@@ -1,1 +1,3 @@
 nimcache/
+*.exe
+tests/testrowutils
