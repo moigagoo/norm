@@ -5,6 +5,7 @@ author        = "Konstantin Molchanov"
 description   = "Utils to help create REST APIs with Jester."
 license       = "MIT"
 srcDir        = "src"
+bin           = @["rester"]
 
 
 # Dependencies

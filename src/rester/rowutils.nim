@@ -1,11 +1,13 @@
 ## Macros to convert between objects and ``Row`` instances.
 
-import macros, strutils
+import macros
+
+import strutils
+export strutils
+
 from db_sqlite import Row
 from db_postgres import Row
 from db_mysql import Row
-
-export strutils
 
 
 type Row = db_sqlite.Row | db_postgres.Row | db_mysql.Row

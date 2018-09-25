@@ -1,3 +1,5 @@
 nimcache/
 *.exe
 tests/testrowutils
+*.db
+rester

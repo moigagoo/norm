@@ -1,29 +1,12 @@
-import macros, db_sqlite
+import db_sqlite
+
+import rowutils
+export rowutils
 
 
-type
-  User = object
-    email: string
-    age: int
+proc getAll*(T: typedesc, dbConn: DbConn, tableName: string): seq[T] =
+  for row in dbConn.fastRows(sql"SELECT rowid, * FROM ?", tableName):
+    result.add row.to T
 
-
-template makeGetAll(idents: untyped, tableName: string): untyped =
-  proc `getAll idents`(dbConn: DbConn): seq[Row] =
-    dbConn.getAllRows sql"select * from ?", tableName
-
-template makeGet(ident: untyped, tableName: string): untyped =
-  proc `get ident`(dbConn: DbConn, id: int): Row =
-    dbConn.getRow sql"select * from ? where rowid = ?", tableName, id
-
-macro makeGetters*(ident, idents: untyped, tableName: string): untyped =
-  result = newStmtList()
-  result.add getAst makeGetAll(idents, tableName)
-  result.add getAst makeGet(ident, tableName)
-
-
-makeGetters(User, Users, "users")
-
-let dbConn = open("rester.db", "", "", "")
-
-echo dbConn.getAllUsers()
-echo dbConn.getUser 1
+proc getById*(T: typedesc, dbConn: DbConn, tableName: string, id: int): T =
+  dbConn.getRow(sql"SELECT rowid, * FROM ? WHERE rowid = ?", tableName, $id).to T
