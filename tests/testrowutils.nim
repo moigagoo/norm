@@ -82,3 +82,17 @@ suite "Test object to row and row to object conversion":
 
   test "Object to row with custom formatter":
     check newYearObj.toRow == newYearRow
+
+  test "Row to object to row with custom parser and formatter":
+    let
+      newYearObjFromRow = newYearRow.to Holiday
+      rowFromNewYearObj = newYearObjFromRow.toRow()
+
+    check rowFromNewYearObj == newYearRow
+
+  test "Object to row to object with custom formatter and parser":
+    let
+      rowFromNewYearObj = newYearObj.toRow()
+      newYearObjFromRow = rowFromNewYearObj.to Holiday
+
+    check newYearObjFromRow == newYearObj
