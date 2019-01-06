@@ -1,6 +1,6 @@
 ## Macros to convert between objects and ``Row`` instances.
 
-import macros
+import macros, sugar
 
 import strutils
 export strutils
@@ -13,7 +13,11 @@ from db_mysql import Row
 type Row = db_sqlite.Row | db_postgres.Row | db_mysql.Row
 
 
-macro to*(row: Row, T: typedesc): untyped =
+template parser*(value: (string) -> any) {.pragma.}
+
+template formatter*(value: (any) -> string) {.pragma.}
+
+macro to*(row: Row, T: type): untyped =
   ##[Convert ``Row`` instance to an instance of type ``T``.
 
   ``T`` must be an object.
@@ -40,14 +44,14 @@ macro to*(row: Row, T: typedesc): untyped =
   ]##
 
   let typeNode = getTypeInst(T)[1]
-  doAssert typeNode.typeKind == ntyObject
+  expectKind(typeNode.getType(), nnkObjectTy)
 
   let
     typeName = $typeNode
     typeImpl = getImpl(typeNode)
     recListNode = typeImpl[2][2]
 
-  var toProc = newNimNode(nnkLambda).add(
+  var toObjProc = newNimNode(nnkLambda).add(
     newEmptyNode(),
     newEmptyNode(),
     newNimNode(nnkGenericParams),
@@ -64,38 +68,43 @@ macro to*(row: Row, T: typedesc): untyped =
   )
 
   for i, identDefsNode in recListNode:
-    let
-      fieldName = $identDefsNode[0]
-      fieldType = getType(identDefsNode[1])
-      fieldAssignmentNode = case fieldType.typeKind
-        of ntyString:
-          newAssignment(
-            newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
-            newNimNode(nnkBracketExpr).add(newIdentNode("row"), newLit(i))
-          )
-        of ntyInt:
-          newAssignment(
-            newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
-            newCall(
-              newIdentNode("parseInt"),
-              newNimNode(nnkBracketExpr).add(newIdentNode("row"), newLit(i))
-            )
-          )
-        of ntyFloat:
-          newAssignment(
-            newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
-            newCall(
-              newIdentNode("parseFloat"),
-              newNimNode(nnkBracketExpr).add(newIdentNode("row"), newLit(i))
-            )
-          )
-        else: newEmptyNode()
+    expectKind(identDefsNode[0], {nnkIdent, nnkPragmaExpr})
 
-    toProc.body.add fieldAssignmentNode
+    let fieldName = case identDefsNode[0].kind
+      of nnkIdent: $identDefsNode[0]
+      of nnkPragmaExpr: $identDefsNode[0][0]
+      else: raise newException(ValueError, "Unexpected node kind")
 
-    result = newCall(toProc, row)
+    let fieldType = getType(identDefsNode[1])
 
-macro toRow*(obj: untyped): untyped =
+    let parserProc =
+      if identDefsNode[0].kind == nnkPragmaExpr and
+          identDefsNode[0][1][0].kind == nnkExprColonExpr and
+          (let pragmaName = $identDefsNode[0][1][0][0]; pragmaName == "parser"):
+        identDefsNode[0][1][0][1]
+      else:
+        case fieldType.typeKind
+        of ntyInt: newIdentNode("parseInt")
+        of ntyFloat: newIdentNode("parseFloat")
+        else: newIdentNode("$")
+
+    toObjProc.body.add newAssignment(
+      newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
+      newCall(
+        parserProc,
+        newNimNode(nnkBracketExpr).add(newIdentNode("row"), newLit(i))
+      )
+    )
+
+    result = newCall(toObjProc, row)
+
+template formatField(obj, field: NimIdent): untyped =
+  when obj.field.hasCustomPragma(formatter):
+    obj.field.getCustomPragmaVal(formatter)(obj.field)
+  else:
+    $obj.field
+
+macro toRow*(obj: typed): untyped =
   ##[Convert from object instance to ``Row`` instance.
 
   .. code-block:: nim
@@ -119,11 +128,11 @@ macro toRow*(obj: untyped): untyped =
   ]##
 
   let objType = obj.getType()
-  doAssert objType.typeKind == ntyObject
+  expectKind(objType, nnkObjectTy)
 
   let objTypeName = $obj.getTypeInst()
 
-  var fromRowProc = newNimNode(nnkLambda).add(
+  var toRowProc = newNimNode(nnkLambda).add(
     newEmptyNode(),
     newEmptyNode(),
     newNimNode(nnkGenericParams),
@@ -140,13 +149,10 @@ macro toRow*(obj: untyped): untyped =
   )
 
   for field in objType[2]:
-    fromRowProc.body.add newCall(
+    toRowProc.body.add newCall(
       newIdentNode("add"),
       newIdentNode("result"),
-      newNimNode(nnkPrefix).add(
-        newIdentNode("$"),
-        newDotExpr(newIdentNode($obj), newIdentNode($field))
-      )
+      getAst(formatField(ident($obj), ident($field)))
     )
 
-  result = newCall(fromRowProc, obj)
+  result = newCall(toRowProc, obj)
