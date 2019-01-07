@@ -1,4 +1,5 @@
-import macros, db_sqlite
+import strutils, macros, typetraits
+import db_sqlite
 
 import rowutils
 export rowutils
@@ -38,9 +39,6 @@ template createTables*() =
 
 macro models(body: untyped): untyped =
   result = newStmtList()
-
-
-
   result.add body
 
 proc getAll*(T: type, dbConn: DbConn, tableName: string): seq[T] =
@@ -48,31 +46,22 @@ proc getAll*(T: type, dbConn: DbConn, tableName: string): seq[T] =
     result.add row.to(T)
 
 proc getAll*(T: type, dbConn: DbConn): seq[T] =
-  when T.hasCustomPragma(tableName):
-    for row in dbConn.fastRows(sql"SELECT * FROM ?", T.getCustomPragmaVal(tableName)):
-      result.add row.to(T)
-  else:
-    raise newException(ValueError, "Specify table name with 'tableName' pragma or argument")
+  let tableName =
+    when T.hasCustomPragma(tableName): T.getCustomPragmaVal(tableName)
+    else: T.name.toLower()
+
+  for row in dbConn.fastRows(sql"SELECT * FROM ?", tableName):
+    result.add row.to(T)
 
 proc getById*(T: type, dbConn: DbConn, tableName: string, id: int): T =
   dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", tableName, $id).to(T)
 
 proc getById*(T: type, dbConn: DbConn, id: int): T =
-  when T.hasCustomPragma(tableName):
-    dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", T.getCustomPragmaVal(tableName), $id).to(T)
-  else:
-    raise newException(ValueError, "Specify table name with 'tableName' pragma or argument")
+  let tableName =
+    when T.hasCustomPragma(tableName): T.getCustomPragmaVal(tableName)
+    else: T.name.toLower()
 
-proc query*(T: type, dbConn: DbConn, tableName, query: string): seq[T] =
-  for row in dbConn.fastRows(sql"SELECT * FROM ? WHERE ?", tableName, query):
-    result.add row.to(T)
-
-proc query*(T: type, dbConn: DbConn, query: string): seq[T] =
-  when T.hasCustomPragma(tableName):
-    for row in dbConn.fastRows(sql"SELECT * FROM ? WHERE", T.getCustomPragmaVal(tableName), query):
-      result.add row.to(T)
-  else:
-    raise newException(ValueError, "Specify table name with 'tableName' pragma or argument")
+  dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", tableName, $id).to(T)
 
 
 models:
@@ -85,11 +74,16 @@ models:
       id {.primaryKey.}: int
       title: string
 
+  # proc getUserId(user: User): string = $user.id
+
+  proc getUserById(userId: string): User =
+    let dbConn = open("rester.db", "", "", "")
+    User.getById(dbConn, parseInt(userId))
+
   proc getBookId(book: Book): string = $book.id
 
   proc getBookById(bookId: string): Book =
     let dbConn = open("rester.db", "", "", "")
-    echo Book.getById(dbConn, parseInt(bookId))
     Book.getById(dbConn, parseInt(bookId))
 
   type
@@ -97,7 +91,9 @@ models:
       id {.primaryKey.}: int
       title: string
       book {.formatter: getBookId, parser: getBookById.}: Book
-
+    UserBook = object
+      user {.parser: getUserById.}: User
+      book {.parser: getBookById.}: Book
 
 when isMainModule:
   let dbConn = open("rester.db", "", "", "")
@@ -107,5 +103,7 @@ when isMainModule:
   echo Book.getAll(dbConn)
 
   echo Edition.getAll(dbConn)
+
+  echo UserBook.getAll(dbConn)
 
   dbConn.close()
