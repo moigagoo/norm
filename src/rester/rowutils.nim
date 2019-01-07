@@ -44,6 +44,7 @@ macro to*(row: Row, T: type): untyped =
   ]##
 
   let typeNode = getTypeInst(T)[1]
+
   expectKind(typeNode.getType(), nnkObjectTy)
 
   let
@@ -77,16 +78,16 @@ macro to*(row: Row, T: type): untyped =
 
     let fieldType = getType(identDefsNode[1])
 
-    let parserProc =
-      if identDefsNode[0].kind == nnkPragmaExpr and
-          identDefsNode[0][1][0].kind == nnkExprColonExpr and
-          (let pragmaName = $identDefsNode[0][1][0][0]; pragmaName == "parser"):
-        identDefsNode[0][1][0][1]
-      else:
-        case fieldType.typeKind
-        of ntyInt: newIdentNode("parseInt")
-        of ntyFloat: newIdentNode("parseFloat")
-        else: newIdentNode("$")
+    var parserProc = case fieldType.typeKind
+      of ntyInt: newIdentNode("parseInt")
+      of ntyFloat: newIdentNode("parseFloat")
+      else: newIdentNode("$")
+
+    if identDefsNode[0].kind == nnkPragmaExpr:
+      for pragmaDef in identDefsNode[0][1]:
+        if pragmaDef.kind == nnkExprColonExpr and strVal(pragmaDef[0]) == "parser":
+          parserProc = pragmaDef[1]
+          break
 
     toObjProc.body.add newAssignment(
       newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
