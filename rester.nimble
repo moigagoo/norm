@@ -10,4 +10,4 @@ bin           = @["rester"]
 
 # Dependencies
 
-requires "nim >= 0.18.1"
+requires "nim >= 0.19.2"

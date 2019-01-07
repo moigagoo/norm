@@ -10,6 +10,7 @@ type
     email: string
     age: int
 
+
 when isMainModule:
   let
     dbConn = open("rester.db", "", "", "")
