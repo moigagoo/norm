@@ -95,6 +95,28 @@ models:
       user {.parser: getUserById.}: User
       book {.parser: getBookById.}: Book
 
+  proc books(user: User): seq[Book] =
+    let
+      dbConn = open("rester.db", "", "", "")
+      query = sql"""
+        SELECT books.*
+        FROM userbook JOIN books ON userbook.book_id = books.id
+        WHERE userbook.user_id = ?;"""
+
+    for row in dbConn.fastRows(query, user.id):
+      result.add row.to(Book)
+
+  proc authors(book: Book): seq[User] =
+    let
+      dbConn = open("rester.db", "", "", "")
+      query = sql"""
+        SELECT users.*
+        FROM userbook JOIN users ON userbook.user_id = users.id
+        WHERE userbook.book_id = ?;"""
+
+    for row in dbConn.fastRows(query, book.id):
+      result.add row.to(User)
+
 when isMainModule:
   let dbConn = open("rester.db", "", "", "")
 
@@ -105,5 +127,9 @@ when isMainModule:
   echo Edition.getAll(dbConn)
 
   echo UserBook.getAll(dbConn)
+
+  echo User.getById(dbConn, 1).books
+
+  echo Book.getById(dbConn, 1).authors
 
   dbConn.close()
