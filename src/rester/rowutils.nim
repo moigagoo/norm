@@ -15,7 +15,7 @@ type Row = db_sqlite.Row | db_postgres.Row | db_mysql.Row
 
 template fromDb*(value: (string) -> any) {.pragma.}
 
-template formatter*(value: (any) -> string) {.pragma.}
+template toDb*(value: (any) -> string) {.pragma.}
 
 macro to*(row: Row, T: type): untyped =
   ##[Convert ``Row`` instance to an instance of type ``T``.
@@ -100,8 +100,8 @@ macro to*(row: Row, T: type): untyped =
     result = newCall(toObjProc, row)
 
 template formatField(obj, field: NimIdent): untyped =
-  when obj.field.hasCustomPragma(formatter):
-    obj.field.getCustomPragmaVal(formatter)(obj.field)
+  when obj.field.hasCustomPragma(toDb):
+    obj.field.getCustomPragmaVal(toDb)(obj.field)
   else:
     $obj.field
 
