@@ -13,7 +13,7 @@ from db_mysql import Row
 type Row = db_sqlite.Row | db_postgres.Row | db_mysql.Row
 
 
-template parser*(value: (string) -> any) {.pragma.}
+template fromDb*(value: (string) -> any) {.pragma.}
 
 template formatter*(value: (any) -> string) {.pragma.}
 
@@ -78,21 +78,21 @@ macro to*(row: Row, T: type): untyped =
 
     let fieldType = getType(identDefsNode[1])
 
-    var parserProc = case fieldType.typeKind
+    var fromDbProc = case fieldType.typeKind
       of ntyInt: newIdentNode("parseInt")
       of ntyFloat: newIdentNode("parseFloat")
       else: newIdentNode("$")
 
     if identDefsNode[0].kind == nnkPragmaExpr:
       for pragmaDef in identDefsNode[0][1]:
-        if pragmaDef.kind == nnkExprColonExpr and strVal(pragmaDef[0]) == "parser":
-          parserProc = pragmaDef[1]
+        if pragmaDef.kind == nnkExprColonExpr and strVal(pragmaDef[0]) == "fromDb":
+          fromDbProc = pragmaDef[1]
           break
 
     toObjProc.body.add newAssignment(
       newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
       newCall(
-        parserProc,
+        fromDbProc,
         newNimNode(nnkBracketExpr).add(newIdentNode("row"), newLit(i))
       )
     )

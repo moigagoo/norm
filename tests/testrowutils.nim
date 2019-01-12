@@ -47,7 +47,7 @@ suite "Test object to row and row to object conversion":
     type
       Holiday = object
         title: string
-        date {.formatter: formatDate, parser: parseDate.}: DateTime
+        date {.toDb: formatDate, fromDb: parseDate.}: DateTime
 
     let
       newYearObj = Holiday(title: "New Year", date: initDateTime(1, mJan, 2019, 0, 0, 0, 0))

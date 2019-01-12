@@ -5,9 +5,9 @@ import rowutils
 export rowutils
 
 
-template primaryKey() {.pragma.}
+template pk() {.pragma.}
 
-template tableName(val: string) {.pragma.}
+template table(val: string) {.pragma.}
 
 template createTables*() =
   sql"""
@@ -37,41 +37,30 @@ template createTables*() =
     );
   """
 
-macro models(body: untyped): untyped =
+macro tables(body: untyped): untyped =
   result = newStmtList()
   result.add body
 
-proc getAll*(T: type, dbConn: DbConn, tableName: string): seq[T] =
-  for row in dbConn.fastRows(sql"SELECT * FROM ?", tableName):
-    result.add row.to(T)
+proc getTable(T: type): string =
+  when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
+  else: T.name.toLower()
 
 proc getAll*(T: type, dbConn: DbConn): seq[T] =
-  let tableName =
-    when T.hasCustomPragma(tableName): T.getCustomPragmaVal(tableName)
-    else: T.name.toLower()
-
-  for row in dbConn.fastRows(sql"SELECT * FROM ?", tableName):
+  for row in dbConn.fastRows(sql"SELECT * FROM ?", T.getTable()):
     result.add row.to(T)
 
-proc getById*(T: type, dbConn: DbConn, tableName: string, id: int): T =
-  dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", tableName, $id).to(T)
-
 proc getById*(T: type, dbConn: DbConn, id: int): T =
-  let tableName =
-    when T.hasCustomPragma(tableName): T.getCustomPragmaVal(tableName)
-    else: T.name.toLower()
-
-  dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", tableName, $id).to(T)
+  dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", T.getTable(), $id).to(T)
 
 
-models:
+tables:
   type
-    User {.tableName: "users".} = object
-      id {.primaryKey.}: int
+    User {.table: "users".} = object
+      id {.pk.}: int
       email: string
       age: int
-    Book {.tableName: "books".} = object
-      id {.primaryKey.}: int
+    Book {.table: "books".} = object
+      id {.pk.}: int
       title: string
 
   # proc getUserId(user: User): string = $user.id
@@ -87,13 +76,13 @@ models:
     Book.getById(dbConn, parseInt(bookId))
 
   type
-    Edition {.tableName: "editions".} = object
-      id {.primaryKey.}: int
+    Edition {.table: "editions".} = object
+      id {.pk.}: int
       title: string
-      book {.formatter: getBookId, parser: getBookById.}: Book
+      book {.toDb: getBookId, fromDb: getBookById.}: Book
     UserBook = object
-      user {.parser: getUserById.}: User
-      book {.parser: getBookById.}: Book
+      user {.fromDb: getUserById.}: User
+      book {.fromDb: getBookById.}: Book
 
   proc books(user: User): seq[Book] =
     let
