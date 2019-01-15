@@ -1,4 +1,4 @@
-import strutils, macros, typetraits
+import strutils, strformat, macros, typetraits, sequtils
 import db_sqlite
 
 import rowutils
@@ -50,12 +50,29 @@ template makeWithDbConn(connection, user, password, database: string,
     block:
       let dbConn = open(connection, user, password, database)
 
-      proc getAll(T: type): seq[T] =
+      proc all(T: type): seq[T] =
         for row in dbConn.fastRows(sql"SELECT * FROM ?", T.getTable()):
           result.add row.to(T)
 
-      proc getById(T: type, id: int): T =
+      proc one(T: type, id: int): T =
         dbConn.getRow(sql"SELECT  * FROM ? WHERE id = ?", T.getTable(), id).to(T)
+
+      proc where(T: type, clause: string): seq[T] =
+        for row in dbConn.fastRows(sql &"SELECT * FROM ? WHERE {clause}", T.getTable()):
+          result.add row.to(T)
+
+      template insert(obj: var typed) =
+        obj.id = dbConn.insertId(
+          sql"INSERT INTO ? (email, age) VALUES (?, ?)",
+          type(obj).getTable(), obj.email, obj.age
+        ).int
+
+      template delete(obj: var typed) =
+        dbConn.exec(
+          sql"DELETE FROM ? WHERE id = ?",
+          type(obj).getTable(), obj.id
+        )
+        obj.id = 0
 
       dbProcs
 
@@ -79,7 +96,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       dbTypes.add node
 
-  result.add getAst(makeWithDbConn(connection, user, password, database, dbProcs))
+  result.add getAst makeWithDbConn(connection, user, password, database, dbProcs)
   result.add dbTypes
 
 
@@ -92,16 +109,20 @@ db("rester.db", "", "", ""):
     Book {.table: "books".} = object
       id {.pk.}: int
       title: string
-    UserBook = object
-      userId: int
-      bookId: int
     Edition {.table: "editions".} = object
       id {.pk.}: int
       title: string
       bookId: int
+    UserBook = object
+      userId: int
+      bookId: int
+
+  proc setAge(user: var User, value: int) =
+    dbConn.exec(sql"""UPDATE ? SET age = ? WHERE id = ?""", "users", value, user.id)
+    user.age = value
 
   proc books(user: User): seq[Book] =
-    let query = sql"""
+    const query = sql"""
         SELECT
           books.*
         FROM
@@ -126,12 +147,22 @@ db("rester.db", "", "", ""):
 
     for row in dbConn.fastRows(query, book.id): result.add row.to(User)
 
+
 when isMainModule:
   withDbConn:
-    echo User.getAll()
-    echo Book.getAll()
-    echo Edition.getAll()
-    echo UserBook.getAll()
-    echo User.getById(1)
-    echo User.getById(1).books
-    echo Book.getById(1).authors
+    for i in 1..10:
+      var user = User(email: "asd@asd.asd", age: i)
+      user.insert()
+
+    echo User.all
+
+  withDbConn:
+    var users = User.all
+    for user in users.filterIt(it.email=="asd@asd.asd").mitems:
+      user.delete()
+
+    echo User.all()
+    # var usersAge1 = User.getWhere("age=1")
+    # for user in usersAge1.mitems:
+    #   user.delete()
+    # echo User.getWhere("age=1")
