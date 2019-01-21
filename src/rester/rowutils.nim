@@ -1,159 +1,135 @@
-## Macros to convert between objects and ``Row`` instances.
-
-import macros, sugar
-
 import strutils
-export strutils
+import sugar
+import macros; export macros
 
-from db_sqlite import Row
-from db_postgres import Row
-from db_mysql import Row
-
-
-type Row = db_sqlite.Row | db_postgres.Row | db_mysql.Row
+import objutils
 
 
-template fromDb*(value: (string) -> any) {.pragma.}
+template parser*(op: untyped) {.pragma.}
+  ##[ Pragma to define a parser for an object field.
 
-template toDb*(value: (any) -> string) {.pragma.}
-
-macro to*(row: Row, T: type): untyped =
-  ##[Convert ``Row`` instance to an instance of type ``T``.
-
-  ``T`` must be an object.
-
-  .. code-block:: nim
-    from db_sqlite import Row
-
-    # Define an object type that reflects your business logic entity.
-    type
-      User = object
-        name: string
-        age: int
-        height: float
-
-    # Get a ``Row`` instance. It would normally come as a result of a DB query, but in this example we'll just define one.
-    let row: Row = @["John", "42", "1.72"]
-
-    # Create a ``User`` instance from the row.
-    let user = row.to User
-
-    # Note that field types from ``User`` are preserved even though all ``Row`` fields are strings.
-    echo user
-    # User(name: "John", age: 42, height: 1.72)
+  ``op`` should be a lambda that accepts ``string`` and returns the object field type.
+  The proc is called in ``to`` proc or template to turn a string from row into a typed object field.
   ]##
 
-  let typeNode = getTypeInst(T)[1]
+template formatter*(op: untyped) {.pragma.}
+  ##[ Pragma to define a formatter for an object field.
 
-  expectKind(typeNode.getType(), nnkObjectTy)
-
-  let
-    typeName = $typeNode
-    typeImpl = getImpl(typeNode)
-    recListNode = typeImpl[2][2]
-
-  var toObjProc = newNimNode(nnkLambda).add(
-    newEmptyNode(),
-    newEmptyNode(),
-    newNimNode(nnkGenericParams),
-    newNimNode(nnkFormalParams).add(
-      newIdentNode(typeName),
-      newIdentDefs(
-        newIdentNode("row"),
-        newIdentNode("Row")
-      )
-    ),
-    newEmptyNode(),
-    newEmptyNode(),
-    newStmtList(newNimNode(nnkDiscardStmt).add(newEmptyNode()))
-  )
-
-  for i, identDefsNode in recListNode:
-    expectKind(identDefsNode[0], {nnkIdent, nnkPragmaExpr})
-
-    let fieldName = case identDefsNode[0].kind
-      of nnkIdent: $identDefsNode[0]
-      of nnkPragmaExpr: $identDefsNode[0][0]
-      else: raise newException(ValueError, "Unexpected node kind")
-
-    let fieldType = getType(identDefsNode[1])
-
-    var fromDbProc = case fieldType.typeKind
-      of ntyInt: newIdentNode("parseInt")
-      of ntyFloat: newIdentNode("parseFloat")
-      else: newIdentNode("$")
-
-    if identDefsNode[0].kind == nnkPragmaExpr:
-      for pragmaDef in identDefsNode[0][1]:
-        if pragmaDef.kind == nnkExprColonExpr and strVal(pragmaDef[0]) == "fromDb":
-          fromDbProc = pragmaDef[1]
-          break
-
-    toObjProc.body.add newAssignment(
-      newDotExpr(newIdentNode("result"), newIdentNode(fieldName)),
-      newCall(
-        fromDbProc,
-        newNimNode(nnkBracketExpr).add(newIdentNode("row"), newLit(i))
-      )
-    )
-
-    result = newCall(toObjProc, row)
-
-template formatField(obj, field: NimIdent): untyped =
-  when obj.field.hasCustomPragma(toDb):
-    obj.field.getCustomPragmaVal(toDb)(obj.field)
-  else:
-    $obj.field
-
-macro toRow*(obj: typed): untyped =
-  ##[Convert from object instance to ``Row`` instance.
-
-  .. code-block:: nim
-    from db_sqlite import Row
-
-    # Define an object type that reflects your business logic entity.
-    type
-      User = object
-        name: string
-        age: int
-        height: float
-
-    # Create a ``User`` instance.
-    let user = User(name: "John", age: 42, height: 1.72)
-
-    # Get a ``Row`` instance ready to be passed to a DB query.
-    # let row = user.toRow()
-
-    echo row
-    # @["John", "42", "1.72"]
+  ``op`` should be a lambda that accepts the object field type and returns ``string``.
+  The proc is called in ``toRow`` proc to turn a typed object field into a string within a row.
   ]##
 
-  let objType = obj.getType()
-  expectKind(objType, nnkObjectTy)
+template to*(row: seq[string], obj: var object) =
+  ##[ Convert row to a given object instance. String values from row are converted
+  into types of the respective object fields.
 
-  let objTypeName = $obj.getTypeInst()
+  If object fields don't require initialization, you may use the proc that instantiates the object
+  on the fly. This template though can be safely used for all object kinds.
+  ]##
 
-  var toRowProc = newNimNode(nnkLambda).add(
-    newEmptyNode(),
-    newEmptyNode(),
-    newNimNode(nnkGenericParams),
-    newNimNode(nnkFormalParams).add(
-      newIdentNode("Row"),
-      newIdentDefs(
-        newIdentNode($obj),
-        newIdentNode(objTypeName)
-      )
-    ),
-    newEmptyNode(),
-    newEmptyNode(),
-    newStmtList(newNimNode(nnkDiscardStmt).add(newEmptyNode()))
-  )
+  runnableExamples:
+    import times, sugar
 
-  for field in objType[2]:
-    toRowProc.body.add newCall(
-      newIdentNode("add"),
-      newIdentNode("result"),
-      getAst(formatField(ident($obj), ident($field)))
-    )
+    type
+      Example = object
+        intField: int
+        strField: string
+        floatField: float
+        dtField {.parser: (s: string) => s.parse("yyyy-MM-dd HH:mm:sszzz").}: DateTime
 
-  result = newCall(toRowProc, obj)
+    let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
+
+    var example = Example(dtField: now())
+
+    row.to(example)
+
+    doAssert example.intField == 123
+    doAssert example.strField == "foo"
+    doAssert example.floatField == 123.321
+    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+
+  var i: int
+
+  for field, value in obj.fieldPairs:
+    when type(value) is string:
+      obj[field] = row[i]
+    elif type(value) is int:
+      obj[field] = parseInt row[i]
+    elif type(value) is float:
+      obj[field] = parseFloat row[i]
+    elif obj[field].hasCustomPragma(parser):
+      obj[field] = obj[field].getCustomPragmaVal(parser) row[i]
+    else:
+      raise newException(ValueError, &"Parser for {type(value)} is undefined.")
+
+    inc i
+
+proc to*(row: seq[string], T: type): T =
+  ##[ Instantiate object with type ``T`` with values from ``row``. String values from row
+  are converted into types of the respective object fields.
+
+  Use this proc if the object fields have default values and do not require initialization:
+  ``int``, ``string``, ``float``, etc.
+
+  If fields require initialization, for example, ``times.DateTime``, use template ``to``.
+  It converts a row to a given object instance.
+  ]##
+
+  runnableExamples:
+    type
+      Example = object
+        intField: int
+        strField: string
+        floatField: float
+
+    let
+      row = @["123", "foo", "123.321"]
+      obj = row.to(Example)
+
+    doAssert obj.intField == 123
+    doAssert obj.strField == "foo"
+    doAssert obj.floatField == 123.321
+
+  var i: int
+
+  for field, value in result.fieldPairs:
+    when type(value) is string:
+      result[field] = row[i]
+    elif type(value) is int:
+      result[field] = parseInt row[i]
+    elif type(value) is float:
+      result[field] = parseFloat row[i]
+    elif result[field].hasCustomPragma(parser):
+      result[field] = result[field].getCustomPragmaVal(parser) row[i]
+    else:
+      raise newException(ValueError, "Parser for $# is undefined." % type(value))
+
+    inc i
+
+proc toRow*(obj: object): seq[string] =
+  ##[ Convert an object into row, i.e. sequence of strings.
+
+  If a custom formatter is provided for a field via ``formatter`` pragma, it is used for conversion,
+  otherwise `$` is invoked.
+  ]##
+
+  runnableExamples:
+    type
+      Example = object
+        intField: int
+        strField: string
+        floatField: float
+
+    let
+      example = Example(intField: 123, strField: "foo", floatField: 123.321)
+      row = example.toRow()
+
+    doAssert row[0] == "123"
+    doAssert row[1] == "foo"
+    doAssert row[2] == "123.321"
+
+  for field, value in obj.fieldPairs:
+    when obj[field].hasCustomPragma(formatter):
+      result.add obj[field].getCustomPragmaVal(formatter) value
+    else:
+      result.add $value

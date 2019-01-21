@@ -1,8 +1,7 @@
 import unittest
-from db_sqlite import Row
-import times, sugar
+import times, sugar, db_sqlite
 
-import rester / rowutils
+import rester/rowutils
 
 import macros
 
@@ -47,7 +46,10 @@ suite "Test object to row and row to object conversion":
     type
       Holiday = object
         title: string
-        date {.toDb: formatDate, fromDb: parseDate.}: DateTime
+        date {.
+          parser: proc(s: string): DateTime = s.parse("yyyy-MM-dd"),
+          formatter: (dt: DateTime) => dt.format("yyyy-MM-dd")
+        .}: DateTime
 
     let
       newYearObj = Holiday(title: "New Year", date: initDateTime(1, mJan, 2019, 0, 0, 0, 0))
