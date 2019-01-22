@@ -39,16 +39,17 @@ suite "Test object to row and row to object conversion":
       userWithPragmaRow: Row = @["alice@example.com", "23"]
       userWithPragmaObj = initUserWithPragma("alice@example.com", 23)
 
+    proc parseDate(s: string): DateTime = s.parse("yyyy-MM-dd")
+
+    proc formatDate(dt: DateTime): string = dt.format("yyyy-MM-dd")
+
     type
       Holiday = object
         title{.
           parser: (s: string) => s.split().mapIt(capitalizeAscii(it)).join(" "),
           formatter: (s: string) => s.toLowerAscii()
         .}: string
-        date {.
-          parser: proc(s: string): DateTime = s.parse("yyyy-MM-dd"),
-          formatter: (dt: DateTime) => dt.format("yyyy-MM-dd")
-        .}: DateTime
+        date {.parser: parseDate, formatter: formatDate.}: DateTime
 
     let
       newYearObj = Holiday(title: "New Year", date: initDateTime(1, mJan, 2019, 0, 0, 0, 0))

@@ -5,7 +5,14 @@ import macros; export macros
 import objutils
 
 
-template parser*(op: untyped) {.pragma.}
+template parse*(op: (string) -> any) {.pragma.}
+  ##[ Pragma to define a parser for an object field.
+
+  ``op`` should be a lambda that accepts ``string`` and returns the object field type.
+  The proc is called in ``to`` proc or template to turn a string from row into a typed object field.
+  ]##
+
+template parseIt*(op: untyped) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
   ``op`` should be a lambda that accepts ``string`` and returns the object field type.
@@ -30,12 +37,14 @@ template to*(row: seq[string], obj: var object) =
   runnableExamples:
     import times, sugar
 
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
+
     type
       Example = object
         intField: int
         strField: string
         floatField: float
-        dtField {.parser: (s: string) => s.parse("yyyy-MM-dd HH:mm:sszzz").}: DateTime
+        dtField {.parse: parseDateTime.}: DateTime
 
     let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
 
@@ -51,8 +60,8 @@ template to*(row: seq[string], obj: var object) =
   var i: int
 
   for field, value in obj.fieldPairs:
-    when obj[field].hasCustomPragma(parser):
-      obj[field] = obj[field].getCustomPragmaVal(parser) row[i]
+    when obj[field].hasCustomPragma(parse):
+      obj[field] = obj[field].getCustomPragmaVal(parse) row[i]
     elif type(value) is string:
       obj[field] = row[i]
     elif type(value) is int:
@@ -100,10 +109,14 @@ proc toRow*(obj: object): seq[string] =
   ]##
 
   runnableExamples:
+    import strutils, sequtils, sugar
+
+    proc toTitleCase(s: string): string = s.split().mapIt(capitalizeAscii(it)).join(" ")
+
     type
       Example = object
         intField: int
-        strField: string
+        strField{.parse: toTitleCase, formatter: (s: string) => s.toLowerAscii() .}: string
         floatField: float
 
     let
