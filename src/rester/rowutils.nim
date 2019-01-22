@@ -51,16 +51,16 @@ template to*(row: seq[string], obj: var object) =
   var i: int
 
   for field, value in obj.fieldPairs:
-    when type(value) is string:
+    when obj[field].hasCustomPragma(parser):
+      obj[field] = obj[field].getCustomPragmaVal(parser) row[i]
+    elif type(value) is string:
       obj[field] = row[i]
     elif type(value) is int:
       obj[field] = parseInt row[i]
     elif type(value) is float:
       obj[field] = parseFloat row[i]
-    elif obj[field].hasCustomPragma(parser):
-      obj[field] = obj[field].getCustomPragmaVal(parser) row[i]
     else:
-      raise newException(ValueError, &"Parser for {type(value)} is undefined.")
+      raise newException(ValueError, "Parser for $# is undefined." % type(value))
 
     inc i
 
@@ -93,14 +93,14 @@ proc to*(row: seq[string], T: type): T =
   var i: int
 
   for field, value in result.fieldPairs:
-    when type(value) is string:
+    when result[field].hasCustomPragma(parser):
+      result[field] = result[field].getCustomPragmaVal(parser) row[i]
+    elif type(value) is string:
       result[field] = row[i]
     elif type(value) is int:
       result[field] = parseInt row[i]
     elif type(value) is float:
       result[field] = parseFloat row[i]
-    elif result[field].hasCustomPragma(parser):
-      result[field] = result[field].getCustomPragmaVal(parser) row[i]
     else:
       raise newException(ValueError, "Parser for $# is undefined." % type(value))
 

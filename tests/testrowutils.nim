@@ -1,5 +1,5 @@
 import unittest
-import times, sugar, db_sqlite
+import times, strutils, sequtils, sugar, db_sqlite
 
 import rester/rowutils
 
@@ -39,13 +39,12 @@ suite "Test object to row and row to object conversion":
       userWithPragmaRow: Row = @["alice@example.com", "23"]
       userWithPragmaObj = initUserWithPragma("alice@example.com", 23)
 
-    proc parseDate(dateString: string): DateTime = parse(dateString, "yyyy-MM-dd")
-
-    proc formatDate(date: DateTime): string = format(date, "yyyy-MM-dd")
-
     type
       Holiday = object
-        title: string
+        title{.
+          parser: (s: string) => s.split().mapIt(capitalizeAscii(it)).join(" "),
+          formatter: (s: string) => s.toLowerAscii()
+        .}: string
         date {.
           parser: proc(s: string): DateTime = s.parse("yyyy-MM-dd"),
           formatter: (dt: DateTime) => dt.format("yyyy-MM-dd")
@@ -53,7 +52,7 @@ suite "Test object to row and row to object conversion":
 
     let
       newYearObj = Holiday(title: "New Year", date: initDateTime(1, mJan, 2019, 0, 0, 0, 0))
-      newYearRow: Row = @["New Year", "2019-01-01"]
+      newYearRow: Row = @["new year", "2019-01-01"]
 
   test "Row to object":
     check (userRow.to User) == userObj
@@ -80,21 +79,26 @@ suite "Test object to row and row to object conversion":
     check userObjFromRow == userObj
 
   test "Row to object with custom parser":
-    check (newYearRow.to Holiday) == newYearObj
+    var newYearObjFromRow = Holiday(date: now())
+    newYearRow.to(newYearObjFromRow)
+
+    check newYearObjFromRow == newYearObj
 
   test "Object to row with custom formatter":
     check newYearObj.toRow == newYearRow
 
   test "Row to object to row with custom parser and formatter":
-    let
-      newYearObjFromRow = newYearRow.to Holiday
-      rowFromNewYearObj = newYearObjFromRow.toRow()
+    var newYearObjFromRow = Holiday(date: now())
+    newYearRow.to(newYearObjFromRow)
+
+    let rowFromNewYearObj = newYearObjFromRow.toRow()
 
     check rowFromNewYearObj == newYearRow
 
   test "Object to row to object with custom formatter and parser":
-    let
-      rowFromNewYearObj = newYearObj.toRow()
-      newYearObjFromRow = rowFromNewYearObj.to Holiday
+    let rowFromNewYearObj = newYearObj.toRow()
+
+    var newYearObjFromRow = Holiday(date: now())
+    rowFromNewYearObj.to(newYearObjFromRow)
 
     check newYearObjFromRow == newYearObj
