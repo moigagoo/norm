@@ -90,21 +90,7 @@ proc to*(row: seq[string], T: type): T =
     doAssert obj.strField == "foo"
     doAssert obj.floatField == 123.321
 
-  var i: int
-
-  for field, value in result.fieldPairs:
-    when result[field].hasCustomPragma(parser):
-      result[field] = result[field].getCustomPragmaVal(parser) row[i]
-    elif type(value) is string:
-      result[field] = row[i]
-    elif type(value) is int:
-      result[field] = parseInt row[i]
-    elif type(value) is float:
-      result[field] = parseFloat row[i]
-    else:
-      raise newException(ValueError, "Parser for $# is undefined." % type(value))
-
-    inc i
+  row.to(result)
 
 proc toRow*(obj: object): seq[string] =
   ##[ Convert an object into row, i.e. sequence of strings.
