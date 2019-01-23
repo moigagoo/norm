@@ -1,4 +1,4 @@
-import strutils, strformat, macros, typetraits, sequtils
+import strutils, strformat, macros, sequtils, options
 import db_sqlite
 
 import rowutils
@@ -42,7 +42,7 @@ template createTables*() =
 
 proc getTable(T: type): string =
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
-  else: T.name.toLower()
+  else: T.name.toLowerAscii()
 
 template makeWithDbConn(connection, user, password, database: string,
                         dbProcs: NimNode): untyped {.dirty.} =
@@ -61,13 +61,17 @@ template makeWithDbConn(connection, user, password, database: string,
         for row in dbConn.fastRows(sql &"SELECT * FROM ? WHERE {clause}", T.getTable()):
           result.add row.to(T)
 
-      template insert(obj: var typed) =
-        obj.id = dbConn.insertId(
-          sql"INSERT INTO ? (email, age) VALUES (?, ?)",
-          type(obj).getTable(), obj.email, obj.age
-        ).int
+      proc insert(obj: var object) =
+        var fields: seq[string]
 
-      template delete(obj: var typed) =
+        for field, _ in obj.fieldPairs: fields.add field
+
+        let query = sql "INSERT INTO $# ($#) VALUES ($#)" %
+                    [type(obj).getTable(), fields.join(","), '?'.repeat(len(fields))]
+
+        obj.id = dbConn.insertId(query, obj.toRow()).int
+
+      proc delete(obj: var object) =
         dbConn.exec(
           sql"DELETE FROM ? WHERE id = ?",
           type(obj).getTable(), obj.id
