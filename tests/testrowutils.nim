@@ -43,15 +43,13 @@ suite "Test object to row and row to object conversion":
 
     proc formatDate(dt: DateTime): string = dt.format("yyyy-MM-dd")
 
-    proc toLowerCase(s: string): string = s.toLowerAscii()
-
     type
       Holiday = object
         title{.
           parseIt: it.split().mapIt(capitalizeAscii(it)).join(" "),
-          formatter: toLowerCase
+          formatIt: it.toLowerAscii()
         .}: string
-        date {.parse: parseDate, formatter: formatDate.}: DateTime
+        date {.parser: parseDate, formatter: formatDate.}: DateTime
 
     let
       newYearObj = Holiday(title: "New Year", date: initDateTime(1, mJan, 2019, 0, 0, 0, 0))

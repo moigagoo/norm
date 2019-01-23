@@ -5,20 +5,38 @@ import macros; export macros
 import objutils
 
 
-template parse*(op: (string) -> any) {.pragma.}
+template parser*(op: (string) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
   ``op`` should be a proc that accepts ``string`` and returns the object field type.
+
   The proc is called in ``to`` template to turn a string from row into a typed object field.
   ]##
 
 template parseIt*(op: untyped) {.pragma.}
+  ##[ Pragma to define a parse expression for an object field.
+
+  ``op`` should be an expression with ``it`` variable that evaluates to the object field type.
+
+  The expression is invoked in ``to`` template to turn a string from row into a typed object field.
+  ]##
 
 template formatter*(op: (any) -> string) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
   ``op`` should be a proc that accepts the object field type and returns ``string``.
+
   The proc is called in ``toRow`` proc to turn a typed object field into a string within a row.
+  ]##
+
+template formatIt*(op: untyped) {.pragma.}
+  ##[ Pragma to define a format expression for an object field.
+
+  ``op`` should be an expression with ``it`` variable with the object field type and evaluates
+  to ``string``.
+
+  The expression is invoked in ``toRow`` proc to turn a typed object field into a string
+  within a row.
   ]##
 
 template to*(row: seq[string], obj: var object) =
@@ -39,7 +57,7 @@ template to*(row: seq[string], obj: var object) =
         intField: int
         strField: string
         floatField: float
-        dtField {.parse: parseDateTime.}: DateTime
+        dtField {.parser: parseDateTime.}: DateTime
 
     let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
 
@@ -55,8 +73,8 @@ template to*(row: seq[string], obj: var object) =
   var i: int
 
   for field, value in obj.fieldPairs:
-    when obj[field].hasCustomPragma(parse):
-      obj[field] = obj[field].getCustomPragmaVal(parse) row[i]
+    when obj[field].hasCustomPragma(parser):
+      obj[field] = obj[field].getCustomPragmaVal(parser) row[i]
     elif obj[field].hasCustomPragma(parseIt):
       block:
         let it {.inject.} = row[i]
@@ -129,5 +147,9 @@ proc toRow*(obj: object): seq[string] =
   for field, value in obj.fieldPairs:
     when obj[field].hasCustomPragma(formatter):
       result.add obj[field].getCustomPragmaVal(formatter) value
+    elif obj[field].hasCustomPragma(formatIt):
+      block:
+        let it {.inject.} = value
+        result.add obj[field].getCustomPragmaVal(formatIt)
     else:
       result.add $value
