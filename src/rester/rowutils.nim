@@ -128,12 +128,10 @@ proc toRow*(obj: object): seq[string] =
   runnableExamples:
     import strutils, sequtils, sugar
 
-    proc toLowerCase(s: string): string = s.toLowerAscii()
-
     type
       Example = object
         intField: int
-        strField{.formatter: toLowerCase.}: string
+        strField{.formatIt: it.toLowerAscii().}: string
         floatField: float
 
     let
