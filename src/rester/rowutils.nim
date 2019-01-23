@@ -8,21 +8,16 @@ import objutils
 template parse*(op: (string) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
-  ``op`` should be a lambda that accepts ``string`` and returns the object field type.
-  The proc is called in ``to`` proc or template to turn a string from row into a typed object field.
+  ``op`` should be a proc that accepts ``string`` and returns the object field type.
+  The proc is called in ``to`` template to turn a string from row into a typed object field.
   ]##
 
 template parseIt*(op: untyped) {.pragma.}
-  ##[ Pragma to define a parser for an object field.
 
-  ``op`` should be a lambda that accepts ``string`` and returns the object field type.
-  The proc is called in ``to`` proc or template to turn a string from row into a typed object field.
-  ]##
-
-template formatter*(op: untyped) {.pragma.}
+template formatter*(op: (any) -> string) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
-  ``op`` should be a lambda that accepts the object field type and returns ``string``.
+  ``op`` should be a proc that accepts the object field type and returns ``string``.
   The proc is called in ``toRow`` proc to turn a typed object field into a string within a row.
   ]##
 
@@ -62,6 +57,10 @@ template to*(row: seq[string], obj: var object) =
   for field, value in obj.fieldPairs:
     when obj[field].hasCustomPragma(parse):
       obj[field] = obj[field].getCustomPragmaVal(parse) row[i]
+    elif obj[field].hasCustomPragma(parseIt):
+      block:
+        let it {.inject.} = row[i]
+        obj[field] = obj[field].getCustomPragmaVal(parseIt)
     elif type(value) is string:
       obj[field] = row[i]
     elif type(value) is int:
@@ -111,16 +110,16 @@ proc toRow*(obj: object): seq[string] =
   runnableExamples:
     import strutils, sequtils, sugar
 
-    proc toTitleCase(s: string): string = s.split().mapIt(capitalizeAscii(it)).join(" ")
+    proc toLowerCase(s: string): string = s.toLowerAscii()
 
     type
       Example = object
         intField: int
-        strField{.parse: toTitleCase, formatter: (s: string) => s.toLowerAscii() .}: string
+        strField{.formatter: toLowerCase.}: string
         floatField: float
 
     let
-      example = Example(intField: 123, strField: "foo", floatField: 123.321)
+      example = Example(intField: 123, strField: "Foo", floatField: 123.321)
       row = example.toRow()
 
     doAssert row[0] == "123"
