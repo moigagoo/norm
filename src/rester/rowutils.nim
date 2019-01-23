@@ -121,7 +121,7 @@ proc to*(row: seq[string], T: type): T =
 proc toRow*(obj: object): seq[string] =
   ##[ Convert an object into row, i.e. sequence of strings.
 
-  If a custom formatter is provided for a field via ``formatter`` pragma, it is used for conversion,
+  If a custom formatter is provided for a field, it is used for conversion,
   otherwise `$` is invoked.
   ]##
 
