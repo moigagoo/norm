@@ -75,7 +75,6 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   for node in body:
     if node.kind == nnkTypeSection:
       dbTypes.add node
-
     else:
       dbOthers.add node
 
