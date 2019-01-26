@@ -2,11 +2,16 @@ import strutils, strformat, macros, sequtils, options
 import typetraits
 import db_sqlite
 
-import rowutils
+import objutils, rowutils
 
 
-template table(val: string) {.pragma.}
-template db(val: DbConn) {.pragma.}
+template pk* {.pragma.}
+template autoinc* {.pragma.}
+
+template protected* {.pragma.}
+
+template table*(val: string) {.pragma.}
+template db*(val: DbConn) {.pragma.}
 
 
 template createTables*() =
@@ -47,11 +52,11 @@ template makeWithDbConn(connection, user, password, database: string,
     block:
       let dbConn = open(connection, user, password, database)
 
-      proc insert(obj: var object) =
+      template insert(obj: var object) =
         var fields, values: seq[string]
 
         for field, value in obj.fieldPairs:
-          if field != "id":
+          when not obj[field].hasCustomPragma(protected):
             fields.add field
             values.add $value
 
@@ -64,6 +69,47 @@ template makeWithDbConn(connection, user, password, database: string,
       try: body
       finally: dbConn.close()
 
+proc injectIdField(typeSection: NimNode): NimNode =
+  result = newNimNode(nnkTypeSection)
+
+  for typeDef in typeSection:
+    var typeDefBody = typeDef[2]
+    expectKind(typeDefBody, nnkObjectTy)
+
+    var fieldNames: seq[string]
+
+    var fieldDefs = typeDefBody[2]
+
+    for fieldDef in fieldDefs:
+      let fieldNameDef = fieldDef[0]
+      expectKind(fieldNameDef, {nnkIdent, nnkPragmaExpr})
+
+      let fieldName = case fieldNameDef.kind
+        of nnkIdent: fieldNameDef.strVal
+        of nnkPragmaExpr: fieldNameDef[0].strVal
+        else: raise newException(ValueError,
+                                  "Unexpected field definition type: " & $fieldNameDef.kind)
+
+      fieldNames.add fieldName
+
+    if "id" notin fieldNames:
+      let idFieldDef = newIdentDefs(
+        newNimNode(nnkPragmaExpr).add(
+          ident "id",
+          newNimNode(nnkPragma).add(
+            ident "pk",
+            ident "autoinc",
+            ident "protected"
+          )
+        ),
+        ident "int",
+        newEmptyNode()
+      )
+
+      fieldDefs.insert(0, idFieldDef)
+
+    result.add typeDef
+
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   result = newStmtList()
@@ -74,7 +120,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   for node in body:
     if node.kind == nnkTypeSection:
-      dbTypes.add node
+      dbTypes.add node.injectIdField()
     else:
       dbOthers.add node
 
@@ -85,14 +131,11 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 db("rester.db", "", "", ""):
   type
     User {.table: "users".} = object
-      id: int
       email: string
       age: int
     Book {.table: "books".} = object
-      id: int
       title: string
     Edition {.table: "editions".} = object
-      id: int
       title: string
       bookId: int
     UserBook = object
@@ -133,6 +176,7 @@ db("rester.db", "", "", ""):
 when isMainModule:
   withDbConn:
     var u = User(email: "user@example.com", age: 23)
+
     u.insert()
 
     echo u
