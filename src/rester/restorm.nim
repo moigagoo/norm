@@ -1,4 +1,4 @@
-import strutils, strformat, macros, sequtils, options
+import strutils, strformat, macros
 import typetraits
 import db_sqlite
 
@@ -69,11 +69,11 @@ template makeWithDbConn(connection, user, password, database: string,
       try: body
       finally: dbConn.close()
 
-proc injectIdField(typeSection: NimNode): NimNode =
+proc ensureIdField(typeSection: NimNode): NimNode =
   result = newNimNode(nnkTypeSection)
 
   for typeDef in typeSection:
-    var typeDefBody = typeDef[2]
+    let typeDefBody = typeDef[2]
     expectKind(typeDefBody, nnkObjectTy)
 
     var fieldNames: seq[string]
@@ -120,7 +120,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   for node in body:
     if node.kind == nnkTypeSection:
-      dbTypes.add node.injectIdField()
+      dbTypes.add node.ensureIdField()
     else:
       dbOthers.add node
 

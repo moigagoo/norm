@@ -5,7 +5,11 @@ import macros; export macros
 import objutils
 
 
-template parser*(op: (string) -> any) {.pragma.}
+type
+  BasicDbType = string | int | float ## Types that can be safely mapped to native DB types
+
+
+template parser*(op: (BasicDbType) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
   ``op`` should be a proc that accepts ``string`` and returns the object field type.
@@ -21,7 +25,7 @@ template parseIt*(op: untyped) {.pragma.}
   The expression is invoked in ``to`` template to turn a string from row into a typed object field.
   ]##
 
-template formatter*(op: (any) -> string) {.pragma.}
+template formatter*(op: (any) -> BasicDbType) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
   ``op`` should be a proc that accepts the object field type and returns ``string``.
