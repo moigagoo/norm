@@ -1,5 +1,5 @@
-*.exe
-*.db
-*.html
-tests/testrowutils
-bin
+*
+
+!*.nim
+!*.nimble
+!LICENSE
