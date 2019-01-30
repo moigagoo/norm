@@ -1,4 +1,4 @@
-import strutils, strformat, macros
+import strutils, macros
 import typetraits
 import db_sqlite
 
@@ -63,8 +63,8 @@ template makeWithDbConn(connection, user, password, database: string,
 
         let
           placeholders = '?'.repeat(fields.len).join(", ")
-          query = sql "INSERT INTO ? ($1) VALUES ($1)" % placeholders
-          params = obj.type.getTable() & fields & values
+          query = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "), placeholders]
+          params = obj.type.getTable() & values
 
         obj.id = dbConn.insertID(query, params).int
 
@@ -72,18 +72,22 @@ template makeWithDbConn(connection, user, password, database: string,
         dbConn.exec(sql"DELETE FROM ? WHERE id = ?", obj.type.getTable(), obj.id)
         obj.id = 0
 
-      proc getById(obj: var object, id: int) =
+      template getById(obj: var object, id: int) =
         var fields: seq[string]
 
         for field, _ in obj.fieldPairs:
           fields.add field
 
         let
-          placeholders = '?'.repeat(fields.len).join(", ")
-          query = sql "SELECT $1 FROM ? WHERE id = ?" % placeholders
-          params = fields & obj.type.getTable() & obj.id
+          query = sql "SELECT $# FROM ? WHERE id = ?" % fields.join(", ")
+          params = [obj.type.getTable(), $id]
 
-        dbConn.getRow(query, params).to(obj)
+        let row = dbConn.getRow(query, params)
+
+        if row.isEmpty():
+          raise newException(KeyError, "Record with id=$# doesn't exist." % $id)
+
+        row.to(obj)
 
       dbOthers
 

@@ -1,4 +1,4 @@
-import strutils
+import strutils, sequtils
 import sugar
 import macros; export macros
 
@@ -151,3 +151,5 @@ proc toRow*(obj: object): seq[string] =
         result.add obj[field].getCustomPragmaVal(formatIt)
     else:
       result.add $value
+
+proc isEmpty*(row: seq[string]): bool = row.allIt(it.len == 0)
