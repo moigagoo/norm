@@ -64,12 +64,12 @@ template makeWithDbConn(connection, user, password, database: string,
         let
           placeholders = '?'.repeat(fields.len).join(", ")
           query = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "), placeholders]
-          params = obj.type.getTable() & values
+          params = type(obj).getTable() & values
 
         obj.id = dbConn.insertID(query, params).int
 
       template delete(obj: var object) =
-        dbConn.exec(sql"DELETE FROM ? WHERE id = ?", obj.type.getTable(), obj.id)
+        dbConn.exec(sql"DELETE FROM ? WHERE id = ?", type(obj).getTable(), obj.id)
         obj.id = 0
 
       template getById(obj: var object, id: int) =
@@ -80,7 +80,7 @@ template makeWithDbConn(connection, user, password, database: string,
 
         let
           query = sql "SELECT $# FROM ? WHERE id = ?" % fields.join(", ")
-          params = [obj.type.getTable(), $id]
+          params = [type(obj).getTable(), $id]
 
         let row = dbConn.getRow(query, params)
 
@@ -88,6 +88,22 @@ template makeWithDbConn(connection, user, password, database: string,
           raise newException(KeyError, "Record with id=$# doesn't exist." % $id)
 
         row.to(obj)
+
+      proc getById(T: type, id: int): T = result.getById(id)
+
+      template update(obj: object, force = false) =
+        var fieldsWithPlaceholders, values: seq[string]
+
+        for field, value in obj.fieldPairs:
+          when force or not obj[field].hasCustomPragma(protected):
+            fieldsWithPlaceholders.add field & " = ?"
+            values.add $value
+
+        let
+          query = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
+          params = type(obj).getTable() & values & $obj.id
+
+        dbConn.exec(query, params)
 
       dbOthers
 
@@ -200,13 +216,15 @@ db("rester.db", "", "", ""):
 
 when isMainModule:
   withDbConn:
-    var u = User(email: "user@example.com", age: 23)
+    # var u = User(email: "user@example.com", age: 23)
 
-    u.insert()
+    # u.insert()
 
-    echo u
+    # echo u
 
-    u.delete()
+    echo User.getById(126)
+
+    # u.delete()
 
   #   echo User.all
 
