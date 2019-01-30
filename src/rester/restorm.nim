@@ -53,17 +53,37 @@ template makeWithDbConn(connection, user, password, database: string,
     block:
       let dbConn = open(connection, user, password, database)
 
-      template insert(obj: var object) =
+      template insert(obj: var object, force = false) =
         var fields, values: seq[string]
 
         for field, value in obj.fieldPairs:
-          when not obj[field].hasCustomPragma(protected):
+          when force or not obj[field].hasCustomPragma(protected):
             fields.add field
             values.add $value
 
-        let query = sql "INSERT INTO ? ($1) VALUES ($1)" % '?'.repeat(fields.len).join(",")
+        let
+          placeholders = '?'.repeat(fields.len).join(", ")
+          query = sql "INSERT INTO ? ($1) VALUES ($1)" % placeholders
+          params = obj.type.getTable() & fields & values
 
-        obj.id = dbConn.insertID(query, obj.type.getTable() & fields & values).int
+        obj.id = dbConn.insertID(query, params).int
+
+      template delete(obj: var object) =
+        dbConn.exec(sql"DELETE FROM ? WHERE id = ?", obj.type.getTable(), obj.id)
+        obj.id = 0
+
+      proc getById(obj: var object, id: int) =
+        var fields: seq[string]
+
+        for field, _ in obj.fieldPairs:
+          fields.add field
+
+        let
+          placeholders = '?'.repeat(fields.len).join(", ")
+          query = sql "SELECT $1 FROM ? WHERE id = ?" % placeholders
+          params = fields & obj.type.getTable() & obj.id
+
+        dbConn.getRow(query, params).to(obj)
 
       dbOthers
 
@@ -181,6 +201,8 @@ when isMainModule:
     u.insert()
 
     echo u
+
+    u.delete()
 
   #   echo User.all
 
