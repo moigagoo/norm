@@ -1,105 +1,100 @@
 import unittest
-import times, strutils, sequtils, sugar, db_sqlite
 
-import rester/rowutils
+import times, strutils
 
-import macros
-
-
-template somePragma() {.pragma.}
-
-template somePragmaWithValue(val: string) {.pragma.}
+import rester / rowutils
 
 
-suite "Test object to row and row to object conversion":
+suite "Basic object <-> row conversion":
+  type
+    SimpleUser = object
+      name: string
+      age: int
+      height: float
+
+  let
+    user = SimpleUser(name: "Alice", age: 23, height: 168.2)
+    row = @["Alice", "23", "168.2"]
+
+  test "Object -> row":
+    check user.toRow == row
+
+  test "Row -> object":
+    check row.to(SimpleUser) == user
+
+  test "Object -> row -> object":
+    check user.toRow().to(SimpleUser) == user
+
+  test "Row -> object -> row":
+    check row.to(SimpleUser).toRow() == row
+
+
+suite "Conversion with custom parser and formatter expressions":
+  type
+    UserDatetimeAsString = object
+      name: string
+      age: int
+      height: float
+      createdAt {.
+        formatIt: it.format("yyyy-MM-dd HH:mm:sszzz"),
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz")
+      .}: DateTime
+
+  let
+    datetimeString = "2019-01-30 12:34:56+04:00"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz")
+    user = UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @["Alice", "23", "168.2", datetimeString]
+
   setup:
-    type
-      User = object
-        email: string
-        age: int
+    var tmpUser = UserDatetimeAsString(createdAt: now())
 
-      Constant = object
-        title: string
-        value: float
+  test "Object -> row":
+    check user.toRow == row
 
-      UserWithPragma {.somePragmaWithValue: "someValue".} = object
-        email {.somePragma.}: string
-        age: int
+  test "Row -> object":
+    row.to(tmpUser)
+    check tmpUser == user
 
-    proc initUser(email: string, age: int): User = User(email: email, age: age)
+  test "Object -> row -> object":
+    user.toRow().to(tmpUser)
+    check tmpUser == user
 
-    proc initUserWithPragma(email: string, age: int): UserWithPragma =
-      UserWithPragma(email: email, age: age)
+  test "Row -> object -> row":
+    row.to(tmpUser)
+    check tmpUser.toRow() == row
 
-    let
-      userRow: Row = @["bob@example.com", "42"]
-      userObj = initUser("bob@example.com", 42)
-      constantRow: Row = @["tau", "6.28"]
-      constantObj = Constant(title: "tau", value: 6.28)
-      userWithPragmaRow: Row = @["alice@example.com", "23"]
-      userWithPragmaObj = initUserWithPragma("alice@example.com", 23)
+suite "Conversion with custom parser and formatter procs":
+  proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
 
-    proc parseDate(s: string): DateTime = s.parse("yyyy-MM-dd")
+  proc toDatetime(ts: string): DateTime = ts.parseInt().fromUnix().local()
 
-    proc formatDate(dt: DateTime): string = dt.format("yyyy-MM-dd")
+  type
+    UserDatetimeAsTimestamp = object
+      name: string
+      age: int
+      height: float
+      createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
-    type
-      Holiday = object
-        title{.
-          parseIt: it.split().mapIt(capitalizeAscii(it)).join(" "),
-          formatIt: it.toLowerAscii()
-        .}: string
-        date {.parser: parseDate, formatter: formatDate.}: DateTime
+  let
+    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @["Alice", "23", "168.2", datetime.toTimestamp]
 
-    let
-      newYearObj = Holiday(title: "New Year", date: initDateTime(1, mJan, 2019, 0, 0, 0, 0))
-      newYearRow: Row = @["new year", "2019-01-01"]
+  setup:
+    var tmpUser = UserDatetimeAsTimestamp(createdAt: now())
 
-  test "Row to object":
-    check (userRow.to User) == userObj
-    check (constantRow.to Constant) == constantObj
-    check (userWithPragmaRow.to UserWithPragma) == userWithPragmaObj
+  test "Object -> row":
+    check user.toRow == row
 
-  test "Object to row":
-    check userObj.toRow() == userRow
-    check constantObj.toRow() == constantRow
-    check userWithPragmaObj.toRow() == userWithPragmaRow
+  test "Row -> object":
+    row.to(tmpUser)
+    check tmpUser == user
 
-  test "Row to object to row":
-    let
-      userObjFromRow = userRow.to User
-      rowFromUserObj = userObjFromRow.toRow()
+  test "Object -> row -> object":
+    user.toRow().to(tmpUser)
+    check tmpUser == user
 
-    check rowFromUserObj == userRow
-
-  test "Object to row to object":
-    let
-      rowFromUserObj = userObj.toRow()
-      userObjFromRow = rowFromUserObj.to User
-
-    check userObjFromRow == userObj
-
-  test "Row to object with custom parser":
-    var newYearObjFromRow = Holiday(date: now())
-    newYearRow.to(newYearObjFromRow)
-
-    check newYearObjFromRow == newYearObj
-
-  test "Object to row with custom formatter":
-    check newYearObj.toRow == newYearRow
-
-  test "Row to object to row with custom parser and formatter":
-    var newYearObjFromRow = Holiday(date: now())
-    newYearRow.to(newYearObjFromRow)
-
-    let rowFromNewYearObj = newYearObjFromRow.toRow()
-
-    check rowFromNewYearObj == newYearRow
-
-  test "Object to row to object with custom formatter and parser":
-    let rowFromNewYearObj = newYearObj.toRow()
-
-    var newYearObjFromRow = Holiday(date: now())
-    rowFromNewYearObj.to(newYearObjFromRow)
-
-    check newYearObjFromRow == newYearObj
+  test "Row -> object -> row":
+    row.to(tmpUser)
+    check tmpUser.toRow() == row

@@ -9,6 +9,7 @@ template pk* {.pragma.}
 template autoinc* {.pragma.}
 
 template protected* {.pragma.}
+template dbType*(val: string) {.pragma.}
 
 template table*(val: string) {.pragma.}
 template db*(val: DbConn) {.pragma.}
