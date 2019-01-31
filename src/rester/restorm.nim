@@ -109,25 +109,25 @@ template makeWithDbConn(connection, user, password, database: string,
       proc getOne(T: type, id: int): T = result.getOne(id)
         ## Read a record from DB into a new object instance.
 
-      proc getMany(objs: var openArray[object], n: int,  offset = 0) =
-        ## Read ``n`` records from DB into an existing open array of objects with ``offset``.
+      proc getMany(objs: var seq[object], limit: int,  offset = 0) =
+        ## Read ``limit`` records from DB into an existing open array of objects with ``offset``.
 
         if len(objs) == 0: return
 
         let
           query = sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % objs[0].fieldNames.join(", ")
-          params = [type(objs[0]).getTable(), $min(n, len(objs)), $offset]
+          params = [type(objs[0]).getTable(), $min(limit, len(objs)), $offset]
           rows = dbConn.getAllRows(query, params)
 
         rows.to(objs)
 
-      proc getMany(T: type, n: int, offset = 0): seq[T] =
-        ##[ Read ``n`` records from DB into a sequence of objects with ``offset``,
+      proc getMany(T: type, limit: int, offset = 0): seq[T] =
+        ##[ Read ``limit`` records from DB into a sequence of objects with ``offset``,
         create the sequence on the fly.
         ]##
 
-        result.setLen n
-        result.getMany(n, offset)
+        result.setLen limit
+        result.getMany(limit, offset)
 
       template delete(obj: var object) =
         ## Delete a record in DB by object's id. The id is set to 0 after the deletion.

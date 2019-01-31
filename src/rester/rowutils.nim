@@ -93,10 +93,11 @@ template to*(row: Row, obj: var object) =
 
     inc i
 
-template to*(rows: openArray[Row], objs: var openArray[object]) =
-  ##[ Convert a open array of rows into an existing open array of objects.
+template to*(rows: openArray[Row], objs: var seq[object]) =
+  ##[ Convert a open array of rows into an existing sequence of objects.
 
-  If the row sequence is shorter than the object one, extra rows are ignored.
+  If the number of rows is higher than the number of objects, extra rows are ignored.
+
   If the number of objects is higher, unused objects are trimmed away.
   ]##
 
