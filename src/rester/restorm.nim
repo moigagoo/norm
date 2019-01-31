@@ -213,62 +213,7 @@ db("rester.db", "", "", ""):
       userId: int
       bookId: int
 
-  proc setAge(user: var User, value: int) =
-    dbConn.exec(sql"""UPDATE ? SET age = ? WHERE id = ?""", "users", value, user.id)
-    user.age = value
-
-  proc books(user: User): seq[Book] =
-    const query = sql"""
-        SELECT
-          books.*
-        FROM
-          userbook JOIN books
-          ON userbook.book_id = books.id
-        WHERE
-          userbook.user_id = ?
-      """
-
-    for row in dbConn.fastRows(query, user.id): result.add row.to(Book)
-
-  proc authors(book: Book): seq[User] =
-    let query = sql"""
-        SELECT
-          users.*
-        FROM
-          userbook JOIN users
-          ON userbook.user_id = users.id
-        WHERE
-          userbook.book_id = ?
-      """
-
-    for row in dbConn.fastRows(query, book.id): result.add row.to(User)
-
 
 when isMainModule:
   withDbConn:
-    # var u = User(email: "user@example.com", age: 23)
-    # u.insert()
-    # echo u
-
-    # echo User.getOne(126)
-
     echo User.getMany(10)
-
-    # var users = User().repeat(10)
-    # users.getMany(10)
-    # echo users
-
-    # u.delete()
-
-  #   echo User.all
-
-  # withDbConn:
-  #   var users = User.all
-  #   for user in users.filterIt(it.email=="asd@asd.asd").mitems:
-  #     user.delete()
-
-  #   echo User.all()
-  #   # var usersAge1 = User.getWhere("age=1")
-  #   # for user in usersAge1.mitems:
-  #   #   user.delete()
-  #   # echo User.getWhere("age=1")
