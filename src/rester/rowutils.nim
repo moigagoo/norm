@@ -5,6 +5,9 @@ import macros; export macros
 import objutils
 
 
+type Row = seq[string]
+
+
 template parser*(op: (string) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
@@ -39,8 +42,8 @@ template formatIt*(op: untyped) {.pragma.}
   within a row.
   ]##
 
-template to*(row: seq[string], obj: var object) =
-  ##[ Convert row to a given object instance. String values from row are converted
+template to*(row: Row, obj: var object) =
+  ##[ Convert row to an existing object instance. String values from row are converted
   into types of the respective object fields.
 
   If object fields don't require initialization, you may use the proc that instantiates the object
@@ -68,7 +71,7 @@ template to*(row: seq[string], obj: var object) =
     doAssert example.intField == 123
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
-    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
 
   var i: int
 
@@ -90,15 +93,55 @@ template to*(row: seq[string], obj: var object) =
 
     inc i
 
-proc to*(row: seq[string], T: type): T =
+template to*(rows: openArray[Row], objs: var openArray[object]) =
+  ##[ Convert a open array of rows into an existing open array of objects.
+
+  If the row sequence is shorter than the object one, extra rows are ignored.
+  If the number of objects is smaller, extra objects are left unassigned.
+  ]##
+
+  runnableExamples:
+    import times, sugar
+
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
+
+    type
+      Example = object
+        intField: int
+        strField: string
+        floatField: float
+        dtField {.parser: parseDateTime.}: DateTime
+
+    let rows = @[
+      @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"],
+      @["456", "bar", "456.654", "2019-02-22 16:14:32+04:00"],
+      @["789", "baz", "789.987", "2019-03-23 17:25:43+04:00"]
+    ]
+
+    var examples = @[
+      Example(dtField: now()),
+      Example(dtField: now()),
+      Example(dtField: now())
+    ]
+
+    rows.to(examples)
+
+    doAssert examples[0].intField == 123
+    doAssert examples[1].strField == "bar"
+    doAssert examples[2].floatField == 789.987
+    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
+
+  for i in 0..<min(len(rows), len(objs)):
+    rows[i].to(objs[i])
+
+proc to*(row: Row, T: type): T =
   ##[ Instantiate object with type ``T`` with values from ``row``. String values from row
   are converted into types of the respective object fields.
 
-  Use this proc if the object fields have default values and do not require initialization:
-  ``int``, ``string``, ``float``, etc.
+  Use this proc if the object fields have default values and do not require initialization, e.g. ``int``, ``string``, ``float``.
 
   If fields require initialization, for example, ``times.DateTime``, use template ``to``.
-  It converts a row to a given object instance.
+  It converts a row to a existing object instance.
   ]##
 
   runnableExamples:
@@ -118,7 +161,41 @@ proc to*(row: seq[string], T: type): T =
 
   row.to(result)
 
-proc toRow*(obj: object): seq[string] =
+proc to*(rows: openArray[Row], T: type): seq[T] =
+  ##[ Instantiate a sequence of objects with type ``T`` with values
+  from ``rows``. String values from each row are converted into types
+  of the respective object fields.
+
+  Use this proc if the object fields have default values and do not require initialization, e.g. ``int``, ``string``, ``float``.
+
+  If fields require initialization, for example, ``times.DateTime``, use template ``to``.
+  It converts an open array of rows to an existing object instance openarray.
+  ]##
+
+  runnableExamples:
+    type
+      Example = object
+        intField: int
+        strField: string
+        floatField: float
+
+    let
+      rows = @[
+        @["123", "foo", "123.321"],
+        @["456", "bar", "456.654"],
+        @["789", "baz", "789.987"]
+      ]
+      examples = rows.to(Example)
+
+    doAssert examples[0].intField == 123
+    doAssert examples[1].strField == "bar"
+    doAssert examples[2].floatField == 789.987
+
+  result.setLen len(rows)
+
+  rows.to(result)
+
+proc toRow*(obj: object): Row =
   ##[ Convert an object into row, i.e. sequence of strings.
 
   If a custom formatter is provided for a field, it is used for conversion,
@@ -152,4 +229,34 @@ proc toRow*(obj: object): seq[string] =
     else:
       result.add $value
 
-proc isEmpty*(row: seq[string]): bool = row.allIt(it.len == 0)
+proc toRows*(objs: openArray[object]): seq[Row] =
+  ##[ Convert an open array of objects into a sequence of rows.
+
+  If a custom formatter is provided for a field, it is used for conversion,
+  otherwise `$` is invoked.
+  ]##
+
+  runnableExamples:
+    import strutils, sequtils, sugar
+
+    type
+      Example = object
+        intField: int
+        strField{.formatIt: it.toLowerAscii().}: string
+        floatField: float
+
+    let
+      examples = @[
+        Example(intField: 123, strField: "Foo", floatField: 123.321),
+        Example(intField: 456, strField: "Bar", floatField: 456.654),
+        Example(intField: 789, strField: "Baz", floatField: 789.987)
+      ]
+      rows = examples.toRows()
+
+    doAssert rows[0][0] == "123"
+    doAssert rows[1][1] == "bar"
+    doAssert rows[2][2] == "789.987"
+
+  objs.mapIt(it.toRow())
+
+proc isEmpty*(row: Row): bool = row.allIt(it.len == 0)
