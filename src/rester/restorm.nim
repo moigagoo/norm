@@ -8,7 +8,7 @@ import objutils, rowutils
 template pk* {.pragma.}
 template autoinc* {.pragma.}
 
-template protected* {.pragma.}
+template ro* {.pragma.}
 template dbType*(val: string) {.pragma.}
 
 template table*(val: string) {.pragma.}
@@ -54,32 +54,49 @@ template makeWithDbConn(connection, user, password, database: string,
       let dbConn = open(connection, user, password, database)
 
       template insert(obj: var object, force = false) =
-        var fields, values: seq[string]
+        ##[ Insert object instance as a record into DB.The object's id is updated after
+        the insertion.
 
-        for field, value in obj.fieldPairs:
-          when force or not obj[field].hasCustomPragma(protected):
-            fields.add field
+        By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
+        ]##
+
+        var values: seq[string]
+
+        for _, value in obj.fieldPairs:
+          when force or not obj[field].hasCustomPragma(ro):
             values.add $value
 
         let
           placeholders = '?'.repeat(fields.len).join(", ")
-          query = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "), placeholders]
+          query = sql "INSERT INTO ? ($#) VALUES ($#)" % [obj.fieldNames.join(", "), placeholders]
           params = type(obj).getTable() & values
 
         obj.id = dbConn.insertID(query, params).int
 
-      template delete(obj: var object) =
-        dbConn.exec(sql"DELETE FROM ? WHERE id = ?", type(obj).getTable(), obj.id)
-        obj.id = 0
+      template update(obj: object, force = false) =
+        ##[ Update DB record with object field values.
 
-      template getById(obj: var object, id: int) =
-        var fields: seq[string]
+        By default, readonly fields are not updated. Use ``force=true`` to update all fields.
+        ]##
 
-        for field, _ in obj.fieldPairs:
-          fields.add field
+        var fieldsWithPlaceholders, values: seq[string]
+
+        for field, value in obj.fieldPairs:
+          when force or not obj[field].hasCustomPragma(ro):
+            fieldsWithPlaceholders.add field & " = ?"
+            values.add $value
 
         let
-          query = sql "SELECT $# FROM ? WHERE id = ?" % fields.join(", ")
+          query = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
+          params = type(obj).getTable() & values & $obj.id
+
+        dbConn.exec(query, params)
+
+      template getOne(obj: var object, id: int) =
+        ## Read a record from DB and store it into an existing object instance.
+
+        let
+          query = sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
           params = [type(obj).getTable(), $id]
 
         let row = dbConn.getRow(query, params)
@@ -89,21 +106,26 @@ template makeWithDbConn(connection, user, password, database: string,
 
         row.to(obj)
 
-      proc getById(T: type, id: int): T = result.getById(id)
+      proc getOne(T: type, id: int): T = result.getOne(id)
+        ## Read a record from DB into a new object instance.
 
-      template update(obj: object, force = false) =
-        var fieldsWithPlaceholders, values: seq[string]
-
-        for field, value in obj.fieldPairs:
-          when force or not obj[field].hasCustomPragma(protected):
-            fieldsWithPlaceholders.add field & " = ?"
-            values.add $value
+      proc getMany(objs: var seq[object], offset = 0) =
+        if len(objs) == 0: return
 
         let
-          query = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
-          params = type(obj).getTable() & values & $obj.id
+          query = sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % objs[0].fieldNames.join(", ")
+          params = [type(objs[0]).getTable(), $len(objs), $offset]
+          rows = dbConn.getAllRows(query, params)
 
-        dbConn.exec(query, params)
+        rows.to(objs)
+
+      proc getMany(T: type, offset = 0): seq[T] = result.getMany(offset)
+
+      template delete(obj: var object) =
+        ## Delete a record in DB by object's id. The id is set to 0 after the deletion.
+
+        dbConn.exec(sql"DELETE FROM ? WHERE id = ?", type(obj).getTable(), obj.id)
+        obj.id = 0
 
       dbOthers
 
@@ -140,7 +162,7 @@ proc ensureIdField(typeSection: NimNode): NimNode =
           newNimNode(nnkPragma).add(
             ident "pk",
             ident "autoinc",
-            ident "protected"
+            ident "ro"
           )
         ),
         ident "int",
@@ -217,12 +239,14 @@ db("rester.db", "", "", ""):
 when isMainModule:
   withDbConn:
     # var u = User(email: "user@example.com", age: 23)
-
     # u.insert()
-
     # echo u
 
-    echo User.getById(126)
+    # echo User.getOne(126)
+
+    var users = @[User(), User(), User()]
+    users.getMany()
+    echo users
 
     # u.delete()
 
