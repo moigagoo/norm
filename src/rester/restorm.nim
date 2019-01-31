@@ -6,14 +6,14 @@ import objutils, rowutils
 
 
 template pk* {.pragma.}
-template autoinc* {.pragma.}
 
 template ro* {.pragma.}
+
 template dbType*(val: string) {.pragma.}
 
 template table*(val: string) {.pragma.}
-template db*(val: DbConn) {.pragma.}
 
+template db*(val: DbConn) {.pragma.}
 
 template createTables*() =
   sql"""
@@ -44,6 +44,10 @@ template createTables*() =
   """
 
 proc getTable(T: type): string =
+  ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
+  or lowercased type name otherwise.
+  ]##
+
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: T.name.toLowerAscii()
 
@@ -141,6 +145,8 @@ template makeWithDbConn(connection, user, password, database: string,
       finally: dbConn.close()
 
 proc ensureIdField(typeSection: NimNode): NimNode =
+  ## Check if ``id`` field is in the object definition, insert it if it's not.
+
   result = newNimNode(nnkTypeSection)
 
   for typeDef in typeSection:
@@ -169,7 +175,6 @@ proc ensureIdField(typeSection: NimNode): NimNode =
           ident "id",
           newNimNode(nnkPragma).add(
             ident "pk",
-            ident "autoinc",
             ident "ro"
           )
         ),
@@ -212,8 +217,3 @@ db("rester.db", "", "", ""):
     UserBook = object
       userId: int
       bookId: int
-
-
-when isMainModule:
-  withDbConn:
-    echo User.getMany(10)
