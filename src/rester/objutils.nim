@@ -30,3 +30,19 @@ macro `[]=`*(obj: var object, fieldName: string, value: untyped): untyped =
     doAssert example["field"] == 321
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
+
+
+proc fieldNames*(obj: object): seq[string] =
+  ## Get object's field names as a sequence.
+
+  runnableExamples:
+    type
+      Example = object
+        a: int
+        b: float
+        c: string
+
+    assert Example().fieldNames == @["a", "b", "c"]
+
+  for field, _ in obj.fieldPairs:
+    result.add field
