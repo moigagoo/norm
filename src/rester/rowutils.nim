@@ -97,7 +97,7 @@ template to*(rows: openArray[Row], objs: var openArray[object]) =
   ##[ Convert a open array of rows into an existing open array of objects.
 
   If the row sequence is shorter than the object one, extra rows are ignored.
-  If the number of objects is smaller, extra objects are left unassigned.
+  If the number of objects is higher, unused objects are trimmed away.
   ]##
 
   runnableExamples:
@@ -131,7 +131,9 @@ template to*(rows: openArray[Row], objs: var openArray[object]) =
     doAssert examples[2].floatField == 789.987
     doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
 
-  for i in 0..<min(len(rows), len(objs)):
+  objs.setLen min(len(rows), len(objs))
+
+  for i in 0..high(objs):
     rows[i].to(objs[i])
 
 proc to*(row: Row, T: type): T =

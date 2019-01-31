@@ -239,7 +239,7 @@ suite "Bulk conversion with custom parser and formatter procs":
     for i in 0..2:
       check tmpUsers[i] == users[i]
 
-    check tmpUsers[^1] == u
+    check len(tmpUsers) == len(rows)
 
   test "Objects -> rows -> objects":
     users.toRows().to(tmpUsers)
