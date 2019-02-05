@@ -164,8 +164,7 @@ proc ensureIdField(typeSection: NimNode): NimNode =
       let fieldName = case fieldNameDef.kind
         of nnkIdent: fieldNameDef.strVal
         of nnkPragmaExpr: fieldNameDef[0].strVal
-        else: raise newException(ValueError,
-                                  "Unexpected field definition type: " & $fieldNameDef.kind)
+        else: ""
 
       fieldNames.add fieldName
 
