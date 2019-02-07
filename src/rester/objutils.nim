@@ -13,44 +13,61 @@ type
     name: NimNode
     typ: NimNode
     pragmas: seq[Pragma]
-  ObjDef = object
+  Object = object
     name: NimNode
     fields: seq[Field]
     pragmas: seq[Pragma]
 
 
+proc getPragmas(pragmaDefs: NimNode): seq[Pragma] =
+  for pragmaDef in pragmaDefs:
+    result.add case pragmaDef.kind
+      of nnkIdent: Pragma(kind: pkFlag, name: pragmaDef)
+      of nnkExprColonExpr: Pragma(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
+      else: Pragma()
+
+proc parseObjDef*(typeDef: NimNode): Object =
+  expectKind(typeDef[0], {nnkIdent, nnkPragmaExpr})
+
+  case typeDef[0].kind
+    of nnkIdent:
+      result.name = typeDef[0]
+    of nnkPragmaExpr:
+      result.name = typeDef[0][0]
+      result.pragmas = typeDef[0][1].getPragmas()
+    else: discard
+
+  expectKind(typeDef[2], nnkObjectTy)
+
+  for fieldDef in typeDef[2][2]:
+    expectKind(fieldDef[0], {nnkIdent, nnkPragmaExpr})
+
+    var field = Field()
+
+    case fieldDef[0].kind
+      of nnkIdent:
+        field.name = fieldDef[0]
+      of nnkPragmaExpr:
+        field.name = fieldDef[0][0]
+        field.pragmas = fieldDef[0][1].getPragmas()
+      else: discard
+    field.typ = fieldDef[1]
+
+    result.fields.add field
+
 macro foo(body: untyped): untyped =
   for typeSection in body:
-    var objDef = ObjDef()
-
     for typeDef in typeSection:
-      expectKind(typeDef[0], {nnkIdent, nnkPragmaExpr})
-
-      case typeDef[0].kind
-      of nnkIdent:
-        objDef.name = typeDef[0]
-      of nnkPragmaExpr:
-        objDef.name = typeDef[0][0]
-        for pragmaDef in typeDef[0][1]:
-          objDef.pragmas.add case pragmaDef.kind
-          of nnkIdent: Pragma(kind: pkFlag, name: pragmaDef)
-          of nnkExprColonExpr: Pragma(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
-          else: Pragma()
-      else: discard
-
-      expectKind(typeDef[2], nnkObjectTy)
-
-      for fieldDef in typeDef[2][2]:
-        echo treeRepr fieldDef
-
-      # echo treeRepr typeDef
-      echo objDef
+      let obj = parseObjDef(typeDef)
+      echo obj.name, ":"
+      for field in obj.fields:
+        echo "\t", field.name, ": ", field.typ, ", ", field.pragmas.len, " pragmas."
 
 
 foo:
   type
     User {.table: "users", shmable.} = object
-      name: string
+      name {.protected, parseIt: it.toLowerAscii() .}: string
       age: int
     Book = object
       title: string
@@ -85,7 +102,6 @@ macro `[]=`*(obj: var object, fieldName: string, value: untyped): untyped =
     doAssert example["field"] == 321
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
-
 
 proc fieldNames*(obj: object): seq[string] =
   ## Get object's field names as a sequence.
