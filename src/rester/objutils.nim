@@ -2,21 +2,48 @@ import macros
 
 
 type
-  PragmaKind = enum
+  PragmaKind* = enum
     pkFlag, pkKval
-  Pragma = object
-    name: NimNode
-    case kind: PragmaKind
+
+  Pragma* = object
+    ##[ A container for a pragma definition components.
+
+    There are two kinds of pragmas: flags and key-value pairs. For flag pragmas,
+    only the pragma name is stored. For key-value pragmas, name and value is stored.
+
+    Components are stored as NimNodes.
+    ]##
+
+    name*: NimNode
+    case kind*: PragmaKind
     of pkFlag: discard
-    of pkKval: value: NimNode
-  Field = object
-    name: NimNode
-    typ: NimNode
-    pragmas: seq[Pragma]
-  Object = object
-    name: NimNode
-    fields: seq[Field]
-    pragmas: seq[Pragma]
+    of pkKval: value*: NimNode
+
+  Field* = object
+    ##[ A container for a single object field definition components:
+      - field name
+      - field type
+      - field pragmas
+
+    Components are stored as NimNodes.
+    ]##
+
+    name*: NimNode
+    typ*: NimNode
+    pragmas*: seq[Pragma]
+
+  Object* = object
+    ##[ A container for object definition components:
+      - type name
+      - type pragmas
+      - object fields
+
+    Components are stored as NimNodes.
+    ]##
+
+    name*: NimNode
+    pragmas*: seq[Pragma]
+    fields*: seq[Field]
 
 
 proc getPragmas(pragmaDefs: NimNode): seq[Pragma] =
@@ -27,6 +54,8 @@ proc getPragmas(pragmaDefs: NimNode): seq[Pragma] =
       else: Pragma()
 
 proc parseObjDef*(typeDef: NimNode): Object =
+  ## Parse type definition of an object into an ``Object`` instance.
+
   expectKind(typeDef[0], {nnkIdent, nnkPragmaExpr})
 
   case typeDef[0].kind
@@ -54,24 +83,6 @@ proc parseObjDef*(typeDef: NimNode): Object =
     field.typ = fieldDef[1]
 
     result.fields.add field
-
-macro foo(body: untyped): untyped =
-  for typeSection in body:
-    for typeDef in typeSection:
-      let obj = parseObjDef(typeDef)
-      echo obj.name, ":"
-      for field in obj.fields:
-        echo "\t", field.name, ": ", field.typ, ", ", field.pragmas.len, " pragmas."
-
-
-foo:
-  type
-    User {.table: "users", shmable.} = object
-      name {.protected, parseIt: it.toLowerAscii() .}: string
-      age: int
-    Book = object
-      title: string
-
 
 macro `[]`*(obj: object, fieldName: string): untyped =
   ## Access object field value by name: ``obj["field"]`` translates to ``obj.field``.
