@@ -55,55 +55,38 @@ proc getPragmas(pragmaDefs: NimNode): seq[Pragma] =
       of nnkExprColonExpr: Pragma(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
       else: Pragma()
 
+proc parseDef(def: NimNode, dest: var (Field | Object)) =
+  expectKind(def[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
+
+  case def[0].kind
+    of nnkIdent:
+      dest.name = def[0]
+    of nnkPostfix:
+      dest.name = def[0][1]
+      dest.exported = true
+    of nnkPragmaExpr:
+      expectKind(def[0][0], {nnkIdent, nnkPostfix})
+      case def[0][0].kind
+      of nnkIdent:
+        dest.name = def[0][0]
+      of nnkPostfix:
+        dest.name = def[0][0][1]
+        dest.exported = true
+      else: discard
+      dest.pragmas = def[0][1].getPragmas()
+    else: discard
+
 proc parseObjDef*(typeDef: NimNode): Object =
   ## Parse type definition of an object into an ``Object`` instance.
 
-  expectKind(typeDef[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
-
-  case typeDef[0].kind
-    of nnkIdent:
-      result.name = typeDef[0]
-    of nnkPostfix:
-      result.name = typeDef[0][1]
-      result.exported = true
-    of nnkPragmaExpr:
-      expectKind(typeDef[0][0], {nnkIdent, nnkPostfix})
-      case typeDef[0][0].kind
-      of nnkIdent:
-        result.name = typeDef[0][0]
-      of nnkPostfix:
-        result.name = typeDef[0][0][1]
-        result.exported = true
-      else: discard
-      result.pragmas = typeDef[0][1].getPragmas()
-    else: discard
+  parseDef(typeDef, result)
 
   expectKind(typeDef[2], nnkObjectTy)
 
   for fieldDef in typeDef[2][2]:
-    expectKind(fieldDef[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
-
     var field = Field()
-
-    case fieldDef[0].kind
-      of nnkIdent:
-        field.name = fieldDef[0]
-      of nnkPostfix:
-        field.name = fieldDef[0][1]
-        field.exported = true
-      of nnkPragmaExpr:
-        expectKind(fieldDef[0][0], {nnkIdent, nnkPostfix})
-        case fieldDef[0][0].kind
-        of nnkIdent:
-          field.name = fieldDef[0][0]
-        of nnkPostfix:
-          field.name = fieldDef[0][0][1]
-          field.exported = true
-        else: discard
-        field.pragmas = fieldDef[0][1].getPragmas()
-      else: discard
+    parseDef(fieldDef, field)
     field.typ = fieldDef[1]
-
     result.fields.add field
 
 proc makeFieldDef(field: Field): NimNode =
