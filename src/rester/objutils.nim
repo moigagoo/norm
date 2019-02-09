@@ -29,6 +29,7 @@ type
     ]##
 
     name*: NimNode
+    exported*: bool
     typ*: NimNode
     pragmas*: seq[Pragma]
 
@@ -42,6 +43,7 @@ type
     ]##
 
     name*: NimNode
+    exported*: bool
     pragmas*: seq[Pragma]
     fields*: seq[Field]
 
@@ -56,33 +58,71 @@ proc getPragmas(pragmaDefs: NimNode): seq[Pragma] =
 proc parseObjDef*(typeDef: NimNode): Object =
   ## Parse type definition of an object into an ``Object`` instance.
 
-  expectKind(typeDef[0], {nnkIdent, nnkPragmaExpr})
+  expectKind(typeDef[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
 
   case typeDef[0].kind
     of nnkIdent:
       result.name = typeDef[0]
+    of nnkPostfix:
+      result.name = typeDef[0][1]
+      result.exported = true
     of nnkPragmaExpr:
-      result.name = typeDef[0][0]
+      expectKind(typeDef[0][0], {nnkIdent, nnkPostfix})
+      case typeDef[0][0].kind
+      of nnkIdent:
+        result.name = typeDef[0][0]
+      of nnkPostfix:
+        result.name = typeDef[0][0][1]
+        result.exported = true
+      else: discard
       result.pragmas = typeDef[0][1].getPragmas()
     else: discard
 
   expectKind(typeDef[2], nnkObjectTy)
 
   for fieldDef in typeDef[2][2]:
-    expectKind(fieldDef[0], {nnkIdent, nnkPragmaExpr})
+    expectKind(fieldDef[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
 
     var field = Field()
 
     case fieldDef[0].kind
       of nnkIdent:
         field.name = fieldDef[0]
+      of nnkPostfix:
+        field.name = fieldDef[0][1]
+        field.exported = true
       of nnkPragmaExpr:
-        field.name = fieldDef[0][0]
+        expectKind(fieldDef[0][0], {nnkIdent, nnkPostfix})
+        case fieldDef[0][0].kind
+        of nnkIdent:
+          field.name = fieldDef[0][0]
+        of nnkPostfix:
+          field.name = fieldDef[0][0][1]
+          field.exported = true
+        else: discard
         field.pragmas = fieldDef[0][1].getPragmas()
       else: discard
     field.typ = fieldDef[1]
 
     result.fields.add field
+
+proc makeFieldDef(field: Field): NimNode =
+  discard
+
+proc makeObjDef(obj: Object): NimNode =
+  discard
+
+macro foo(body: untyped): untyped =
+  for node in body:
+    for typeDef in node:
+      echo typeDef.parseObjDef()
+      echo typeDef.treeRepr
+
+foo:
+  type
+    User* {.table: "users".} = object
+      name* {.protected, qwe: "asd".}: string
+      age*: int
 
 macro `[]`*(obj: object, fieldName: string): untyped =
   ## Access object field value by name: ``obj["field"]`` translates to ``obj.field``.
