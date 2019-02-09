@@ -76,7 +76,7 @@ proc parseDef(def: NimNode, dest: var (Field | Object)) =
       dest.pragmas = def[0][1].getPragmas()
     else: discard
 
-proc parseObjDef*(typeDef: NimNode): Object =
+proc parseTypeDef*(typeDef: NimNode): Object =
   ## Parse type definition of an object into an ``Object`` instance.
 
   parseDef(typeDef, result)
@@ -89,23 +89,38 @@ proc parseObjDef*(typeDef: NimNode): Object =
     field.typ = fieldDef[1]
     result.fields.add field
 
-proc makeFieldDef(field: Field): NimNode =
-  discard
+proc makeDef(src: Field | Object): NimNode =
+  let title =
+    if not src.exported: src.name
+    else: newNimNode(nnkPostfix).add(ident"*", src.name)
 
-proc makeObjDef(obj: Object): NimNode =
-  discard
+  if src.pragmas.len == 0:
+    return title
+  else:
+    var pragmas = newNimNode(nnkPragma)
 
-macro foo(body: untyped): untyped =
-  for node in body:
-    for typeDef in node:
-      echo typeDef.parseObjDef()
-      echo typeDef.treeRepr
+    for pragma in src.pragmas:
+      pragmas.add case pragma.kind
+      of pkFlag: pragma.name
+      of pkKval: newColonExpr(pragma.name, pragma.value)
 
-foo:
-  type
-    User* {.table: "users".} = object
-      name* {.protected, qwe: "asd".}: string
-      age*: int
+    result = newNimNode(nnkPragmaExpr).add(title, pragmas)
+
+proc toTypeDef*(obj: Object): NimNode =
+  var fieldDefs = newNimNode(nnkRecList)
+
+  for field in obj.fields:
+    fieldDefs.add newIdentDefs(makeDef(field), field.typ)
+
+  result = newNimNode(nnkTypeDef).add(
+    makeDef(obj),
+    newEmptyNode(),
+    newNimNode(nnkObjectTy).add(
+      newEmptyNode(),
+      newEmptyNode(),
+      fieldDefs
+    )
+  )
 
 macro `[]`*(obj: object, fieldName: string): untyped =
   ## Access object field value by name: ``obj["field"]`` translates to ``obj.field``.
