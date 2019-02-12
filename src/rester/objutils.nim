@@ -3,15 +3,20 @@ import macros
 
 type
   PragmaKind* = enum
+    ##[ There are two kinds of pragmas: flags and key-value pairs:
+
+      .. code-block:: nim
+
+        type Example {.flag, key: value .} = object
+    ]##
+
     pkFlag, pkKval
 
-  Pragma* = object
-    ##[ A container for a pragma definition components.
+  PragmaRepr* = object
+    ##[ A container for pragma definition components.
 
-    There are two kinds of pragmas: flags and key-value pairs. For flag pragmas,
-    only the pragma name is stored. For key-value pragmas, name and value is stored.
-
-    Components are stored as NimNodes.
+    For flag pragmas, only the pragma name is stored. For key-value pragmas,
+    name and value are stored.
     ]##
 
     name*: NimNode
@@ -19,101 +24,101 @@ type
     of pkFlag: discard
     of pkKval: value*: NimNode
 
-  Field* = object
-    ##[ A container for a single object field definition components:
-      - field name
-      - field type
-      - field pragmas
-
-    Components are stored as NimNodes.
+  Signature* = object
+    ##[ Part of an object or field definition that contains:
+      - name
+      - exported flag
+      - pragmas
     ]##
 
     name*: NimNode
     exported*: bool
+    pragmas*: seq[PragmaRepr]
+
+  FieldRepr* = object
+    ## Object field representation: signature + type.
+
+    signature: Signature
     typ*: NimNode
-    pragmas*: seq[Pragma]
 
-  Object* = object
-    ##[ A container for object definition components:
-      - type name
-      - type pragmas
-      - object fields
+  ObjRepr* = object
+    ## Object representation: signature + fields.
 
-    Components are stored as NimNodes.
-    ]##
+    signature: Signature
+    fields*: seq[FieldRepr]
 
-    name*: NimNode
-    exported*: bool
-    pragmas*: seq[Pragma]
-    fields*: seq[Field]
+proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
+  ## Parse an ``nnkPragma`` node into a sequence of ``PragmaRepr`s.
 
+  expectKind(pragmaDefs, nnkPragma)
 
-proc getPragmas(pragmaDefs: NimNode): seq[Pragma] =
   for pragmaDef in pragmaDefs:
     result.add case pragmaDef.kind
-      of nnkIdent: Pragma(kind: pkFlag, name: pragmaDef)
-      of nnkExprColonExpr: Pragma(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
-      else: Pragma()
+      of nnkIdent: PragmaRepr(kind: pkFlag, name: pragmaDef)
+      of nnkExprColonExpr: PragmaRepr(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
+      else: PragmaRepr()
 
-proc parseDef(def: NimNode, dest: var (Field | Object)) =
+proc parseSignature(def: NimNode): Signature =
+  ## Parse signature from an object or field definition node.
+
   expectKind(def[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
 
   case def[0].kind
     of nnkIdent:
-      dest.name = def[0]
+      result.name = def[0]
     of nnkPostfix:
-      dest.name = def[0][1]
-      dest.exported = true
+      result.name = def[0][1]
+      result.exported = true
     of nnkPragmaExpr:
       expectKind(def[0][0], {nnkIdent, nnkPostfix})
       case def[0][0].kind
       of nnkIdent:
-        dest.name = def[0][0]
+        result.name = def[0][0]
       of nnkPostfix:
-        dest.name = def[0][0][1]
-        dest.exported = true
+        result.name = def[0][0][1]
+        result.exported = true
       else: discard
-      dest.pragmas = def[0][1].getPragmas()
+      result.pragmas = def[0][1].toPragmaReprs()
     else: discard
 
-proc parseTypeDef*(typeDef: NimNode): Object =
-  ## Parse type definition of an object into an ``Object`` instance.
+proc toObjRepr*(typeDef: NimNode): ObjRepr =
+  ## Parse type definition of an object into an ``ObjRepr`` instance.
 
-  parseDef(typeDef, result)
+  result.signature = parseSignature(typeDef)
 
   expectKind(typeDef[2], nnkObjectTy)
 
   for fieldDef in typeDef[2][2]:
-    var field = Field()
-    parseDef(fieldDef, field)
+    var field = FieldRepr()
+    field.signature = parseSignature(fieldDef)
     field.typ = fieldDef[1]
     result.fields.add field
 
-proc makeDef(src: Field | Object): NimNode =
+proc toDef(signature: Signature): NimNode =
   let title =
-    if not src.exported: src.name
-    else: newNimNode(nnkPostfix).add(ident"*", src.name)
+    if not signature.exported: signature.name
+    else: newNimNode(nnkPostfix).add(ident"*", signature.name)
 
-  if src.pragmas.len == 0:
+  if signature.pragmas.len == 0:
     return title
   else:
     var pragmas = newNimNode(nnkPragma)
 
-    for pragma in src.pragmas:
+    for pragma in signature.pragmas:
       pragmas.add case pragma.kind
       of pkFlag: pragma.name
       of pkKval: newColonExpr(pragma.name, pragma.value)
 
     result = newNimNode(nnkPragmaExpr).add(title, pragmas)
 
-proc toTypeDef*(obj: Object): NimNode =
+proc toTypeDef*(obj: ObjRepr): NimNode =
   var fieldDefs = newNimNode(nnkRecList)
 
   for field in obj.fields:
-    fieldDefs.add newIdentDefs(makeDef(field), field.typ)
+    fieldDefs.add newIdentDefs(field.signature.toDef(), field.typ)
 
   result = newNimNode(nnkTypeDef).add(
-    makeDef(obj),
+    obj.signature.toDef(),
     newEmptyNode(),
     newNimNode(nnkObjectTy).add(
       newEmptyNode(),
