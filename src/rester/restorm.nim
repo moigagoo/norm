@@ -144,12 +144,19 @@ template makeWithDbConn(connection, user, password, database: string,
       try: body
       finally: dbConn.close()
 
-proc ensureIdField(typeSection: NimNode): NimNode =
+proc ensureIdFields(typeSection: NimNode): NimNode =
   ## Check if ``id`` field is in the object definition, insert it if it's not.
 
   result = newNimNode(nnkTypeSection)
 
   for typeDef in typeSection:
+    var objRepr = typeDef.toObjRepr()
+
+    if "id" notin objRepr.fieldNames:
+      echo objRepr.signature.name
+      echo "inject id field here"
+
+
     let typeDefBody = typeDef[2]
     expectKind(typeDefBody, nnkObjectTy)
 
@@ -195,7 +202,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   for node in body:
     if node.kind == nnkTypeSection:
-      dbTypes.add node.ensureIdField()
+      dbTypes.add node.ensureIdFields()
     else:
       dbOthers.add node
 
