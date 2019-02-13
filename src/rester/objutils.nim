@@ -211,7 +211,7 @@ macro `[]=`*(obj: var object, fieldName: string, value: untyped): untyped =
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
 
 proc fieldNames*(obj: object): seq[string] =
-  ## Get object's field names as a sequence.
+  ## Get object's field names as a sequence of strings.
 
   runnableExamples:
     type
@@ -220,7 +220,34 @@ proc fieldNames*(obj: object): seq[string] =
         b: float
         c: string
 
-    assert Example().fieldNames == @["a", "b", "c"]
+    doAssert Example().fieldNames == @["a", "b", "c"]
 
   for field, _ in obj.fieldPairs:
     result.add field
+
+proc fieldNames*(objRepr: ObjRepr): seq[string] =
+  ## Get object representation's field names as a sequence of strings.
+
+  runnableExamples:
+    import macros
+
+    macro inspect(body: untyped): untyped =
+      expectKind(body[0], nnkTypeSection)
+
+      let
+        typeSection = body[0]
+        typeDef = typeSection[0]
+
+      doAssert typeDef.toObjRepr().fieldNames == @["a", "b", "c"]
+
+      body
+
+    inspect:
+      type
+        Example = object
+          a: int
+          b: float
+          c: string
+
+  for field in objRepr.fields:
+    result.add $field.signature.name
