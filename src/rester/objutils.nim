@@ -3,12 +3,7 @@ import macros
 
 type
   PragmaKind* = enum
-    ##[ There are two kinds of pragmas: flags and key-value pairs:
-
-      .. code-block:: nim
-
-        type Example {.flag, key: value .} = object
-    ]##
+    ## There are two kinds of pragmas: flags and key-value pairs:
 
     pkFlag, pkKval
 
@@ -24,11 +19,21 @@ type
     of pkFlag: discard
     of pkKval: value*: NimNode
 
-  Signature* = object
-    ##[ Part of an object or field definition that contains:
+  SignatureRepr* = object
+    ##[ Representation of the part of an object or field definition that contains:
       - name
       - exported flag
       - pragmas
+
+    .. code-block::
+        type
+        # Object signature is parsed from this part:
+        # |                        |
+          Example {.pr1, pr2: val2.} = object
+
+          # Field signature is parsed from this part:
+          # |                       |
+            field1 {.pr3, pr4: val4.}: int
     ]##
 
     name*: NimNode
@@ -38,17 +43,17 @@ type
   FieldRepr* = object
     ## Object field representation: signature + type.
 
-    signature: Signature
+    signature: SignatureRepr
     typ*: NimNode
 
   ObjRepr* = object
     ## Object representation: signature + fields.
 
-    signature: Signature
+    signature: SignatureRepr
     fields*: seq[FieldRepr]
 
 proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
-  ## Parse an ``nnkPragma`` node into a sequence of ``PragmaRepr`s.
+  ## Convert an ``nnkPragma`` node into a sequence of ``PragmaRepr`s.
 
   expectKind(pragmaDefs, nnkPragma)
 
@@ -58,8 +63,8 @@ proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
       of nnkExprColonExpr: PragmaRepr(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
       else: PragmaRepr()
 
-proc parseSignature(def: NimNode): Signature =
-  ## Parse signature from an object or field definition node.
+proc toSignatureRepr(def: NimNode): SignatureRepr =
+  ## Convert a signature definition into a ``SignatureRepr``.
 
   expectKind(def[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
 
@@ -82,19 +87,36 @@ proc parseSignature(def: NimNode): Signature =
     else: discard
 
 proc toObjRepr*(typeDef: NimNode): ObjRepr =
-  ## Parse type definition of an object into an ``ObjRepr`` instance.
+  ## Convert an object type definition into an ``ObjRepr``.
 
-  result.signature = parseSignature(typeDef)
+  result.signature = toSignatureRepr(typeDef)
 
   expectKind(typeDef[2], nnkObjectTy)
 
   for fieldDef in typeDef[2][2]:
     var field = FieldRepr()
-    field.signature = parseSignature(fieldDef)
+    field.signature = toSignatureRepr(fieldDef)
     field.typ = fieldDef[1]
     result.fields.add field
 
-proc toDef(signature: Signature): NimNode =
+proc toObjRepr*(T: type): ObjRepr =
+  ## Convert a type into an ``ObjRepr``.
+
+  let typeDef = T.getTypeImpl().getImpl()
+
+  result.signature = toSignatureRepr(typeDef)
+
+  expectKind(typeDef[2], nnkObjectTy)
+
+  for fieldDef in typeDef[2][2]:
+    var field = FieldRepr()
+    field.signature = toSignatureRepr(fieldDef)
+    field.typ = fieldDef[1]
+    result.fields.add field
+
+proc toSignatureDef(signature: SignatureRepr): NimNode =
+  ## Convert a ``SignatureRepr`` into a signature definition.
+
   let title =
     if not signature.exported: signature.name
     else: newNimNode(nnkPostfix).add(ident"*", signature.name)
@@ -112,13 +134,15 @@ proc toDef(signature: Signature): NimNode =
     result = newNimNode(nnkPragmaExpr).add(title, pragmas)
 
 proc toTypeDef*(obj: ObjRepr): NimNode =
+  ## Convert an ``ObjRepr`` into an object type definition.
+
   var fieldDefs = newNimNode(nnkRecList)
 
   for field in obj.fields:
-    fieldDefs.add newIdentDefs(field.signature.toDef(), field.typ)
+    fieldDefs.add newIdentDefs(field.signature.toSignatureDef(), field.typ)
 
   result = newNimNode(nnkTypeDef).add(
-    obj.signature.toDef(),
+    obj.signature.toSignatureDef(),
     newEmptyNode(),
     newNimNode(nnkObjectTy).add(
       newEmptyNode(),
