@@ -43,13 +43,13 @@ type
   FieldRepr* = object
     ## Object field representation: signature + type.
 
-    signature: SignatureRepr
+    signature*: SignatureRepr
     typ*: NimNode
 
   ObjRepr* = object
     ## Object representation: signature + fields.
 
-    signature: SignatureRepr
+    signature*: SignatureRepr
     fields*: seq[FieldRepr]
 
 proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
@@ -89,20 +89,30 @@ proc toSignatureRepr(def: NimNode): SignatureRepr =
 proc toObjRepr*(typeDef: NimNode): ObjRepr =
   ## Convert an object type definition into an ``ObjRepr``.
 
-  result.signature = toSignatureRepr(typeDef)
+  runnableExamples:
+    import macros
 
-  expectKind(typeDef[2], nnkObjectTy)
+    macro inspect(body: untyped): untyped =
+      expectKind(body[0], nnkTypeSection)
 
-  for fieldDef in typeDef[2][2]:
-    var field = FieldRepr()
-    field.signature = toSignatureRepr(fieldDef)
-    field.typ = fieldDef[1]
-    result.fields.add field
+      let
+        typeSection = body[0]
+        typeDef = typeSection[0]
+        objRepr = typeDef.toObjRepr()
 
-proc toObjRepr*(T: type): ObjRepr =
-  ## Convert a type into an ``ObjRepr``.
+      doAssert $objRepr.signature.name == "Example"
 
-  let typeDef = T.getTypeImpl().getImpl()
+      doAssert len(objRepr.fields) == 1
+      doAssert $objRepr.fields[0].signature.name == "field"
+      doAssert objRepr.fields[0].signature.exported
+      doAssert $objRepr.fields[0].typ == "int"
+
+      body
+
+    inspect:
+      type
+        Example = object
+          field*: int
 
   result.signature = toSignatureRepr(typeDef)
 
@@ -135,6 +145,25 @@ proc toSignatureDef(signature: SignatureRepr): NimNode =
 
 proc toTypeDef*(obj: ObjRepr): NimNode =
   ## Convert an ``ObjRepr`` into an object type definition.
+
+  runnableExamples:
+    import macros
+
+    macro inspect(body: untyped): untyped =
+      expectKind(body[0], nnkTypeSection)
+
+      let
+        typeSection = body[0]
+        typeDef = typeSection[0]
+
+      doAssert typeDef.toObjRepr().toTypeDef() == typeDef
+
+      body
+
+    inspect:
+      type
+        Example = object
+          field*: int
 
   var fieldDefs = newNimNode(nnkRecList)
 
