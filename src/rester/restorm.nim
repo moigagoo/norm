@@ -15,34 +15,6 @@ template table*(val: string) {.pragma.}
 
 template db*(val: DbConn) {.pragma.}
 
-template createTables*() =
-  sql"""
-    CREATE TABLE users (
-      id INTEGER PRIMARY KEY,
-      email TEXT,
-      age INTEGER
-    );
-
-    CREATE TABLE books (
-      id INTEGER PRIMARY KEY,
-      title TEXT
-    );
-
-    CREATE TABLE editions (
-      id INTEGER PRIMARY KEY,
-      title TEXT,
-      book_id INTEGER,
-      FOREIGN KEY(book_id) REFERENCES books(id)
-    );
-
-    CREATE TABLE users_books (
-      user_id INTEGER,
-      book_id INTEGER,
-      FOREIGN KEY(user_id) REFERENCES users(id),
-      FOREIGN KEY(book_id) REFERENCES books(id)
-    );
-  """
-
 proc getTable(objRepr: ObjRepr): string =
   result = objRepr.signature.name.toLowerAscii()
 
@@ -50,21 +22,36 @@ proc getTable(objRepr: ObjRepr): string =
     if pragma.name == "table" and pragma.kind == pkKval:
       return $pragma.value
 
+proc getColumn(fieldRepr: FieldRepr): string =
+  var components: seq[string]
+
+  components.add fieldRepr.signature.name
+
+  components.add case $fieldRepr.typ
+    of "int": "INTEGER"
+    of "string": "TEXT"
+    of "float": "REAL"
+    else: "TEXT"
+
+  if "pk" in fieldRepr.signature.pragmaNames:
+    components.add "PRIMARY KEY"
+
+  result = components.join(" ")
+
 proc getSchema(typeDef: NimNode): string =
   expectKind(typeDef, nnkTypeDef)
 
   let objRepr = typeDef.toObjRepr()
 
-  var lines: seq[string]
+  result.add "CREATE TABLE $# (\n" % objRepr.getTable()
 
-  lines.add "CREATE TABLE $# (" % objRepr.getTable()
+  var columns: seq[string]
 
   for field in objRepr.fields:
-    lines.add "$# $#," % [field.signature.name, $field.typ]
+    columns.add "\t$#" % getColumn(field)
 
-  lines.add ");"
-
-  result = lines.join("\n")
+  result.add columns.join(",\n")
+  result.add "\n);"
 
 proc getTable(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
@@ -75,10 +62,19 @@ proc getTable(T: type): string =
   else: T.name.toLowerAscii()
 
 template makeWithDbConn(connection, user, password, database: string,
-                        dbOthers: NimNode): untyped {.dirty.} =
+                        dbTypeSections, dbOthers: NimNode): untyped {.dirty.} =
   template withDbConn*(body: untyped): untyped {.dirty.} =
     block:
       let dbConn = open(connection, user, password, database)
+
+      template createTables() =
+        var components: seq[string]
+
+        for typeSection in dbTypeSections:
+          for typeDef in typeSection:
+            components.add getSchema(typeDef)
+
+        dbConn.exec sql components.join("\n\n")
 
       template insert(obj: var object, force = false) =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -209,7 +205,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     for typeDef in typeSection:
       echo getSchema(typeDef)
 
-  result.add getAst makeWithDbConn(connection, user, password, database, dbOthers)
+  result.add getAst makeWithDbConn(connection, user, password, database, dbTypeSections, dbOthers)
   result.add dbTypeSections
 
 

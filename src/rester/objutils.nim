@@ -107,8 +107,6 @@ proc toObjRepr*(typeDef: NimNode): ObjRepr =
       doAssert objRepr.fields[0].signature.exported
       doAssert $objRepr.fields[0].typ == "int"
 
-      body
-
     inspect:
       type
         Example = object
@@ -157,8 +155,6 @@ proc toTypeDef*(obj: ObjRepr): NimNode =
         typeDef = typeSection[0]
 
       doAssert typeDef.toObjRepr().toTypeDef() == typeDef
-
-      body
 
     inspect:
       type
@@ -240,8 +236,6 @@ proc fieldNames*(objRepr: ObjRepr): seq[string] =
 
       doAssert typeDef.toObjRepr().fieldNames == @["a", "b", "c"]
 
-      body
-
     inspect:
       type
         Example = object
@@ -251,3 +245,27 @@ proc fieldNames*(objRepr: ObjRepr): seq[string] =
 
   for field in objRepr.fields:
     result.add field.signature.name
+
+proc pragmaNames*(signRepr: SignatureRepr): seq[string] =
+  ## Get signature representation's pragma names as a sequence of strings.
+
+  runnableExamples:
+    import macros
+
+    macro inspect(body: untyped): untyped =
+      expectKind(body[0], nnkTypeSection)
+
+      let
+        typeSection = body[0]
+        typeDef = typeSection[0]
+
+      doAssert typeDef.toObjRepr().signature.pragmaNames == @["a", "b"]
+      doAssert typeDef.toObjRepr().fields[0].signature.pragmaNames == @["d", "f"]
+
+    inspect:
+      type
+        Example {.a, b: "c".} = object
+          a {.d: "e", f.}: int
+
+  for pragma in signRepr.pragmas:
+    result.add pragma.name
