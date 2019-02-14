@@ -64,15 +64,16 @@ template makeWithDbConn(connection, user, password, database: string,
         By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
         ]##
 
-        var values: seq[string]
+        var fields, values: seq[string]
 
-        for _, value in obj.fieldPairs:
+        for field, value in obj.fieldPairs:
           when force or not obj[field].hasCustomPragma(ro):
+            fields.add field
             values.add $value
 
         let
           placeholders = '?'.repeat(fields.len).join(", ")
-          query = sql "INSERT INTO ? ($#) VALUES ($#)" % [obj.fieldNames.join(", "), placeholders]
+          query = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "), placeholders]
           params = type(obj).getTable() & values
 
         obj.id = dbConn.insertID(query, params).int
@@ -201,5 +202,32 @@ db("rester.db", "", "", ""):
 
 when isMainModule:
   withDbConn:
-    for user in User.getMany 10:
+    echo '-'.repeat(10)
+
+    echo "Insert and delete user:"
+    var user = User(email: "qwe@asd.zxc", age: 20)
+    user.insert()
+    echo User.getOne(user.id)
+    user.delete()
+
+  withDbConn:
+    echo '-'.repeat(10)
+
+    echo "Get 100 users:"
+    for user in User.getMany 100:
       echo user
+
+    echo '-'.repeat(10)
+
+    echo "Get user with id 3:"
+    echo User.getOne(3)
+
+    echo '-'.repeat(10)
+
+    echo "Get user with id 1493:"
+    try:
+      echo User.getOne(1493)
+    except KeyError:
+      echo getCurrentExceptionMsg()
+
+    echo '-'.repeat(10)
