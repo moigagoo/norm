@@ -153,45 +153,19 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
     var objRepr = typeDef.toObjRepr()
 
     if "id" notin objRepr.fieldNames:
-      echo objRepr.signature.name
-      echo "inject id field here"
-
-
-    let typeDefBody = typeDef[2]
-    expectKind(typeDefBody, nnkObjectTy)
-
-    var fieldNames: seq[string]
-
-    var fieldDefs = typeDefBody[2]
-
-    for fieldDef in fieldDefs:
-      let fieldNameDef = fieldDef[0]
-      expectKind(fieldNameDef, {nnkIdent, nnkPragmaExpr})
-
-      let fieldName = case fieldNameDef.kind
-        of nnkIdent: fieldNameDef.strVal
-        of nnkPragmaExpr: fieldNameDef[0].strVal
-        else: ""
-
-      fieldNames.add fieldName
-
-    if "id" notin fieldNames:
-      let idFieldDef = newIdentDefs(
-        newNimNode(nnkPragmaExpr).add(
-          ident "id",
-          newNimNode(nnkPragma).add(
-            ident "pk",
-            ident "ro"
-          )
+      objRepr.fields.add FieldRepr(
+        signature: SignatureRepr(
+          name: ident "id",
+          exported: true,
+          pragmas: @[
+            PragmaRepr(name: ident "pk", kind: pkFlag),
+            PragmaRepr(name: ident "ro", kind: pkFlag)
+          ]
         ),
-        ident "int",
-        newEmptyNode()
+        typ: ident "int"
       )
 
-      fieldDefs.insert(0, idFieldDef)
-
-    result.add typeDef
-
+    result.add objRepr.toTypeDef()
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   result = newStmtList()
@@ -223,3 +197,8 @@ db("rester.db", "", "", ""):
     UserBook = object
       userId: int
       bookId: int
+
+when isMainModule:
+  withDbConn:
+    let u = User()
+    echo u
