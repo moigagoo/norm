@@ -43,6 +43,29 @@ template createTables*() =
     );
   """
 
+proc getTable(objRepr: ObjRepr): string =
+  result = objRepr.signature.name.toLowerAscii()
+
+  for pragma in objRepr.signature.pragmas:
+    if pragma.name == "table" and pragma.kind == pkKval:
+      return $pragma.value
+
+proc getSchema(typeDef: NimNode): string =
+  expectKind(typeDef, nnkTypeDef)
+
+  let objRepr = typeDef.toObjRepr()
+
+  var lines: seq[string]
+
+  lines.add "CREATE TABLE $# (" % objRepr.getTable()
+
+  for field in objRepr.fields:
+    lines.add "$# $#," % [field.signature.name, $field.typ]
+
+  lines.add ");"
+
+  result = lines.join("\n")
+
 proc getTable(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
@@ -156,11 +179,11 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
     if "id" notin objRepr.fieldNames:
       let idField = FieldRepr(
         signature: SignatureRepr(
-          name: ident "id",
+          name: "id",
           exported: true,
           pragmas: @[
-            PragmaRepr(name: ident "pk", kind: pkFlag),
-            PragmaRepr(name: ident "ro", kind: pkFlag)
+            PragmaRepr(name: "pk", kind: pkFlag),
+            PragmaRepr(name: "ro", kind: pkFlag)
           ]
         ),
         typ: ident "int"
@@ -173,17 +196,21 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   result = newStmtList()
 
   var
-    dbTypes = newStmtList()
+    dbTypeSections = newStmtList()
     dbOthers = newStmtList()
 
   for node in body:
     if node.kind == nnkTypeSection:
-      dbTypes.add node.ensureIdFields()
+      dbTypeSections.add node.ensureIdFields()
     else:
       dbOthers.add node
 
+  for typeSection in dbTypeSections:
+    for typeDef in typeSection:
+      echo getSchema(typeDef)
+
   result.add getAst makeWithDbConn(connection, user, password, database, dbOthers)
-  result.add dbTypes
+  result.add dbTypeSections
 
 
 db("rester.db", "", "", ""):
@@ -219,8 +246,8 @@ when isMainModule:
 
     echo '-'.repeat(10)
 
-    echo "Get user with id 3:"
-    echo User.getOne(3)
+    echo "Get user with id 1:"
+    echo User.getOne(1)
 
     echo '-'.repeat(10)
 
@@ -234,9 +261,9 @@ when isMainModule:
   withDbConn:
     echo '-'.repeat(10)
 
-    echo "Update user with id 3:"
-    var user = User.getOne(3)
+    echo "Update user with id 1:"
+    var user = User.getOne(1)
     user.age.inc
     user.update()
-    assert user == User.getOne(3)
+    assert user == User.getOne(1)
     echo user

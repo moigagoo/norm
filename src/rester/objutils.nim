@@ -14,7 +14,7 @@ type
     name and value are stored.
     ]##
 
-    name*: NimNode
+    name*: string
     case kind*: PragmaKind
     of pkFlag: discard
     of pkKval: value*: NimNode
@@ -59,8 +59,8 @@ proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
 
   for pragmaDef in pragmaDefs:
     result.add case pragmaDef.kind
-      of nnkIdent: PragmaRepr(kind: pkFlag, name: pragmaDef)
-      of nnkExprColonExpr: PragmaRepr(kind: pkKval, name: pragmaDef[0], value: pragmaDef[1])
+      of nnkIdent: PragmaRepr(kind: pkFlag, name: $pragmaDef)
+      of nnkExprColonExpr: PragmaRepr(kind: pkKval, name: $pragmaDef[0], value: pragmaDef[1])
       else: PragmaRepr()
 
 proc toSignatureRepr(def: NimNode): SignatureRepr =
@@ -138,8 +138,8 @@ proc toSignatureDef(signature: SignatureRepr): NimNode =
 
     for pragma in signature.pragmas:
       pragmas.add case pragma.kind
-      of pkFlag: pragma.name
-      of pkKval: newColonExpr(pragma.name, pragma.value)
+      of pkFlag: ident pragma.name
+      of pkKval: newColonExpr(ident pragma.name, pragma.value)
 
     result = newNimNode(nnkPragmaExpr).add(title, pragmas)
 
