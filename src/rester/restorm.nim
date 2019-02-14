@@ -230,4 +230,13 @@ when isMainModule:
     except KeyError:
       echo getCurrentExceptionMsg()
 
+
+  withDbConn:
     echo '-'.repeat(10)
+
+    echo "Update user with id 3:"
+    var user = User.getOne(3)
+    user.age.inc
+    user.update()
+    assert user == User.getOne(3)
+    echo user
