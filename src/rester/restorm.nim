@@ -153,7 +153,7 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
     var objRepr = typeDef.toObjRepr()
 
     if "id" notin objRepr.fieldNames:
-      objRepr.fields.add FieldRepr(
+      let idField = FieldRepr(
         signature: SignatureRepr(
           name: ident "id",
           exported: true,
@@ -164,6 +164,7 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
         ),
         typ: ident "int"
       )
+      objRepr.fields.insert(idField, 0)
 
     result.add objRepr.toTypeDef()
 
@@ -200,5 +201,5 @@ db("rester.db", "", "", ""):
 
 when isMainModule:
   withDbConn:
-    let u = User()
-    echo u
+    for user in User.getMany 10:
+      echo user
