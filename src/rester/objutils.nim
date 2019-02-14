@@ -36,7 +36,7 @@ type
             field1 {.pr3, pr4: val4.}: int
     ]##
 
-    name*: NimNode
+    name*: string
     exported*: bool
     pragmas*: seq[PragmaRepr]
 
@@ -70,17 +70,17 @@ proc toSignatureRepr(def: NimNode): SignatureRepr =
 
   case def[0].kind
     of nnkIdent:
-      result.name = def[0]
+      result.name = $def[0]
     of nnkPostfix:
-      result.name = def[0][1]
+      result.name = $def[0][1]
       result.exported = true
     of nnkPragmaExpr:
       expectKind(def[0][0], {nnkIdent, nnkPostfix})
       case def[0][0].kind
       of nnkIdent:
-        result.name = def[0][0]
+        result.name = $def[0][0]
       of nnkPostfix:
-        result.name = def[0][0][1]
+        result.name = $def[0][0][1]
         result.exported = true
       else: discard
       result.pragmas = def[0][1].toPragmaReprs()
@@ -100,10 +100,10 @@ proc toObjRepr*(typeDef: NimNode): ObjRepr =
         typeDef = typeSection[0]
         objRepr = typeDef.toObjRepr()
 
-      doAssert $objRepr.signature.name == "Example"
+      doAssert objRepr.signature.name == "Example"
 
       doAssert len(objRepr.fields) == 1
-      doAssert $objRepr.fields[0].signature.name == "field"
+      doAssert objRepr.fields[0].signature.name == "field"
       doAssert objRepr.fields[0].signature.exported
       doAssert $objRepr.fields[0].typ == "int"
 
@@ -128,8 +128,8 @@ proc toSignatureDef(signature: SignatureRepr): NimNode =
   ## Convert a ``SignatureRepr`` into a signature definition.
 
   let title =
-    if not signature.exported: signature.name
-    else: newNimNode(nnkPostfix).add(ident"*", signature.name)
+    if not signature.exported: ident signature.name
+    else: newNimNode(nnkPostfix).add(ident"*", ident signature.name)
 
   if signature.pragmas.len == 0:
     return title
@@ -250,4 +250,4 @@ proc fieldNames*(objRepr: ObjRepr): seq[string] =
           c: string
 
   for field in objRepr.fields:
-    result.add $field.signature.name
+    result.add field.signature.name
