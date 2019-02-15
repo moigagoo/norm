@@ -2,12 +2,16 @@ import strutils, macros
 import typetraits
 import db_sqlite
 
+import chronicles
+
 import objutils, rowutils
 
 
 template pk* {.pragma.}
 
 template ro* {.pragma.}
+
+template fk*(val: type) {.pragma.}
 
 template dbType*(val: string) {.pragma.}
 
@@ -22,19 +26,32 @@ proc getTable(objRepr: ObjRepr): string =
     if pragma.name == "table" and pragma.kind == pkKval:
       return $pragma.value
 
+proc getDbType(fieldRepr: FieldRepr): string =
+  result = case $fieldRepr.typ
+  of "int": "INTEGER"
+  of "string": "TEXT"
+  of "float": "REAL"
+  else: "TEXT"
+
+  for pragma in fieldRepr.signature.pragmas:
+    if pragma.name == "dbType" and pragma.kind == pkKval:
+      return $pragma.value
+
 proc getColumn(fieldRepr: FieldRepr): string =
   var components: seq[string]
 
   components.add fieldRepr.signature.name
 
-  components.add case $fieldRepr.typ
-    of "int": "INTEGER"
-    of "string": "TEXT"
-    of "float": "REAL"
-    else: "BLOB"
+  components.add getDbType(fieldRepr)
 
-  if "pk" in fieldRepr.signature.pragmaNames:
-    components.add "PRIMARY KEY"
+  for pragma in fieldRepr.signature.pragmas:
+    if pragma.name == "pk" and pragma.kind == pkFlag:
+      components.add "PRIMARY KEY"
+    elif pragma.name == "fk" and pragma.kind == pkKval:
+      echo pragma.value.kind
+
+      components.add ", FOREIGN KEY($#) REFERENCES $#(id)" %
+                      [fieldRepr.signature.name, $pragma.value]
 
   result = components.join(" ")
 
@@ -110,6 +127,15 @@ template makeWithDb(connection, user, password, database, schema, dropTablesStmt
 
         if force:
           dropTables()
+
+          # CREATE TABLE editions (
+          #   id INTEGER PRIMARY KEY,
+          #   title TEXT,
+          #   bookId INTEGER,
+          #   FOREIGN KEY(bookId) REFERENCES books(id)
+          # );
+
+        debug "Create tables", dbSchema=schema
 
         dbConn.exec sql schema
 
@@ -253,10 +279,8 @@ db("rester.db", "", "", ""):
       title: string
     Edition {.table: "editions".} = object
       title: string
-      bookId: int
-    UserBook = object
-      userId: int
-      bookId: int
+      bookId {.fk: Book.}: int
+
 
 when isMainModule:
   withDb:
