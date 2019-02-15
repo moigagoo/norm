@@ -31,7 +31,7 @@ proc getColumn(fieldRepr: FieldRepr): string =
     of "int": "INTEGER"
     of "string": "TEXT"
     of "float": "REAL"
-    else: "TEXT"
+    else: "BLOB"
 
   if "pk" in fieldRepr.signature.pragmaNames:
     components.add "PRIMARY KEY"
