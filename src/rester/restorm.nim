@@ -38,7 +38,9 @@ proc getColumn(fieldRepr: FieldRepr): string =
 
   result = components.join(" ")
 
-proc getSchema(typeDef: NimNode): string =
+proc getTableSchema(typeDef: NimNode): string =
+  ## Get table schema from a type definition.
+
   expectKind(typeDef, nnkTypeDef)
 
   let objRepr = typeDef.toObjRepr()
@@ -53,6 +55,34 @@ proc getSchema(typeDef: NimNode): string =
   result.add columns.join(",\n")
   result.add "\n);"
 
+proc getDbSchema(typeSections: NimNode): string =
+  ## Get DB schema from a list of type sections.
+
+  expectKind(typeSections, nnkStmtList)
+
+  var tableSchemas: seq[string]
+
+  for typeSection in typeSections:
+    for typeDef in typeSection:
+      tableSchemas.add getTableSchema(typeDef)
+
+  result = tableSchemas.join("\n\n")
+
+proc getDropTableStmt(typeDef: NimNode): string =
+  expectKind(typeDef, nnkTypeDef)
+  "DROP TABLE IF EXISTS $#;" % typeDef.toObjRepr().getTable()
+
+proc getDropTablesStmt(typeSections: NimNode): string =
+  expectKind(typeSections, nnkStmtList)
+
+  var dropTableStmts: seq[string]
+
+  for typeSection in typeSections:
+    for typeDef in typeSection:
+      dropTableStmts.add getDropTableStmt(typeDef)
+
+  result = dropTableStmts.join("\n\n")
+
 proc getTable(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
@@ -61,20 +91,27 @@ proc getTable(T: type): string =
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: T.name.toLowerAscii()
 
-template makeWithDbConn(connection, user, password, database: string,
-                        dbTypeSections, dbOthers: NimNode): untyped {.dirty.} =
-  template withDbConn*(body: untyped): untyped {.dirty.} =
+template makeWithDb(connection, user, password, database, schema, dropTablesStmt: string,
+                        dbOthers: NimNode): untyped {.dirty.} =
+  template withDb*(body: untyped): untyped {.dirty.} =
     block:
       let dbConn = open(connection, user, password, database)
 
-      template createTables() =
-        var components: seq[string]
+      template dropTables() =
+        ## Drop tables for all types in all type sections under ``db`` macro.
 
-        for typeSection in dbTypeSections:
-          for typeDef in typeSection:
-            components.add getSchema(typeDef)
+        dbConn.exec sql dropTablesStmt
 
-        dbConn.exec sql components.join("\n\n")
+      template createTables(force = false) =
+        ##[ Create tables for all types in all type sections under ``db`` macro.
+
+        If ``force`` is ``true``, drop tables beforehand.
+        ]##
+
+        if force:
+          dropTables()
+
+        dbConn.exec sql schema
 
       template insert(obj: var object, force = false) =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -201,11 +238,9 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       dbOthers.add node
 
-  for typeSection in dbTypeSections:
-    for typeDef in typeSection:
-      echo getSchema(typeDef)
-
-  result.add getAst makeWithDbConn(connection, user, password, database, dbTypeSections, dbOthers)
+  result.add getAst makeWithDb(connection, user, password, database,
+                                getDbSchema(dbTypeSections), getDropTablesStmt(dbTypeSections),
+                                dbOthers)
   result.add dbTypeSections
 
 
@@ -224,19 +259,32 @@ db("rester.db", "", "", ""):
       bookId: int
 
 when isMainModule:
-  withDbConn:
+  withDb:
     echo '-'.repeat(10)
 
-    echo "Insert and delete user:"
+    echo "Create tables."
+    createTables(force=true)
+
+    echo "Create ten users."
+    for i in 1..10:
+      var user = User(email: "foo-$#@bar.com" % $i, age: i*i)
+      user.insert()
+
+  withDb:
+    echo '-'.repeat(10)
+
+    echo "Insert user:"
     var user = User(email: "qwe@asd.zxc", age: 20)
     user.insert()
     echo User.getOne(user.id)
+
+    echo "Delete user."
     user.delete()
 
-  withDbConn:
+  withDb:
     echo '-'.repeat(10)
 
-    echo "Get 100 users:"
+    echo "Get first 100 users:"
     for user in User.getMany 100:
       echo user
 
@@ -254,7 +302,7 @@ when isMainModule:
       echo getCurrentExceptionMsg()
 
 
-  withDbConn:
+  withDb:
     echo '-'.repeat(10)
 
     echo "Update user with id 1:"
