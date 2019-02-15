@@ -1,4 +1,4 @@
-import strutils, macros
+import strutils, strformat, macros
 import typetraits
 import db_sqlite
 
@@ -38,22 +38,16 @@ proc getDbType(fieldRepr: FieldRepr): string =
       return $pragma.value
 
 proc getColumn(fieldRepr: FieldRepr): string =
-  var components: seq[string]
-
-  components.add fieldRepr.signature.name
-
-  components.add getDbType(fieldRepr)
+  result.add fieldRepr.signature.name
+  result.add " "
+  result.add getDbType(fieldRepr)
 
   for pragma in fieldRepr.signature.pragmas:
     if pragma.name == "pk" and pragma.kind == pkFlag:
-      components.add "PRIMARY KEY"
+      result.add " PRIMARY KEY"
     elif pragma.name == "fk" and pragma.kind == pkKval:
-      echo pragma.value.kind
-
-      components.add ", FOREIGN KEY($#) REFERENCES $#(id)" %
+      result.add ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}(id)" %
                       [fieldRepr.signature.name, $pragma.value]
-
-  result = components.join(" ")
 
 proc getTableSchema(typeDef: NimNode): string =
   ## Get table schema from a type definition.
@@ -135,9 +129,9 @@ template makeWithDb(connection, user, password, database, schema, dropTablesStmt
           #   FOREIGN KEY(bookId) REFERENCES books(id)
           # );
 
-        debug "Create tables", dbSchema=schema
+        debug "Create tables", dbSchema=(&schema)
 
-        dbConn.exec sql schema
+        dbConn.exec sql &schema
 
       template insert(obj: var object, force = false) =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -277,6 +271,7 @@ db("rester.db", "", "", ""):
       age: int
     Book {.table: "books".} = object
       title: string
+      author {.fk: User.}: int
     Edition {.table: "editions".} = object
       title: string
       bookId {.fk: Book.}: int
@@ -324,7 +319,6 @@ when isMainModule:
       echo User.getOne(1493)
     except KeyError:
       echo getCurrentExceptionMsg()
-
 
   withDb:
     echo '-'.repeat(10)
