@@ -274,53 +274,34 @@ db("rester.db", "", "", ""):
 
 when isMainModule:
   withDb:
-    echo '-'.repeat(10)
-
-    echo "Create tables."
+    info "Create tables"
     createTables(force=true)
 
-    echo "Create ten users."
+    info "Populate tables"
     for i in 1..10:
       var user = User(email: "foo-$#@bar.com" % $i, age: i*i)
       user.insert()
 
   withDb:
-    echo '-'.repeat(10)
-
-    echo "Insert user:"
     var user = User(email: "qwe@asd.zxc", age: 20)
+    info "Add user", user = user
     user.insert()
-    echo User.getOne(user.id)
-
-    echo "Delete user."
+    info "Get new user from db", user = User.getOne(user.id)
+    info "Delete user"
     user.delete()
 
   withDb:
-    echo '-'.repeat(10)
-
-    echo "Get first 100 users:"
-    for user in User.getMany 100:
-      echo user
-
-    echo '-'.repeat(10)
-
-    echo "Get user with id 1:"
-    echo User.getOne(1)
-
-    echo '-'.repeat(10)
-
-    echo "Get user with id 1493:"
+    info "Get the first 100 users", users = User.getMany 100
+    info "Get the user with id = 1", user = User.getOne(1)
     try:
-      echo User.getOne(1493)
+      info "Get the user with id = 1493", user = User.getOne(1493)
     except KeyError:
-      echo getCurrentExceptionMsg()
+      warn getCurrentExceptionMsg()
 
   withDb:
-    echo '-'.repeat(10)
-
-    echo "Update user with id 1:"
     var user = User.getOne(1)
+    info "Update user with id 1", user = user
     user.age.inc
     user.update()
-    assert user == User.getOne(1)
-    echo user
+    info "Updated user", user = user
+    info "Get updated user from db", user = User.getOne(1)
