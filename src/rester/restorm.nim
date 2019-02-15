@@ -20,6 +20,10 @@ template table*(val: string) {.pragma.}
 template db*(val: DbConn) {.pragma.}
 
 proc getTable(objRepr: ObjRepr): string =
+  ##[ Get the name of the DB table for the given object representation:
+  ``table`` pragma value if it exists or lowercased type name otherwise.
+  ]##
+
   result = objRepr.signature.name.toLowerAscii()
 
   for prag in objRepr.signature.pragmas:
@@ -27,6 +31,8 @@ proc getTable(objRepr: ObjRepr): string =
       return $prag.value
 
 proc getDbType(fieldRepr: FieldRepr): string =
+  ## SQLite-specific mapping from Nim types to SQL data types.
+
   result = case $fieldRepr.typ
   of "int": "INTEGER"
   of "string": "TEXT"
@@ -37,7 +43,9 @@ proc getDbType(fieldRepr: FieldRepr): string =
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
 
-proc getColumn(fieldRepr: FieldRepr): string =
+proc genColStmt(fieldRepr: FieldRepr): string =
+  ## Generate SQL column statement for a field representation.
+
   result.add fieldRepr.signature.name
   result.add " "
   result.add getDbType(fieldRepr)
@@ -49,8 +57,8 @@ proc getColumn(fieldRepr: FieldRepr): string =
       result.add ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}(id)" %
                       [fieldRepr.signature.name, $prag.value]
 
-proc getTableSchema(typeDef: NimNode): string =
-  ## Get table schema from a type definition.
+proc genTableSchema(typeDef: NimNode): string =
+  ## Generate table schema for a type definition.
 
   expectKind(typeDef, nnkTypeDef)
 
@@ -61,13 +69,13 @@ proc getTableSchema(typeDef: NimNode): string =
   var columns: seq[string]
 
   for field in objRepr.fields:
-    columns.add "\t$#" % getColumn(field)
+    columns.add "\t$#" % genColStmt(field)
 
   result.add columns.join(",\n")
   result.add "\n);"
 
-proc getDbSchema(typeSections: NimNode): string =
-  ## Get DB schema from a list of type sections.
+proc genDbSchema(typeSections: NimNode): string =
+  ## Generate DB schema for a list of type sections.
 
   expectKind(typeSections, nnkStmtList)
 
@@ -75,22 +83,26 @@ proc getDbSchema(typeSections: NimNode): string =
 
   for typeSection in typeSections:
     for typeDef in typeSection:
-      tableSchemas.add getTableSchema(typeDef)
+      tableSchemas.add genTableSchema(typeDef)
 
   result = tableSchemas.join("\n")
 
-proc getDropTableStmt(typeDef: NimNode): string =
+proc genDropTableStmt(typeDef: NimNode): string =
+  ## Generate a ``DROP TABLE`` statement for a type definition.
+
   expectKind(typeDef, nnkTypeDef)
   "DROP TABLE IF EXISTS $#;" % typeDef.toObjRepr().getTable()
 
-proc getDropTablesStmt(typeSections: NimNode): string =
+proc genDropTablesStmt(typeSections: NimNode): string =
+  ## Generate ``DROP TABLE`` statements for a list of type sections.
+
   expectKind(typeSections, nnkStmtList)
 
   var dropTableStmts: seq[string]
 
   for typeSection in typeSections:
     for typeDef in typeSection:
-      dropTableStmts.add getDropTableStmt(typeDef)
+      dropTableStmts.add genDropTableStmt(typeDef)
 
   result = dropTableStmts.join("\n")
 
@@ -102,9 +114,18 @@ proc getTable(T: type): string =
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: T.name.toLowerAscii()
 
-template makeWithDb(connection, user, password, database, schema, dropTablesStmt: string,
+template genMakeDbTmpl(connection, user, password, database, schema, dropTablesStmt: string,
                         dbOthers: NimNode): untyped {.dirty.} =
+  ## Generate ``withDb`` template.
+
   template withDb*(body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
+    as well as ``createTables`` and ``dropTables`` procs.
+
+      Aforementioned procs and procs defined in a ``db`` block can be used only
+      in  a ``withDb`` block.
+    ]##
+
     block:
       let dbConn = open(connection, user, password, database)
 
@@ -253,8 +274,8 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       dbOthers.add node
 
-  result.add getAst makeWithDb(connection, user, password, database,
-                                getDbSchema(dbTypeSections), getDropTablesStmt(dbTypeSections),
+  result.add getAst genMakeDbTmpl(connection, user, password, database,
+                                genDbSchema(dbTypeSections), genDropTablesStmt(dbTypeSections),
                                 dbOthers)
   result.add dbTypeSections
 
