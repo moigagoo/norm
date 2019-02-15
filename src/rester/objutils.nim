@@ -134,10 +134,10 @@ proc toSignatureDef(signature: SignatureRepr): NimNode =
   else:
     var pragmas = newNimNode(nnkPragma)
 
-    for pragma in signature.pragmas:
-      pragmas.add case pragma.kind
-      of pkFlag: ident pragma.name
-      of pkKval: newColonExpr(ident pragma.name, pragma.value)
+    for prag in signature.pragmas:
+      pragmas.add case prag.kind
+      of pkFlag: ident prag.name
+      of pkKval: newColonExpr(ident prag.name, prag.value)
 
     result = newNimNode(nnkPragmaExpr).add(title, pragmas)
 
@@ -267,5 +267,5 @@ proc pragmaNames*(signRepr: SignatureRepr): seq[string] =
         Example {.a, b: "c".} = object
           a {.d: "e", f.}: int
 
-  for pragma in signRepr.pragmas:
-    result.add pragma.name
+  for prag in signRepr.pragmas:
+    result.add prag.name

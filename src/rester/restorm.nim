@@ -22,9 +22,9 @@ template db*(val: DbConn) {.pragma.}
 proc getTable(objRepr: ObjRepr): string =
   result = objRepr.signature.name.toLowerAscii()
 
-  for pragma in objRepr.signature.pragmas:
-    if pragma.name == "table" and pragma.kind == pkKval:
-      return $pragma.value
+  for prag in objRepr.signature.pragmas:
+    if prag.name == "table" and prag.kind == pkKval:
+      return $prag.value
 
 proc getDbType(fieldRepr: FieldRepr): string =
   result = case $fieldRepr.typ
@@ -33,21 +33,21 @@ proc getDbType(fieldRepr: FieldRepr): string =
   of "float": "REAL"
   else: "TEXT"
 
-  for pragma in fieldRepr.signature.pragmas:
-    if pragma.name == "dbType" and pragma.kind == pkKval:
-      return $pragma.value
+  for prag in fieldRepr.signature.pragmas:
+    if prag.name == "dbType" and prag.kind == pkKval:
+      return $prag.value
 
 proc getColumn(fieldRepr: FieldRepr): string =
   result.add fieldRepr.signature.name
   result.add " "
   result.add getDbType(fieldRepr)
 
-  for pragma in fieldRepr.signature.pragmas:
-    if pragma.name == "pk" and pragma.kind == pkFlag:
+  for prag in fieldRepr.signature.pragmas:
+    if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
-    elif pragma.name == "fk" and pragma.kind == pkKval:
+    elif prag.name == "fk" and prag.kind == pkKval:
       result.add ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}(id)" %
-                      [fieldRepr.signature.name, $pragma.value]
+                      [fieldRepr.signature.name, $prag.value]
 
 proc getTableSchema(typeDef: NimNode): string =
   ## Get table schema from a type definition.
@@ -77,7 +77,7 @@ proc getDbSchema(typeSections: NimNode): string =
     for typeDef in typeSection:
       tableSchemas.add getTableSchema(typeDef)
 
-  result = tableSchemas.join("\n\n")
+  result = tableSchemas.join("\n")
 
 proc getDropTableStmt(typeDef: NimNode): string =
   expectKind(typeDef, nnkTypeDef)
@@ -92,7 +92,7 @@ proc getDropTablesStmt(typeSections: NimNode): string =
     for typeDef in typeSection:
       dropTableStmts.add getDropTableStmt(typeDef)
 
-  result = dropTableStmts.join("\n\n")
+  result = dropTableStmts.join("\n")
 
 proc getTable(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
@@ -111,6 +111,8 @@ template makeWithDb(connection, user, password, database, schema, dropTablesStmt
       template dropTables() =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
+        debug "Drop tables", query = dropTablesStmt
+
         dbConn.exec sql dropTablesStmt
 
       template createTables(force = false) =
@@ -122,14 +124,7 @@ template makeWithDb(connection, user, password, database, schema, dropTablesStmt
         if force:
           dropTables()
 
-          # CREATE TABLE editions (
-          #   id INTEGER PRIMARY KEY,
-          #   title TEXT,
-          #   bookId INTEGER,
-          #   FOREIGN KEY(bookId) REFERENCES books(id)
-          # );
-
-        debug "Create tables", dbSchema=(&schema)
+        debug "Create tables", query = &schema
 
         dbConn.exec sql &schema
 
