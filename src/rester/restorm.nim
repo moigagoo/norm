@@ -19,9 +19,9 @@ template ro* {.pragma.}
   The special field ``id`` is mark with ``pk`` by default.
   ]##
 
-template fk*(val: type) {.pragma.}
-  ##[ Mark field as foreign key referencing ``id`` field in another type.
-  ``val`` is the referenced type.
+template fk*(val: untyped) {.pragma.}
+  ##[ Mark field as foreign key another type. ``val`` is either a type or a "type.field"
+  expression.
   ]##
 
 template dbType*(val: string) {.pragma.}
@@ -65,8 +65,16 @@ proc genColStmt(fieldRepr: FieldRepr): string =
     if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
     elif prag.name == "fk" and prag.kind == pkKval:
-      result.add ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}(id)" %
-                      [fieldRepr.signature.name, $prag.value]
+      expectKind(prag.value, {nnkIdent, nnkDotExpr})
+
+      result.add case prag.value.kind
+      of nnkIdent:
+        ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}(id)" % [fieldRepr.signature.name,
+                                                                $prag.value]
+      of nnkDotExpr:
+        ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}($#)" % [fieldRepr.signature.name,
+                                                                $prag.value[0], $prag.value[1]]
+      else: ""
 
 proc genTableSchema(typeDef: NimNode): string =
   ## Generate table schema for a type definition.
@@ -286,8 +294,8 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       dbOthers.add node
 
   result.add getAst genMakeDbTmpl(connection, user, password, database,
-                                genDbSchema(dbTypeSections), genDropTablesStmt(dbTypeSections),
-                                dbOthers)
+                                  genDbSchema(dbTypeSections), genDropTablesStmt(dbTypeSections),
+                                  dbOthers)
   result.add dbTypeSections
 
 
@@ -298,7 +306,7 @@ db("rester.db", "", "", ""):
       age: int
     Book {.table: "books".} = object
       title: string
-      author {.fk: User.}: int
+      author {.fk: User.id.}: int
     Edition {.table: "editions".} = object
       title: string
       bookId {.fk: Book.}: int
