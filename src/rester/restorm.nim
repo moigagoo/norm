@@ -8,16 +8,27 @@ import objutils, rowutils
 
 
 template pk* {.pragma.}
+  ## Mark field as primary key. The special field ``id`` is mark with ``pk`` by default.
 
 template ro* {.pragma.}
+  ##[ Mark field as read-only.
+
+  Read-only fields are ignored in ``insert`` and ``update`` unless ``force`` is passed.
+
+  Use for fields that are populated automatically by the DB: ids, timestamps, and so on.
+  The special field ``id`` is mark with ``pk`` by default.
+  ]##
 
 template fk*(val: type) {.pragma.}
+  ##[ Mark field as foreign key referencing ``id`` field in another type.
+  ``val`` is the referenced type.
+  ]##
 
 template dbType*(val: string) {.pragma.}
+  ## DB native type to use in table schema.
 
 template table*(val: string) {.pragma.}
-
-template db*(val: DbConn) {.pragma.}
+  ## Set table name.
 
 proc getTable(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
