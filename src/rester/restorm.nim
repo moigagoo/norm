@@ -21,11 +21,14 @@ template ro* {.pragma.}
 
 template fk*(val: untyped) {.pragma.}
   ##[ Mark field as foreign key another type. ``val`` is either a type or a "type.field"
-  expression.
+  expression. If a type is provided, its ``id`` field is referenced.
   ]##
 
 template dbType*(val: string) {.pragma.}
   ## DB native type to use in table schema.
+
+template default*(val: string) {.pragma.}
+  ## Default value for the DB column.
 
 template table*(val: string) {.pragma.}
   ## Set table name.
@@ -64,6 +67,8 @@ proc genColStmt(fieldRepr: FieldRepr): string =
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
+    elif prag.name == "default" and prag.kind == pkKval:
+      result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
       expectKind(prag.value, {nnkIdent, nnkDotExpr})
 
