@@ -2,7 +2,7 @@ import unittest
 
 import times, strutils
 
-import rester / rowutils
+import norm / rowutils
 
 
 suite "Basic object <-> row conversion":
