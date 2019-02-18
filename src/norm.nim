@@ -63,7 +63,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
 
-proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: seq[ObjRepr]): string =
+proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
 
   result.add fieldRepr.signature.name
@@ -92,8 +92,8 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: seq[ObjRepr]): string =
                                                     $prag.value[1]]
       else: ""
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: seq[ObjRepr]): string =
-  ## Generate table schema for a type definition.
+proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
+  ## Generate table schema for an object representation.
 
   result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
 
@@ -105,8 +105,8 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: seq[ObjRepr]): string =
   result.add columns.join(",\n")
   result.add "\n);"
 
-proc genDbSchema(dbObjReprs: seq[ObjRepr]): string =
-  ## Generate DB schema for a list of type sections.
+proc genDbSchema(dbObjReprs: openarray[ObjRepr]): string =
+  ## Generate DB schema for a list of object representations.
 
   var tableSchemas: seq[string]
 
@@ -116,7 +116,7 @@ proc genDbSchema(dbObjReprs: seq[ObjRepr]): string =
   result = tableSchemas.join("\n")
 
 proc genDropTablesStmt(dbObjReprs: seq[ObjRepr]): string =
-  ## Generate ``DROP TABLE`` statements for a list of type sections.
+  ## Generate ``DROP TABLE`` statements for a list of object representations.
 
   var dropTableStmts: seq[string]
 
