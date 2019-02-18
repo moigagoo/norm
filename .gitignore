@@ -1,7 +1,2 @@
-*
-
-!*.nim
-!*.nimble
-
-!*.md
-!LICENSE
+*.exe
+*.html
