@@ -30,6 +30,12 @@ template dbType*(val: string) {.pragma.}
 template default*(val: string) {.pragma.}
   ## Default value for the DB column.
 
+template notNull* {.pragma.}
+  ## Add ``NOT NULL`` constraint.
+
+template check*(val: string) {.pragma.}
+  ## Add a ``CHECK <CONDITION>}`` constraint.
+
 template table*(val: string) {.pragma.}
   ## Set table name.
 
@@ -67,6 +73,10 @@ proc genColStmt(fieldRepr: FieldRepr): string =
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
+    elif prag.name == "notNull" and prag.kind == pkFlag:
+      result.add " NOT NULL"
+    elif prag.name == "check" and prag.kind == pkKval:
+      result.add " CHECK $#" % $prag.value
     elif prag.name == "default" and prag.kind == pkKval:
       result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
