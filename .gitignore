@@ -2,3 +2,6 @@
 
 !*.nim
 !*.nimble
+
+!*.md
+!LICENSE
