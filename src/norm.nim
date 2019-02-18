@@ -295,7 +295,19 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
 
     result.add objRepr.toTypeDef()
 
-macro db*(connection, user, password, database: string, body: untyped): untyped =
+macro db*(backend: untyped, connection, user, password, database: string, body: untyped): untyped =
+  ##[ DB models definition. Models are defined as regular Nim objects in a regular ``type`` section.
+
+  ``backend`` is one of ``db_sqlite`` or ``db_postgres``.
+
+  ``connection``, ``user``, ``password``, ``database`` are the same args accepted
+  by a standard ``dbConn`` instance.
+
+  The macro generates ``withDb`` template that can be used to query the DB.
+
+  Additional pragmas are used to finetune DB and tables.
+  ]##
+
   result = newStmtList()
 
   var
@@ -314,7 +326,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   result.add dbTypeSections
 
 
-db(":memory:", "", "", ""):
+db(db_sqlite, ":memory:", "", "", ""):
   type
     User {.table: "users".} = object
       email: string
