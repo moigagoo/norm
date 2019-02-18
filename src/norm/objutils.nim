@@ -1,4 +1,4 @@
-import macros
+import strutils, macros
 
 
 type
@@ -175,6 +175,13 @@ proc toTypeDef*(obj: ObjRepr): NimNode =
       fieldDefs
     )
   )
+
+proc getByName*[T](reprs: seq[T], name: string): T =
+  for repr in reprs:
+    if repr.signature.name == name:
+      return repr
+
+  raise newException(KeyError, "Repr with name $# not found." % name)
 
 macro `[]`*(obj: object, fieldName: string): untyped =
   ## Access object field value by name: ``obj["field"]`` translates to ``obj.field``.

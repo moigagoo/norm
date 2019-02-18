@@ -1,4 +1,4 @@
-import strutils, strformat, macros
+import strutils, macros
 import typetraits
 import db_sqlite
 
@@ -63,7 +63,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
 
-proc genColStmt(fieldRepr: FieldRepr): string =
+proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: seq[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
 
   result.add fieldRepr.signature.name
@@ -84,59 +84,44 @@ proc genColStmt(fieldRepr: FieldRepr): string =
 
       result.add case prag.value.kind
       of nnkIdent:
-        ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}(id)" % [fieldRepr.signature.name,
-                                                                $prag.value]
+        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.signature.name,
+                                                    dbObjReprs.getByName($prag.value).getTable()]
       of nnkDotExpr:
-        ", FOREIGN KEY ($#) REFERENCES {$#.getTable()}($#)" % [fieldRepr.signature.name,
-                                                                $prag.value[0], $prag.value[1]]
+        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.signature.name,
+                                                    dbObjReprs.getByName($prag.value[0]).getTable(),
+                                                    $prag.value[1]]
       else: ""
 
-proc genTableSchema(typeDef: NimNode): string =
+proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: seq[ObjRepr]): string =
   ## Generate table schema for a type definition.
 
-  expectKind(typeDef, nnkTypeDef)
-
-  let objRepr = typeDef.toObjRepr()
-
-  result.add "CREATE TABLE $# (\n" % objRepr.getTable()
+  result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
 
   var columns: seq[string]
 
-  for field in objRepr.fields:
-    columns.add "\t$#" % genColStmt(field)
+  for field in dbObjRepr.fields:
+    columns.add "\t$#" % genColStmt(field, dbObjReprs)
 
   result.add columns.join(",\n")
   result.add "\n);"
 
-proc genDbSchema(typeSections: NimNode): string =
+proc genDbSchema(dbObjReprs: seq[ObjRepr]): string =
   ## Generate DB schema for a list of type sections.
-
-  expectKind(typeSections, nnkStmtList)
 
   var tableSchemas: seq[string]
 
-  for typeSection in typeSections:
-    for typeDef in typeSection:
-      tableSchemas.add genTableSchema(typeDef)
+  for dbObjRepr in dbObjReprs:
+    tableSchemas.add genTableSchema(dbObjRepr, dbObjReprs)
 
   result = tableSchemas.join("\n")
 
-proc genDropTableStmt(typeDef: NimNode): string =
-  ## Generate a ``DROP TABLE`` statement for a type definition.
-
-  expectKind(typeDef, nnkTypeDef)
-  "DROP TABLE IF EXISTS $#;" % typeDef.toObjRepr().getTable()
-
-proc genDropTablesStmt(typeSections: NimNode): string =
+proc genDropTablesStmt(dbObjReprs: seq[ObjRepr]): string =
   ## Generate ``DROP TABLE`` statements for a list of type sections.
-
-  expectKind(typeSections, nnkStmtList)
 
   var dropTableStmts: seq[string]
 
-  for typeSection in typeSections:
-    for typeDef in typeSection:
-      dropTableStmts.add genDropTableStmt(typeDef)
+  for dbObjRepr in dbObjReprs:
+    dropTableStmts.add "DROP TABLE IF EXISTS $#;" % dbObjRepr.getTable()
 
   result = dropTableStmts.join("\n")
 
@@ -148,7 +133,8 @@ proc getTable(T: type): string =
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: T.name.toLowerAscii()
 
-template genMakeDbTmpl(connection, user, password, database, schema, dropTablesStmt: string,
+template genMakeDbTmpl(connection, user, password, database: string,
+                        schema, dropTablesStmt: string,
                         dbOthers: NimNode): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
@@ -179,9 +165,9 @@ template genMakeDbTmpl(connection, user, password, database, schema, dropTablesS
         if force:
           dropTables()
 
-        debug "Create tables", query = &schema
+        debug "Create tables", query = schema
 
-        dbConn.exec sql &schema
+        dbConn.exec sql schema
 
       template insert(obj: var object, force = false) =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -233,7 +219,7 @@ template genMakeDbTmpl(connection, user, password, database, schema, dropTablesS
         let row = dbConn.getRow(query, params)
 
         if row.isEmpty():
-          raise newException(KeyError, "Record with id=$# doesn't exist." % $id)
+          raise newException(KeyError, "Record with id=$# not found." % $id)
 
         row.to(obj)
 
@@ -312,6 +298,7 @@ macro db*(backend: untyped, connection, user, password, database: string, body: 
 
   var
     dbTypeSections = newStmtList()
+    dbObjReprs: seq[ObjRepr]
     dbOthers = newStmtList()
 
   for node in body:
@@ -320,8 +307,12 @@ macro db*(backend: untyped, connection, user, password, database: string, body: 
     else:
       dbOthers.add node
 
+  for typeSection in dbTypeSections:
+    for typeDef in typeSection:
+      dbObjReprs.add typeDef.toObjRepr()
+
   result.add getAst genMakeDbTmpl(connection, user, password, database,
-                                  genDbSchema(dbTypeSections), genDropTablesStmt(dbTypeSections),
+                                  genDbSchema(dbObjReprs), genDropTablesStmt(dbObjReprs),
                                   dbOthers)
   result.add dbTypeSections
 
@@ -373,3 +364,11 @@ when isMainModule:
       user.update()
       info "Updated user", user = user
       info "Get updated user from db", user = User.getOne(1)
+
+    block:
+      info "Drop tables"
+      dropTables()
+      try:
+        info "Get the first 10 users", users = User.getMany 10
+      except DbError:
+        warn getCurrentExceptionMsg()
