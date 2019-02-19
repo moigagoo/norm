@@ -1,6 +1,6 @@
 import unittest
 
-import os, db_sqlite
+import os, strutils, db_sqlite
 
 import chronicles
 
@@ -27,13 +27,50 @@ suite "Setting up and cleaning up DB":
     withDb:
       createTables(force=true)
 
+      for i in 1..10:
+        var
+          user = User(email: "test-$#@example.com" % $i, age: i*i)
+          book = Book(title: "Book $#" % $i, authorEmail: user.email)
+          edition = Edition(title: "Edition $#" % $i)
+
+        user.insert()
+        book.insert()
+
+        edition.bookId = book.id
+        edition.insert()
+
   teardown:
     withDb:
       dropTables()
 
-  test "Check table creation":
+  test "Table creation":
     withDb:
-      check dbConn.tryExec(sql "SELECT NULL FROM users")
+      check dbConn.tryExec sql "SELECT id, email, age FROM users"
+      check dbConn.tryExec sql "SELECT title, authorEmail FROM books"
+      check dbConn.tryExec sql "SELECT title, bookId FROM editions"
+
+  test "Inserting records":
+    withDb:
+      let
+        users = User.getMany 100
+        books = Book.getMany 100
+        editions = Edition.getMany 100
+
+      check len(users) == 10
+      check len(books) == 10
+      check len(editions) == 10
+
+      check users[3].id == 4
+      check users[3].email == "test-4@example.com"
+      check users[3].age == 16
+
+      check books[5].id == 6
+      check books[5].title == "Book 6"
+      check books[5].authorEmail == users[5].email
+
+      check editions[7].id == 8
+      check editions[7].title == "Edition 8"
+      check editions[7].bookId == books[7].id
 
   removeFile "test.db"
 

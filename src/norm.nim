@@ -4,7 +4,11 @@ import db_sqlite
 
 import chronicles
 
-import norm / [objutils, rowutils]
+import norm / [rowutils, objutils]
+
+
+export macros, rowutils, objutils
+
 
 
 template pk* {.pragma.}
