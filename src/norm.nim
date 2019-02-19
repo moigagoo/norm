@@ -39,7 +39,7 @@ template check*(val: string) {.pragma.}
 template table*(val: string) {.pragma.}
   ## Set table name.
 
-proc getTable(objRepr: ObjRepr): string =
+proc getTable*(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
   ``table`` pragma value if it exists or lowercased type name otherwise.
   ]##
@@ -103,29 +103,21 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string 
     columns.add "\t$#" % genColStmt(field, dbObjReprs)
 
   result.add columns.join(",\n")
-  result.add "\n);"
+  result.add "\n)"
 
-proc genDbSchema(dbObjReprs: openarray[ObjRepr]): string =
+proc genTableSchemas*(dbObjReprs: openarray[ObjRepr]): seq[string] =
   ## Generate DB schema for a list of object representations.
 
-  var tableSchemas: seq[string]
-
   for dbObjRepr in dbObjReprs:
-    tableSchemas.add genTableSchema(dbObjRepr, dbObjReprs)
+    result.add genTableSchema(dbObjRepr, dbObjReprs)
 
-  result = tableSchemas.join("\n")
-
-proc genDropTablesQuery(dbObjReprs: seq[ObjRepr]): string =
+proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
   ## Generate ``DROP TABLE`` statements for a list of object representations.
 
-  var dropTableStmts: seq[string]
-
   for dbObjRepr in dbObjReprs:
-    dropTableStmts.add "DROP TABLE IF EXISTS $#;" % dbObjRepr.getTable()
+    result.add "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
 
-  result = dropTableStmts.join("\n")
-
-proc genInsertQuery(obj: object, force: bool): SqlQuery =
+proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   var fields: seq[string]
 
   for field, _ in obj.fieldPairs:
@@ -135,13 +127,13 @@ proc genInsertQuery(obj: object, force: bool): SqlQuery =
   result = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "),
                                                     '?'.repeat(fields.len).join(", ")]
 
-proc genGetOneQuery(obj: object): SqlQuery =
+proc genGetOneQuery*(obj: object): SqlQuery =
   sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
 
-proc genGetManyQuery(obj: object): SqlQuery =
+proc genGetManyQuery*(obj: object): SqlQuery =
   sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % obj.fieldNames.join(", ")
 
-proc getTable(T: type): string =
+proc getTable*(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
   ]##
@@ -150,7 +142,7 @@ proc getTable(T: type): string =
   else: T.name.toLowerAscii()
 
 template genMakeDbTmpl(connection, user, password, database: string,
-                        schema, dropTablesStmt: string,
+                        tableSchemas, dropTableQueries: openarray[string],
                         dbOthers: NimNode): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
@@ -168,9 +160,9 @@ template genMakeDbTmpl(connection, user, password, database: string,
       template dropTables() =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
-        debug "Drop tables", query = dropTablesStmt
-
-        dbConn.exec sql dropTablesStmt
+        for dropTableQuery in dropTableQueries:
+          debug "Drop table", query = dropTableQuery
+          dbConn.exec sql dropTableQuery
 
       template createTables(force = false) =
         ##[ Create tables for all types in all type sections under ``db`` macro.
@@ -181,9 +173,9 @@ template genMakeDbTmpl(connection, user, password, database: string,
         if force:
           dropTables()
 
-        debug "Create tables", query = schema
-
-        dbConn.exec sql schema
+        for tableSchema in tableSchemas:
+          debug "Create table", query = tableSchema
+          dbConn.exec sql tableSchema
 
       template insert(obj: var object, force = false) =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -321,63 +313,6 @@ macro db*(backend: untyped, connection, user, password, database: string, body: 
       dbObjReprs.add typeDef.toObjRepr()
 
   result.add getAst genMakeDbTmpl(connection, user, password, database,
-                                  genDbSchema(dbObjReprs), genDropTablesQuery(dbObjReprs),
+                                  genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs),
                                   dbOthers)
   result.add dbTypeSections
-
-
-db(db_sqlite, ":memory:", "", "", ""):
-  type
-    User {.table: "users".} = object
-      email: string
-      age: int
-    Book {.table: "books".} = object
-      title: string
-      author {.fk: User.id.}: int
-    Edition {.table: "editions".} = object
-      title: string
-      bookId {.fk: Book.}: int
-
-
-when isMainModule:
-  withDb:
-    block:
-      info "Create tables"
-      createTables(force=true)
-
-      info "Populate tables"
-      for i in 1..10:
-        var user = User(email: "foo-$#@bar.com" % $i, age: i*i)
-        user.insert()
-
-    block:
-      var user = User(email: "qwe@asd.zxc", age: 20)
-      info "Add user", user = user
-      user.insert()
-      info "Get new user from db", user = User.getOne(user.id)
-      info "Delete user"
-      user.delete()
-
-    block:
-      info "Get the first 100 users", users = User.getMany 100
-      info "Get the user with id = 1", user = User.getOne(1)
-      try:
-        info "Get the user with id = 1493", user = User.getOne(1493)
-      except KeyError:
-        warn getCurrentExceptionMsg()
-
-    block:
-      var user = User.getOne(1)
-      info "Update user with id 1", user = user
-      user.age.inc
-      user.update()
-      info "Updated user", user = user
-      info "Get updated user from db", user = User.getOne(1)
-
-    block:
-      info "Drop tables"
-      dropTables()
-      try:
-        info "Get the first 10 users", users = User.getMany 10
-      except DbError:
-        warn getCurrentExceptionMsg()
