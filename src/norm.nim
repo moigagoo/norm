@@ -10,7 +10,6 @@ import norm / [rowutils, objutils]
 export macros, rowutils, objutils
 
 
-
 template pk* {.pragma.}
   ## Mark field as primary key. The special field ``id`` is mark with ``pk`` by default.
 

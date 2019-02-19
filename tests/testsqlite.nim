@@ -43,13 +43,13 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       dropTables()
 
-  test "Table creation":
+  test "Create tables":
     withDb:
       check dbConn.tryExec sql "SELECT id, email, age FROM users"
       check dbConn.tryExec sql "SELECT title, authorEmail FROM books"
       check dbConn.tryExec sql "SELECT title, bookId FROM editions"
 
-  test "Inserting records":
+  test "Create records":
     withDb:
       let
         users = User.getMany 100
@@ -72,7 +72,7 @@ suite "Creating and dropping tables, CRUD":
       check editions[7].title == "Edition 8"
       check editions[7].bookId == books[7].id
 
-  test "Reading records":
+  test "Read records":
     withDb:
       var
         users = User().repeat 10
@@ -108,7 +108,27 @@ suite "Creating and dropping tables, CRUD":
       check book.id == 8
       check edition.id == 8
 
-  test "Deleting records":
+  test "Update records":
+    withDb:
+      var
+        user = User.getOne 2
+        book = Book.getOne 2
+        edition = Edition.getOne 2
+
+      user.email = "new@example.com"
+      book.title = "New Book"
+      edition.title = "New Edition"
+
+      user.update()
+      book.update()
+      edition.update()
+
+    withDb:
+      check User.getOne(2).email == "new@example.com"
+      check Book.getOne(2).title == "New Book"
+      check Edition.getOne(2).title == "New Edition"
+
+  test "Delete records":
     withDb:
       var
         user = User.getOne 2
@@ -128,21 +148,13 @@ suite "Creating and dropping tables, CRUD":
       expect KeyError:
         discard Edition.getOne 2
 
+  test "Drop tables":
+    withDb:
+      dropTables()
+
+      expect DbError:
+        dbConn.exec sql "SELECT NULL FROM users"
+        dbConn.exec sql "SELECT NULL FROM books"
+        dbConn.exec sql "SELECT NULL FROM editions"
+
   removeFile "test.db"
-
-
-#   block:
-#     var user = User.getOne(1)
-#     info "Update user with id 1", user = user
-#     user.age.inc
-#     user.update()
-#     info "Updated user", user = user
-#     info "Get updated user from db", user = User.getOne(1)
-
-#   block:
-#     info "Drop tables"
-#     dropTables()
-#     try:
-#       info "Get the first 10 users", users = User.getMany 10
-#     except DbError:
-#       warn getCurrentExceptionMsg()
