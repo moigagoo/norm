@@ -72,26 +72,28 @@ suite "Setting up and cleaning up DB":
       check editions[7].title == "Edition 8"
       check editions[7].bookId == books[7].id
 
+  test "Deleting records":
+    withDb:
+      var
+        user = User.getOne 2
+        book = Book.getOne 2
+        edition = Edition.getOne 2
+
+      user.delete()
+      book.delete()
+      edition.delete()
+
+      expect KeyError:
+        discard User.getOne 2
+
+      expect KeyError:
+        discard Book.getOne 2
+
+      expect KeyError:
+        discard Edition.getOne 2
+
   removeFile "test.db"
 
-# when isMainModule:
-# withDb:
-#   block:
-#     info "Create tables"
-#     createTables(force=true)
-
-#     info "Populate tables"
-#     for i in 1..10:
-#       var user = User(email: "foo-$#@bar.com" % $i, age: i*i)
-#       user.insert()
-
-#   block:
-#     var user = User(email: "qwe@asd.zxc", age: 20)
-#     info "Add user", user = user
-#     user.insert()
-#     info "Get new user from db", user = User.getOne(user.id)
-#     info "Delete user"
-#     user.delete()
 
 #   block:
 #     info "Get the first 100 users", users = User.getMany 100
