@@ -1,6 +1,6 @@
 import unittest
 
-import os, strutils, db_sqlite
+import os, strutils, sequtils, db_sqlite
 
 import chronicles
 
@@ -22,7 +22,7 @@ db(db_sqlite, testDbFile, "", "", ""):
       title: string
       bookId {.fk: Book.}: int
 
-suite "Setting up and cleaning up DB":
+suite "Creating and dropping tables, CRUD":
   setup:
     withDb:
       createTables(force=true)
@@ -72,6 +72,42 @@ suite "Setting up and cleaning up DB":
       check editions[7].title == "Edition 8"
       check editions[7].bookId == books[7].id
 
+  test "Reading records":
+    withDb:
+      var
+        users = User().repeat 10
+        books = Book().repeat 10
+        editions = Edition().repeat 10
+
+      users.getMany(20, offset=5)
+      books.getMany(20, offset=5)
+      editions.getMany(20, offset=5)
+
+      check len(users) == 5
+      check users[0].id == 6
+      check users[^1].id == 10
+
+      check len(books) == 5
+      check books[0].id == 6
+      check books[^1].id == 10
+
+      check len(editions) == 5
+      check editions[0].id == 6
+      check editions[^1].id == 10
+
+      var
+        user = User()
+        book = Book()
+        edition = Edition()
+
+      user.getOne 8
+      book.getOne 8
+      edition.getOne 8
+
+      check user.id == 8
+      check book.id == 8
+      check edition.id == 8
+
   test "Deleting records":
     withDb:
       var
@@ -94,14 +130,6 @@ suite "Setting up and cleaning up DB":
 
   removeFile "test.db"
 
-
-#   block:
-#     info "Get the first 100 users", users = User.getMany 100
-#     info "Get the user with id = 1", user = User.getOne(1)
-#     try:
-#       info "Get the user with id = 1493", user = User.getOne(1493)
-#     except KeyError:
-#       warn getCurrentExceptionMsg()
 
 #   block:
 #     var user = User.getOne(1)
