@@ -125,6 +125,16 @@ proc genDropTablesQuery(dbObjReprs: seq[ObjRepr]): string =
 
   result = dropTableStmts.join("\n")
 
+proc genInsertQuery(obj: object, force: bool): SqlQuery =
+  var fields: seq[string]
+
+  for field, _ in obj.fieldPairs:
+    if force or not obj[field].hasCustomPragma(ro):
+      fields.add field
+
+  result = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "),
+                                                    '?'.repeat(fields.len).join(", ")]
+
 proc genGetOneQuery(obj: object): SqlQuery =
   sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
 
@@ -182,19 +192,13 @@ template genMakeDbTmpl(connection, user, password, database: string,
         By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
         ]##
 
-        var fields, values: seq[string]
+        var values: seq[string]
 
-        for field, value in obj.fieldPairs:
-          when force or not obj[field].hasCustomPragma(ro):
-            fields.add field
+        for _, value in obj.fieldPairs:
+          when force or not obj[_].hasCustomPragma(ro):
             values.add $value
 
-        let
-          placeholders = '?'.repeat(fields.len).join(", ")
-          query = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "), placeholders]
-          params = type(obj).getTable() & values
-
-        obj.id = dbConn.insertID(query, params).int
+        obj.id = dbConn.insertID(genInsertQuery(obj, force), type(obj).getTable() & values).int
 
       template update(obj: object, force = false) =
         ##[ Update DB record with object field values.
