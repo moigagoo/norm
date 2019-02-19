@@ -115,7 +115,7 @@ proc genDbSchema(dbObjReprs: openarray[ObjRepr]): string =
 
   result = tableSchemas.join("\n")
 
-proc genDropTablesStmt(dbObjReprs: seq[ObjRepr]): string =
+proc genDropTablesQuery(dbObjReprs: seq[ObjRepr]): string =
   ## Generate ``DROP TABLE`` statements for a list of object representations.
 
   var dropTableStmts: seq[string]
@@ -124,6 +124,12 @@ proc genDropTablesStmt(dbObjReprs: seq[ObjRepr]): string =
     dropTableStmts.add "DROP TABLE IF EXISTS $#;" % dbObjRepr.getTable()
 
   result = dropTableStmts.join("\n")
+
+proc genGetOneQuery(obj: object): SqlQuery =
+  sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
+
+proc genGetManyQuery(obj: object): SqlQuery =
+  sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % obj.fieldNames.join(", ")
 
 proc getTable(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
@@ -213,18 +219,18 @@ template genMakeDbTmpl(connection, user, password, database: string,
         ## Read a record from DB and store it into an existing object instance.
 
         let
-          query = sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
           params = [type(obj).getTable(), $id]
-
-        let row = dbConn.getRow(query, params)
+          row = dbConn.getRow(genGetOneQuery(obj), params)
 
         if row.isEmpty():
           raise newException(KeyError, "Record with id=$# not found." % $id)
 
         row.to(obj)
 
-      proc getOne(T: type, id: int): T = result.getOne(id)
+      proc getOne(T: type, id: int): T =
         ## Read a record from DB into a new object instance.
+
+        result.getOne(id)
 
       proc getMany(objs: var seq[object], limit: int,  offset = 0) =
         ## Read ``limit`` records from DB into an existing open array of objects with ``offset``.
@@ -232,9 +238,8 @@ template genMakeDbTmpl(connection, user, password, database: string,
         if len(objs) == 0: return
 
         let
-          query = sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % objs[0].fieldNames.join(", ")
           params = [type(objs[0]).getTable(), $min(limit, len(objs)), $offset]
-          rows = dbConn.getAllRows(query, params)
+          rows = dbConn.getAllRows(genGetManyQuery(objs[0]), params)
 
         rows.to(objs)
 
@@ -312,7 +317,7 @@ macro db*(backend: untyped, connection, user, password, database: string, body: 
       dbObjReprs.add typeDef.toObjRepr()
 
   result.add getAst genMakeDbTmpl(connection, user, password, database,
-                                  genDbSchema(dbObjReprs), genDropTablesStmt(dbObjReprs),
+                                  genDbSchema(dbObjReprs), genDropTablesQuery(dbObjReprs),
                                   dbOthers)
   result.add dbTypeSections
 
