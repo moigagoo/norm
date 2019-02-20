@@ -1273,8 +1273,8 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#17" id="67">Macros</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#db.m%2Cuntyped%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped"
-    title="db(backend: untyped; connection, user, password, database: string; body: untyped): untyped"><wbr />db<span class="attachedType" style="visibility:hidden"></span></a></li>
+      <li><a class="reference" href="#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped"
+    title="db(connection, user, password, database: string; body: untyped): untyped"><wbr />db<span class="attachedType" style="visibility:hidden"></span></a></li>
 
   </ul>
 </li>
@@ -1343,19 +1343,19 @@ Generate <tt class="docutils literal"><span class="pre">DROP TABLE</span></tt> q
 <a id="genInsertQuery,,bool"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">genInsertQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">force</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
-
+Generate <tt class="docutils literal"><span class="pre">INSERT</span></tt> query for an object.
 
 </dd>
 <a id="genGetOneQuery,"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetOneQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
-
+Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query to fetch a single record for an object.
 
 </dd>
 <a id="genGetManyQuery,"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetManyQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
-
+Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query to fetch multiple records for an object.
 
 </dd>
 <a id="getTable,type"></a>
@@ -1369,14 +1369,12 @@ Get the name of the DB table for the given type: <tt class="docutils literal"><s
 <div class="section" id="17">
 <h1><a class="toc-backref" href="#17">Macros</a></h1>
 <dl class="item">
-<a id="db.m,untyped,string,string,string,string,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <span class="Identifier">db</span><span class="Other">(</span><span class="Identifier">backend</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">;</span> <span class="Identifier">connection</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">database</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<a id="db.m,string,string,string,string,untyped"></a>
+<dt><pre><span class="Keyword">macro</span> <span class="Identifier">db</span><span class="Other">(</span><span class="Identifier">connection</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">database</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
-<p>DB models definition. Models are defined as regular Nim objects in a regular <tt class="docutils literal"><span class="pre">type</span></tt> section.</p>
-<p><tt class="docutils literal"><span class="pre">backend</span></tt> is one of <tt class="docutils literal"><span class="pre">db_sqlite</span></tt> or <tt class="docutils literal"><span class="pre">db_postgres</span></tt>.</p>
+<p>DB models definition. Models are defined as regular Nim objects in regular <tt class="docutils literal"><span class="pre">type</span></tt> sections.</p>
 <p><tt class="docutils literal"><span class="pre">connection</span></tt>, <tt class="docutils literal"><span class="pre">user</span></tt>, <tt class="docutils literal"><span class="pre">password</span></tt>, <tt class="docutils literal"><span class="pre">database</span></tt> are the same args accepted by a standard <tt class="docutils literal"><span class="pre">dbConn</span></tt> instance.</p>
-<p>The macro generates <tt class="docutils literal"><span class="pre">withDb</span></tt> template that can be used to query the DB.</p>
-<p>Additional pragmas are used to finetune DB and tables. </p>
+<p>The macro generates <tt class="docutils literal"><span class="pre">withDb</span></tt> template that wraps all DB interations. </p>
 
 
 </dd>
@@ -1446,7 +1444,7 @@ Set table name.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-20 07:30:53 UTC</small>
+        <small>Made with Nim. Generated: 2019-02-20 07:38:50 UTC</small>
       </div>
     </div>
   </div>
