@@ -166,6 +166,22 @@ proc genGetManyQuery*(obj: object): SqlQuery =
 
   sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % obj.fieldNames.join(", ")
 
+proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
+  ## Generate ``UPDATE`` query for an object.
+
+  var fieldsWithPlaceholders: seq[string]
+
+  for field, value in obj.fieldPairs:
+    if force or not obj[field].hasCustomPragma(ro):
+      fieldsWithPlaceholders.add field & " = ?"
+
+  result = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
+
+proc genDeleteQuery*(obj: object): SqlQuery =
+  ## Generate ``DELETE`` query for an object.
+
+  sql "DELETE FROM ? WHERE id = ?"
+
 proc getTable*(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
@@ -225,25 +241,6 @@ template genMakeDbTmpl(connection, user, password, database: string,
 
         obj.id = dbConn.insertID(genInsertQuery(obj, force), type(obj).getTable() & values).int
 
-      template update(obj: object, force = false) =
-        ##[ Update DB record with object field values.
-
-        By default, readonly fields are not updated. Use ``force=true`` to update all fields.
-        ]##
-
-        var fieldsWithPlaceholders, values: seq[string]
-
-        for field, value in obj.fieldPairs:
-          when force or not obj[field].hasCustomPragma(ro):
-            fieldsWithPlaceholders.add field & " = ?"
-            values.add $value
-
-        let
-          query = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
-          params = type(obj).getTable() & values & $obj.id
-
-        dbConn.exec(query, params)
-
       template getOne(obj: var object, id: int) =
         ## Read a record from DB and store it into an existing object instance.
 
@@ -280,10 +277,24 @@ template genMakeDbTmpl(connection, user, password, database: string,
         result.setLen limit
         result.getMany(limit, offset)
 
+      template update(obj: object, force = false) =
+        ##[ Update DB record with object field values.
+
+        By default, readonly fields are not updated. Use ``force=true`` to update all fields.
+        ]##
+
+        var values: seq[string]
+
+        for _, value in obj.fieldPairs:
+          when force or not obj[_].hasCustomPragma(ro):
+            values.add $value
+
+        dbConn.exec(getUpdateQuery(obj, force), type(obj).getTable() & values & $obj.id)
+
       template delete(obj: var object) =
         ## Delete a record in DB by object's id. The id is set to 0 after the deletion.
 
-        dbConn.exec(sql"DELETE FROM ? WHERE id = ?", type(obj).getTable(), obj.id)
+        dbConn.exec(genDeleteQuery(obj), type(obj).getTable(), obj.id)
         obj.id = 0
 
       dbOthers
