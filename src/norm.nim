@@ -351,6 +351,8 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       ## Use custom DB proc defined in ``db`` block:
       doAssert getUsersByEmail("hello@norm.nim") == @[user]
 
+      dropTables()
+
   result = newStmtList()
 
   var
