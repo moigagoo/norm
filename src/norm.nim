@@ -37,7 +37,7 @@ template notNull* {.pragma.}
   ## Add ``NOT NULL`` constraint.
 
 template check*(val: string) {.pragma.}
-  ## Add a ``CHECK <CONDITION>}`` constraint.
+  ## Add a ``CHECK <CONDITION>`` constraint.
 
 template table*(val: string) {.pragma.}
   ## Set table name.
