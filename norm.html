@@ -1390,16 +1390,19 @@ Get the name of the DB table for the given type: <tt class="docutils literal"><s
       <span class="Identifier">title</span><span class="Other">:</span> <span class="Identifier">string</span>
       <span class="Identifier">author</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">fk</span><span class="Other">:</span> <span class="Identifier">User</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
 
+  <span class="Comment">## Define custom DB procs:</span>
   <span class="Keyword">proc</span> <span class="Identifier">getUsersByEmail</span><span class="Other">(</span><span class="Identifier">email</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">User</span><span class="Other">]</span> <span class="Other">=</span>
     <span class="Identifier">dbConn</span><span class="Other">.</span><span class="Identifier">getAllRows</span><span class="Other">(</span><span class="Identifier">sql</span> <span class="StringLit">&quot;SELECT id, email, age FROM users WHERE email = ?&quot;</span><span class="Other">,</span>
                       <span class="Identifier">email</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">to</span> <span class="Identifier">User</span>
 
 <span class="Identifier">withDb</span><span class="Other">:</span>
   <span class="Identifier">createTables</span><span class="Other">(</span><span class="Other">)</span>
+  <span class="Comment">## Instantiate an object and insert it as a record:</span>
   <span class="Keyword">var</span> <span class="Identifier">user</span> <span class="Other">=</span> <span class="Identifier">User</span><span class="Other">(</span><span class="Identifier">email</span><span class="Other">:</span> <span class="StringLit">&quot;hello@norm.nim&quot;</span><span class="Other">,</span> <span class="Identifier">age</span><span class="Other">:</span> <span class="DecNumber">30</span><span class="Other">)</span>
   <span class="Identifier">user</span><span class="Other">.</span><span class="Identifier">insert</span><span class="Other">(</span><span class="Other">)</span>
   <span class="Comment">## Retrieve the newly created record as an object:</span>
   <span class="Identifier">doAssert</span> <span class="Identifier">User</span><span class="Other">.</span><span class="Identifier">getOne</span><span class="Other">(</span><span class="Identifier">user</span><span class="Other">.</span><span class="Identifier">id</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">email</span> <span class="Operator">==</span> <span class="StringLit">&quot;hello@norm.nim&quot;</span>
+  <span class="Comment">## Use custom DB proc defined in ``db`` block:</span>
   <span class="Identifier">doAssert</span> <span class="Identifier">getUsersByEmail</span><span class="Other">(</span><span class="StringLit">&quot;hello@norm.nim&quot;</span><span class="Other">)</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="Identifier">user</span><span class="Other">]</span></pre>
 
 </dd>
@@ -1469,7 +1472,7 @@ Set table name. Lowercased type name is used when unset.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-20 07:58:45 UTC</small>
+        <small>Made with Nim. Generated: 2019-02-20 08:00:45 UTC</small>
       </div>
     </div>
   </div>
