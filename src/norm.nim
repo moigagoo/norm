@@ -177,11 +177,6 @@ proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
 
   result = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
 
-proc genDeleteQuery*(obj: object): SqlQuery =
-  ## Generate ``DELETE`` query for an object.
-
-  sql "DELETE FROM ? WHERE id = ?"
-
 proc getTable*(T: type): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
@@ -326,7 +321,7 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
 
     result.add objRepr.toTypeDef()
 
-macro db*(connection, user, password, database: string, body: untyped): untyped =
+macro db*(backend: untyped, connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
 
   ``connection``, ``user``, ``password``, ``database`` are the same args accepted
@@ -338,7 +333,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   runnableExamples:
     import db_sqlite
 
-    db(":memory:", "", "", ""):
+    db(sqlite, ":memory:", "", "", ""):
       type
         User {.table: "users".} = object
           email: string
@@ -367,6 +362,9 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       dropTables()
 
   result = newStmtList()
+
+  result.add quote do:
+    include norm / backends / `backend`
 
   var
     dbTypeSections = newStmtList()

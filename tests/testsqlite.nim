@@ -5,10 +5,7 @@ import os, strutils, sequtils, db_sqlite
 import norm
 
 
-const testDbFile = "test.db"
-
-
-db(testDbFile, "", "", ""):
+db(sqlite, "test.db", "", "", ""):
   type
     User {.table: "users".} = object
       email: string
