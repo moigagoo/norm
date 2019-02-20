@@ -16,4 +16,4 @@ requires "nim >= 0.19.4", "chronicles"
 
 task docs, "Generate and upload API docs":
   exec "nim doc --project src/norm.nim"
-  exec "ghp-import -np src"
+  exec "ghp-import -np src/htmldocs"
