@@ -2,8 +2,7 @@
 Norm, a Nim ORM
 ###############
 
-Norm is an ORM for Nim that doesn't try to outsmart you. It lubricates the boring parts of working
-with DB but won't try to solve complex problems that are best solved by humans anyway.
+Norm is an ORM for Nim that doesn't try to outsmart you. While lubricating the boring parts of working with DB, it won't try to solve complex problems that are best solved by humans anyway.
 
 To use Norm, you need to learn just a few concepts:
 
