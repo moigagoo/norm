@@ -10,7 +10,7 @@ import norm
 const testDbFile = "test.db"
 
 
-db(db_sqlite, testDbFile, "", "", ""):
+db(testDbFile, "", "", ""):
   type
     User {.table: "users".} = object
       email: string

@@ -121,6 +121,8 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
     result.add "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
+  ## Generate ``INSERT`` query for an object.
+
   var fields: seq[string]
 
   for field, _ in obj.fieldPairs:
@@ -131,9 +133,13 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
                                                     '?'.repeat(fields.len).join(", ")]
 
 proc genGetOneQuery*(obj: object): SqlQuery =
+  ## Generate ``SELECT`` query to fetch a single record for an object.
+
   sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
 
 proc genGetManyQuery*(obj: object): SqlQuery =
+  ## Generate ``SELECT`` query to fetch multiple records for an object.
+
   sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % obj.fieldNames.join(", ")
 
 proc getTable*(T: type): string =
@@ -285,17 +291,13 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
 
     result.add objRepr.toTypeDef()
 
-macro db*(backend: untyped, connection, user, password, database: string, body: untyped): untyped =
-  ##[ DB models definition. Models are defined as regular Nim objects in a regular ``type`` section.
-
-  ``backend`` is one of ``db_sqlite`` or ``db_postgres``.
+macro db*(connection, user, password, database: string, body: untyped): untyped =
+  ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
 
   ``connection``, ``user``, ``password``, ``database`` are the same args accepted
   by a standard ``dbConn`` instance.
 
-  The macro generates ``withDb`` template that can be used to query the DB.
-
-  Additional pragmas are used to finetune DB and tables.
+  The macro generates ``withDb`` template that wraps all DB interations.
   ]##
 
   result = newStmtList()
