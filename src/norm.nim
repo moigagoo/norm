@@ -314,21 +314,22 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
           title: string
           author {.fk: User.}: string
 
-      # # Define custom DB procs:
-      # proc getUsersByEmail(email: string): seq[User] =
-      #   dbConn.getAllRows(sql "SELECT id, email, age FROM users WHERE email = ?", email).to User
+      ## Define custom DB procs:
+      proc getUsersByEmail(email: string): seq[User] =
+        dbConn.getAllRows(sql "SELECT id, email, age FROM users WHERE email = ?", email).to User
 
     withDb:
       createTables()
 
-      # Instantiate an object and insert it as a record:
+      ## Instantiate an object and insert it as a record:
       var user = User(email: "hello@norm.nim", age: 30)
       user.insert()
 
-      # Retrieve the newly created record as an object:
+      ## Retrieve the newly created record as an object:
       doAssert User.getOne(user.id).email == "hello@norm.nim"
 
-      # doAssert getUsersByEmail("hello@norm.nim") == @[user]
+      ## Use custom DB proc defined in ``db`` block:
+      doAssert getUsersByEmail("hello@norm.nim") == @[user]
 
   result = newStmtList()
 
