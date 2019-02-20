@@ -13,7 +13,7 @@ To use Norm, you need to learn just a few concepts:
 - to finetune the model, add pragmas to objects and fields
 - to work with the DB, use ``withDB`` block
 - for CRUD, use the predefined ``insert``, ``getOne``, ``getMany``, ``update``,
-``delete`` procs
+and ``delete`` procs
 - to create tables, call ``createTables``, to drop tables call ``dropTables``
 ]##
 

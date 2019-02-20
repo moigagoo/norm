@@ -1,3 +1,0 @@
-# Norm: Nim ORM
-
-
