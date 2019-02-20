@@ -2,8 +2,6 @@ import unittest
 
 import os, strutils, sequtils, db_sqlite
 
-import chronicles
-
 import norm
 
 
