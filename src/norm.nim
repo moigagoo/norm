@@ -7,7 +7,9 @@ import chronicles
 import norm / [rowutils, objutils]
 
 
-export macros, rowutils, objutils
+export strutils, macros
+export chronicles
+export rowutils, objutils
 
 
 template pk* {.pragma.}
@@ -40,7 +42,7 @@ template check*(val: string) {.pragma.}
   ## Add a ``CHECK <CONDITION>`` constraint.
 
 template table*(val: string) {.pragma.}
-  ## Set table name.
+  ## Set table name. Lowercased type name is used when unset.
 
 proc getTable*(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
@@ -155,7 +157,7 @@ template genMakeDbTmpl(connection, user, password, database: string,
                         dbOthers: NimNode): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
-  template withDb*(body: untyped): untyped {.dirty.} =
+  template withDb(body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
     as well as ``createTables`` and ``dropTables`` procs.
 
@@ -299,6 +301,34 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   The macro generates ``withDb`` template that wraps all DB interations.
   ]##
+
+  runnableExamples:
+    import db_sqlite
+
+    db(":memory:", "", "", ""):
+      type
+        User {.table: "users".} = object
+          email: string
+          age: int
+        Book {.table: "books".} = object
+          title: string
+          author {.fk: User.}: string
+
+      # # Define custom DB procs:
+      # proc getUsersByEmail(email: string): seq[User] =
+      #   dbConn.getAllRows(sql "SELECT id, email, age FROM users WHERE email = ?", email).to User
+
+    withDb:
+      createTables()
+
+      # Instantiate an object and insert it as a record:
+      var user = User(email: "hello@norm.nim", age: 30)
+      user.insert()
+
+      # Retrieve the newly created record as an object:
+      doAssert User.getOne(user.id).email == "hello@norm.nim"
+
+      # doAssert getUsersByEmail("hello@norm.nim") == @[user]
 
   result = newStmtList()
 
