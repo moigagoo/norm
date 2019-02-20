@@ -1265,6 +1265,10 @@ function main() {
     title="genGetOneQuery(obj: object): SqlQuery"><wbr />gen<wbr />Get<wbr />One<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#genGetManyQuery%2C"
     title="genGetManyQuery(obj: object): SqlQuery"><wbr />gen<wbr />Get<wbr />Many<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#getUpdateQuery%2C%2Cbool"
+    title="getUpdateQuery(obj: object; force: bool): SqlQuery"><wbr />get<wbr />Update<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#genDeleteQuery%2C"
+    title="genDeleteQuery(obj: object): SqlQuery"><wbr />gen<wbr />Delete<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getTable%2Ctype"
     title="getTable(T: type): string"><wbr />get<wbr />Table<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1367,6 +1371,18 @@ Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetManyQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
 Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query to fetch multiple records for an object.
+
+</dd>
+<a id="getUpdateQuery,,bool"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">getUpdateQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">force</span><span class="Other">:</span> <span class="Identifier">bool</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<dd>
+Generate <tt class="docutils literal"><span class="pre">UPDATE</span></tt> query for an object.
+
+</dd>
+<a id="genDeleteQuery,"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genDeleteQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<dd>
+Generate <tt class="docutils literal"><span class="pre">DELETE</span></tt> query for an object.
 
 </dd>
 <a id="getTable,type"></a>
@@ -1484,7 +1500,7 @@ Set table name. Lowercased type name is used when unset.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-20 08:32:57 UTC</small>
+        <small>Made with Nim. Generated: 2019-02-20 18:16:17 UTC</small>
       </div>
     </div>
   </div>
