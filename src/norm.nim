@@ -152,6 +152,44 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
   for dbObjRepr in dbObjReprs:
     result.add "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
 
+proc genInsertQuery*(obj: object, force: bool): SqlQuery =
+  ## Generate ``INSERT`` query for an object.
+
+  var fields: seq[string]
+
+  for field, _ in obj.fieldPairs:
+    if force or not obj[field].hasCustomPragma(ro):
+      fields.add field
+
+  result = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "),
+                                                    '?'.repeat(fields.len).join(", ")]
+
+proc genGetOneQuery*(obj: object): SqlQuery =
+  ## Generate ``SELECT`` query to fetch a single record for an object.
+
+  sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
+
+proc genGetManyQuery*(obj: object): SqlQuery =
+  ## Generate ``SELECT`` query to fetch multiple records for an object.
+
+  sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % obj.fieldNames.join(", ")
+
+proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
+  ## Generate ``UPDATE`` query for an object.
+
+  var fieldsWithPlaceholders: seq[string]
+
+  for field, value in obj.fieldPairs:
+    if force or not obj[field].hasCustomPragma(ro):
+      fieldsWithPlaceholders.add field & " = ?"
+
+  result = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
+
+proc genDeleteQuery*(obj: object): SqlQuery =
+  ## Generate ``DELETE`` query for an object.
+
+  sql "DELETE FROM ? WHERE id = ?"
+
 template genMakeDbTmpl(connection, user, password, database: string,
                         tableSchemas, dropTableQueries: openarray[string],
                         dbOthers: NimNode): untyped {.dirty.} =
@@ -329,9 +367,6 @@ macro db*(backend: untyped, connection, user, password, database: string, body: 
       dropTables()
 
   result = newStmtList()
-
-  result.add quote do:
-    include norm / backends / `backend`
 
   var
     dbTypeSections = newStmtList()
