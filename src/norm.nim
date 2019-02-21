@@ -77,6 +77,14 @@ proc getTable*(objRepr: ObjRepr): string =
     if prag.name == "table" and prag.kind == pkKval:
       return $prag.value
 
+proc getTable*(T: type): string =
+  ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
+  or lowercased type name otherwise.
+  ]##
+
+  when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
+  else: T.name.toLowerAscii()
+
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
@@ -143,47 +151,6 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
 
   for dbObjRepr in dbObjReprs:
     result.add "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
-
-proc genInsertQuery*(obj: object, force: bool): SqlQuery =
-  ## Generate ``INSERT`` query for an object.
-
-  var fields: seq[string]
-
-  for field, _ in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      fields.add field
-
-  result = sql "INSERT INTO ? ($#) VALUES ($#)" % [fields.join(", "),
-                                                    '?'.repeat(fields.len).join(", ")]
-
-proc genGetOneQuery*(obj: object): SqlQuery =
-  ## Generate ``SELECT`` query to fetch a single record for an object.
-
-  sql "SELECT $# FROM ? WHERE id = ?" % obj.fieldNames.join(", ")
-
-proc genGetManyQuery*(obj: object): SqlQuery =
-  ## Generate ``SELECT`` query to fetch multiple records for an object.
-
-  sql "SELECT $# FROM ? LIMIT ? OFFSET ?" % obj.fieldNames.join(", ")
-
-proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
-  ## Generate ``UPDATE`` query for an object.
-
-  var fieldsWithPlaceholders: seq[string]
-
-  for field, value in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      fieldsWithPlaceholders.add field & " = ?"
-
-  result = sql "UPDATE ? SET $# WHERE id = ?" % fieldsWithPlaceholders.join(", ")
-
-proc getTable*(T: type): string =
-  ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
-  or lowercased type name otherwise.
-  ]##
-
-  when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
-  else: T.name.toLowerAscii()
 
 template genMakeDbTmpl(connection, user, password, database: string,
                         tableSchemas, dropTableQueries: openarray[string],
