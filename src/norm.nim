@@ -190,7 +190,7 @@ proc genDeleteQuery*(obj: object): SqlQuery =
 
   sql "DELETE FROM ? WHERE id = ?"
 
-template genMakeDbTmpl(connection, user, password, database: string,
+template genWithDb(connection, user, password, database: string,
                         tableSchemas, dropTableQueries: openarray[string],
                         dbOthers: NimNode): untyped {.dirty.} =
   ## Generate ``withDb`` template.
@@ -383,7 +383,7 @@ macro db*(backend: untyped, connection, user, password, database: string, body: 
     for typeDef in typeSection:
       dbObjReprs.add typeDef.toObjRepr()
 
-  result.add getAst genMakeDbTmpl(connection, user, password, database,
-                                  genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs),
-                                  dbOthers)
+  result.add getAst genWithDb(connection, user, password, database,
+                              genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs),
+                              dbOthers)
   result.add dbTypeSections
