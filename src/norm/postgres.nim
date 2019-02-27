@@ -1,15 +1,15 @@
 ##[
 
-##############
-SQLite Backend
-##############
+##################
+PostgreSQL Backend
+##################
 
 ]##
 
 
 import strutils, macros
 import typetraits
-import db_sqlite
+import db_postgres
 
 import chronicles
 
@@ -17,7 +17,7 @@ import rowutils, objutils, pragmas
 
 
 export strutils, macros
-export db_sqlite
+export db_postgres
 export chronicles
 export rowutils, objutils, pragmas
 
@@ -290,37 +290,6 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   The macro generates ``withDb`` template that wraps all DB interations.
   ]##
-
-  runnableExamples:
-    import db_sqlite
-
-    db(":memory:", "", "", ""):
-      type
-        User {.table: "users".} = object
-          email: string
-          age: int
-        Book {.table: "books".} = object
-          title: string
-          author {.fk: User.}: string
-
-      ## Define custom DB procs:
-      proc getUsersByEmail(email: string): seq[User] =
-        dbConn.getAllRows(sql "SELECT id, email, age FROM users WHERE email = ?", email).to User
-
-    withDb:
-      createTables()
-
-      ## Instantiate an object and insert it as a record:
-      var user = User(email: "hello@norm.nim", age: 30)
-      user.insert()
-
-      ## Retrieve the newly created record as an object:
-      doAssert User.getOne(user.id).email == "hello@norm.nim"
-
-      ## Use custom DB proc defined in ``db`` block:
-      doAssert getUsersByEmail("hello@norm.nim") == @[user]
-
-      dropTables()
 
   result = newStmtList()
 

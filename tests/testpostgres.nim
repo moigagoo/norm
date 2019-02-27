@@ -2,10 +2,10 @@ import unittest
 
 import os, strutils, sequtils
 
-import norm / sqlite
+import norm / postgres
 
 
-db("test.db", "", "", ""):
+db("db", "postgres", "", "postgres"):
   type
     User {.table: "users".} = object
       email: string
