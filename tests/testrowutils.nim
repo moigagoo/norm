@@ -1,7 +1,5 @@
 import unittest
-
 import times, strutils
-
 import norm / rowutils
 
 
@@ -28,7 +26,6 @@ suite "Basic object <-> row conversion":
   test "Row -> object -> row":
     check row.to(SimpleUser).toRow() == row
 
-
 suite "Conversion with custom parser and formatter expressions":
   type
     UserDatetimeAsString = object
@@ -37,12 +34,12 @@ suite "Conversion with custom parser and formatter expressions":
       height: float
       createdAt {.
         formatIt: it.format("yyyy-MM-dd HH:mm:sszzz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz")
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56+04:00"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz")
+    datetimeString = "2019-01-30 12:34:56Z"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
     user = UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
     row = @["Alice", "23", "168.2", datetimeString]
 
@@ -63,7 +60,6 @@ suite "Conversion with custom parser and formatter expressions":
   test "Row -> object -> row":
     row.to(tmpUser)
     check tmpUser.toRow() == row
-
 
 suite "Conversion with custom parser and formatter procs":
   proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
@@ -100,7 +96,6 @@ suite "Conversion with custom parser and formatter procs":
     row.to(tmpUser)
     check tmpUser.toRow() == row
 
-
 suite "Basic bulk object <-> row conversion":
   type
     SimpleUser = object
@@ -132,7 +127,6 @@ suite "Basic bulk object <-> row conversion":
   test "Rows -> objects -> rows":
     check rows.to(SimpleUser).toRows() == rows
 
-
 suite "Bulk conversion with custom parser and formatter expressions":
   type
     UserDatetimeAsString = object
@@ -141,12 +135,12 @@ suite "Bulk conversion with custom parser and formatter expressions":
       height: float
       createdAt {.
         formatIt: it.format("yyyy-MM-dd HH:mm:sszzz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz")
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56+04:00"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz")
+    datetimeString = "2019-01-30 12:34:56Z"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
     users = @[
       UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime),
       UserDatetimeAsString(name: "Bob", age: 34, height: 172.5, createdAt: datetime),
@@ -165,7 +159,6 @@ suite "Bulk conversion with custom parser and formatter expressions":
       UserDatetimeAsString(createdAt: now())
     ]
 
-
   test "Objects -> rows":
     check users.toRows() == rows
 
@@ -180,7 +173,6 @@ suite "Bulk conversion with custom parser and formatter expressions":
   test "Rows -> objects -> rows":
     rows.to(tmpUsers)
     check tmpUsers.toRows() == rows
-
 
 suite "Bulk conversion with custom parser and formatter procs":
   proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
@@ -248,7 +240,6 @@ suite "Bulk conversion with custom parser and formatter procs":
   test "Rows -> objects -> rows":
     rows.to(tmpUsers)
     check tmpUsers.toRows() == rows
-
 
 suite "Utils":
   test "Empty row check":
