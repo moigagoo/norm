@@ -36,5 +36,14 @@ template notNull* {.pragma.}
 template check*(val: string) {.pragma.}
   ## Add a ``CHECK <CONDITION>`` constraint.
 
+template unique* {.pragma.}
+## Add a ``UNIQUE`` constraint.
+
+template onDelete*(val: string) {.pragma.}
+  ## Add an ``ON DELETE <POLICY>`` constraint.
+
+template onUpdate*(val: string) {.pragma.}
+## Add an ``ON UPDATE <POLICY>`` constraint.
+
 template table*(val: string) {.pragma.}
   ## Set table name. Lowercased type name is used when unset.
