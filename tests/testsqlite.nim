@@ -2,10 +2,10 @@ import unittest
 
 import os, strutils, sequtils, db_sqlite
 
-import norm
+import norm / sqlite
 
 
-db(sqlite, "test.db", "", "", ""):
+db("test.db", "", "", ""):
   type
     User {.table: "users".} = object
       email: string
