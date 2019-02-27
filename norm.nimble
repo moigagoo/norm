@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "1.0.0"
 author        = "Constantine Molchanov"
 description   = "Nim ORM."
 license       = "MIT"
