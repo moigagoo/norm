@@ -8,14 +8,14 @@ import norm / postgres
 db("db", "postgres", "", "postgres"):
   type
     User {.table: "users".} = object
-      email: string
+      email {.unique.}: string
       age: int
     Book {.table: "books".} = object
       title: string
-      authorEmail {.fk: User.email.}: string
+      authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
     Edition {.table: "editions".} = object
       title: string
-      bookId {.fk: Book.}: int
+      bookId {.fk: Book, onDelete: "CASCADE".}: int
 
 suite "Creating and dropping tables, CRUD":
   setup:
@@ -40,9 +40,11 @@ suite "Creating and dropping tables, CRUD":
 
   test "Create tables":
     withDb:
-      check dbConn.tryExec sql "SELECT id, email, age FROM users"
-      check dbConn.tryExec sql "SELECT title, authorEmail FROM books"
-      check dbConn.tryExec sql "SELECT title, bookId FROM editions"
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+
+      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["age"]]
+      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"]]
+      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
 
   test "Create records":
     withDb:
@@ -110,7 +112,7 @@ suite "Creating and dropping tables, CRUD":
         book = Book.getOne 2
         edition = Edition.getOne 2
 
-      user.email = "new@example.com"
+      user.age = 23
       book.title = "New Book"
       edition.title = "New Edition"
 
@@ -119,7 +121,7 @@ suite "Creating and dropping tables, CRUD":
       edition.update()
 
     withDb:
-      check User.getOne(2).email == "new@example.com"
+      check User.getOne(2).age == 23
       check Book.getOne(2).title == "New Book"
       check Edition.getOne(2).title == "New Edition"
 
@@ -151,5 +153,3 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM users"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
-
-  removeFile "test.db"
