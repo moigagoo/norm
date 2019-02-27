@@ -1255,6 +1255,12 @@ function main() {
     title="notNull()"><wbr />not<wbr />Null<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#check.t%2Cstring"
     title="check(val: string)"><wbr />check<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#unique.t%2C"
+    title="unique()"><wbr />unique<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#onDelete.t%2Cstring"
+    title="onDelete(val: string)"><wbr />on<wbr />Delete<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#onUpdate.t%2Cstring"
+    title="onUpdate(val: string)"><wbr />on<wbr />Update<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#table.t%2Cstring"
     title="table(val: string)"><wbr />table<span class="attachedType" style="visibility:hidden"></span></a></li>
 
@@ -1267,7 +1273,7 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   <p class="module-desc"><p>Pragmas to customize the database representation of the object model.</p>
-</p>
+Add a <tt class="docutils literal"><span class="pre">UNIQUE</span></tt> constraint.Add an <tt class="docutils literal"><span class="pre">ON UPDATE &lt;POLICY&gt;</span></tt> constraint.</p>
   <div class="section" id="18">
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
@@ -1316,6 +1322,24 @@ Add <tt class="docutils literal"><span class="pre">NOT NULL</span></tt> constrai
 Add a <tt class="docutils literal"><span class="pre">CHECK &lt;CONDITION&gt;</span></tt> constraint.
 
 </dd>
+<a id="unique.t,"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">unique</span><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
+<a id="onDelete.t,string"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">onDelete</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+Add an <tt class="docutils literal"><span class="pre">ON DELETE &lt;POLICY&gt;</span></tt> constraint.
+
+</dd>
+<a id="onUpdate.t,string"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">onUpdate</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+
+</dd>
 <a id="table.t,string"></a>
 <dt><pre><span class="Keyword">template</span> <span class="Identifier">table</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
@@ -1332,7 +1356,7 @@ Set table name. Lowercased type name is used when unset.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-27 08:06:19 UTC</small>
+        <small>Made with Nim. Generated: 2019-02-27 12:28:47 UTC</small>
       </div>
     </div>
   </div>
