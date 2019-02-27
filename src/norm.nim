@@ -4,22 +4,20 @@
 Norm, a Nim ORM
 ###############
 
-Norm is an ORM for Nim that doesn't try to outsmart you. While lubricating the boring parts of working with DB, it won't try to solve complex problems that are best solved by humans anyway.
+**Norm** is an ORM that doesn't try to outsmart you. While lubricating the boring parts of working with DB, it doesn't try to solve complex problems best solved by humans.
 
 To use Norm, you need to learn just a few concepts:
 
-- to define DB models, wrap a type section with objects in a ``db`` block
-- to finetune the model, add pragmas to objects and fields
-- to work with the DB, use ``withDB`` block
-- for CRUD, use the predefined ``insert``, ``getOne``, ``getMany``, ``update``,
-and ``delete`` procs
-- to create tables, call ``createTables``, to drop tables call ``dropTables``
+- wrap a ``type`` section in a ``db`` block to define DB model
+- add pragmas to finetune the model
+- create tables with ``createTables``
+- query the DB in ``withDb`` blocks with predefined CRUD procs
 
-`Read the API docs → <https://moigagoo.github.io/norm/norm.html>`__
+Norm supports SQLite and PostgreSQL.
 
 ]##
 
 
 import norm / [rowutils, objutils]
 import norm / pragmas
-import norm / sqlite
+import norm / [sqlite, postgres]
