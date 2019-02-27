@@ -1,0 +1,11 @@
+version: '3'
+services:
+  db:
+    image: postgres
+  test:
+    build: .
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+    command: nimble test

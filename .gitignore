@@ -1,1 +1,4 @@
-nimcache/
+.vscode
+
+*.exe
+*.html
