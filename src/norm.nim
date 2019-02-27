@@ -18,3 +18,8 @@ and ``delete`` procs
 `Read the API docs → <https://moigagoo.github.io/norm/norm.html>`__
 
 ]##
+
+
+import norm / [rowutils, objutils]
+import norm / pragmas
+import norm / sqlite
