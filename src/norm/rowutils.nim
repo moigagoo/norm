@@ -262,4 +262,7 @@ proc toRows*(objs: openArray[object]): seq[Row] =
 
   objs.mapIt(it.toRow())
 
-proc isEmpty*(row: Row): bool = row.allIt(it.len == 0)
+proc isEmpty*(row: Row): bool =
+  ## Check if row is empty, i.e. all its items are ``""``.
+
+  row.allIt(it.len == 0)
