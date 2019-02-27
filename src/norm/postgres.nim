@@ -44,6 +44,10 @@ proc getTable*(T: type): string =
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
+  if fieldRepr.signature.name == "id" and $fieldRepr.typ == "int" and
+    "pk" in fieldRepr.signature.pragmaNames:
+      return "SERIAL"
+
   result = case $fieldRepr.typ
   of "int": "INTEGER"
   of "string": "TEXT"
@@ -64,6 +68,8 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
+    elif prag.name == "unique" and prag.kind == pkFlag:
+      result.add " UNIQUE"
     elif prag.name == "notNull" and prag.kind == pkFlag:
       result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
@@ -82,6 +88,10 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
                                                     dbObjReprs.getByName($prag.value[0]).getTable(),
                                                     $prag.value[1]]
       else: ""
+    elif prag.name == "onDelete" and prag.kind == pkKval:
+      result.add " ON DELETE $#" % $prag.value
+    elif prag.name == "onUpdate" and prag.kind == pkKval:
+      result.add " ON UPDATE $#" % $prag.value
 
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
   ## Generate table schema for an object representation.
@@ -106,7 +116,7 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
   ## Generate ``DROP TABLE`` queries for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
+    result.add "DROP TABLE IF EXISTS $# CASCADE" % dbObjRepr.getTable()
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
