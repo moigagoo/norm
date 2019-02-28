@@ -1239,6 +1239,12 @@ function main() {
   </div>
   <ul class="simple simple-toc" id="toc-list">
 <li>
+  <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
+  <ul class="simple simple-toc-section">
+    
+  </ul>
+</li>
+<li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#PragmaKind"
@@ -1278,7 +1284,7 @@ function main() {
   <li><a class="reference" href="#getByName%2CopenArray%5BT%5D%2Cstring"
     title="getByName[T: ObjRepr | FieldRepr](reprs: openArray[T]; name: string): T"><wbr />get<wbr />By<wbr />Name<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#fieldNames%2C"
-    title="fieldNames(obj: object): seq[string]"><wbr />field<wbr />Names<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="fieldNames(obj: object; force = false): seq[string]"><wbr />field<wbr />Names<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#fieldNames%2CObjRepr"
     title="fieldNames(objRepr: ObjRepr): seq[string]"><wbr />field<wbr />Names<span class="attachedType" style="visibility:hidden">ObjRepr</span></a></li>
   <li><a class="reference" href="#pragmaNames%2CSignatureRepr"
@@ -1303,7 +1309,12 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   <p class="module-desc"></p>
-  <div class="section" id="7">
+  <div class="section" id="6">
+<h1><a class="toc-backref" href="#6">Imports</a></h1>
+<dl class="item">
+<a class="reference external" href="pragmas.html">pragmas</a>
+</dl></div>
+<div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
 <a id="PragmaKind"></a>
@@ -1428,7 +1439,7 @@ Convert an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> in
 
 </dd>
 <a id="fieldNames,"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">fieldNames</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">fieldNames</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 Get object's field names as a sequence of strings.
 <p><strong class="examples_text">Examples:</strong></p>
@@ -1530,7 +1541,7 @@ Set object field value by name: <tt class="docutils literal"><span class="pre">o
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-27 12:28:44 UTC</small>
+        <small>Made with Nim. Generated: 2019-02-28 08:30:44 UTC</small>
       </div>
     </div>
   </div>
