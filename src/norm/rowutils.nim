@@ -2,7 +2,7 @@ import strutils, sequtils
 import sugar
 import macros; export macros
 
-import objutils
+import objutils, pragmas
 
 
 type Row = seq[string]
@@ -198,7 +198,7 @@ proc to*(rows: openArray[Row], T: type): seq[T] =
 
   rows.to(result)
 
-proc toRow*(obj: object): Row =
+proc toRow*(obj: object, force = false): Row =
   ##[ Convert an object into row, i.e. sequence of strings.
 
   If a custom formatter is provided for a field, it is used for conversion,
@@ -223,16 +223,17 @@ proc toRow*(obj: object): Row =
     doAssert row[2] == "123.321"
 
   for field, value in obj.fieldPairs:
-    when obj[field].hasCustomPragma(formatter):
-      result.add obj[field].getCustomPragmaVal(formatter) value
-    elif obj[field].hasCustomPragma(formatIt):
-      block:
-        let it {.inject.} = value
-        result.add obj[field].getCustomPragmaVal(formatIt)
-    else:
-      result.add $value
+    if force or not obj[field].hasCustomPragma(ro):
+      when obj[field].hasCustomPragma(formatter):
+        result.add obj[field].getCustomPragmaVal(formatter) value
+      elif obj[field].hasCustomPragma(formatIt):
+        block:
+          let it {.inject.} = value
+          result.add obj[field].getCustomPragmaVal(formatIt)
+      else:
+        result.add $value
 
-proc toRows*(objs: openArray[object]): seq[Row] =
+proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
 
   If a custom formatter is provided for a field, it is used for conversion,
@@ -260,7 +261,7 @@ proc toRows*(objs: openArray[object]): seq[Row] =
     doAssert rows[1][1] == "bar"
     doAssert rows[2][2] == "789.987"
 
-  objs.mapIt(it.toRow())
+  objs.mapIt(it.toRow(force))
 
 proc isEmpty*(row: Row): bool =
   ## Check if row is empty, i.e. all its items are ``""``.

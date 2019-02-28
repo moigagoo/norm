@@ -7,8 +7,7 @@ PostgreSQL Backend
 ]##
 
 
-import strutils, macros
-import typetraits
+import strutils, macros, typetraits
 import db_postgres
 
 import chronicles
@@ -39,7 +38,7 @@ proc getTable*(T: type): string =
   ]##
 
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
-  else: T.name.toLowerAscii()
+  else: ($T).toLowerAscii()
 
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
@@ -121,33 +120,32 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
 
-  var fields: seq[string]
-
-  for field, _ in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      fields.add field
+  let
+    fields = obj.fieldNames(force)
+    placeholders = '?'.repeat(fields.len)
 
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
-                                                    '?'.repeat(fields.len).join(", ")]
+                                                    placeholders.join(", ")]
 
 proc genGetOneQuery*(obj: object): SqlQuery =
   ## Generate ``SELECT`` query to fetch a single record for an object.
 
-  sql "SELECT $# FROM $# WHERE id = ?" % [obj.fieldNames.join(", "), type(obj).getTable()]
+  sql "SELECT $# FROM $# WHERE id = ?" % [obj.fieldNames(force=true).join(", "),
+                                          type(obj).getTable()]
 
 proc genGetManyQuery*(obj: object): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
 
-  sql "SELECT $# FROM $# LIMIT ? OFFSET ?" % [obj.fieldNames.join(", "), type(obj).getTable()]
+  sql "SELECT $# FROM $# LIMIT ? OFFSET ?" % [obj.fieldNames(force=true).join(", "),
+                                              type(obj).getTable()]
 
 proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
 
   var fieldsWithPlaceholders: seq[string]
 
-  for field, value in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      fieldsWithPlaceholders.add field & " = ?"
+  for field in obj.fieldNames(force):
+    fieldsWithPlaceholders.add field & " = ?"
 
   result = sql "UPDATE $# SET $# WHERE id = ?" % [type(obj).getTable(),
                                                   fieldsWithPlaceholders.join(", ")]
@@ -162,7 +160,7 @@ template genWithDb(connection, user, password, database: string,
                         dbOthers: NimNode): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
-  template withDb(body: untyped): untyped {.dirty.} =
+  template withDb*(body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
     as well as ``createTables`` and ``dropTables`` procs.
 
@@ -200,13 +198,7 @@ template genWithDb(connection, user, password, database: string,
         By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
         ]##
 
-        var values: seq[string]
-
-        for _, value in obj.fieldPairs:
-          when force or not obj[_].hasCustomPragma(ro):
-            values.add $value
-
-        obj.id = dbConn.insertID(genInsertQuery(obj, force), values).int
+        obj.id = dbConn.insertID(genInsertQuery(obj, force), obj.toRow(force)).int
 
       template getOne(obj: var object, id: int) =
         ## Read a record from DB and store it into an existing object instance.
@@ -249,13 +241,7 @@ template genWithDb(connection, user, password, database: string,
         By default, readonly fields are not updated. Use ``force=true`` to update all fields.
         ]##
 
-        var values: seq[string]
-
-        for _, value in obj.fieldPairs:
-          when force or not obj[_].hasCustomPragma(ro):
-            values.add $value
-
-        dbConn.exec(getUpdateQuery(obj, force), values & $obj.id)
+        dbConn.exec(getUpdateQuery(obj, force), obj.toRow(force) & $obj.id)
 
       template delete(obj: var object) =
         ## Delete a record in DB by object's id. The id is set to 0 after the deletion.

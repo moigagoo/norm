@@ -1,6 +1,6 @@
 import unittest
 
-import os, strutils, sequtils
+import os, strutils, sequtils, times
 
 import norm / postgres
 
@@ -9,7 +9,12 @@ db("db", "postgres", "", "postgres"):
   type
     User {.table: "users".} = object
       email {.unique.}: string
-      age: int
+      birthDate {.
+        dbType: "DATE",
+        default: "CURRENT_TIMESTAMP",
+        parseIt: it.parse("yyyy-MM-dd", utc()),
+        formatIt: it.format("yyyy-MM-dd")
+      .}: DateTime
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
@@ -22,9 +27,10 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       createTables(force=true)
 
-      for i in 1..10:
+      for i in 1..9:
         var
-          user = User(email: "test-$#@example.com" % $i, age: i*i)
+          user = User(email: "test-$#@example.com" % $i,
+                      birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
           book = Book(title: "Book $#" % $i, authorEmail: user.email)
           edition = Edition(title: "Edition $#" % $i)
 
@@ -42,28 +48,21 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
 
-      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["age"]]
+      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
       check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"]]
       check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
 
   test "Create records":
     withDb:
       let
-        users = User.getMany 100
         books = Book.getMany 100
         editions = Edition.getMany 100
 
-      check len(users) == 10
-      check len(books) == 10
-      check len(editions) == 10
-
-      check users[3].id == 4
-      check users[3].email == "test-4@example.com"
-      check users[3].age == 16
+      check len(books) == 9
+      check len(editions) == 9
 
       check books[5].id == 6
       check books[5].title == "Book 6"
-      check books[5].authorEmail == users[5].email
 
       check editions[7].id == 8
       check editions[7].title == "Edition 8"
@@ -72,7 +71,18 @@ suite "Creating and dropping tables, CRUD":
   test "Read records":
     withDb:
       var
-        users = User().repeat 10
+        users = @[
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now()),
+          User(birthDate: now())
+        ]
         books = Book().repeat 10
         editions = Edition().repeat 10
 
@@ -80,20 +90,20 @@ suite "Creating and dropping tables, CRUD":
       books.getMany(20, offset=5)
       editions.getMany(20, offset=5)
 
-      check len(users) == 5
+      check len(users) == 4
       check users[0].id == 6
-      check users[^1].id == 10
+      check users[^1].id == 9
 
-      check len(books) == 5
+      check len(books) == 4
       check books[0].id == 6
-      check books[^1].id == 10
+      check books[^1].id == 9
 
-      check len(editions) == 5
+      check len(editions) == 4
       check editions[0].id == 6
-      check editions[^1].id == 10
+      check editions[^1].id == 9
 
       var
-        user = User()
+        user = User(birthDate: now())
         book = Book()
         edition = Edition()
 
@@ -108,36 +118,27 @@ suite "Creating and dropping tables, CRUD":
   test "Update records":
     withDb:
       var
-        user = User.getOne 2
         book = Book.getOne 2
         edition = Edition.getOne 2
 
-      user.age = 23
       book.title = "New Book"
       edition.title = "New Edition"
 
-      user.update()
       book.update()
       edition.update()
 
     withDb:
-      check User.getOne(2).age == 23
       check Book.getOne(2).title == "New Book"
       check Edition.getOne(2).title == "New Edition"
 
   test "Delete records":
     withDb:
       var
-        user = User.getOne 2
         book = Book.getOne 2
         edition = Edition.getOne 2
 
-      user.delete()
       book.delete()
       edition.delete()
-
-      expect KeyError:
-        discard User.getOne 2
 
       expect KeyError:
         discard Book.getOne 2

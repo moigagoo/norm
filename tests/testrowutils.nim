@@ -64,7 +64,7 @@ suite "Conversion with custom parser and formatter expressions":
 suite "Conversion with custom parser and formatter procs":
   proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
 
-  proc toDatetime(ts: string): DateTime = ts.parseInt().fromUnix().local()
+  proc toDatetime(ts: string): DateTime = ts.parseInt().fromUnix().utc()
 
   type
     UserDatetimeAsTimestamp = object
@@ -177,7 +177,7 @@ suite "Bulk conversion with custom parser and formatter expressions":
 suite "Bulk conversion with custom parser and formatter procs":
   proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
 
-  proc toDatetime(ts: string): DateTime = ts.parseInt().fromUnix().local()
+  proc toDatetime(ts: string): DateTime = ts.parseInt().fromUnix().utc()
 
   type
     UserDatetimeAsTimestamp = object

@@ -1,5 +1,7 @@
 import strutils, macros
 
+import pragmas
+
 
 type
   PragmaKind* = enum
@@ -213,7 +215,7 @@ macro `[]=`*(obj: var object, fieldName: string, value: untyped): untyped =
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
 
-proc fieldNames*(obj: object): seq[string] =
+proc fieldNames*(obj: object, force = false): seq[string] =
   ## Get object's field names as a sequence of strings.
 
   runnableExamples:
@@ -226,7 +228,8 @@ proc fieldNames*(obj: object): seq[string] =
     doAssert Example().fieldNames == @["a", "b", "c"]
 
   for field, _ in obj.fieldPairs:
-    result.add field
+    if force or not obj[field].hasCustomPragma(ro):
+      result.add field
 
 proc fieldNames*(objRepr: ObjRepr): seq[string] =
   ## Get object representation's field names as a sequence of strings.
