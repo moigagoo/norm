@@ -15,5 +15,7 @@ Changelog
 
 - SQLite: Respect custom field parsers and formatters.
 - SQLite: Type conversion: Fix issue with incorrect conversion of field named ``name``.
+- PostgreSQL: Respect custom field parsers and formatters.
+- PostgreSQL: Type conversion: Fix issue with incorrect conversion of field named ``name``.
 - Rowutils: Respect ``ro`` pragma in ``toRow`` proc.
 - Objutils: Respect ``ro`` pragma in ``fieldNames`` proc.
