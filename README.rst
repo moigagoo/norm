@@ -13,4 +13,5 @@ To use Norm, you need to learn just a few concepts:
 
 Norm supports SQLite and PostgreSQL.
 
-`Read the API docs → <https://moigagoo.github.io/norm/norm.html>`__
+- `API docs → <https://moigagoo.github.io/norm/norm.html>`__
+- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`__
