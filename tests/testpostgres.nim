@@ -18,9 +18,20 @@ db("db", "postgres", "", "postgres"):
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
+
+  proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
+
+  type
     Edition {.table: "editions".} = object
       title: string
-      bookId {.fk: Book, onDelete: "CASCADE".}: int
+      book {.
+        dbColumn: "bookid",
+        dbType: "INTEGER",
+        fk: Book
+        parser: getBookById,
+        formatIt: $it.id,
+        onDelete: "CASCADE"
+      .}: Book
 
 suite "Creating and dropping tables, CRUD":
   setup:
@@ -37,7 +48,7 @@ suite "Creating and dropping tables, CRUD":
         user.insert()
         book.insert()
 
-        edition.bookId = book.id
+        edition.book = book
         edition.insert()
 
   teardown:
@@ -50,7 +61,7 @@ suite "Creating and dropping tables, CRUD":
 
       check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
       check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"]]
-      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["book"]]
 
   test "Create records":
     withDb:
@@ -66,7 +77,7 @@ suite "Creating and dropping tables, CRUD":
 
       check editions[7].id == 8
       check editions[7].title == "Edition 8"
-      check editions[7].bookId == books[7].id
+      check editions[7].book == books[7]
 
   test "Read records":
     withDb:

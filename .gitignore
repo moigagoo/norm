@@ -2,3 +2,8 @@
 
 *.exe
 *.html
+
+tests/testobjutils
+tests/testpostgres
+tests/testrowutils
+tests/testsqlite
