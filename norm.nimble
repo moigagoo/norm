@@ -1,8 +1,8 @@
 # Package
 
-version       = "1.0.1"
+version       = "1.0.2"
 author        = "Constantine Molchanov"
-description   = "Nim ORM."
+description   = "ORM that doesn't try to outsmart you."
 license       = "MIT"
 srcDir        = "src"
 

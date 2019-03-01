@@ -40,6 +40,27 @@ proc getTable*(T: type): string =
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: ($T).toLowerAscii()
 
+proc getColumn*(fieldRepr: FieldRepr): string =
+  ##[ Get the name of DB column for a field: ``dbCol`` pragma value if it exists
+  or field name otherwise.
+  ]##
+
+  result = fieldRepr.signature.name
+
+  for prag in fieldRepr.signature.pragmas:
+    if prag.name == "dbCol" and prag.kind == pkKval:
+      return $prag.value
+
+proc getColumns*(obj: object, force = false): seq[string] =
+  ## Get DB column names for an object as a sequence of strings.
+
+  for field, _ in obj.fieldPairs:
+    if force or not obj[field].hasCustomPragma(ro):
+      when obj[field].hasCustomPragma(dbCol):
+        result.add obj[field].getCustomPragmaVal(dbCol)
+      else:
+        result.add field
+
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
@@ -56,7 +77,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
 proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
 
-  result.add fieldRepr.signature.name
+  result.add fieldRepr.getColumn()
   result.add " "
   result.add getDbType(fieldRepr)
 
@@ -74,10 +95,10 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
 
       result.add case prag.value.kind
       of nnkIdent:
-        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.signature.name,
+        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
                                                     dbObjReprs.getByName($prag.value).getTable()]
       of nnkDotExpr:
-        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.signature.name,
+        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.getColumn(),
                                                     dbObjReprs.getByName($prag.value[0]).getTable(),
                                                     $prag.value[1]]
       else: ""
@@ -111,7 +132,7 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
 
   let
-    fields = obj.fieldNames(force)
+    fields = obj.getColumns(force)
     placeholders = '?'.repeat(fields.len)
 
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
@@ -120,13 +141,13 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
 proc genGetOneQuery*(obj: object): SqlQuery =
   ## Generate ``SELECT`` query to fetch a single record for an object.
 
-  sql "SELECT $# FROM $# WHERE id = ?" % [obj.fieldNames(force=true).join(", "),
+  sql "SELECT $# FROM $# WHERE id = ?" % [obj.getColumns(force=true).join(", "),
                                           type(obj).getTable()]
 
 proc genGetManyQuery*(obj: object): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
 
-  sql "SELECT $# FROM $# LIMIT ? OFFSET ?" % [obj.fieldNames(force=true).join(", "),
+  sql "SELECT $# FROM $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
                                               type(obj).getTable()]
 
 proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
@@ -134,7 +155,7 @@ proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
 
   var fieldsWithPlaceholders: seq[string]
 
-  for field in obj.fieldNames(force):
+  for field in obj.getColumns(force):
     fieldsWithPlaceholders.add field & " = ?"
 
   result = sql "UPDATE $# SET $# WHERE id = ?" % [type(obj).getTable(),
@@ -146,8 +167,7 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                        tableSchemas, dropTableQueries: openarray[string],
-                        dbOthers: NimNode): untyped {.dirty.} =
+                    tableSchemas, dropTableQueries: openarray[string]): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
   template withDb*(body: untyped): untyped {.dirty.} =
@@ -239,8 +259,6 @@ template genWithDb(connection, user, password, database: string,
         dbConn.exec(genDeleteQuery(obj), obj.id)
         obj.id = 0
 
-      dbOthers
-
       try: body
       finally: dbConn.close()
 
@@ -279,22 +297,21 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   result = newStmtList()
 
-  var
-    dbTypeSections = newStmtList()
-    dbObjReprs: seq[ObjRepr]
-    dbOthers = newStmtList()
+  var dbObjReprs: seq[ObjRepr]
 
   for node in body:
     if node.kind == nnkTypeSection:
-      dbTypeSections.add node.ensureIdFields()
+      let typeSection = node.ensureIdFields()
+
+      result.add typeSection
+
+      for typeDef in typeSection:
+        dbObjReprs.add typeDef.toObjRepr()
+
     else:
-      dbOthers.add node
+      result.add node
 
-  for typeSection in dbTypeSections:
-    for typeDef in typeSection:
-      dbObjReprs.add typeDef.toObjRepr()
+  let withDbNode = getAst genWithDb(connection, user, password, database,
+                                    genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
 
-  result.add getAst genWithDb(connection, user, password, database,
-                              genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs),
-                              dbOthers)
-  result.add dbTypeSections
+  result.insert(0, withDbNode)

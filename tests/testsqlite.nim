@@ -17,9 +17,19 @@ db("test.db", "", "", ""):
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email.}: string
+
+  proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
+
+  type
     Edition {.table: "editions".} = object
       title: string
-      bookId {.fk: Book.}: int
+      book {.
+        dbCol: "bookId",
+        dbType: "INTEGER",
+        fk: Book
+        parser: getBookById,
+        formatIt: $it.id
+      .}: Book
 
 suite "Creating and dropping tables, CRUD":
   setup:
@@ -36,7 +46,7 @@ suite "Creating and dropping tables, CRUD":
         user.insert()
         book.insert()
 
-        edition.bookId = book.id
+        edition.book = book
         edition.insert()
 
   teardown:
@@ -77,7 +87,7 @@ suite "Creating and dropping tables, CRUD":
 
       check editions[7].id == 8
       check editions[7].title == "Edition 8"
-      check editions[7].bookId == books[7].id
+      check editions[7].book == books[7]
 
   test "Read records":
     withDb:
