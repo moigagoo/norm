@@ -24,7 +24,7 @@ template fk*(val: untyped) {.pragma.}
   expression. If a type is provided, its ``id`` field is referenced.
   ]##
 
-template dbColumn*(val: string) {.pragma.}
+template dbCol*(val: string) {.pragma.}
   ## DB native column name to use in table schema.
 
 template dbType*(val: string) {.pragma.}
