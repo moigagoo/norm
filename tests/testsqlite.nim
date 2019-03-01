@@ -24,7 +24,7 @@ db("test.db", "", "", ""):
     Edition {.table: "editions".} = object
       title: string
       book {.
-        dbColumn: "bookId",
+        dbCol: "bookId",
         dbType: "INTEGER",
         fk: Book
         parser: getBookById,
@@ -70,7 +70,7 @@ suite "Creating and dropping tables, CRUD":
       check dbConn.getAllRows(query, "editions") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
         @["1", "title", "TEXT", "0", "", "0"],
-        @["2", "book", "INTEGER", "0", "", "0"]
+        @["2", "bookId", "INTEGER", "0", "", "0"]
       ]
 
   test "Create records":

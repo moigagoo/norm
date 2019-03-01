@@ -25,3 +25,4 @@ Changelog
 =====
 
 - Procs defined in ``db`` macro are now passed as is to the resulting code and are not forced inside ``withDb`` template.
+- Allow to override column names for fields with ``dbCol`` pragma.

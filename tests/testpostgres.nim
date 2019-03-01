@@ -25,7 +25,7 @@ db("db", "postgres", "", "postgres"):
     Edition {.table: "editions".} = object
       title: string
       book {.
-        dbColumn: "bookid",
+        dbCol: "bookid",
         dbType: "INTEGER",
         fk: Book
         parser: getBookById,
@@ -61,7 +61,7 @@ suite "Creating and dropping tables, CRUD":
 
       check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
       check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"]]
-      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["book"]]
+      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
 
   test "Create records":
     withDb:
