@@ -156,8 +156,7 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                        tableSchemas, dropTableQueries: openarray[string],
-                        dbOthers: NimNode): untyped {.dirty.} =
+                    tableSchemas, dropTableQueries: openarray[string]): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
   template withDb*(body: untyped): untyped {.dirty.} =
@@ -249,8 +248,6 @@ template genWithDb(connection, user, password, database: string,
         dbConn.exec(genDeleteQuery(obj), obj.id)
         obj.id = 0
 
-      dbOthers
-
       try: body
       finally: dbConn.close()
 
@@ -289,22 +286,21 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   result = newStmtList()
 
-  var
-    dbTypeSections = newStmtList()
-    dbObjReprs: seq[ObjRepr]
-    dbOthers = newStmtList()
+  var dbObjReprs: seq[ObjRepr]
 
   for node in body:
     if node.kind == nnkTypeSection:
-      dbTypeSections.add node.ensureIdFields()
+      let typeSection = node.ensureIdFields()
+
+      result.add typeSection
+
+      for typeDef in typeSection:
+        dbObjReprs.add typeDef.toObjRepr()
+
     else:
-      dbOthers.add node
+      result.add node
 
-  for typeSection in dbTypeSections:
-    for typeDef in typeSection:
-      dbObjReprs.add typeDef.toObjRepr()
+  let withDbNode = getAst genWithDb(connection, user, password, database,
+                                    genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
 
-  result.add getAst genWithDb(connection, user, password, database,
-                              genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs),
-                              dbOthers)
-  result.add dbTypeSections
+  result.insert(0, withDbNode)
