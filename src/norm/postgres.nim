@@ -55,9 +55,9 @@ proc getColumns*(obj: object, force = false): seq[string] =
   ## Get DB column names for an object as a sequence of strings.
 
   for field, _ in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      when obj[field].hasCustomPragma(dbCol):
-        result.add obj[field].getCustomPragmaVal(dbCol)
+    if force or not obj.dot(field).hasCustomPragma(ro):
+      when obj.dot(field).hasCustomPragma(dbCol):
+        result.add obj.dot(field).getCustomPragmaVal(dbCol)
       else:
         result.add field
 
