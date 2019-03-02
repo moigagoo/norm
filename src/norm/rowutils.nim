@@ -76,18 +76,18 @@ template to*(row: Row, obj: var object) =
   var i: int
 
   for field, value in obj.fieldPairs:
-    when obj[field].hasCustomPragma(parser):
-      obj[field] = obj[field].getCustomPragmaVal(parser) row[i]
-    elif obj[field].hasCustomPragma(parseIt):
+    when obj.dot(field).hasCustomPragma(parser):
+      obj.dot(field) = obj.dot(field).getCustomPragmaVal(parser) row[i]
+    elif obj.dot(field).hasCustomPragma(parseIt):
       block:
         let it {.inject.} = row[i]
-        obj[field] = obj[field].getCustomPragmaVal(parseIt)
+        obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
     elif type(value) is string:
-      obj[field] = row[i]
+      obj.dot(field) = row[i]
     elif type(value) is int:
-      obj[field] = parseInt row[i]
+      obj.dot(field) = parseInt row[i]
     elif type(value) is float:
-      obj[field] = parseFloat row[i]
+      obj.dot(field) = parseFloat row[i]
     else:
       raise newException(ValueError, "Parser for $# is undefined." % type(value))
 
@@ -223,13 +223,13 @@ proc toRow*(obj: object, force = false): Row =
     doAssert row[2] == "123.321"
 
   for field, value in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      when obj[field].hasCustomPragma(formatter):
-        result.add obj[field].getCustomPragmaVal(formatter) value
-      elif obj[field].hasCustomPragma(formatIt):
+    if force or not obj.dot(field).hasCustomPragma(ro):
+      when obj.dot(field).hasCustomPragma(formatter):
+        result.add obj.dot(field).getCustomPragmaVal(formatter) value
+      elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
-          result.add obj[field].getCustomPragmaVal(formatIt)
+          result.add obj.dot(field).getCustomPragmaVal(formatIt)
       else:
         result.add $value
 

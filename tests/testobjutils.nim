@@ -23,9 +23,9 @@ suite "Getting and setting object fields using bracket notation":
     var rect = Rectangle(width: width, height: height, color: color)
 
   test "Get field values":
-    check rect["width"] == width
-    check rect["height"] == height
-    check rect["color"] == color
+    check rect.dot("width") == width
+    check rect.dot("height") == height
+    check rect.dot("color") == color
 
   test "Set field values":
     let
@@ -34,8 +34,8 @@ suite "Getting and setting object fields using bracket notation":
       newColor = green
       newRect = Rectangle(width: newWidth, height: newHeight, color: newColor)
 
-    rect["width"] = newWidth
-    rect["height"] = newHeight
-    rect["color"] = newColor
+    rect.dot("width") = newWidth
+    rect.dot("height") = newHeight
+    rect.dot("color") = newColor
 
     check rect == newRect
