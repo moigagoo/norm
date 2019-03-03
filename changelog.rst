@@ -35,8 +35,8 @@ Changelog
 -   Objutils: Rename ``[]`` field accessor to ``dot`` to avoid collisions with ``tables`` module.
 
 
-=========
-1.0.4 dev
-=========
+=====
+1.0.4
+=====
 
 -   Add ``WHERE`` lookup to ``getMany`` procs.
