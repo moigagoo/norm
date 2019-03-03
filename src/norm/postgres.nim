@@ -154,11 +154,11 @@ proc genGetOneQuery*(obj: object): SqlQuery =
   sql "SELECT $# FROM $# WHERE id = ?" % [obj.getColumns(force=true).join(", "),
                                           type(obj).getTable()]
 
-proc genGetManyQuery*(obj: object): SqlQuery =
+proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
 
-  sql "SELECT $# FROM $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
-                                              type(obj).getTable()]
+  sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
+                                                        type(obj).getTable(), condition]
 
 proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
@@ -236,24 +236,28 @@ template genWithDb(connection, user, password, database: string,
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int,  offset = 0) =
-        ## Read ``limit`` records from DB into an existing open array of objects with ``offset``.
+      proc getMany(objs: var seq[object], limit: int,  offset = 0, where = "TRUE") =
+        ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
+
+        Filter using ``where`` condition.
+        ]##
 
         if len(objs) == 0: return
 
-        let
-          params = [$min(limit, len(objs)), $offset]
-          rows = dbConn.getAllRows(genGetManyQuery(objs[0]), params)
+        let rows = dbConn.getAllRows(genGetManyQuery(objs[0], where),
+                                      $min(limit, len(objs)), $offset)
 
         rows.to(objs)
 
-      proc getMany(T: type, limit: int, offset = 0): seq[T] =
-        ##[ Read ``limit`` records from DB into a sequence of objects with ``offset``,
+      proc getMany(T: type, limit: int, offset = 0, where = "TRUE"): seq[T] =
+        ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
+
+        Filter using ``where`` condition.
         ]##
 
         result.setLen limit
-        result.getMany(limit, offset)
+        result.getMany(limit, offset, where)
 
       template update(obj: object, force = false) =
         ##[ Update DB record with object field values.

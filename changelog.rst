@@ -39,4 +39,4 @@ Changelog
 1.0.4 dev
 =========
 
--   SQLite: Add ``WHERE`` lookup to ``getMany`` procs.
+-   Add ``WHERE`` lookup to ``getMany`` procs.
