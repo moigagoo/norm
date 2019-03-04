@@ -215,22 +215,6 @@ macro dot*(obj: var object, fieldName: string, value: untyped): untyped =
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
 
-proc fieldNames*(obj: object, force = false): seq[string] =
-  ## Get object's field names as a sequence of strings.
-
-  runnableExamples:
-    type
-      Example = object
-        a: int
-        b: float
-        c: string
-
-    doAssert Example().fieldNames == @["a", "b", "c"]
-
-  for field, _ in obj.fieldPairs:
-    if force or not obj.dot(field).hasCustomPragma(ro):
-      result.add field
-
 proc fieldNames*(objRepr: ObjRepr): seq[string] =
   ## Get object representation's field names as a sequence of strings.
 
