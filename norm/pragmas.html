@@ -1247,6 +1247,8 @@ function main() {
     title="ro()"><wbr />ro<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#fk.t%2Cuntyped"
     title="fk(val: untyped)"><wbr />fk<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#dbCol.t%2Cstring"
+    title="dbCol(val: string)"><wbr />db<wbr />Col<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#dbType.t%2Cstring"
     title="dbType(val: string)"><wbr />db<wbr />Type<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#default.t%2Cstring"
@@ -1296,6 +1298,12 @@ Mark field as primary key. The special field <tt class="docutils literal"><span 
 <dt><pre><span class="Keyword">template</span> <span class="Identifier">fk</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 Mark field as foreign key another type. <tt class="docutils literal"><span class="pre">val</span></tt> is either a type or a &quot;type.field&quot; expression. If a type is provided, its <tt class="docutils literal"><span class="pre">id</span></tt> field is referenced. 
+
+</dd>
+<a id="dbCol.t,string"></a>
+<dt><pre><span class="Keyword">template</span> <span class="Identifier">dbCol</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+DB native column name to use in table schema.
 
 </dd>
 <a id="dbType.t,string"></a>
@@ -1356,7 +1364,7 @@ Set table name. Lowercased type name is used when unset.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-02-28 08:30:41 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-04 07:38:41 UTC</small>
       </div>
     </div>
   </div>
