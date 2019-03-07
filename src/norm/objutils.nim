@@ -179,6 +179,8 @@ proc toTypeDef*(obj: ObjRepr): NimNode =
   )
 
 proc getByName*[T: ObjRepr | FieldRepr](reprs: openarray[T], name: string): T =
+  ## Get an ``ObjRepr`` or ``FieldRepr`` from an openarray by its name.
+
   for repr in reprs:
     if repr.signature.name == name:
       return repr
