@@ -9,7 +9,7 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 0.19.4", "chronicles"
+requires "nim >= 0.19.4"
 
 
 # Tasks

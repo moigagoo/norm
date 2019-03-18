@@ -40,3 +40,10 @@ Changelog
 =====
 
 -   Add ``WHERE`` lookup to ``getMany`` procs.
+
+
+=====
+1.0.5
+=====
+
+-   Do not require ``chronicles`` package.
