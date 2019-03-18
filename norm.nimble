@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.0.4"
+version       = "1.0.5"
 author        = "Constantine Molchanov"
 description   = "ORM that doesn't try to outsmart you."
 license       = "MIT"
@@ -9,7 +9,7 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 0.19.4", "chronicles"
+requires "nim >= 0.19.4"
 
 
 # Tasks

@@ -7,17 +7,14 @@ SQLite Backend
 ]##
 
 
-import strutils, macros, typetraits
+import strutils, macros, typetraits, logging
 import db_sqlite
-
-import chronicles
 
 import rowutils, objutils, pragmas
 
 
-export strutils, macros
+export strutils, macros, logging
 export db_sqlite
-export chronicles
 export rowutils, objutils, pragmas
 
 
@@ -185,7 +182,7 @@ template genWithDb(connection, user, password, database: string,
         ## Drop tables for all types in all type sections under ``db`` macro.
 
         for dropTableQuery in dropTableQueries:
-          debug "Drop table", query = dropTableQuery
+          debug dropTableQuery
           dbConn.exec sql dropTableQuery
 
       template createTables(force = false) =
@@ -198,7 +195,7 @@ template genWithDb(connection, user, password, database: string,
           dropTables()
 
         for tableSchema in tableSchemas:
-          debug "Create table", query = tableSchema
+          debug tableSchema
           dbConn.exec sql tableSchema
 
       template insert(obj: var object, force = false) =

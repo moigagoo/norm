@@ -1,1 +1,0 @@
-switch("define", "chronicles_sinks:textblocks")

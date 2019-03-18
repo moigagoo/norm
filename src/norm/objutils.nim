@@ -179,6 +179,8 @@ proc toTypeDef*(obj: ObjRepr): NimNode =
   )
 
 proc getByName*[T: ObjRepr | FieldRepr](reprs: openarray[T], name: string): T =
+  ## Get an ``ObjRepr`` or ``FieldRepr`` from an openarray by its name.
+
   for repr in reprs:
     if repr.signature.name == name:
       return repr
@@ -195,7 +197,7 @@ macro dot*(obj: object, fieldName: string): untyped =
 
     let example = Example(field: 123)
 
-    doAssert example["field"] == example.field
+    doAssert example.dot("field") == example.field
 
   newDotExpr(obj, newIdentNode(fieldName.strVal))
 
@@ -209,27 +211,11 @@ macro dot*(obj: var object, fieldName: string, value: untyped): untyped =
 
     var example = Example()
 
-    example["field"] = 321
+    example.dot("field") = 321
 
-    doAssert example["field"] == 321
+    doAssert example.dot("field") == 321
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
-
-proc fieldNames*(obj: object, force = false): seq[string] =
-  ## Get object's field names as a sequence of strings.
-
-  runnableExamples:
-    type
-      Example = object
-        a: int
-        b: float
-        c: string
-
-    doAssert Example().fieldNames == @["a", "b", "c"]
-
-  for field, _ in obj.fieldPairs:
-    if force or not obj[field].hasCustomPragma(ro):
-      result.add field
 
 proc fieldNames*(objRepr: ObjRepr): seq[string] =
   ## Get object representation's field names as a sequence of strings.
