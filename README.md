@@ -4,14 +4,9 @@
 
 Norm supports SQLite and PostgreSQL.
 
-    **Disclaimer**
-
-    My goal with Norm was to lubricate the routine of working with DB: creating DB schema from the object model and converting data between DB and object representations. It's a tool for *common* cases not for *all* cases. Norm's builtin CRUD procs will help you write a typical RESTful API, but as your app grows more complex, you will have to write SQL queries manually (btw Norm can help with that too).
-
-    Using any ORM, Norm included, doesn't free a programmer from having to learn SQL!
-
-- `API docs → <https://moigagoo.github.io/norm/norm.html>`__
-- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`__
+- [Quickstart](#Quickstart)
+- [API docs →](https://moigagoo.github.io/norm/norm.html>)
+- [Sample app →](https://github.com/moigagoo/norm-sample-webapp)
 
 
 ## Installation
@@ -70,3 +65,10 @@ withDb:
 withDb:
   dropTables()                    # Drop all tables.
 ```
+
+
+## Disclaimer
+
+My goal with Norm was to lubricate the routine of working with DB: creating DB schema from the object model and converting data between DB and object representations. It's a tool for *common* cases not for *all* cases. Norm's builtin CRUD procs will help you write a typical RESTful API, but as your app grows more complex, you will have to write SQL queries manually (btw Norm can help with that too).
+
+**Using any ORM, Norm included, doesn't free a programmer from having to learn SQL!**
