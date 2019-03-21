@@ -18,6 +18,8 @@ export db_sqlite
 export rowutils, objutils, pragmas
 
 
+proc `$`*(query: SqlQuery): string = $ string query
+
 proc getTable*(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
   ``table`` pragma value if it exists or lowercased type name otherwise.
@@ -113,17 +115,17 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string 
   result.add columns.join(",\n")
   result.add "\n)"
 
-proc genTableSchemas*(dbObjReprs: openarray[ObjRepr]): seq[string] =
+proc genTableSchemas*(dbObjReprs: openarray[ObjRepr]): seq[SqlQuery] =
   ## Generate table schemas for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add genTableSchema(dbObjRepr, dbObjReprs)
+    result.add sql genTableSchema(dbObjRepr, dbObjReprs)
 
-proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[string] =
+proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[SqlQuery] =
   ## Generate ``DROP TABLE`` queries for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
+    result.add sql "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
@@ -164,8 +166,8 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                    tableSchemas, dropTableQueries: openarray[string]): untyped {.dirty.} =
-  ## Generate ``withDb`` template.
+                    tableSchemas, dropTableQueries: openarray[SqlQuery]): untyped {.dirty.} =
+  ## Generate ``withDb`` templates.
 
   template withDb*(body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
@@ -183,6 +185,7 @@ template genWithDb(connection, user, password, database: string,
 
         for dropTableQuery in dropTableQueries:
           debug dropTableQuery
+
           dbConn.exec sql dropTableQuery
 
       template createTables(force = false) =
@@ -196,6 +199,7 @@ template genWithDb(connection, user, password, database: string,
 
         for tableSchema in tableSchemas:
           debug tableSchema
+
           dbConn.exec sql tableSchema
 
       template insert(obj: var object, force = false) =
@@ -205,13 +209,22 @@ template genWithDb(connection, user, password, database: string,
         By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
         ]##
 
-        obj.id = dbConn.insertID(genInsertQuery(obj, force), obj.toRow(force)).int
+        let
+          insertQuery = genInsertQuery(obj, force)
+          params = obj.toRow(force)
+
+        debug insertQuery, " <- ", params.join(", ")
+
+        obj.id = dbConn.insertID(insertQuery, params).int
 
       template getOne(obj: var object, id: int) =
         ## Read a record from DB and store it into an existing object instance.
 
-        let
-          row = dbConn.getRow(genGetOneQuery(obj), id)
+        let getOneQuery = genGetOneQuery(obj)
+
+        debug getOneQuery, " <- ", $id
+
+        let row = dbConn.getRow(genGetOneQuery(obj), id)
 
         if row.isEmpty():
           raise newException(KeyError, "Record with id=$# not found." % $id)
@@ -231,8 +244,13 @@ template genWithDb(connection, user, password, database: string,
 
         if len(objs) == 0: return
 
-        let rows = dbConn.getAllRows(genGetManyQuery(objs[0], where),
-                                      $min(limit, len(objs)), $offset)
+        let
+          getManyQuery = genGetManyQuery(objs[0], where)
+          params = [$min(limit, len(objs)), $offset]
+
+        debug getManyQuery, " <- ", params.join(", ")
+
+        let rows = dbConn.getAllRows(getManyQuery, params)
 
         rows.to(objs)
 
@@ -252,12 +270,23 @@ template genWithDb(connection, user, password, database: string,
         By default, readonly fields are not updated. Use ``force=true`` to update all fields.
         ]##
 
-        dbConn.exec(getUpdateQuery(obj, force), obj.toRow(force) & $obj.id)
+        let
+          updateQuery = getUpdateQuery(obj, force)
+          params = obj.toRow(force) & $obj.id
+
+        debug updateQuery, " <- ", params.join(", ")
+
+        dbConn.exec(updateQuery, params)
 
       template delete(obj: var object) =
         ## Delete a record in DB by object's id. The id is set to 0 after the deletion.
 
-        dbConn.exec(genDeleteQuery(obj), obj.id)
+        let deleteQuery = genDeleteQuery(obj)
+
+        debug deleteQuery, " <- ", $obj.id
+
+        dbConn.exec(deleteQuery, obj.id)
+
         obj.id = 0
 
       try: body

@@ -47,3 +47,10 @@ Changelog
 =====
 
 -   Do not require ``chronicles`` package.
+
+
+=====
+1.0.6
+=====
+
+-   Log all generated SQL statements as debug level logs.
