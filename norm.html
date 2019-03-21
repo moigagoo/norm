@@ -1250,14 +1250,48 @@ function main() {
   </div>
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
-  <p class="module-desc"><p><strong>Norm</strong> is an ORM that doesn't try to outsmart you. While lubricating the boring parts of working with DB, it doesn't try to solve complex problems best solved by humans.</p>
-<p>To use Norm, you need to learn just a few concepts:</p>
-<ul class="simple"><li>wrap a <tt class="docutils literal"><span class="pre">type</span></tt> section in a <tt class="docutils literal"><span class="pre">db</span></tt> block to define DB model</li>
-<li>add pragmas to finetune the model</li>
-<li>create tables with <tt class="docutils literal"><span class="pre">createTables</span></tt></li>
-<li>query the DB in <tt class="docutils literal"><span class="pre">withDb</span></tt> blocks with predefined CRUD procs</li>
-</ul>
+  <p class="module-desc"><p><strong>Norm</strong> is a lightweight ORM written in [Nim programming language](<a class="reference external" href="https://nim-lang.org)">https://nim-lang.org)</a>. It enables you to store Nim's objects as DB rows and fetch data from DB as objects. So that your business logic is driven with objects, and the storage aspect is decoupled from it.</p>
 <p>Norm supports SQLite and PostgreSQL.</p>
+<ul class="simple"><li>[API docs →](<a class="reference external" href="https://moigagoo.github.io/norm/norm.html&gt;">https://moigagoo.github.io/norm/norm.html&gt;</a>)</li>
+<li>[Sample app →](<a class="reference external" href="https://github.com/moigagoo/norm-sample-webapp">https://github.com/moigagoo/norm-sample-webapp</a>)</li>
+</ul>
+<p>```nim import norm / sqlite              # Import SQLite backend. Another option is <tt class="docutils literal"><span class="pre">norm / postgres</span></tt>. import logging                    # Import logging to inspect the generated SQL statements. import unicode, sugar</p>
+<dl class="docutils"><dt>db(&quot;petshop.db&quot;, &quot;&quot;, &quot;&quot;, &quot;&quot;):     # Set DB connection credentials.</dt>
+<dd><dl class="docutils"><dt>type                            # Describe object model in an ordinary type section.</dt>
+<dd><dl class="docutils"><dt>User = object</dt>
+<dd><dl class="docutils"><dt>age: int                    # Nim types are automatically converted into SQL types and back.</dt>
+<dd># You can specify how types are converted using <tt class="docutils literal"><span class="pre">parser</span></tt>, # <tt class="docutils literal"><span class="pre">formatter</span></tt>, <tt class="docutils literal"><span class="pre">parseIt</span></tt>, and <tt class="docutils literal"><span class="pre">formatIt</span></tt> pragmas.</dd>
+<dt>name {.</dt>
+<dd>formatIt: capitalize(it)  # Guarantee that <tt class="docutils literal"><span class="pre">name</span></tt> is stored in DB capitalized.</dd>
+</dl>
+<p>.}: string</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>addHandler newConsoleLogger()</p>
+<dl class="docutils"><dt>withDb:                           # Start a DB session.</dt>
+<dd>createTables(force=true)        # Create tables for all objects. Drop tables if they exist.<dl class="docutils"><dt>var bob = User(                 # Create a <tt class="docutils literal"><span class="pre">User</span></tt> instance as you normally would.</dt>
+<dd>name: &quot;bob&quot;,                  # Note that the instance is mutable. This is mandatory! age: 23</dd>
+</dl>
+<p>) bob.insert()                    # Insert <tt class="docutils literal"><span class="pre">bob</span></tt> into DB. dump bob.id                     # <tt class="docutils literal"><span class="pre">id</span></tt> attr is added by Norm and updated on insertion.</p>
+</dd>
+<dt>withDb:</dt>
+<dd><p>var bob = User.getOne(1)        # Fetch record from DB and store it as <tt class="docutils literal"><span class="pre">User</span></tt> instance. bob.age += 10                   # Change attr value. bob.update()                    # Update the record in DB.</p>
+<p>bob.delete()                    # Delete the record. dump bob.id                     # <tt class="docutils literal"><span class="pre">id</span></tt> is 0 for objects not stored in DB.</p>
+</dd>
+<dt>withDb:</dt>
+<dd><dl class="docutils"><dt>let bobs = User.getMany(        # Read records from DB:</dt>
+<dd>100,                          # - only the first 100 records where=&quot;name LIKE 'Bob%'&quot;,     # - find by condition orderBy=&quot;age DESC&quot;            # - order by age from oldest to youngest</dd>
+</dl>
+<p>)</p>
+</dd>
+<dt>withDb:</dt>
+<dd>dropTables()                    # Drop all tables.</dd>
+</dl>
+<p>``` </p>
 </p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -1272,7 +1306,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-21 12:26:30 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-21 13:25:51 UTC</small>
       </div>
     </div>
   </div>
