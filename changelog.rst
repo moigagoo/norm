@@ -54,3 +54,10 @@ Changelog
 =====
 
 -   Log all generated SQL statements as debug level logs.
+
+
+=====
+1.0.7
+=====
+
+-   Add ``orderBy`` argument to ``getMany`` procs.
