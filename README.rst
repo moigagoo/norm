@@ -43,8 +43,8 @@ Quickstart
           age: int                  # Nim types are automatically converted into SQL types and back.
                                     # You can specify how types are converted using ``parser``,
                                     # ``formatter``, ``parseIt``, and ``formatIt`` pragmas.
-          name {.
-            formatIt: capitalize it # We guarantee that ``name`` is stored in DB capitalized.
+          name {.                   # We guarantee that ``name`` is stored in DB capitalized.
+            formatIt: capitalize it
           .}: string
 
     addHandler newConsoleLogger()
