@@ -33,46 +33,46 @@ Quickstart
 
 .. code-block:: nim
 
-    import norm / sqlite            # Import SQLite backend. Another option is ``norm / postgres``.
-    import logging                  # Import logging to inspect the generated SQL statements.
-    import strutils
+    import norm / sqlite              # Import SQLite backend. Another option is ``norm / postgres``.
+    import logging                    # Import logging to inspect the generated SQL statements.
+    import unicode, sugar
 
-    db("petshop.db", "", "", ""):   # Set DB connection credentials.
-      type                          # Describe object model in an ordinary type section.
+    db("petshop.db", "", "", ""):     # Set DB connection credentials.
+      type                            # Describe object model in an ordinary type section.
         User = object
-          age: int                  # Nim types are automatically converted into SQL types and back.
-                                    # You can specify how types are converted using ``parser``,
-                                    # ``formatter``, ``parseIt``, and ``formatIt`` pragmas.
-          name {.                   # We guarantee that ``name`` is stored in DB capitalized.
-            formatIt: capitalize it
+          age: int                    # Nim types are automatically converted into SQL types and back.
+                                      # You can specify how types are converted using ``parser``,
+                                      # ``formatter``, ``parseIt``, and ``formatIt`` pragmas.
+          name {.
+            formatIt: capitalize(it)  # Guarantee that ``name`` is stored in DB capitalized.
           .}: string
 
     addHandler newConsoleLogger()
 
-    withDb:                         # Start a DB session.
-      createTables()                # Create tables for all objects.
+    withDb:                           # Start a DB session.
+      createTables(force=true)        # Create tables for all objects. Drop tables if they exist.
 
-      var bob = User(               # Create a ``User`` instance as you normally would.
-        name: "bob",                # Note that the instance is mutable. This is mandatory!
+      var bob = User(                 # Create a ``User`` instance as you normally would.
+        name: "bob",                  # Note that the instance is mutable. This is mandatory!
         age: 23
       )
-      bob.insert()                  # Insert ``bob`` into DB.
-      echo bob.id                   # ``id`` attr is added by Norm and updated on insertion.
+      bob.insert()                    # Insert ``bob`` into DB.
+      dump bob.id                     # ``id`` attr is added by Norm and updated on insertion.
 
     withDb:
-      var bob = User.getOne(1)      # Fetch record from DB and store it as ``User`` instance.
-      bob.age += 10                 # Change attr value.
-      bob.update()                  # Update the record in DB.
+      var bob = User.getOne(1)        # Fetch record from DB and store it as ``User`` instance.
+      bob.age += 10                   # Change attr value.
+      bob.update()                    # Update the record in DB.
 
-      bob.delete()                  # Delete the record.
-      echo bob.id                   # ``id`` is 0 for objects not stored in DB.
+      bob.delete()                    # Delete the record.
+      dump bob.id                     # ``id`` is 0 for objects not stored in DB.
 
     withDb:
-      let bobs = User.getMany(      # Read records from DB:
-        100,                        # - only the first 100 records
-        where="name LIKE 'Bob%'",   # - find by condition
-        orderBy="age DESC"          # - order by age from oldest to youngest
+      let bobs = User.getMany(        # Read records from DB:
+        100,                          # - only the first 100 records
+        where="name LIKE 'Bob%'",     # - find by condition
+        orderBy="age DESC"            # - order by age from oldest to youngest
       )
 
     withDb:
-      dropTables()                  # Drop all tables.
+      dropTables()                    # Drop all tables.
