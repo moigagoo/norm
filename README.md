@@ -47,13 +47,11 @@ withDb:                           # Start a DB session.
   bob.insert()                    # Insert ``bob`` into DB.
   dump bob.id                     # ``id`` attr is added by Norm and updated on insertion.
 
-withDb:
-  var bob = User.getOne(1)        # Fetch record from DB and store it as ``User`` instance.
-  bob.age += 10                   # Change attr value.
-  bob.update()                    # Update the record in DB.
+  var bobby = User(name: "bobby", age: 34)
+  bobby.insert()
 
-  bob.delete()                    # Delete the record.
-  dump bob.id                     # ``id`` is 0 for objects not stored in DB.
+  var alice = User(name: "alice", age: 12)
+  alice.insert()
 
 withDb:
   let bobs = User.getMany(        # Read records from DB:
@@ -61,6 +59,16 @@ withDb:
     where="name LIKE 'Bob%'",     # - find by condition
     orderBy="age DESC"            # - order by age from oldest to youngest
   )
+
+  dump bobs
+
+withDb:
+  var bob = User.getOne(1)        # Fetch record from DB and store it as ``User`` instance.
+  bob.age += 10                   # Change attr value.
+  bob.update()                    # Update the record in DB.
+
+  bob.delete()                    # Delete the record.
+  dump bob.id                     # ``id`` is 0 for objects not stored in DB.
 
 withDb:
   dropTables()                    # Drop all tables.
