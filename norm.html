@@ -1280,6 +1280,21 @@ function main() {
   <span class="Punctuation">)</span>
   <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">insert</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                    <span class="Comment"># Insert ``bob`` into DB.</span>
   <span class="Identifier">dump</span> <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">id</span>                     <span class="Comment"># ``id`` attr is added by Norm and updated on insertion.</span>
+  
+  <span class="Keyword">var</span> <span class="Identifier">bobby</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span><span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;bobby&quot;</span><span class="Punctuation">,</span> <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">34</span><span class="Punctuation">)</span>
+  <span class="Identifier">bobby</span><span class="Operator">.</span><span class="Identifier">insert</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+  
+  <span class="Keyword">var</span> <span class="Identifier">alice</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span><span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;alice&quot;</span><span class="Punctuation">,</span> <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">12</span><span class="Punctuation">)</span>
+  <span class="Identifier">alice</span><span class="Operator">.</span><span class="Identifier">insert</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+
+<span class="Identifier">withDb</span><span class="Punctuation">:</span>
+  <span class="Keyword">let</span> <span class="Identifier">bobs</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Operator">.</span><span class="Identifier">getMany</span><span class="Punctuation">(</span>        <span class="Comment"># Read records from DB:</span>
+    <span class="DecNumber">100</span><span class="Punctuation">,</span>                          <span class="Comment"># - only the first 100 records</span>
+    <span class="Identifier">where</span><span class="Operator">=</span><span class="StringLit">&quot;name LIKE 'Bob%'&quot;</span><span class="Punctuation">,</span>     <span class="Comment"># - find by condition</span>
+    <span class="Identifier">orderBy</span><span class="Operator">=</span><span class="StringLit">&quot;age DESC&quot;</span>            <span class="Comment"># - order by age from oldest to youngest</span>
+  <span class="Punctuation">)</span>
+  
+  <span class="Identifier">dump</span> <span class="Identifier">bobs</span>
 
 <span class="Identifier">withDb</span><span class="Punctuation">:</span>
   <span class="Keyword">var</span> <span class="Identifier">bob</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Operator">.</span><span class="Identifier">getOne</span><span class="Punctuation">(</span><span class="DecNumber">1</span><span class="Punctuation">)</span>        <span class="Comment"># Fetch record from DB and store it as ``User`` instance.</span>
@@ -1288,13 +1303,6 @@ function main() {
   
   <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">delete</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                    <span class="Comment"># Delete the record.</span>
   <span class="Identifier">dump</span> <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">id</span>                     <span class="Comment"># ``id`` is 0 for objects not stored in DB.</span>
-
-<span class="Identifier">withDb</span><span class="Punctuation">:</span>
-  <span class="Keyword">let</span> <span class="Identifier">bobs</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Operator">.</span><span class="Identifier">getMany</span><span class="Punctuation">(</span>        <span class="Comment"># Read records from DB:</span>
-    <span class="DecNumber">100</span><span class="Punctuation">,</span>                          <span class="Comment"># - only the first 100 records</span>
-    <span class="Identifier">where</span><span class="Operator">=</span><span class="StringLit">&quot;name LIKE 'Bob%'&quot;</span><span class="Punctuation">,</span>     <span class="Comment"># - find by condition</span>
-    <span class="Identifier">orderBy</span><span class="Operator">=</span><span class="StringLit">&quot;age DESC&quot;</span>            <span class="Comment"># - order by age from oldest to youngest</span>
-  <span class="Punctuation">)</span>
 
 <span class="Identifier">withDb</span><span class="Punctuation">:</span>
   <span class="Identifier">dropTables</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                    <span class="Comment"># Drop all tables.</span></pre></p>
@@ -1311,7 +1319,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-21 13:54:00 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-21 14:25:44 UTC</small>
       </div>
     </div>
   </div>
