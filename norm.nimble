@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.0.5"
+version       = "1.0.6"
 author        = "Constantine Molchanov"
 description   = "ORM that doesn't try to outsmart you."
 license       = "MIT"
