@@ -136,13 +136,13 @@ suite "Creating and dropping tables, CRUD":
       check book.id == 8
       check edition.id == 8
 
-  test "Find records":
+  test "Filter and sort records":
     withDb:
-      let someBooks = Book.getMany(10, where="title IN ('Book 1', 'Book 5')")
+      let someBooks = Book.getMany(10, where="title IN ('Book 1', 'Book 5')", orderBy="title DESC")
 
       check len(someBooks) == 2
-      check someBooks[0].title == "Book 1"
-      check someBooks[1].authorEmail == "test-5@example.com"
+      check someBooks[0].title == "Book 5"
+      check someBooks[1].authorEmail == "test-1@example.com"
 
   test "Update records":
     withDb:

@@ -152,11 +152,12 @@ proc genGetOneQuery*(obj: object): SqlQuery =
   sql "SELECT $# FROM $# WHERE id = ?" % [obj.getColumns(force=true).join(", "),
                                           type(obj).getTable()]
 
-proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
+proc genGetManyQuery*(obj: object, condition, orderBy: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
 
-  sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
-                                                        type(obj).getTable(), condition]
+  sql "SELECT $# FROM $# WHERE $# ORDER BY $# LIMIT ? OFFSET ?" % [
+                                                      obj.getColumns(force=true).join(", "),
+                                                      type(obj).getTable(), condition, orderBy]
 
 proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
@@ -245,7 +246,7 @@ template genWithDb(connection, user, password, database: string,
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int,  offset = 0, where = "TRUE") =
+      proc getMany(objs: var seq[object], limit: int,  offset = 0, where = "TRUE", orderBy = "id") =
         ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
 
         Filter using ``where`` condition.
@@ -254,7 +255,7 @@ template genWithDb(connection, user, password, database: string,
         if len(objs) == 0: return
 
         let
-          getManyQuery = genGetManyQuery(objs[0], where)
+          getManyQuery = genGetManyQuery(objs[0], where, orderBy)
           params = [$min(limit, len(objs)), $offset]
 
         debug getManyQuery, " <- ", params.join(", ")
@@ -263,7 +264,7 @@ template genWithDb(connection, user, password, database: string,
 
         rows.to(objs)
 
-      proc getMany(T: type, limit: int, offset = 0, where = "TRUE"): seq[T] =
+      proc getMany(T: type, limit: int, offset = 0, where = "TRUE", orderBy = "id"): seq[T] =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
@@ -271,7 +272,7 @@ template genWithDb(connection, user, password, database: string,
         ]##
 
         result.setLen limit
-        result.getMany(limit, offset, where)
+        result.getMany(limit, offset, where, orderBy)
 
       template update(obj: object, force = false) =
         ##[ Update DB record with object field values.
