@@ -8,7 +8,7 @@ Norm, a Nim ORM
 Norm supports SQLite and PostgreSQL.
 
 - `API docs → <https://moigagoo.github.io/norm/norm.html>`__
-- `Sample app → <https://github.com/moigagoo/norm-sample-webapp`__
+- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`__
 
 ==========
 Quickstart
