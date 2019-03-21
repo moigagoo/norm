@@ -1283,8 +1283,6 @@ function main() {
     title="toTypeDef(obj: ObjRepr): NimNode"><wbr />to<wbr />Type<wbr />Def<span class="attachedType" style="visibility:hidden">ObjRepr</span></a></li>
   <li><a class="reference" href="#getByName%2CopenArray%5BT%5D%2Cstring"
     title="getByName[T: ObjRepr | FieldRepr](reprs: openArray[T]; name: string): T"><wbr />get<wbr />By<wbr />Name<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#fieldNames%2C"
-    title="fieldNames(obj: object; force = false): seq[string]"><wbr />field<wbr />Names<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#fieldNames%2CObjRepr"
     title="fieldNames(objRepr: ObjRepr): seq[string]"><wbr />field<wbr />Names<span class="attachedType" style="visibility:hidden">ObjRepr</span></a></li>
   <li><a class="reference" href="#pragmaNames%2CSignatureRepr"
@@ -1435,21 +1433,7 @@ Convert an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> in
 <a id="getByName,openArray[T],string"></a>
 <dt><pre><span class="Keyword">proc</span> <span class="Identifier">getByName</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a> <span class="Operator">|</span> <a href="objutils.html#FieldRepr"><span class="Identifier">FieldRepr</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">reprs</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">name</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T</span></pre></dt>
 <dd>
-
-
-</dd>
-<a id="fieldNames,"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">fieldNames</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
-<dd>
-Get object's field names as a sequence of strings.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">c</span><span class="Other">:</span> <span class="Identifier">string</span>
-
-<span class="Identifier">doAssert</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">fieldNames</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="StringLit">&quot;a&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;b&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;c&quot;</span><span class="Other">]</span></pre>
+Get an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> or <tt class="docutils literal"><span class="pre">FieldRepr</span></tt> from an openarray by its name.
 
 </dd>
 <a id="fieldNames,ObjRepr"></a>
@@ -1541,7 +1525,7 @@ Set object field value by name: <tt class="docutils literal"><span class="pre">o
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-03-04 07:38:46 UTC</small>
+        <small>Made with Nim. Generated: 2019-03-21 12:26:27 UTC</small>
       </div>
     </div>
   </div>
