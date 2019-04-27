@@ -294,7 +294,11 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = 0
 
-      try: body
+      try:
+        let foreignKeyQuery {.gensym.} = sql "PRAGMA foreign_keys = ON"
+        debug foreignKeyQuery
+        dbConn.exec foreignKeyQuery
+        body
       finally: dbConn.close()
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
