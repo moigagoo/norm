@@ -94,12 +94,12 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
 
       result.add case prag.value.kind
       of nnkIdent:
-        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value).getTable()]
+        " REFERENCES $# (id)" % [fieldRepr.getColumn(),
+                                 dbObjReprs.getByName($prag.value).getTable()]
       of nnkDotExpr:
-        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value[0]).getTable(),
-                                                    $prag.value[1]]
+        " REFERENCES $# ($#)" % [fieldRepr.getColumn(),
+                                 dbObjReprs.getByName($prag.value[0]).getTable(),
+                                 $prag.value[1]]
       else: ""
 
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
