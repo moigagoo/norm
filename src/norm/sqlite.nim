@@ -101,6 +101,10 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
                                  dbObjReprs.getByName($prag.value[0]).getTable(),
                                  $prag.value[1]]
       else: ""
+    elif prag.name == "onUpdate" and prag.kind == pkKval:
+      result.add " ON UPDATE $#" % $prag.value
+    elif prag.name == "onDelete" and prag.kind == pkKval:
+      result.add " ON DELETE $#" % $prag.value
 
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
   ## Generate table schema for an object representation.
