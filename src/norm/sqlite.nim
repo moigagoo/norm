@@ -94,11 +94,9 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
 
       result.add case prag.value.kind
       of nnkIdent:
-        " REFERENCES $# (id)" % [fieldRepr.getColumn(),
-                                 dbObjReprs.getByName($prag.value).getTable()]
+        " REFERENCES $# (id)" % [ dbObjReprs.getByName($prag.value).getTable()]
       of nnkDotExpr:
-        " REFERENCES $# ($#)" % [fieldRepr.getColumn(),
-                                 dbObjReprs.getByName($prag.value[0]).getTable(),
+        " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(),
                                  $prag.value[1]]
       else: ""
     elif prag.name == "onUpdate" and prag.kind == pkKval:
