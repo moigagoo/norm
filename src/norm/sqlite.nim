@@ -94,13 +94,15 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
 
       result.add case prag.value.kind
       of nnkIdent:
-        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value).getTable()]
+        " REFERENCES $# (id)" % [ dbObjReprs.getByName($prag.value).getTable()]
       of nnkDotExpr:
-        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value[0]).getTable(),
-                                                    $prag.value[1]]
+        " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(),
+                                 $prag.value[1]]
       else: ""
+    elif prag.name == "onUpdate" and prag.kind == pkKval:
+      result.add " ON UPDATE $#" % $prag.value
+    elif prag.name == "onDelete" and prag.kind == pkKval:
+      result.add " ON DELETE $#" % $prag.value
 
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
   ## Generate table schema for an object representation.
@@ -290,7 +292,11 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = 0
 
-      try: body
+      try:
+        let foreignKeyQuery {.gensym.} = sql "PRAGMA foreign_keys = ON"
+        debug foreignKeyQuery
+        dbConn.exec foreignKeyQuery
+        body
       finally: dbConn.close()
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
