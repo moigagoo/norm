@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.8 (in progress)
+
+-   SQLite: Add `{.onUpdate}` and `{.onDelete.}` pragmas (thanks @alaviss).
+-   SQLite: Add support for multiple foreign keys (thanks @alaviss).
+-   SQLite: Enable foreign keys for all connections (thanks @alaviss).
+
+
 ## 1.0.7
 
 -   Add ``orderBy`` argument to ``getMany`` procs.
