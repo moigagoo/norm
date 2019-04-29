@@ -14,9 +14,12 @@ db("test.db", "", "", ""):
         parseIt: it.parseInt().fromUnix().local(),
         formatIt: $it.toTime().toUnix()
       .}: DateTime
+    Publisher {.table: "publishers".} = object
+      title: string
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email.}: string
+      publisherTitle {.fk: Publisher.title.}: string
 
   proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
 
@@ -65,7 +68,8 @@ suite "Creating and dropping tables, CRUD":
       check dbConn.getAllRows(query, "books") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
         @["1", "title", "TEXT", "0", "", "0"],
-        @["2", "authorEmail", "TEXT", "0", "", "0"]
+        @["2", "authorEmail", "TEXT", "0", "", "0"],
+        @["3", "publisherTitle", "TEXT", "0", "", "0"]
       ]
       check dbConn.getAllRows(query, "editions") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
