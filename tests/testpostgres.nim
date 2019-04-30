@@ -15,9 +15,12 @@ db("db", "postgres", "", "postgres"):
         parseIt: it.parse("yyyy-MM-dd", utc()),
         formatIt: it.format("yyyy-MM-dd")
       .}: DateTime
+    Publisher {.table: "publishers".} = object
+      title {.unique.}: string
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
+      publisherTitle {.fk: Publisher.title.}: string
 
   proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
 
@@ -42,10 +45,13 @@ suite "Creating and dropping tables, CRUD":
         var
           user = User(email: "test-$#@example.com" % $i,
                       birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
-          book = Book(title: "Book $#" % $i, authorEmail: user.email)
+          publisher = Publisher(title: "Publisher $#" % $i)
+          book = Book(title: "Book $#" % $i, authorEmail: user.email,
+                      publisherTitle: publisher.title)
           edition = Edition(title: "Edition $#" % $i)
 
         user.insert()
+        publisher.insert()
         book.insert()
 
         edition.book = book
@@ -60,7 +66,9 @@ suite "Creating and dropping tables, CRUD":
       let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
 
       check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
-      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"]]
+      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"]]
+      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
+                                                   @["publishertitle"]]
       check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
 
   test "Create records":
@@ -94,16 +102,22 @@ suite "Creating and dropping tables, CRUD":
           User(birthDate: now()),
           User(birthDate: now())
         ]
+        publishers = Publisher().repeat 10
         books = Book().repeat 10
         editions = Edition().repeat 10
 
       users.getMany(20, offset=5)
+      publishers.getMany(20, offset=5)
       books.getMany(20, offset=5)
       editions.getMany(20, offset=5)
 
       check len(users) == 4
       check users[0].id == 6
       check users[^1].id == 9
+
+      check len(publishers) == 4
+      check publishers[0].id == 6
+      check publishers[^1].id == 9
 
       check len(books) == 4
       check books[0].id == 6
@@ -115,14 +129,17 @@ suite "Creating and dropping tables, CRUD":
 
       var
         user = User(birthDate: now())
+        publisher = Publisher()
         book = Book()
         edition = Edition()
 
       user.getOne 8
+      publisher.getOne 8
       book.getOne 8
       edition.getOne 8
 
       check user.id == 8
+      check publisher.id == 8
       check book.id == 8
       check edition.id == 8
 
@@ -171,5 +188,6 @@ suite "Creating and dropping tables, CRUD":
 
       expect DbError:
         dbConn.exec sql "SELECT NULL FROM users"
+        dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"

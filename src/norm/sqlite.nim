@@ -83,6 +83,8 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
+    elif prag.name == "unique" and prag.kind == pkFlag:
+      result.add " UNIQUE"
     elif prag.name == "notNull" and prag.kind == pkFlag:
       result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
@@ -94,13 +96,14 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
 
       result.add case prag.value.kind
       of nnkIdent:
-        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value).getTable()]
+        " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
       of nnkDotExpr:
-        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value[0]).getTable(),
-                                                    $prag.value[1]]
+        " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
       else: ""
+    elif prag.name == "onUpdate" and prag.kind == pkKval:
+      result.add " ON UPDATE $#" % $prag.value
+    elif prag.name == "onDelete" and prag.kind == pkKval:
+      result.add " ON DELETE $#" % $prag.value
 
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
   ## Generate table schema for an object representation.
@@ -181,7 +184,7 @@ template genWithDb(connection, user, password, database: string,
     block:
       let dbConn = open(connection, user, password, database)
 
-      template dropTables() =
+      template dropTables() {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
         for dropTableQuery in dropTableQueries:
@@ -189,7 +192,7 @@ template genWithDb(connection, user, password, database: string,
 
           dbConn.exec sql dropTableQuery
 
-      template createTables(force = false) =
+      template createTables(force = false) {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
 
         If ``force`` is ``true``, drop tables beforehand.
@@ -203,7 +206,7 @@ template genWithDb(connection, user, password, database: string,
 
           dbConn.exec sql tableSchema
 
-      template insert(obj: var object, force = false) =
+      template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
         the insertion.
 
@@ -218,7 +221,7 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = dbConn.insertID(insertQuery, params).int
 
-      template getOne(obj: var object, id: int) =
+      template getOne(obj: var object, id: int) {.used.} =
         ## Read a record from DB and store it into an existing object instance.
 
         let getOneQuery = genGetOneQuery(obj)
@@ -232,12 +235,12 @@ template genWithDb(connection, user, password, database: string,
 
         row.to(obj)
 
-      proc getOne(T: type, id: int): T =
+      proc getOne(T: type, id: int): T {.used.} =
         ## Read a record from DB into a new object instance.
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int,  offset = 0, where = "1", orderBy = "id") =
+      proc getMany(objs: var seq[object], limit: int, offset = 0, where = "1", orderBy = "id") {.used.} =
         ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
 
         Filter using ``where`` condition.
@@ -255,7 +258,7 @@ template genWithDb(connection, user, password, database: string,
 
         rows.to(objs)
 
-      proc getMany(T: type, limit: int, offset = 0, where = "1", orderBy = "id"): seq[T] =
+      proc getMany(T: type, limit: int, offset = 0, where = "1", orderBy = "id"): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
@@ -265,7 +268,7 @@ template genWithDb(connection, user, password, database: string,
         result.setLen limit
         result.getMany(limit, offset, where, orderBy)
 
-      template update(obj: object, force = false) =
+      template update(obj: object, force = false) {.used.} =
         ##[ Update DB record with object field values.
 
         By default, readonly fields are not updated. Use ``force=true`` to update all fields.
@@ -279,7 +282,7 @@ template genWithDb(connection, user, password, database: string,
 
         dbConn.exec(updateQuery, params)
 
-      template delete(obj: var object) =
+      template delete(obj: var object) {.used.} =
         ## Delete a record in DB by object's id. The id is set to 0 after the deletion.
 
         let deleteQuery = genDeleteQuery(obj)
@@ -290,7 +293,11 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = 0
 
-      try: body
+      try:
+        let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
+        debug foreignKeyQuery
+        dbConn.exec foreignKeyQuery
+        body
       finally: dbConn.close()
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
