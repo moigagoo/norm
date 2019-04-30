@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.9 (in progress)
+
+-   Add `getOne(where: string)` procs to get a single record by condition.
+
 ## 1.0.8
 
 -   SQLite: Add `{.onUpdate}` and `{.onDelete.}` pragmas (thanks to @alaviss).

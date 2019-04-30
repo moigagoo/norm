@@ -146,11 +146,11 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
                                                     placeholders.join(", ")]
 
-proc genGetOneQuery*(obj: object): SqlQuery =
+proc genGetOneQuery*(obj: object, where = "id = ?"): SqlQuery =
   ## Generate ``SELECT`` query to fetch a single record for an object.
 
-  sql "SELECT $# FROM $# WHERE id = ?" % [obj.getColumns(force=true).join(", "),
-                                          type(obj).getTable()]
+  sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
+                                          type(obj).getTable(), where]
 
 proc genGetManyQuery*(obj: object, condition, orderBy: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
@@ -245,6 +245,31 @@ template genWithDb(connection, user, password, database: string,
         ## Read a record from DB into a new object instance.
 
         result.getOne(id)
+
+      template getOne(obj: var object, where: string) {.used.} =
+        ##[ Read a record from DB by condition and store it into an existing object instance.
+
+        If multiple records are found, return the first one.
+        ]##
+
+        let getOneQuery = genGetOneQuery(obj, where)
+
+        debug getOneQuery
+
+        let row = dbConn.getRow(getOneQuery)
+
+        if row.isEmpty():
+          raise newException(KeyError, "Record by condition '$#' not found." % where)
+
+        row.to(obj)
+
+      proc getOne(T: type, where: string): T {.used.} =
+        ##[ Read a record from DB by condition into a new object instance.
+
+        If multiple records are found, return the first one.
+        ]##
+
+        result.getOne(where)
 
       proc getMany(objs: var seq[object], limit: int, offset = 0, where = "TRUE", orderBy = "id") {.used.} =
         ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
