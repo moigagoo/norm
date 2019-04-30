@@ -8,18 +8,15 @@ import norm / sqlite
 db("test.db", "", "", ""):
   type
     User {.table: "users".} = object
-      email: string
+      email {.unique.}: string
       birthDate {.
         dbType: "INTEGER",
         parseIt: it.parseInt().fromUnix().local(),
         formatIt: $it.toTime().toUnix()
       .}: DateTime
-    Publisher {.table: "publishers".} = object
-      title: string
     Book {.table: "books".} = object
       title: string
-      authorEmail {.fk: User.email.}: string
-      publisherTitle {.fk: Publisher.title.}: string
+      authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
 
   proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
 
@@ -31,7 +28,8 @@ db("test.db", "", "", ""):
         dbType: "INTEGER",
         fk: Book
         parser: getBookById,
-        formatIt: $it.id
+        formatIt: $it.id,
+        onDelete: "CASCADE"
       .}: Book
 
 suite "Creating and dropping tables, CRUD":
@@ -68,8 +66,7 @@ suite "Creating and dropping tables, CRUD":
       check dbConn.getAllRows(query, "books") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
         @["1", "title", "TEXT", "0", "", "0"],
-        @["2", "authorEmail", "TEXT", "0", "", "0"],
-        @["3", "publisherTitle", "TEXT", "0", "", "0"]
+        @["2", "authorEmail", "TEXT", "0", "", "0"]
       ]
       check dbConn.getAllRows(query, "editions") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
