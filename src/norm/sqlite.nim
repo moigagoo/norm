@@ -140,11 +140,11 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
                                                     placeholders.join(", ")]
 
-proc genGetOneQuery*(obj: object, where = "id = ?"): SqlQuery =
+proc genGetOneQuery*(obj: object, condition = "id = ?"): SqlQuery =
   ## Generate ``SELECT`` query to fetch a single record for an object.
 
   sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
-                                          type(obj).getTable(), where]
+                                          type(obj).getTable(), condition]
 
 proc genGetManyQuery*(obj: object, condition, orderBy: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
@@ -265,7 +265,8 @@ template genWithDb(connection, user, password, database: string,
 
         result.getOne(where)
 
-      proc getMany(objs: var seq[object], limit: int, offset = 0, where = "1", orderBy = "id") {.used.} =
+      proc getMany(objs: var seq[object], limit: int, offset = 0, where = "1", orderBy = "id")
+                  {.used.} =
         ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
 
         Filter using ``where`` condition.

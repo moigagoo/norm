@@ -146,11 +146,11 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
                                                     placeholders.join(", ")]
 
-proc genGetOneQuery*(obj: object, where = "id = ?"): SqlQuery =
+proc genGetOneQuery*(obj: object, condition = "id = ?"): SqlQuery =
   ## Generate ``SELECT`` query to fetch a single record for an object.
 
   sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
-                                          type(obj).getTable(), where]
+                                          type(obj).getTable(), condition]
 
 proc genGetManyQuery*(obj: object, condition, orderBy: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
