@@ -83,6 +83,8 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "pk" and prag.kind == pkFlag:
       result.add " PRIMARY KEY"
+    elif prag.name == "unique" and prag.kind == pkFlag:
+      result.add " UNIQUE"
     elif prag.name == "notNull" and prag.kind == pkFlag:
       result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
@@ -292,6 +294,9 @@ template genWithDb(connection, user, password, database: string,
         obj.id = 0
 
       try:
+        let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
+        debug foreignKeyQuery
+        dbConn.exec foreignKeyQuery
         body
       finally: dbConn.close()
 
