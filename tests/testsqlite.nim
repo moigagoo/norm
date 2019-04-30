@@ -14,9 +14,12 @@ db("test.db", "", "", ""):
         parseIt: it.parseInt().fromUnix().local(),
         formatIt: $it.toTime().toUnix()
       .}: DateTime
+    Publisher {.table: "publishers".} = object
+      title {.unique.}: string
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
+      publisherTitle {.fk: Publisher.title.}: string
 
   proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
 
@@ -41,10 +44,13 @@ suite "Creating and dropping tables, CRUD":
         var
           user = User(email: "test-$#@example.com" % $i,
                       birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
-          book = Book(title: "Book $#" % $i, authorEmail: user.email)
+          publisher = Publisher(title: "Publisher $#" % $i)
+          book = Book(title: "Book $#" % $i, authorEmail: user.email,
+                      publisherTitle: publisher.title)
           edition = Edition(title: "Edition $#" % $i)
 
         user.insert()
+        publisher.insert()
         book.insert()
 
         edition.book = book
@@ -66,7 +72,8 @@ suite "Creating and dropping tables, CRUD":
       check dbConn.getAllRows(query, "books") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
         @["1", "title", "TEXT", "0", "", "0"],
-        @["2", "authorEmail", "TEXT", "0", "", "0"]
+        @["2", "authorEmail", "TEXT", "0", "", "0"],
+        @["3", "publisherTitle", "TEXT", "0", "", "0"],
       ]
       check dbConn.getAllRows(query, "editions") == @[
         @["0", "id", "INTEGER", "0", "", "1"],
@@ -77,11 +84,16 @@ suite "Creating and dropping tables, CRUD":
   test "Create records":
     withDb:
       let
+        publishers = Publisher.getMany 100
         books = Book.getMany 100
         editions = Edition.getMany 100
 
+      check len(publishers) == 9
       check len(books) == 9
       check len(editions) == 9
+
+      check publishers[3].id == 4
+      check publishers[3].title == "Publisher 4"
 
       check books[5].id == 6
       check books[5].title == "Book 6"
@@ -105,16 +117,22 @@ suite "Creating and dropping tables, CRUD":
           User(birthDate: now()),
           User(birthDate: now())
         ]
+        publishers = Publisher().repeat 10
         books = Book().repeat 10
         editions = Edition().repeat 10
 
       users.getMany(20, offset=5)
+      publishers.getMany(20, offset=5)
       books.getMany(20, offset=5)
       editions.getMany(20, offset=5)
 
       check len(users) == 4
       check users[0].id == 6
       check users[^1].id == 9
+
+      check len(publishers) == 4
+      check publishers[0].id == 6
+      check publishers[^1].id == 9
 
       check len(books) == 4
       check books[0].id == 6
@@ -126,14 +144,17 @@ suite "Creating and dropping tables, CRUD":
 
       var
         user = User(birthDate: now())
+        publisher = Publisher()
         book = Book()
         edition = Edition()
 
       user.getOne 8
+      publisher.getOne 8
       book.getOne 8
       edition.getOne 8
 
       check user.id == 8
+      check publisher.id == 8
       check book.id == 8
       check edition.id == 8
 
@@ -182,6 +203,7 @@ suite "Creating and dropping tables, CRUD":
 
       expect DbError:
         dbConn.exec sql "SELECT NULL FROM users"
+        dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
 
