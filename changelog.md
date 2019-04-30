@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.8 (in progress)
+## 1.0.8
 
 -   SQLite: Add `{.onUpdate}` and `{.onDelete.}` pragmas (thanks to @alaviss).
 -   SQLite: Add support for multiple foreign keys (thanks to @alaviss).
