@@ -4,8 +4,17 @@ services:
     image: postgres
   test:
     build: .
+    image: norm
     depends_on:
       - db
     volumes:
       - .:/usr/src/app
     command: nimble test
+  testpostgres:
+      build: .
+      image: norm
+      depends_on:
+        - db
+      volumes:
+        - .:/usr/src/app
+      command: nim c -r tests/testpostgres.nim

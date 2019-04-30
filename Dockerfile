@@ -5,4 +5,4 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 RUN nimble install -y
-RUN apt install -y postgresql-client
+RUN apt update && apt install -y postgresql-client
