@@ -6,6 +6,7 @@
 -   SQLite: Add support for multiple foreign keys (thanks to @alaviss).
 -   SQLite: Enable foreign keys for all connections (thanks to @alaviss).
 -   SQLite: Add `unique` pragma.
+-   Add tests for multiple foreign keys.
 
 
 ## 1.0.7
