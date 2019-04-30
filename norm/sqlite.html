@@ -1269,8 +1269,8 @@ function main() {
     title="genDropTableQueries(dbObjReprs: seq[ObjRepr]): seq[SqlQuery]"><wbr />gen<wbr />Drop<wbr />Table<wbr />Queries<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#genInsertQuery%2C%2Cbool"
     title="genInsertQuery(obj: object; force: bool): SqlQuery"><wbr />gen<wbr />Insert<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#genGetOneQuery%2C"
-    title="genGetOneQuery(obj: object): SqlQuery"><wbr />gen<wbr />Get<wbr />One<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#genGetOneQuery%2C%2Cstring"
+    title="genGetOneQuery(obj: object; where = &quot;id = ?&quot;): SqlQuery"><wbr />gen<wbr />Get<wbr />One<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#genGetManyQuery%2C%2Cstring%2Cstring"
     title="genGetManyQuery(obj: object; condition, orderBy: string): SqlQuery"><wbr />gen<wbr />Get<wbr />Many<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getUpdateQuery%2C%2Cbool"
@@ -1358,8 +1358,8 @@ Generate <tt class="docutils literal"><span class="pre">DROP TABLE</span></tt> q
 Generate <tt class="docutils literal"><span class="pre">INSERT</span></tt> query for an object.
 
 </dd>
-<a id="genGetOneQuery,"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetOneQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<a id="genGetOneQuery,,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetOneQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">where</span> <span class="Other">=</span> <span class="StringLit">&quot;id = ?&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
 Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query to fetch a single record for an object.
 
@@ -1406,7 +1406,7 @@ Generate <tt class="docutils literal"><span class="pre">DELETE</span></tt> query
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-04-30 12:54:43 UTC</small>
+        <small>Made with Nim. Generated: 2019-04-30 19:00:02 UTC</small>
       </div>
     </div>
   </div>
