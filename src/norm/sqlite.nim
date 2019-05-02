@@ -73,7 +73,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
 
-proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
+proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
 
   result.add fieldRepr.getColumn()
@@ -105,7 +105,7 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
     elif prag.name == "onDelete" and prag.kind == pkKval:
       result.add " ON DELETE $#" % $prag.value
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
+proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate table schema for an object representation.
 
   result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
@@ -118,7 +118,7 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string 
   result.add columns.join(",\n")
   result.add "\n)"
 
-proc genTableSchemas*(dbObjReprs: openarray[ObjRepr]): seq[SqlQuery] =
+proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
   ## Generate table schemas for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
@@ -170,7 +170,7 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                    tableSchemas, dropTableQueries: openarray[SqlQuery]): untyped {.dirty.} =
+                    tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
   template withDb*(body: untyped): untyped {.dirty.} =
