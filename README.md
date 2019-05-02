@@ -82,3 +82,17 @@ withDb:
 My goal with Norm was to lubricate the routine of working with DB: creating DB schema from the object model and converting data between DB and object representations. It's a tool for *common* cases not for *all* cases. Norm's builtin CRUD procs will help you write a typical RESTful API, but as your app grows more complex, you will have to write SQL queries manually (btw Norm can help with that too).
 
 **Using any ORM, Norm included, doesn't free a programmer from having to learn SQL!**
+
+
+## Contributing
+
+Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
+
+If you decide to contribute through code, please run the tests after you change the code:
+
+```shell
+$ docker-compose run tests        # run all tests
+$ docker-compose run testpostgres # run only PostgreSQL tests
+$ nimble test                     # run all tests natively; requires a running PostgreSQL server!
+$ nim c -r tests/testsqlite.nim   # run a single test suite
+```
