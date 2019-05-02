@@ -9,6 +9,7 @@ Norm supports SQLite and PostgreSQL.
 - [Quickstart →](#Quickstart)
 - [API docs →](https://moigagoo.github.io/norm/norm.html)
 - [Sample app →](https://github.com/moigagoo/norm-sample-webapp)
+- [Contributing info →](#contributing)
 
 
 ## Installation
