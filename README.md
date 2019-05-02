@@ -96,3 +96,9 @@ $ docker-compose run testpostgres # run only PostgreSQL tests
 $ nimble test                     # run all tests natively; requires a running PostgreSQL server!
 $ nim c -r tests/testsqlite.nim   # run a single test suite
 ```
+
+
+### ❤ Contributors ❤
+
+- [@moigagoo](https://github.com/moigagoo)
+- [@alaviss](https://github.com/alaviss)
