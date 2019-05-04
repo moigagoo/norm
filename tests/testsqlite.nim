@@ -169,7 +169,6 @@ suite "Creating and dropping tables, CRUD":
 
       let someBook = Book.getOne("authorEmail=?", "test-2@example.com")
       check someBook.id == 2
-      let notExistingBook = Book.getOne("title=?", "foo")
 
       expect KeyError:
         let notExistingBook = Book.getOne("title=?", "foo")
