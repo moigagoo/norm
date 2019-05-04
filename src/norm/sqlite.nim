@@ -233,7 +233,7 @@ template genWithDb(connection, user, password, database: string,
         let row = dbConn.getRow(getOneQuery, params)
 
         if row.isEmpty():
-          raise newException(KeyError, "Record by condition '$#' and params '$#' not found." %
+          raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
                              [cond, params.join(", ")])
 
         row.to(obj)

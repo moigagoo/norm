@@ -167,8 +167,12 @@ suite "Creating and dropping tables, CRUD":
       check someBooks[0].title == "Book 5"
       check someBooks[1].authorEmail == "test-1@example.com"
 
-      let someBook = Book.getOne(cond="authorEmail=?", params=["test-2@example.com"])
+      let someBook = Book.getOne("authorEmail=?", "test-2@example.com")
       check someBook.id == 2
+      let notExistingBook = Book.getOne("title=?", "foo")
+
+      expect KeyError:
+        let notExistingBook = Book.getOne("title=?", "foo")
 
   test "Update records":
     withDb:
