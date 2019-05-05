@@ -9,13 +9,13 @@ services:
     volumes:
       - .:/usr/src/app
     command: nimble test
-  testpostgres:
+  test:
     build: .
     depends_on:
       - db
     volumes:
       - .:/usr/src/app
-    command: nim c -r tests/testpostgres.nim
+    entrypoint: nim c -r
   docs:
     image: nimlang/nim
     volumes:
