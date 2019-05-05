@@ -267,9 +267,9 @@ template genWithDb(connection, user, password, database: string,
 
       proc getMany(objs: var seq[object], limit: int, offset = 0,
                    cond = "1", params: varargs[string, `$`]) {.used.} =
-        ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
+        ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
-        Filter using ``where`` condition.
+        Filter using ``cond`` condition.
         ]##
 
         if len(objs) == 0: return
@@ -289,7 +289,7 @@ template genWithDb(connection, user, password, database: string,
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
-        Filter using ``where`` condition.
+        Filter using ``cond`` condition.
         ]##
 
         result.setLen limit
