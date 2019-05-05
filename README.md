@@ -94,10 +94,11 @@ Any contributions are welcome, be it pull requests, code reviews, documentation 
 If you decide to contribute through code, please run the tests after you change the code:
 
 ```shell
-$ docker-compose run tests        # run all tests
-$ docker-compose run testpostgres # run only PostgreSQL tests
-$ nimble test                     # run all tests natively; requires a running PostgreSQL server!
-$ nim c -r tests/testsqlite.nim   # run a single test suite
+$ docker-compose run tests                        # run all tests in Docker
+$ docker-compose run test tests/testpostgres.nim  # run a single test suite in Docker
+$ nimble test                                     # run all tests natively;
+                                                  # requires a running PostgreSQL server!
+$ nim c -r tests/testsqlite.nim                   # run a single test suite natively
 ```
 
 
