@@ -1270,9 +1270,9 @@ function main() {
   <li><a class="reference" href="#genInsertQuery%2C%2Cbool"
     title="genInsertQuery(obj: object; force: bool): SqlQuery"><wbr />gen<wbr />Insert<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#genGetOneQuery%2C%2Cstring"
-    title="genGetOneQuery(obj: object; condition = &quot;id = ?&quot;): SqlQuery"><wbr />gen<wbr />Get<wbr />One<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
-  <li><a class="reference" href="#genGetManyQuery%2C%2Cstring%2Cstring"
-    title="genGetManyQuery(obj: object; condition, orderBy: string): SqlQuery"><wbr />gen<wbr />Get<wbr />Many<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
+    title="genGetOneQuery(obj: object; condition: string): SqlQuery"><wbr />gen<wbr />Get<wbr />One<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
+  <li><a class="reference" href="#genGetManyQuery%2C%2Cstring"
+    title="genGetManyQuery(obj: object; condition: string): SqlQuery"><wbr />gen<wbr />Get<wbr />Many<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#getUpdateQuery%2C%2Cbool"
     title="getUpdateQuery(obj: object; force: bool): SqlQuery"><wbr />get<wbr />Update<wbr />Query<span class="attachedType" style="visibility:hidden"></span></a></li>
   <li><a class="reference" href="#genDeleteQuery%2C"
@@ -1359,13 +1359,13 @@ Generate <tt class="docutils literal"><span class="pre">INSERT</span></tt> query
 
 </dd>
 <a id="genGetOneQuery,,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetOneQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">condition</span> <span class="Other">=</span> <span class="StringLit">&quot;id = ?&quot;</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetOneQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">condition</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
 Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query to fetch a single record for an object.
 
 </dd>
-<a id="genGetManyQuery,,string,string"></a>
-<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetManyQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">condition</span><span class="Other">,</span> <span class="Identifier">orderBy</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<a id="genGetManyQuery,,string"></a>
+<dt><pre><span class="Keyword">proc</span> <span class="Identifier">genGetManyQuery</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">condition</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
 <dd>
 Generate <tt class="docutils literal"><span class="pre">SELECT</span></tt> query to fetch multiple records for an object.
 
@@ -1406,7 +1406,7 @@ Generate <tt class="docutils literal"><span class="pre">DELETE</span></tt> query
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-05-02 11:53:28 UTC</small>
+        <small>Made with Nim. Generated: 2019-05-07 18:49:40 UTC</small>
       </div>
     </div>
   </div>
