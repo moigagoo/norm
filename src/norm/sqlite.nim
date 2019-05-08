@@ -73,7 +73,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
 
-proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
+proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
 
   result.add fieldRepr.getColumn()
@@ -105,7 +105,7 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openarray[ObjRepr]): string =
     elif prag.name == "onDelete" and prag.kind == pkKval:
       result.add " ON DELETE $#" % $prag.value
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string =
+proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate table schema for an object representation.
 
   result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
@@ -118,7 +118,7 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openarray[ObjRepr]): string 
   result.add columns.join(",\n")
   result.add "\n)"
 
-proc genTableSchemas*(dbObjReprs: openarray[ObjRepr]): seq[SqlQuery] =
+proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
   ## Generate table schemas for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
@@ -140,18 +140,17 @@ proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
                                                     placeholders.join(", ")]
 
-proc genGetOneQuery*(obj: object): SqlQuery =
+proc genGetOneQuery*(obj: object, condition: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch a single record for an object.
 
-  sql "SELECT $# FROM $# WHERE id = ?" % [obj.getColumns(force=true).join(", "),
-                                          type(obj).getTable()]
+  sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
+                                      type(obj).getTable(), condition]
 
-proc genGetManyQuery*(obj: object, condition, orderBy: string): SqlQuery =
+proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
 
-  sql "SELECT $# FROM $# WHERE $# ORDER BY $# LIMIT ? OFFSET ?" % [
-                                                      obj.getColumns(force=true).join(", "),
-                                                      type(obj).getTable(), condition, orderBy]
+  sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
+                                                       type(obj).getTable(), condition]
 
 proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
@@ -170,7 +169,7 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                    tableSchemas, dropTableQueries: openarray[SqlQuery]): untyped {.dirty.} =
+                    tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
   template withDb*(body: untyped): untyped {.dirty.} =
@@ -221,14 +220,40 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = dbConn.insertID(insertQuery, params).int
 
-      template getOne(obj: var object, id: int) {.used.} =
-        ## Read a record from DB and store it into an existing object instance.
+      template getOne(obj: var object, cond: string, params: varargs[string, `$`]) {.used.} =
+        ##[ Read a record from DB by condition and store it into an existing object instance.
 
-        let getOneQuery = genGetOneQuery(obj)
+        If multiple records are found, return the first one.
+        ]##
+
+        let getOneQuery = genGetOneQuery(obj, cond)
+
+        debug getOneQuery, " <- ", params.join(", ")
+
+        let row = dbConn.getRow(getOneQuery, params)
+
+        if row.isEmpty():
+          raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
+                             [cond, params.join(", ")])
+
+        row.to(obj)
+
+      proc getOne(T: type, cond: string, params: varargs[string, `$`]): T {.used.} =
+        ##[ Read a record from DB by condition into a new object instance.
+
+        If multiple records are found, return the first one.
+        ]##
+
+        result.getOne(cond, params)
+
+      template getOne(obj: var object, id: int) {.used.} =
+        ## Read a record from DB by id and store it into an existing object instance.
+
+        let getOneQuery = genGetOneQuery(obj, "id=?")
 
         debug getOneQuery, " <- ", $id
 
-        let row = dbConn.getRow(genGetOneQuery(obj), id)
+        let row = dbConn.getRow(getOneQuery, id)
 
         if row.isEmpty():
           raise newException(KeyError, "Record with id=$# not found." % $id)
@@ -236,21 +261,22 @@ template genWithDb(connection, user, password, database: string,
         row.to(obj)
 
       proc getOne(T: type, id: int): T {.used.} =
-        ## Read a record from DB into a new object instance.
+        ## Read a record from DB by id into a new object instance.
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int, offset = 0, where = "1", orderBy = "id") {.used.} =
-        ##[ Read ``limit`` records with ``offset``  from DB into an existing open array of objects.
+      proc getMany(objs: var seq[object], limit: int, offset = 0,
+                   cond = "1", params: varargs[string, `$`]) {.used.} =
+        ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
-        Filter using ``where`` condition.
+        Filter using ``cond`` condition.
         ]##
 
         if len(objs) == 0: return
 
         let
-          getManyQuery = genGetManyQuery(objs[0], where, orderBy)
-          params = [$min(limit, len(objs)), $offset]
+          getManyQuery = genGetManyQuery(objs[0], cond)
+          params = @params & @[$min(limit, len(objs)), $offset]
 
         debug getManyQuery, " <- ", params.join(", ")
 
@@ -258,15 +284,16 @@ template genWithDb(connection, user, password, database: string,
 
         rows.to(objs)
 
-      proc getMany(T: type, limit: int, offset = 0, where = "1", orderBy = "id"): seq[T] {.used.} =
+      proc getMany(T: type, limit: int, offset = 0,
+                   cond = "1", params: varargs[string, `$`]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
-        Filter using ``where`` condition.
+        Filter using ``cond`` condition.
         ]##
 
         result.setLen limit
-        result.getMany(limit, offset, where, orderBy)
+        result.getMany(limit, offset, cond, params)
 
       template update(obj: object, force = false) {.used.} =
         ##[ Update DB record with object field values.

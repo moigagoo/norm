@@ -172,7 +172,7 @@ proc to*(rows: openArray[Row], T: type): seq[T] =
   Use this proc if the object fields have default values and do not require initialization, e.g. ``int``, ``string``, ``float``.
 
   If fields require initialization, for example, ``times.DateTime``, use template ``to``.
-  It converts an open array of rows to an existing object instance openarray.
+  It converts an open array of rows to an existing object instance openArray.
   ]##
 
   runnableExamples:

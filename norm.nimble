@@ -1,8 +1,8 @@
 # Package
 
-version       = "1.0.8"
+version       = "1.0.9"
 author        = "Constantine Molchanov"
-description   = "ORM that doesn't try to outsmart you."
+description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
 srcDir        = "src"
 
@@ -10,10 +10,3 @@ srcDir        = "src"
 # Dependencies
 
 requires "nim >= 0.19.4"
-
-
-# Tasks
-
-task docs, "Generate and upload API docs":
-  exec "nim doc --project src/norm.nim"
-  exec "ghp-import -np src/htmldocs"

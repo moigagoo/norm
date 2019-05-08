@@ -2,4 +2,14 @@ services:
   - docker
 
 script:
-  - docker-compose run test
+  - docker-compose run tests
+  - docker-compose run docs
+
+deploy:
+  provider: pages
+  local-dir: src/htmldocs
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: true
+  on:
+    branch: develop

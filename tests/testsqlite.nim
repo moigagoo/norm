@@ -158,13 +158,20 @@ suite "Creating and dropping tables, CRUD":
       check book.id == 8
       check edition.id == 8
 
-  test "Filter and sort records":
+  test "Query records":
     withDb:
-      let someBooks = Book.getMany(10, where="title IN ('Book 1', 'Book 5')", orderBy="title DESC")
+      let someBooks = Book.getMany(10, cond="title IN (?, ?) ORDER BY title DESC",
+                                   params=["Book 1", "Book 5"])
 
       check len(someBooks) == 2
       check someBooks[0].title == "Book 5"
       check someBooks[1].authorEmail == "test-1@example.com"
+
+      let someBook = Book.getOne("authorEmail=?", "test-2@example.com")
+      check someBook.id == 2
+
+      expect KeyError:
+        let notExistingBook = Book.getOne("title=?", "Does not exist")
 
   test "Update records":
     withDb:
