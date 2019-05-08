@@ -6,11 +6,18 @@
 -   🔨—refactoring
 -   ✅—test suite improvement
 
+
+## 1.0.10 (in progress)
+
+-   🔨 Rename `getUpdateQuery` to `genUpdateQuery`.
+
+
 ## 1.0.9
 
 -   ❗ Change signatures for `getMany` and `getOne`: instead of `where` and `orderBy` args there's a single `cond` arg.
 -   ➕ Add `params` arg to `getMany` and `getOne` to allow safe value insertion in SQL queries.
 -   ➕ Add ```getOne(cond: string, params: varargs[string, `$`])``` procs to query a single record by condition.
+
 
 ## 1.0.8
 
