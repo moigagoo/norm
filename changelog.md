@@ -6,7 +6,7 @@
 -   🔨—refactoring
 -   ✅—test suite improvement
 
-## 1.0.9 (in progress)
+## 1.0.9
 
 -   ❗ Change signatures for `getMany` and `getOne`: instead of `where` and `orderBy` args there's a single `cond` arg.
 -   ➕ Add `params` arg to `getMany` and `getOne` to allow safe value insertion in SQL queries.
