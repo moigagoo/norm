@@ -1,9 +1,11 @@
 import strutils, sequtils
 import sugar
 import macros; export macros
+import typetraits
 
-import objutils, pragmas
+import objutils, pragmas, universal
 
+import oids
 
 type Row = seq[string]
 
@@ -88,6 +90,8 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = parseInt row[i]
     elif type(value) is float:
       obj.dot(field) = parseFloat row[i]
+    elif name(type(value)) == "Oid":
+      obj.dot(field) = parseOid row[i]
     else:
       raise newException(ValueError, "Parser for $# is undefined." % type(value))
 
