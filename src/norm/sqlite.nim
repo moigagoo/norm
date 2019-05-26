@@ -65,8 +65,15 @@ proc getDbType(fieldRepr: FieldRepr): string =
 
   result = case $fieldRepr.typ
   of "int": "INTEGER"
+  of "int32": "INTEGER"
+  of "int64": "INTEGER"
   of "string": "TEXT"
   of "float": "REAL"
+  of "float32": "REAL"
+  of "float64": "REAL"
+  of "bool": "INTEGER"   # per spec, SQLite stores bools as 1(true) or 0(false) as an INTEGER
+  of "Time": "INTEGER"   # stored as a 64-bit integer since 1970-01-01 00:00:00 UTC
+  of "Oid": "TEXT"       # stored as hexadecimal string
   else: "TEXT"
 
   for prag in fieldRepr.signature.pragmas:

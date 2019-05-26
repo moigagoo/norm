@@ -2,10 +2,9 @@ import strutils, sequtils
 import sugar
 import macros; export macros
 import typetraits
+import oids, times
 
 import objutils, pragmas, universal
-
-import oids
 
 type Row = seq[string]
 
@@ -86,10 +85,22 @@ template to*(row: Row, obj: var object) =
         obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
     elif type(value) is string:
       obj.dot(field) = row[i]
+    elif type(value) is int32:
+      obj.dot(field) = parseInt(row[i]).int32
+    elif type(value) is int64:
+      obj.dot(field) = parseInt row[i]
     elif type(value) is int:
       obj.dot(field) = parseInt row[i]
+    elif type(value) is float32:
+      obj.dot(field) = parseFloat(row[i]).float32
+    elif type(value) is float64:
+      obj.dot(field) = parseFloat row[i]
     elif type(value) is float:
       obj.dot(field) = parseFloat row[i]
+    elif type(value) is bool:
+      obj.dot(field) = parseBool row[i]
+    elif name(type(value)) == "Time":  # often, a pragma is used; this is the default if not
+      obj.dot(field) = parseTime(row[i], "yyyy-MM-dd\'T\'HH:mm:sszzz", utc())
     elif name(type(value)) == "Oid":
       obj.dot(field) = parseOid row[i]
     else:
