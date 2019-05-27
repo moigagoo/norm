@@ -2,11 +2,11 @@ import strutils, sequtils
 import sugar
 import macros; export macros
 import typetraits
-import oids, times
+import oids, times, options
 
 import objutils, pragmas, universal
 
-type Row = seq[string]
+type Row = seq[Option[string]]
 
 
 template parser*(op: (string) -> any) {.pragma.}
@@ -63,7 +63,12 @@ template to*(row: Row, obj: var object) =
         floatField: float
         dtField {.parser: parseDateTime.}: DateTime
 
-    let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
+    let row = @[
+      some[string]("123"), 
+      some[string]("foo"), 
+      some[string]("123.321"), 
+      some[string]("2019-01-21 15:03:21+04:00")
+    ]
 
     var example = Example(dtField: now())
 
@@ -78,31 +83,68 @@ template to*(row: Row, obj: var object) =
 
   for field, value in obj.fieldPairs:
     when obj.dot(field).hasCustomPragma(parser):
-      obj.dot(field) = obj.dot(field).getCustomPragmaVal(parser) row[i]
+      obj.dot(field) = obj.dot(field).getCustomPragmaVal(parser) row[i].get()
     elif obj.dot(field).hasCustomPragma(parseIt):
       block:
-        let it {.inject.} = row[i]
+        let it {.inject.} = row[i].get()
         obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
     elif type(value) is string:
-      obj.dot(field) = row[i]
+      obj.dot(field) = row[i].get("")
     elif type(value) is int32:
-      obj.dot(field) = parseInt(row[i]).int32
+      obj.dot(field) = parseInt(row[i].get("0")).int32
     elif type(value) is int64:
-      obj.dot(field) = parseInt row[i]
+      obj.dot(field) = parseInt row[i].get("0")
     elif type(value) is int:
-      obj.dot(field) = parseInt row[i]
+      obj.dot(field) = parseInt row[i].get("0")
     elif type(value) is float32:
-      obj.dot(field) = parseFloat(row[i]).float32
+      obj.dot(field) = parseFloat(row[i].get("0.0")).float32
     elif type(value) is float64:
-      obj.dot(field) = parseFloat row[i]
+      obj.dot(field) = parseFloat row[i].get("0.0")
     elif type(value) is float:
-      obj.dot(field) = parseFloat row[i]
+      obj.dot(field) = parseFloat row[i].get("0.0")
     elif type(value) is bool:
-      obj.dot(field) = parseBool row[i]
+      obj.dot(field) = parseBool row[i].get("false")
     elif name(type(value)) == "Time":  # often, a pragma is used; this is the default if not
-      obj.dot(field) = parseTime(row[i], "yyyy-MM-dd\'T\'HH:mm:sszzz", utc())
+      obj.dot(field) = parseTime(row[i].get(""), "yyyy-MM-dd\'T\'HH:mm:sszzz", utc())
     elif name(type(value)) == "Oid":
-      obj.dot(field) = parseOid row[i]
+      obj.dot(field) = parseOid row[i].get("")
+    elif type(value) is Option[string]:
+      obj.dot(field) = row[i]
+    elif type(value) is Option[int]:
+      if row[i].isNone():
+        obj.dot(field) = none[int]()
+      else:
+        obj.dot(field) = some[int](parseInt(row[i].get("0")))
+    elif type(value) is Option[int64]:
+      if row[i].isNone():
+        obj.dot(field) = none[int64]()
+      else:
+        obj.dot(field) = some[int64](parseInt(row[i].get("0")))
+    elif type(value) is Option[float32]:
+      if row[i].isNone():
+        obj.dot(field) = none[float32]()
+      else:
+        obj.dot(field) = some[float32](parseFloat(row[i].get("0.0")).float32)
+    elif type(value) is Option[float]:
+      if row[i].isNone():
+        obj.dot(field) = none[float]()
+      else:
+        obj.dot(field) = some[float](parseFloat(row[i].get("0.0")))
+    elif type(value) is Option[bool]:
+      if row[i].isNone():
+        obj.dot(field) = none[bool]()
+      else:
+        obj.dot(field) = some[bool](parseBool(row[i].get("false")))
+    elif type(value) is Option[Time]:
+      if row[i].isNone():
+        obj.dot(field) = none[Time]()
+      else:
+        obj.dot(field) = some[Time](parseTime(row[i].get(""), "yyyy-MM-dd\'T\'HH:mm:sszzz", utc()))
+    elif type(value) is Option[Oid]:
+      if row[i].isNone():
+        obj.dot(field) = none[Oid]()
+      else:
+        obj.dot(field) = some[Oid](parseOid(row[i].get("")))
     else:
       raise newException(ValueError, "Parser for $# is undefined." % type(value))
 
@@ -240,13 +282,27 @@ proc toRow*(obj: object, force = false): Row =
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
       when obj.dot(field).hasCustomPragma(formatter):
-        result.add obj.dot(field).getCustomPragmaVal(formatter) value
+        result.add some[string](obj.dot(field).getCustomPragmaVal(formatter) value)
       elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
-          result.add obj.dot(field).getCustomPragmaVal(formatIt)
+          result.add some[string](obj.dot(field).getCustomPragmaVal(formatIt))
       else:
-        result.add $value
+        when ((value is Option[string]) or
+          (value is Option[bool]) or 
+          (value is Option[float32]) or 
+          (value is Option[float]) or 
+          (value is Option[int]) or 
+          (value is Option[int64]) or 
+          (value is Option[Time]) or 
+          (value is Option[Oid])
+        ):
+          if value.isNone():
+            result.add none[string]()
+          else:
+            result.add some[string]($value)
+        else:
+          result.add some[string]($value)
 
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
@@ -279,6 +335,9 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
   objs.mapIt(it.toRow(force))
 
 proc isEmpty*(row: Row): bool =
-  ## Check if row is empty, i.e. all its items are ``""``.
+  ## Check if row is empty, i.e. all its items are ``""`` or none.
 
-  row.allIt(it.len == 0)
+  result = true
+  for item in row:
+    if item.get("").len != 0:
+      result = false

@@ -9,6 +9,7 @@ SQLite Backend
 
 import strutils, macros, typetraits, logging
 import db_sqlite
+import options
 
 import rowutils, objutils, pragmas
 
@@ -19,6 +20,20 @@ export rowutils, objutils, pragmas
 
 
 proc `$`*(query: SqlQuery): string = $ string query
+
+proc sqlite_null_handler_in*(ss: seq[string]): seq[Option[string]] =
+  for s in ss:
+    if s == nil:
+      result.add(none[string]())
+    else:
+      result.add(some[string](s))
+
+proc sqlite_null_handler_out*(ss: seq[Option[string]]): seq[string] =
+  for s in ss:
+    if s.isNone():
+      result.add(nil)
+    else:
+      result.add(s.get(""))
 
 proc getTable*(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
@@ -63,18 +78,51 @@ proc getColumns*(obj: object, force = false): seq[string] =
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
-  result = case $fieldRepr.typ
-  of "int": "INTEGER"
-  of "int32": "INTEGER"
-  of "int64": "INTEGER"
-  of "string": "TEXT"
-  of "float": "REAL"
-  of "float32": "REAL"
-  of "float64": "REAL"
-  of "bool": "INTEGER"   # per spec, SQLite stores bools as 1(true) or 0(false) as an INTEGER
-  of "Time": "INTEGER"   # stored as a 64-bit integer since 1970-01-01 00:00:00 UTC
-  of "Oid": "TEXT"       # stored as hexadecimal string
-  else: "TEXT"
+  # result = case $fieldRepr.typ
+  # of "int": "INTEGER"
+  # of "int32": "INTEGER"
+  # of "int64": "INTEGER"
+  # of "string": "TEXT"
+  # of "float": "REAL"
+  # of "float32": "REAL"
+  # of "float64": "REAL"
+  # of "bool": "INTEGER"   # per spec, SQLite stores bools as 1(true) or 0(false) as an INTEGER
+  # of "Time": "INTEGER"   # stored as a 64-bit integer since 1970-01-01 00:00:00 UTC
+  # of "Oid": "TEXT"       # stored as hexadecimal string
+  # else: "TEXT"
+
+  if fieldRepr.typ.kind == nnkIdent:
+    result = case fieldRepr.typ.strVal
+    of "int": "INTEGER"
+    of "int32": "INTEGER"
+    of "int64": "INTEGER"
+    of "string": "TEXT"
+    of "float": "REAL"
+    of "float32": "REAL"
+    of "float64": "REAL"
+    of "bool": "INTEGER"   # per spec, SQLite stores bools as 1(true) or 0(false) as an INTEGER
+    of "Time": "INTEGER"   # stored as a 64-bit integer since 1970-01-01 00:00:00 UTC
+    of "Oid": "TEXT"       # stored as hexadecimal string
+    else: "TEXT"
+  elif fieldRepr.typ.kind == nnkBracketExpr:
+    var name = ""
+    for subname in fieldRepr.typ:
+      name &= $subname & ">"
+    result = case name
+    of "Option>int>": "INTEGER"
+    of "Option>int32>": "INTEGER"
+    of "Option>int64>": "INTEGER"
+    of "Option>string>": "TEXT"
+    of "Option>float>": "REAL"
+    of "Option>float32>": "REAL"
+    of "Option>float64>": "REAL"
+    of "Option>bool>": "INTEGER"   # per spec, SQLite stores bools as 1(true) or 0(false) as an INTEGER
+    of "Option>Time>": "INTEGER"   # stored as a 64-bit integer since 1970-01-01 00:00:00 UTC
+    of "Option>Oid>": "TEXT"       # stored as hexadecimal string
+    else: "TEXT"
+  else:
+    raise newException(KeyError, "Object field not recognized ($1)." % [$fieldRepr.typ.kind])
+
 
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbType" and prag.kind == pkKval:
@@ -221,7 +269,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           insertQuery = genInsertQuery(obj, force)
-          params = obj.toRow(force)
+          params = sqlite_null_handler_out(obj.toRow(force))
 
         debug insertQuery, " <- ", params.join(", ")
 
@@ -237,7 +285,7 @@ template genWithDb(connection, user, password, database: string,
 
         debug getOneQuery, " <- ", params.join(", ")
 
-        let row = dbConn.getRow(getOneQuery, params)
+        let row = sqlite_null_handler_in(dbConn.getRow(getOneQuery, params))
 
         if row.isEmpty():
           raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
@@ -260,7 +308,7 @@ template genWithDb(connection, user, password, database: string,
 
         debug getOneQuery, " <- ", $id
 
-        let row = dbConn.getRow(getOneQuery, id)
+        let row = sqlite_null_handler_in(dbConn.getRow(getOneQuery, id))
 
         if row.isEmpty():
           raise newException(KeyError, "Record with id=$# not found." % $id)
@@ -310,7 +358,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           updateQuery = genUpdateQuery(obj, force)
-          params = obj.toRow(force) & $obj.id
+          params = sqlite_null_handler_out(obj.toRow(force)) & $obj.id
 
         debug updateQuery, " <- ", params.join(", ")
 
