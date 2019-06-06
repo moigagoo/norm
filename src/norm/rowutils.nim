@@ -77,7 +77,7 @@ template to*(row: Row, obj: var object) =
 
   for field, value in obj.fieldPairs:
     when obj.dot(field).hasCustomPragma(parser):
-      obj.dot(field) = obj.dot(field).getCustomPragmaVal(parser) row[i]
+      obj.dot(field) = obj.dot(field).getCustomPragmaVal(parser).op row[i]
     elif obj.dot(field).hasCustomPragma(parseIt):
       block:
         let it {.inject.} = row[i]
@@ -225,7 +225,7 @@ proc toRow*(obj: object, force = false): Row =
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
       when obj.dot(field).hasCustomPragma(formatter):
-        result.add obj.dot(field).getCustomPragmaVal(formatter) value
+        result.add obj.dot(field).getCustomPragmaVal(formatter).op value
       elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
