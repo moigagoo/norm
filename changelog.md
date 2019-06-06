@@ -7,10 +7,10 @@
 -   ✅—test suite improvement
 
 
-## 1.0.10 (in progress)
+## 1.0.10
 
 -   🔨 Rename `getUpdateQuery` to `genUpdateQuery`.
--   👌 Fix rowutils compatibility with Nim 0.20.0.
+-   👌 Fix compatibility with Nim 0.20.0.
 
 
 ## 1.0.9
