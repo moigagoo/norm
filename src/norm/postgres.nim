@@ -158,7 +158,7 @@ proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
   sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
                                                        type(obj).getTable(), condition]
 
-proc getUpdateQuery*(obj: object, force: bool): SqlQuery =
+proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
 
   var fieldsWithPlaceholders: seq[string]
@@ -308,7 +308,7 @@ template genWithDb(connection, user, password, database: string,
         ]##
 
         let
-          updateQuery = getUpdateQuery(obj, force)
+          updateQuery = genUpdateQuery(obj, force)
           params = obj.toRow(force) & $obj.id
 
         debug updateQuery, " <- ", params.join(", ")
