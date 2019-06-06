@@ -1,18 +1,18 @@
 version: '3'
 services:
-  db:
+  postgres:
     image: postgres
   tests:
     build: .
     depends_on:
-      - db
+      - postgres
     volumes:
       - .:/usr/src/app
     command: nimble test
   test:
     build: .
     depends_on:
-      - db
+      - postgres
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
