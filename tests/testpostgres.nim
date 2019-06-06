@@ -5,7 +5,7 @@ import os, strutils, sequtils, times
 import norm / postgres
 
 
-db("db", "postgres", "", "postgres"):
+db("postgres", "postgres", "", "postgres"):
   type
     User {.table: "users".} = object
       email {.unique.}: string

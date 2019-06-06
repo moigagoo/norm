@@ -1,23 +1,23 @@
 version: '3'
 services:
-  db:
+  postgres:
     image: postgres
   tests:
     build: .
     depends_on:
-      - db
+      - postgres
     volumes:
       - .:/usr/src/app
     command: nimble test
   test:
     build: .
     depends_on:
-      - db
+      - postgres
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
   docs:
-    image: nimlang/nim
+    build: .
     volumes:
       - .:/usr/src/app
     command: "nim doc --project /usr/src/app/src/norm.nim"

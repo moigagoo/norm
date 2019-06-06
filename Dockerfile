@@ -1,8 +1,8 @@
-FROM nimlang/nim
+FROM nimlang/choosenim
 
 WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 
-RUN nimble install -y
 RUN apt update && apt install -y postgresql-client
+RUN nimble install -y
