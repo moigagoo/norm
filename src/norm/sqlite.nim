@@ -7,14 +7,14 @@ SQLite Backend
 ]##
 
 
-import strutils, macros, typetraits, logging
-import db_sqlite
+import strutils, macros, typetraits, logging, options
+import ndb/sqlite
 
 import rowutils, objutils, pragmas
 
 
-export strutils, macros, logging
-export db_sqlite
+export strutils, macros, logging, options
+export sqlite
 export rowutils, objutils, pragmas
 
 
@@ -232,11 +232,11 @@ template genWithDb(connection, user, password, database: string,
 
         let row = dbConn.getRow(getOneQuery, params)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
                              [cond, params.join(", ")])
 
-        row.to(obj)
+        get(row).to(obj)
 
       proc getOne(T: type, cond: string, params: varargs[string, `$`]): T {.used.} =
         ##[ Read a record from DB by condition into a new object instance.
@@ -255,10 +255,10 @@ template genWithDb(connection, user, password, database: string,
 
         let row = dbConn.getRow(getOneQuery, id)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record with id=$# not found." % $id)
 
-        row.to(obj)
+        get(row).to(obj)
 
       proc getOne(T: type, id: int): T {.used.} =
         ## Read a record from DB by id into a new object instance.
