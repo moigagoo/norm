@@ -10,6 +10,7 @@
 ## 1.0.10 (in progress)
 
 -   🔨 Rename `getUpdateQuery` to `genUpdateQuery`.
+-   👌 Fix rowutils compatibility with Nim 0.20.0.
 
 
 ## 1.0.9
