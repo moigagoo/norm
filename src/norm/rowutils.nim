@@ -84,7 +84,7 @@ template to*(row: Row, obj: var object) =
     elif typeof(value) is string:
       obj.dot(field) = row[i].s
     elif typeof(value) is int:
-      obj.dot(field) = row[i].i
+      obj.dot(field) = row[i].i.int
     elif typeof(value) is float:
       obj.dot(field) = row[i].f
     elif typeof(value) is bool:
@@ -230,7 +230,7 @@ proc toRow*(obj: object, force = false): Row =
       elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
-          result.add dbValue obj.dot(field).getCustomPragmaVal(formatIt).op
+          result.add dbValue obj.dot(field).getCustomPragmaVal(formatIt)
       else:
         result.add dbValue value
 
