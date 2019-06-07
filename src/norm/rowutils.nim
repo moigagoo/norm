@@ -1,17 +1,16 @@
-import strutils, sequtils
+import sequtils
 import sugar
 import macros; export macros
+
+import ndb/sqlite
 
 import objutils, pragmas
 
 
-type Row = seq[string]
-
-
-template parser*(op: (string) -> any) {.pragma.}
+template parser*(op: (DbValue) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
-  ``op`` should be a proc that accepts ``string`` and returns the object field type.
+  ``op`` should be a proc that accepts ``DbValue`` and returns the object field type.
 
   The proc is called in ``to`` template to turn a string from row into a typed object field.
   ]##
@@ -24,10 +23,10 @@ template parseIt*(op: untyped) {.pragma.}
   The expression is invoked in ``to`` template to turn a string from row into a typed object field.
   ]##
 
-template formatter*(op: (any) -> string) {.pragma.}
+template formatter*(op: (any) -> DbValue) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
-  ``op`` should be a proc that accepts the object field type and returns ``string``.
+  ``op`` should be a proc that accepts the object field type and returns ``DbValue``.
 
   The proc is called in ``toRow`` proc to turn a typed object field into a string within a row.
   ]##
@@ -36,9 +35,9 @@ template formatIt*(op: untyped) {.pragma.}
   ##[ Pragma to define a format expression for an object field.
 
   ``op`` should be an expression with ``it`` variable with the object field type and evaluates
-  to ``string``.
+  to ``DbValue``.
 
-  The expression is invoked in ``toRow`` proc to turn a typed object field into a string
+  The expression is invoked in ``toRow`` proc to turn a typed object field into a DbValue
   within a row.
   ]##
 
@@ -82,14 +81,16 @@ template to*(row: Row, obj: var object) =
       block:
         let it {.inject.} = row[i]
         obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
-    elif type(value) is string:
-      obj.dot(field) = row[i]
-    elif type(value) is int:
-      obj.dot(field) = parseInt row[i]
-    elif type(value) is float:
-      obj.dot(field) = parseFloat row[i]
+    elif typeof(value) is string:
+      obj.dot(field) = row[i].s
+    elif typeof(value) is int:
+      obj.dot(field) = row[i].i
+    elif typeof(value) is float:
+      obj.dot(field) = row[i].f
+    elif typeof(value) is bool:
+      obj.dot(field) = row[i].b
     else:
-      raise newException(ValueError, "Parser for $# is undefined." % type(value))
+      raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
 
     inc i
 
@@ -225,13 +226,13 @@ proc toRow*(obj: object, force = false): Row =
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
       when obj.dot(field).hasCustomPragma(formatter):
-        result.add obj.dot(field).getCustomPragmaVal(formatter).op value
+        result.add dbValue obj.dot(field).getCustomPragmaVal(formatter).op value
       elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
-          result.add obj.dot(field).getCustomPragmaVal(formatIt)
+          result.add dbValue obj.dot(field).getCustomPragmaVal(formatIt).op
       else:
-        result.add $value
+        result.add dbValue value
 
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
@@ -262,8 +263,3 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
     doAssert rows[2][2] == "789.987"
 
   objs.mapIt(it.toRow(force))
-
-proc isEmpty*(row: Row): bool =
-  ## Check if row is empty, i.e. all its items are ``""``.
-
-  row.allIt(it.len == 0)
