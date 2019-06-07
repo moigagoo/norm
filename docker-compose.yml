@@ -4,6 +4,7 @@ services:
     image: postgres:11
   tests:
     build: .
+    image: norm
     depends_on:
       - postgres
     volumes:
@@ -11,13 +12,14 @@ services:
     command: nimble test
   test:
     build: .
+    image: norm
     depends_on:
       - postgres
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
   docs:
-    build: .
+    image: nimlang/nim:0.20.0
     volumes:
       - .:/usr/src/app
     command: "nim doc --project /usr/src/app/src/norm.nim"
