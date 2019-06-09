@@ -51,8 +51,9 @@ template to*(row: Row, obj: var object) =
 
   runnableExamples:
     import times, sugar
+    import ndb/sqlite
 
-    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszzz")
 
     type
       Example = object
@@ -61,7 +62,7 @@ template to*(row: Row, obj: var object) =
         floatField: float
         dtField {.parser: parseDateTime.}: DateTime
 
-    let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
+    let row = @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue "2019-01-21 15:03:21+04:00"]
 
     var example = Example(dtField: now())
 
@@ -70,7 +71,7 @@ template to*(row: Row, obj: var object) =
     doAssert example.intField == 123
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
-    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
+    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
 
   var i: int
 
@@ -104,8 +105,9 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
 
   runnableExamples:
     import times, sugar
+    import ndb/sqlite
 
-    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszzz")
 
     type
       Example = object
@@ -115,9 +117,9 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
         dtField {.parser: parseDateTime.}: DateTime
 
     let rows = @[
-      @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"],
-      @["456", "bar", "456.654", "2019-02-22 16:14:32+04:00"],
-      @["789", "baz", "789.987", "2019-03-23 17:25:43+04:00"]
+      @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue "2019-01-21 15:03:21+04:00"],
+      @[dbValue 456, dbValue "bar", dbValue 456.654, dbValue "2019-02-22 16:14:32+04:00"],
+      @[dbValue 789, dbValue "baz", dbValue 789.987, dbValue "2019-03-23 17:25:43+04:00"]
     ]
 
     var examples = @[
@@ -131,7 +133,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     doAssert examples[0].intField == 123
     doAssert examples[1].strField == "bar"
     doAssert examples[2].floatField == 789.987
-    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
+    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
 
   objs.setLen min(len(rows), len(objs))
 
@@ -149,6 +151,8 @@ proc to*(row: Row, T: type): T =
   ]##
 
   runnableExamples:
+    import ndb/sqlite
+
     type
       Example = object
         intField: int
@@ -156,7 +160,7 @@ proc to*(row: Row, T: type): T =
         floatField: float
 
     let
-      row = @["123", "foo", "123.321"]
+      row = @[dbValue 123, dbValue "foo", dbValue 123.321]
       obj = row.to(Example)
 
     doAssert obj.intField == 123
@@ -177,6 +181,8 @@ proc to*(rows: openArray[Row], T: type): seq[T] =
   ]##
 
   runnableExamples:
+    import ndb/sqlite
+
     type
       Example = object
         intField: int
@@ -185,9 +191,9 @@ proc to*(rows: openArray[Row], T: type): seq[T] =
 
     let
       rows = @[
-        @["123", "foo", "123.321"],
-        @["456", "bar", "456.654"],
-        @["789", "baz", "789.987"]
+        @[dbValue 123, dbValue "foo", dbValue 123.321],
+        @[dbValue 456, dbValue "bar", dbValue 456.654],
+        @[dbValue 789, dbValue "baz", dbValue 789.987]
       ]
       examples = rows.to(Example)
 
@@ -219,9 +225,9 @@ proc toRow*(obj: object, force = false): Row =
       example = Example(intField: 123, strField: "Foo", floatField: 123.321)
       row = example.toRow()
 
-    doAssert row[0] == "123"
-    doAssert row[1] == "foo"
-    doAssert row[2] == "123.321"
+    doAssert row[0].i == 123
+    doAssert row[1].s == "foo"
+    doAssert row[2].f == 123.321
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -258,8 +264,8 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
       ]
       rows = examples.toRows()
 
-    doAssert rows[0][0] == "123"
-    doAssert rows[1][1] == "bar"
-    doAssert rows[2][2] == "789.987"
+    doAssert rows[0][0].i == 123
+    doAssert rows[1][1].s == "bar"
+    doAssert rows[2][2].f == 789.987
 
   objs.mapIt(it.toRow(force))
