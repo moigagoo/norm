@@ -63,40 +63,40 @@ suite "Conversion with custom parser and formatter expressions":
     row.to(tmpUser)
     check tmpUser.toRow() == row
 
-# suite "Conversion with custom parser and formatter procs":
-#   proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
+suite "Conversion with custom parser and formatter procs":
+  proc toTimestamp(dt: DateTime): DbValue = dbValue $dt.toTime().toUnix()
 
-#   proc toDatetime(ts: string): DateTime = ts.parseInt().fromUnix().utc()
+  proc toDatetime(ts: DbValue): DateTime = ts.s.parseInt().fromUnix().utc()
 
-#   type
-#     UserDatetimeAsTimestamp = object
-#       name: string
-#       age: int
-#       height: float
-#       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
+  type
+    UserDatetimeAsTimestamp = object
+      name: string
+      age: int
+      height: float
+      createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
-#   let
-#     datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
-#     user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
-#     row = @["Alice", "23", "168.2", datetime.toTimestamp]
+  let
+    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, datetime.toTimestamp]
 
-#   setup:
-#     var tmpUser = UserDatetimeAsTimestamp(createdAt: now())
+  setup:
+    var tmpUser = UserDatetimeAsTimestamp(createdAt: now())
 
-#   test "Object -> row":
-#     check user.toRow() == row
+  test "Object -> row":
+    check user.toRow() == row
 
-#   test "Row -> object":
-#     row.to(tmpUser)
-#     check tmpUser == user
+  test "Row -> object":
+    row.to(tmpUser)
+    check tmpUser == user
 
-#   test "Object -> row -> object":
-#     user.toRow().to(tmpUser)
-#     check tmpUser == user
+  test "Object -> row -> object":
+    user.toRow().to(tmpUser)
+    check tmpUser == user
 
-#   test "Row -> object -> row":
-#     row.to(tmpUser)
-#     check tmpUser.toRow() == row
+  test "Row -> object -> row":
+    row.to(tmpUser)
+    check tmpUser.toRow() == row
 
 # suite "Basic bulk object <-> row conversion":
 #   type
