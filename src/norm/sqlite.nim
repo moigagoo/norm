@@ -64,7 +64,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
   result = case $fieldRepr.typ
-  of "int": "INTEGER"
+  of "int", "bool": "INTEGER"
   of "string": "TEXT"
   of "float": "REAL"
   else: "TEXT"
@@ -220,7 +220,7 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = dbConn.insertID(insertQuery, params).int
 
-      template getOne(obj: var object, cond: string, params: varargs[string, `$`]) {.used.} =
+      template getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read a record from DB by condition and store it into an existing object instance.
 
         If multiple records are found, return the first one.
@@ -238,7 +238,7 @@ template genWithDb(connection, user, password, database: string,
 
         get(row).to(obj)
 
-      proc getOne(T: type, cond: string, params: varargs[string, `$`]): T {.used.} =
+      proc getOne(T: type, cond: string, params: varargs[DbValue, dbValue]): T {.used.} =
         ##[ Read a record from DB by condition into a new object instance.
 
         If multiple records are found, return the first one.
@@ -266,7 +266,7 @@ template genWithDb(connection, user, password, database: string,
         result.getOne(id)
 
       proc getMany(objs: var seq[object], limit: int, offset = 0,
-                   cond = "1", params: varargs[string, `$`]) {.used.} =
+                   cond = "1", params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
         Filter using ``cond`` condition.
@@ -276,7 +276,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           getManyQuery = genGetManyQuery(objs[0], cond)
-          params = @params & @[$min(limit, len(objs)), $offset]
+          params = @params & @[dbValue min(limit, len(objs)), dbValue offset]
 
         debug getManyQuery, " <- ", params.join(", ")
 
@@ -285,7 +285,7 @@ template genWithDb(connection, user, password, database: string,
         rows.to(objs)
 
       proc getMany(T: type, limit: int, offset = 0,
-                   cond = "1", params: varargs[string, `$`]): seq[T] {.used.} =
+                   cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
@@ -303,7 +303,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           updateQuery = genUpdateQuery(obj, force)
-          params = obj.toRow(force) & $obj.id
+          params = obj.toRow(force) & dbValue obj.id
 
         debug updateQuery, " <- ", params.join(", ")
 
