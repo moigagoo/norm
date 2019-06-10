@@ -1,16 +1,17 @@
-import sequtils
+import strutils, sequtils
 import sugar
 import macros; export macros
-
-import ndb/sqlite
 
 import objutils, pragmas
 
 
-template parser*(op: (DbValue) -> any) {.pragma.}
+type Row = seq[string]
+
+
+template parser*(op: (string) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
-  ``op`` should be a proc that accepts ``DbValue`` and returns the object field type.
+  ``op`` should be a proc that accepts ``string`` and returns the object field type.
 
   The proc is called in ``to`` template to turn a string from row into a typed object field.
   ]##
@@ -23,10 +24,10 @@ template parseIt*(op: untyped) {.pragma.}
   The expression is invoked in ``to`` template to turn a string from row into a typed object field.
   ]##
 
-template formatter*(op: (any) -> DbValue) {.pragma.}
+template formatter*(op: (any) -> string) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
-  ``op`` should be a proc that accepts the object field type and returns ``DbValue``.
+  ``op`` should be a proc that accepts the object field type and returns ``string``.
 
   The proc is called in ``toRow`` proc to turn a typed object field into a string within a row.
   ]##
@@ -35,9 +36,9 @@ template formatIt*(op: untyped) {.pragma.}
   ##[ Pragma to define a format expression for an object field.
 
   ``op`` should be an expression with ``it`` variable with the object field type and evaluates
-  to ``DbValue``.
+  to ``string``.
 
-  The expression is invoked in ``toRow`` proc to turn a typed object field into a DbValue
+  The expression is invoked in ``toRow`` proc to turn a typed object field into a string
   within a row.
   ]##
 
@@ -51,9 +52,8 @@ template to*(row: Row, obj: var object) =
 
   runnableExamples:
     import times, sugar
-    import ndb/sqlite
 
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
 
     type
       Example = object
@@ -62,7 +62,7 @@ template to*(row: Row, obj: var object) =
         floatField: float
         dtField {.parser: parseDateTime.}: DateTime
 
-    let row = @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue "2019-01-21 15:03:21+04:00"]
+    let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
 
     var example = Example(dtField: now())
 
@@ -71,7 +71,7 @@ template to*(row: Row, obj: var object) =
     doAssert example.intField == 123
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
-    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
 
   var i: int
 
@@ -82,16 +82,14 @@ template to*(row: Row, obj: var object) =
       block:
         let it {.inject.} = row[i]
         obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
-    elif typeof(value) is string:
-      obj.dot(field) = row[i].s
-    elif typeof(value) is int:
-      obj.dot(field) = row[i].i.int
-    elif typeof(value) is float:
-      obj.dot(field) = row[i].f
-    elif typeof(value) is bool:
-      obj.dot(field) = row[i].b
+    elif type(value) is string:
+      obj.dot(field) = row[i]
+    elif type(value) is int:
+      obj.dot(field) = parseInt row[i]
+    elif type(value) is float:
+      obj.dot(field) = parseFloat row[i]
     else:
-      raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
+      raise newException(ValueError, "Parser for $# is undefined." % type(value))
 
     inc i
 
@@ -105,9 +103,8 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
 
   runnableExamples:
     import times, sugar
-    import ndb/sqlite
 
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
 
     type
       Example = object
@@ -117,9 +114,9 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
         dtField {.parser: parseDateTime.}: DateTime
 
     let rows = @[
-      @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue "2019-01-21 15:03:21+04:00"],
-      @[dbValue 456, dbValue "bar", dbValue 456.654, dbValue "2019-02-22 16:14:32+04:00"],
-      @[dbValue 789, dbValue "baz", dbValue 789.987, dbValue "2019-03-23 17:25:43+04:00"]
+      @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"],
+      @["456", "bar", "456.654", "2019-02-22 16:14:32+04:00"],
+      @["789", "baz", "789.987", "2019-03-23 17:25:43+04:00"]
     ]
 
     var examples = @[
@@ -133,7 +130,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     doAssert examples[0].intField == 123
     doAssert examples[1].strField == "bar"
     doAssert examples[2].floatField == 789.987
-    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
 
   objs.setLen min(len(rows), len(objs))
 
@@ -151,8 +148,6 @@ proc to*(row: Row, T: type): T =
   ]##
 
   runnableExamples:
-    import ndb/sqlite
-
     type
       Example = object
         intField: int
@@ -160,7 +155,7 @@ proc to*(row: Row, T: type): T =
         floatField: float
 
     let
-      row = @[dbValue 123, dbValue "foo", dbValue 123.321]
+      row = @["123", "foo", "123.321"]
       obj = row.to(Example)
 
     doAssert obj.intField == 123
@@ -181,8 +176,6 @@ proc to*(rows: openArray[Row], T: type): seq[T] =
   ]##
 
   runnableExamples:
-    import ndb/sqlite
-
     type
       Example = object
         intField: int
@@ -191,9 +184,9 @@ proc to*(rows: openArray[Row], T: type): seq[T] =
 
     let
       rows = @[
-        @[dbValue 123, dbValue "foo", dbValue 123.321],
-        @[dbValue 456, dbValue "bar", dbValue 456.654],
-        @[dbValue 789, dbValue "baz", dbValue 789.987]
+        @["123", "foo", "123.321"],
+        @["456", "bar", "456.654"],
+        @["789", "baz", "789.987"]
       ]
       examples = rows.to(Example)
 
@@ -225,20 +218,20 @@ proc toRow*(obj: object, force = false): Row =
       example = Example(intField: 123, strField: "Foo", floatField: 123.321)
       row = example.toRow()
 
-    doAssert row[0].i == 123
-    doAssert row[1].s == "foo"
-    doAssert row[2].f == 123.321
+    doAssert row[0] == "123"
+    doAssert row[1] == "foo"
+    doAssert row[2] == "123.321"
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
       when obj.dot(field).hasCustomPragma(formatter):
-        result.add dbValue obj.dot(field).getCustomPragmaVal(formatter).op value
+        result.add obj.dot(field).getCustomPragmaVal(formatter).op value
       elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
-          result.add dbValue obj.dot(field).getCustomPragmaVal(formatIt)
+          result.add obj.dot(field).getCustomPragmaVal(formatIt)
       else:
-        result.add dbValue value
+        result.add $value
 
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
@@ -264,8 +257,13 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
       ]
       rows = examples.toRows()
 
-    doAssert rows[0][0].i == 123
-    doAssert rows[1][1].s == "bar"
-    doAssert rows[2][2].f == 789.987
+    doAssert rows[0][0] == "123"
+    doAssert rows[1][1] == "bar"
+    doAssert rows[2][2] == "789.987"
 
   objs.mapIt(it.toRow(force))
+
+proc isEmpty*(row: Row): bool =
+  ## Check if row is empty, i.e. all its items are ``""``.
+
+  row.allIt(it.len == 0)

@@ -10,12 +10,12 @@ PostgreSQL Backend
 import strutils, macros, typetraits, logging
 import db_postgres
 
-import rowutils, objutils, pragmas
+import oldrowutils, objutils, pragmas
 
 
 export strutils, macros, logging
 export db_postgres
-export rowutils, objutils, pragmas
+export oldrowutils, objutils, pragmas
 
 proc `$`*(query: SqlQuery): string = $ string query
 

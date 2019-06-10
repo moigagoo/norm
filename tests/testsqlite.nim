@@ -11,8 +11,8 @@ db("test.db", "", "", ""):
       email {.unique.}: string
       birthDate {.
         dbType: "INTEGER",
-        parseIt: it.parseInt().fromUnix().local(),
-        formatIt: $it.toTime().toUnix()
+        parseIt: it.i.fromUnix().local(),
+        formatIt: dbValue(it.toTime().toUnix())
       .}: DateTime
     Publisher {.table: "publishers".} = object
       title {.unique.}: string
@@ -21,7 +21,7 @@ db("test.db", "", "", ""):
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
 
-  proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
+  proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
   type
     Edition {.table: "editions".} = object
@@ -31,7 +31,7 @@ db("test.db", "", "", ""):
         dbType: "INTEGER",
         fk: Book
         parser: getBookById,
-        formatIt: $it.id,
+        formatIt: dbValue(it.id),
         onDelete: "CASCADE"
       .}: Book
 
@@ -62,23 +62,23 @@ suite "Creating and dropping tables, CRUD":
 
   test "Create tables":
     withDb:
-      let query = sql "PRAGMA table_info(?);"
+      let query = "PRAGMA table_info($#);"
 
-      check dbConn.getAllRows(query, "users") == @[
-        @["0", "id", "INTEGER", "0", "", "1"],
-        @["1", "email", "TEXT", "0", "", "0"],
-        @["2", "birthDate", "INTEGER", "0", "", "0"]
+      check dbConn.getAllRows(sql query % "users") == @[
+        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 1],
+        @[dbValue 1, dbValue "email", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 2, dbValue "birthDate", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0]
       ]
-      check dbConn.getAllRows(query, "books") == @[
-        @["0", "id", "INTEGER", "0", "", "1"],
-        @["1", "title", "TEXT", "0", "", "0"],
-        @["2", "authorEmail", "TEXT", "0", "", "0"],
-        @["3", "publisherTitle", "TEXT", "0", "", "0"],
+      check dbConn.getAllRows(sql query % "books") == @[
+        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 1],
+        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 2, dbValue "authorEmail", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 3, dbValue "publisherTitle", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
       ]
-      check dbConn.getAllRows(query, "editions") == @[
-        @["0", "id", "INTEGER", "0", "", "1"],
-        @["1", "title", "TEXT", "0", "", "0"],
-        @["2", "bookId", "INTEGER", "0", "", "0"]
+      check dbConn.getAllRows(sql query % "editions") == @[
+        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 1],
+        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 2, dbValue "bookId", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0]
       ]
 
   test "Create records":
@@ -161,7 +161,7 @@ suite "Creating and dropping tables, CRUD":
   test "Query records":
     withDb:
       let someBooks = Book.getMany(10, cond="title IN (?, ?) ORDER BY title DESC",
-                                   params=["Book 1", "Book 5"])
+                                   params=[dbValue "Book 1", dbValue "Book 5"])
 
       check len(someBooks) == 2
       check someBooks[0].title == "Book 5"
