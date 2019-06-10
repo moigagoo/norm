@@ -88,8 +88,6 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = row[i].i.int
     elif typeof(value) is float:
       obj.dot(field) = row[i].f
-    elif typeof(value) is bool:
-      obj.dot(field) = row[i].b
     else:
       raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
 
