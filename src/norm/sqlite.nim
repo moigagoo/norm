@@ -64,7 +64,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
   result = case $fieldRepr.typ
-  of "int", "bool": "INTEGER"
+  of "int": "INTEGER"
   of "string": "TEXT"
   of "float": "REAL"
   else: "TEXT"
