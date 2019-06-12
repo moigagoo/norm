@@ -31,7 +31,7 @@ proc getTable*(objRepr: ObjRepr): string =
     if prag.name == "table" and prag.kind == pkKval:
       return $prag.value
 
-proc getTable*(T: type): string =
+proc getTable*(T: typedesc): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
   ]##
@@ -238,7 +238,7 @@ template genWithDb(connection, user, password, database: string,
 
         get(row).to(obj)
 
-      proc getOne(T: type, cond: string, params: varargs[DbValue, dbValue]): T {.used.} =
+      proc getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue]): T {.used.} =
         ##[ Read a record from DB by condition into a new object instance.
 
         If multiple records are found, return the first one.
@@ -260,7 +260,7 @@ template genWithDb(connection, user, password, database: string,
 
         get(row).to(obj)
 
-      proc getOne(T: type, id: int): T {.used.} =
+      proc getOne(T: typedesc, id: int): T {.used.} =
         ## Read a record from DB by id into a new object instance.
 
         result.getOne(id)
@@ -284,7 +284,7 @@ template genWithDb(connection, user, password, database: string,
 
         rows.to(objs)
 
-      proc getMany(T: type, limit: int, offset = 0,
+      proc getMany(T: typedesc, limit: int, offset = 0,
                    cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.

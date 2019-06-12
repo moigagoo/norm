@@ -11,6 +11,8 @@
 
 -   ❗ SQLite: Switch to [ndb](https://github.com/xzfc/ndb.nim).
 -   ❗ SQLite: Support inserting and retreiving `NULL` values with `Option` types.
+-   🔨 Replace `type` with `typedesc` and `typeof` where it is not a type definition.
+
 
 ## 1.0.10
 

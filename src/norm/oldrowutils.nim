@@ -137,7 +137,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
   for i in 0..high(objs):
     rows[i].to(objs[i])
 
-proc to*(row: Row, T: type): T =
+proc to*(row: Row, T: typedesc): T =
   ##[ Instantiate object with type ``T`` with values from ``row``. String values from row
   are converted into types of the respective object fields.
 
@@ -164,7 +164,7 @@ proc to*(row: Row, T: type): T =
 
   row.to(result)
 
-proc to*(rows: openArray[Row], T: type): seq[T] =
+proc to*(rows: openArray[Row], T: typedesc): seq[T] =
   ##[ Instantiate a sequence of objects with type ``T`` with values
   from ``rows``. String values from each row are converted into types
   of the respective object fields.
