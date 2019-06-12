@@ -10,6 +10,7 @@
 ## 1.0.11 (WIP)
 
 -   ❗ SQLite: Switch to [ndb](https://github.com/xzfc/ndb.nim).
+-   ❗ SQLite: Support inserting and retreiving `NULL` values with `Option` types.
 
 ## 1.0.10
 
