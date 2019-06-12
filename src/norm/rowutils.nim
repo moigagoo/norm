@@ -1,4 +1,4 @@
-import sequtils
+import sequtils, options
 import sugar
 import macros; export macros
 
@@ -88,8 +88,15 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = row[i].i.int
     elif typeof(value) is float:
       obj.dot(field) = row[i].f
+    elif typeof(value) is Option:
+      when typeof(get(value)) is string:
+        obj.dot(field) = if row[i].kind == dvkNull: none string else: some row[i].s
+      elif typeof(get(value)) is int:
+        obj.dot(field) = if row[i].kind == dvkNull: none int else: some row[i].i.int
+      elif typeof(get(value)) is float:
+        obj.dot(field) = if row[i].kind == dvkNull: none float else: some row[i].f
     else:
-      raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
+      raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
 
     inc i
 
