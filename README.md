@@ -89,9 +89,9 @@ My goal with Norm was to lubricate the routine of working with DB: creating DB s
 
 ## Contributing
 
-Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
+1.  Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
 
-If you decide to contribute through code, please run the tests after you change the code:
+2.  If you decide to contribute through code, please run the tests after you change the code:
 
 ```shell
 $ docker-compose run tests                        # run all tests in Docker
@@ -100,6 +100,10 @@ $ nimble test                                     # run all tests natively;
                                                   # requires a running PostgreSQL server!
 $ nim c -r tests/testsqlite.nim                   # run a single test suite natively
 ```
+
+3.  Use camelCase instead of snake_case.
+4.  Run `nimpretty` before committing.
+5.  New procs must have a documentation comment. If you modify an existing proc, update the comment.
 
 
 ### ❤ Contributors ❤
