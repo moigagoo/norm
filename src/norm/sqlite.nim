@@ -169,19 +169,20 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                    tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
+                   tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
-  template withDb*(body: untyped): untyped {.dirty.} =
-    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
-    as well as ``createTables`` and ``dropTables`` procs.
+  template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
+                         body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require custom DB connection, i.e. not the one defined in ``db``.
+    Defines CRUD procs to work with the DB, as well as ``createTables`` and ``dropTables`` procs.
 
-      Aforementioned procs and procs defined in a ``db`` block can be used only
-      in  a ``withDb`` block.
+    Aforementioned procs and procs defined in a ``db`` block can be used only
+    in  a ``withDb`` block.
     ]##
 
     block:
-      let dbConn = open(connection, user, password, database)
+      let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
       template dropTables() {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
@@ -326,6 +327,18 @@ template genWithDb(connection, user, password, database: string,
         dbConn.exec foreignKeyQuery
         body
       finally: dbConn.close()
+
+  template withDb*(body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
+    as well as ``createTables`` and ``dropTables`` procs.
+
+      Aforementioned procs and procs defined in a ``db`` block can be used only
+      in  a ``withDb`` block.
+    ]##
+
+    withCustomDb(connection, user, password, database):
+      body
+
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
   ## Check if ``id`` field is in the object definition, insert it if it's not.

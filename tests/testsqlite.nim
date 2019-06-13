@@ -5,7 +5,12 @@ import os, strutils, sequtils, times
 import norm / sqlite
 
 
-db("test.db", "", "", ""):
+const
+  dbName = "test.db"
+  customDbName = "custom_test.db"
+
+
+db(dbName, "", "", ""):
   type
     User {.table: "users".} = object
       email {.unique.}: string
@@ -214,4 +219,39 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
 
-  removeFile "test.db"
+  test "Custom DB":
+    withCustomDb(customDbName, "", "", ""):
+      createTables(force=true)
+
+    withCustomDb(customDbName, "", "", ""):
+      let query = "PRAGMA table_info($#);"
+
+      check dbConn.getAllRows(sql query % "users") == @[
+        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 1],
+        @[dbValue 1, dbValue "email", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 2, dbValue "birthDate", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0]
+      ]
+      check dbConn.getAllRows(sql query % "books") == @[
+        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 1],
+        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 2, dbValue "authorEmail", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 3, dbValue "publisherTitle", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+      ]
+      check dbConn.getAllRows(sql query % "editions") == @[
+        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 1],
+        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 0, dbValue nil, dbValue 0],
+        @[dbValue 2, dbValue "bookId", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0]
+      ]
+
+    withCustomDb(customDbName, "", "", ""):
+      dropTables()
+
+      expect DbError:
+        dbConn.exec sql "SELECT NULL FROM users"
+        dbConn.exec sql "SELECT NULL FROM publishers"
+        dbConn.exec sql "SELECT NULL FROM books"
+        dbConn.exec sql "SELECT NULL FROM editions"
+
+    removeFile customDbName
+
+  removeFile dbName
