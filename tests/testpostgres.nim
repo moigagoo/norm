@@ -198,3 +198,27 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
+
+  test "Custom DB":
+    echo "Need to setup multiple PostgreSQL databases with Docker Compose to properly test this."
+
+    withCustomDb("postgres", "postgres", "", "postgres"):
+      createTables(force=true)
+
+    withCustomDb("postgres", "postgres", "", "postgres"):
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+
+      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
+      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"]]
+      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
+                                                    @["publishertitle"]]
+      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+
+    withCustomDb("postgres", "postgres", "", "postgres"):
+      dropTables()
+
+      expect DbError:
+        dbConn.exec sql "SELECT NULL FROM users"
+        dbConn.exec sql "SELECT NULL FROM publishers"
+        dbConn.exec sql "SELECT NULL FROM books"
+        dbConn.exec sql "SELECT NULL FROM editions"
