@@ -1,12 +1,15 @@
 version: '3'
 services:
-  postgres:
+  postgres_1:
+    image: postgres:11
+  postgres_2:
     image: postgres:11
   tests:
     build: .
     image: norm
     depends_on:
-      - postgres
+      - postgres_1
+      - postgres_2
     volumes:
       - .:/usr/src/app
     command: nimble test -c
@@ -14,7 +17,8 @@ services:
     build: .
     image: norm
     depends_on:
-      - postgres
+      - postgres_1
+      - postgres_2
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
