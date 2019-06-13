@@ -102,8 +102,7 @@ $ nim c -r tests/testsqlite.nim                   # run a single test suite nati
 ```
 
 3.  Use camelCase instead of snake_case.
-4.  Run `nimpretty` before committing.
-5.  New procs must have a documentation comment. If you modify an existing proc, update the comment.
+4.  New procs must have a documentation comment. If you modify an existing proc, update the comment.
 
 
 ### ❤ Contributors ❤

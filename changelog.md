@@ -10,7 +10,9 @@
 ## 1.0.11 (WIP)
 
 -   ❗ SQLite: Switch to [ndb](https://github.com/xzfc/ndb.nim).
--   ❗ SQLite: Support inserting and retreiving `NULL` values with `Option` types.
+-   ❗ SQLite: Non-`Option` non-custom types are `NOT NULL` by default.
+-   ➕ SQLite: Support inserting and retreiving `NULL` values with `Option` types.
+-   ➕ SQLite, PostgreSQL: Add `withCustomDb` to run DB procs on a non-default DB (i.e. not the one defined in `db` definition).
 -   🔨 Replace `type` with `typedesc` and `typeof` where it is not a type definition.
 
 
