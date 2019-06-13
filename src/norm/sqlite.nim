@@ -63,15 +63,24 @@ proc getColumns*(obj: object, force = false): seq[string] =
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
-  result = case $fieldRepr.typ
-  of "int": "INTEGER"
-  of "string": "TEXT"
-  of "float": "REAL"
-  else: "TEXT"
-
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
+
+  result =
+    if fieldRepr.typ.kind == nnkIdent:
+      case $fieldRepr.typ:
+      of "int": "INTEGER NOT NULL"
+      of "string": "TEXT NOT NULL"
+      of "float": "REAL NOT NULL"
+      else: "TEXT NOT NULL"
+    elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
+      case $fieldRepr.typ[1]:
+      of "int": "INTEGER"
+      of "string": "TEXT"
+      of "float": "REAL"
+      else: "TEXT"
+    else: "TEXT NOT NULL"
 
 proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
