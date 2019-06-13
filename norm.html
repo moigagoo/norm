@@ -824,15 +824,15 @@ function main() {
 <ul class="simple"><li><a class="reference external" href="https://moigagoo.github.io/norm/norm.html">API docs →</a></li>
 <li><a class="reference external" href="https://github.com/moigagoo/norm-sample-webapp">Sample app →</a></li>
 </ul>
-<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">norm</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>                      <span class="Comment"># Import SQLite backend.</span>
-<span class="Comment"># import norm / postgres                  # Import PostgreSQL backend.</span>
+<pre class="listing"><span class="Keyword">import</span> <span class="Identifier">norm</span><span class="Operator">/</span><span class="Identifier">sqlite</span>                      <span class="Comment"># Import SQLite backend.</span>
+<span class="Comment"># import norm/postgres                  # Import PostgreSQL backend.</span>
 <span class="Keyword">import</span> <span class="Identifier">logging</span>                            <span class="Comment"># Import logging to inspect the generated SQL statements.</span>
-<span class="Keyword">import</span> <span class="Identifier">unicode</span><span class="Punctuation">,</span> <span class="Identifier">sugar</span>
+<span class="Keyword">import</span> <span class="Identifier">unicode</span><span class="Punctuation">,</span> <span class="Identifier">sugar</span><span class="Punctuation">,</span> <span class="Identifier">options</span>
 
 <span class="Identifier">db</span><span class="Punctuation">(</span><span class="StringLit">&quot;petshop.db&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">)</span><span class="Punctuation">:</span>             <span class="Comment"># Set DB connection credentials.</span>
   <span class="Keyword">type</span>                                    <span class="Comment"># Describe object model in an ordinary type section.</span>
     <span class="Identifier">User</span> <span class="Operator">=</span> <span class="Keyword">object</span>
-      <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="Identifier">int</span>                            <span class="Comment"># Nim types are automatically converted into SQL types</span>
+      <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="Identifier">Positive</span>                       <span class="Comment"># Nim types are automatically converted into SQL types</span>
                                           <span class="Comment"># and back.</span>
                                           <span class="Comment"># You can specify how types are converted using</span>
                                           <span class="Comment"># ``parser``, ``formatter``, ``parseIt``,</span>
@@ -840,6 +840,7 @@ function main() {
       <span class="Identifier">name</span> <span class="Punctuation">{</span><span class="Operator">.</span>
         <span class="Identifier">formatIt</span><span class="Punctuation">:</span> <span class="Identifier">capitalize</span><span class="Punctuation">(</span><span class="Identifier">it</span><span class="Punctuation">)</span>          <span class="Comment"># Enforce that ``name`` is stored in DB capitalized.</span>
       <span class="Operator">.</span><span class="Punctuation">}</span><span class="Punctuation">:</span> <span class="Identifier">string</span>
+      <span class="Identifier">ssn</span><span class="Punctuation">:</span> <span class="Identifier">Option</span><span class="Punctuation">[</span><span class="Identifier">int</span><span class="Punctuation">]</span>                    <span class="Comment"># ``Option`` fields are allowed to be NULL in DB.</span>
 
 <span class="Identifier">addHandler</span> <span class="Identifier">newConsoleLogger</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 
@@ -847,17 +848,18 @@ function main() {
   <span class="Identifier">createTables</span><span class="Punctuation">(</span><span class="Identifier">force</span><span class="Operator">=</span><span class="Identifier">true</span><span class="Punctuation">)</span>                <span class="Comment"># Create tables for objects. Drop tables if they exist.</span>
   
   <span class="Keyword">var</span> <span class="Identifier">bob</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span>                         <span class="Comment"># Create a ``User`` instance as you normally would.</span>
-    <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;bob&quot;</span><span class="Punctuation">,</span>                          <span class="Comment"># Note that the instance is mutable. This is mandatory!</span>
-    <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">23</span>
+    <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">23</span><span class="Punctuation">,</span>                              <span class="Comment"># Note that the instance is mutable. This is mandatory.</span>
+    <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;bob&quot;</span><span class="Punctuation">,</span>
+    <span class="Identifier">ssn</span><span class="Punctuation">:</span> <span class="Identifier">some</span> <span class="DecNumber">456</span>
   <span class="Punctuation">)</span>
   <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">insert</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                            <span class="Comment"># Insert ``bob`` into DB.</span>
   <span class="Identifier">dump</span> <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">id</span>                             <span class="Comment"># ``id`` attr is added by Norm and updated on insertion.</span>
   
-  <span class="Keyword">var</span> <span class="Identifier">bobby</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span><span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;bobby&quot;</span><span class="Punctuation">,</span> <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">34</span><span class="Punctuation">)</span>
-  <span class="Identifier">bobby</span><span class="Operator">.</span><span class="Identifier">insert</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
-  
-  <span class="Keyword">var</span> <span class="Identifier">alice</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span><span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;alice&quot;</span><span class="Punctuation">,</span> <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">12</span><span class="Punctuation">)</span>
+  <span class="Keyword">var</span> <span class="Identifier">alice</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span><span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">12</span><span class="Punctuation">,</span> <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;alice&quot;</span><span class="Punctuation">,</span> <span class="Identifier">ssn</span><span class="Punctuation">:</span> <span class="Identifier">none</span> <span class="Identifier">int</span><span class="Punctuation">)</span>
   <span class="Identifier">alice</span><span class="Operator">.</span><span class="Identifier">insert</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+
+<span class="Identifier">withCustomDb</span><span class="Punctuation">(</span><span class="StringLit">&quot;mirror.db&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">)</span><span class="Punctuation">:</span>    <span class="Comment"># Override default DB credentials defined in ``db``.</span>
+  <span class="Identifier">createTables</span><span class="Punctuation">(</span><span class="Identifier">force</span><span class="Operator">=</span><span class="Identifier">true</span><span class="Punctuation">)</span>
 
 <span class="Identifier">withDb</span><span class="Punctuation">:</span>
   <span class="Keyword">let</span> <span class="Identifier">bobs</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Operator">.</span><span class="Identifier">getMany</span><span class="Punctuation">(</span>                <span class="Comment"># Read records from DB:</span>
@@ -890,7 +892,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-06-13 19:50:46 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-13 20:08:40 UTC</small>
       </div>
     </div>
   </div>
