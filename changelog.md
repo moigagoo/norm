@@ -7,7 +7,7 @@
 -   ✅—test suite improvement
 
 
-## 1.0.11 (WIP)
+## 1.0.11
 
 -   ❗ SQLite: Switch to [ndb](https://github.com/xzfc/ndb.nim).
 -   ❗ SQLite: Non-`Option` non-custom types are `NOT NULL` by default.
