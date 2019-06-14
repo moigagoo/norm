@@ -7,14 +7,14 @@ SQLite Backend
 ]##
 
 
-import strutils, macros, typetraits, logging
-import db_sqlite
+import strutils, macros, typetraits, logging, options
+import ndb/sqlite
 
 import rowutils, objutils, pragmas
 
 
-export strutils, macros, logging
-export db_sqlite
+export strutils, macros, logging, options
+export sqlite
 export rowutils, objutils, pragmas
 
 
@@ -31,7 +31,7 @@ proc getTable*(objRepr: ObjRepr): string =
     if prag.name == "table" and prag.kind == pkKval:
       return $prag.value
 
-proc getTable*(T: type): string =
+proc getTable*(T: typedesc): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
   or lowercased type name otherwise.
   ]##
@@ -63,15 +63,24 @@ proc getColumns*(obj: object, force = false): seq[string] =
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
 
-  result = case $fieldRepr.typ
-  of "int": "INTEGER"
-  of "string": "TEXT"
-  of "float": "REAL"
-  else: "TEXT"
-
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbType" and prag.kind == pkKval:
       return $prag.value
+
+  result =
+    if fieldRepr.typ.kind == nnkIdent:
+      case $fieldRepr.typ:
+      of "int": "INTEGER NOT NULL"
+      of "string": "TEXT NOT NULL"
+      of "float": "REAL NOT NULL"
+      else: "TEXT NOT NULL"
+    elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
+      case $fieldRepr.typ[1]:
+      of "int": "INTEGER"
+      of "string": "TEXT"
+      of "float": "REAL"
+      else: "TEXT"
+    else: "TEXT NOT NULL"
 
 proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate SQL column statement for a field representation.
@@ -169,19 +178,20 @@ proc genDeleteQuery*(obj: object): SqlQuery =
   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 template genWithDb(connection, user, password, database: string,
-                    tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
+                   tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
-  template withDb*(body: untyped): untyped {.dirty.} =
-    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
-    as well as ``createTables`` and ``dropTables`` procs.
+  template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
+                         body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require custom DB connection, i.e. not the one defined in ``db``.
+    Defines CRUD procs to work with the DB, as well as ``createTables`` and ``dropTables`` procs.
 
-      Aforementioned procs and procs defined in a ``db`` block can be used only
-      in  a ``withDb`` block.
+    Aforementioned procs and procs defined in a ``db`` block can be used only
+    in  a ``withDb`` block.
     ]##
 
     block:
-      let dbConn = open(connection, user, password, database)
+      let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
       template dropTables() {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
@@ -220,7 +230,7 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = dbConn.insertID(insertQuery, params).int
 
-      template getOne(obj: var object, cond: string, params: varargs[string, `$`]) {.used.} =
+      template getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read a record from DB by condition and store it into an existing object instance.
 
         If multiple records are found, return the first one.
@@ -232,13 +242,13 @@ template genWithDb(connection, user, password, database: string,
 
         let row = dbConn.getRow(getOneQuery, params)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
                              [cond, params.join(", ")])
 
-        row.to(obj)
+        get(row).to(obj)
 
-      proc getOne(T: type, cond: string, params: varargs[string, `$`]): T {.used.} =
+      proc getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue]): T {.used.} =
         ##[ Read a record from DB by condition into a new object instance.
 
         If multiple records are found, return the first one.
@@ -255,18 +265,18 @@ template genWithDb(connection, user, password, database: string,
 
         let row = dbConn.getRow(getOneQuery, id)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record with id=$# not found." % $id)
 
-        row.to(obj)
+        get(row).to(obj)
 
-      proc getOne(T: type, id: int): T {.used.} =
+      proc getOne(T: typedesc, id: int): T {.used.} =
         ## Read a record from DB by id into a new object instance.
 
         result.getOne(id)
 
       proc getMany(objs: var seq[object], limit: int, offset = 0,
-                   cond = "1", params: varargs[string, `$`]) {.used.} =
+                   cond = "1", params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
         Filter using ``cond`` condition.
@@ -276,7 +286,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           getManyQuery = genGetManyQuery(objs[0], cond)
-          params = @params & @[$min(limit, len(objs)), $offset]
+          params = @params & @[dbValue min(limit, len(objs)), dbValue offset]
 
         debug getManyQuery, " <- ", params.join(", ")
 
@@ -284,8 +294,8 @@ template genWithDb(connection, user, password, database: string,
 
         rows.to(objs)
 
-      proc getMany(T: type, limit: int, offset = 0,
-                   cond = "1", params: varargs[string, `$`]): seq[T] {.used.} =
+      proc getMany(T: typedesc, limit: int, offset = 0,
+                   cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
@@ -303,7 +313,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           updateQuery = genUpdateQuery(obj, force)
-          params = obj.toRow(force) & $obj.id
+          params = obj.toRow(force) & dbValue obj.id
 
         debug updateQuery, " <- ", params.join(", ")
 
@@ -326,6 +336,18 @@ template genWithDb(connection, user, password, database: string,
         dbConn.exec foreignKeyQuery
         body
       finally: dbConn.close()
+
+  template withDb*(body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
+    as well as ``createTables`` and ``dropTables`` procs.
+
+      Aforementioned procs and procs defined in a ``db`` block can be used only
+      in  a ``withDb`` block.
+    ]##
+
+    withCustomDb(connection, user, password, database):
+      body
+
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
   ## Check if ``id`` field is in the object definition, insert it if it's not.

@@ -5,7 +5,12 @@ import os, strutils, sequtils, times
 import norm / postgres
 
 
-db("postgres", "postgres", "", "postgres"):
+const
+  dbHost = "postgres_1"
+  customDbHost = "postgres_2"
+
+
+db(dbHost, "postgres", "", "postgres"):
   type
     User {.table: "users".} = object
       email {.unique.}: string
@@ -191,6 +196,30 @@ suite "Creating and dropping tables, CRUD":
 
   test "Drop tables":
     withDb:
+      dropTables()
+
+      expect DbError:
+        dbConn.exec sql "SELECT NULL FROM users"
+        dbConn.exec sql "SELECT NULL FROM publishers"
+        dbConn.exec sql "SELECT NULL FROM books"
+        dbConn.exec sql "SELECT NULL FROM editions"
+
+  test "Custom DB":
+    echo "Need to setup multiple PostgreSQL databases with Docker Compose to properly test this."
+
+    withCustomDb(customDbHost, "postgres", "", "postgres"):
+      createTables(force=true)
+
+    withCustomDb(customDbHost, "postgres", "", "postgres"):
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+
+      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
+      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"]]
+      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
+                                                    @["publishertitle"]]
+      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+
+    withCustomDb(customDbHost, "postgres", "", "postgres"):
       dropTables()
 
       expect DbError:

@@ -24,15 +24,15 @@ $ nimble install norm
 ## Quickstart
 
 ```nim
-import norm / sqlite                      # Import SQLite backend.
-# import norm / postgres                  # Import PostgreSQL backend.
+import norm/sqlite                      # Import SQLite backend.
+# import norm/postgres                  # Import PostgreSQL backend.
 import logging                            # Import logging to inspect the generated SQL statements.
-import unicode, sugar
+import unicode, sugar, options
 
 db("petshop.db", "", "", ""):             # Set DB connection credentials.
   type                                    # Describe object model in an ordinary type section.
     User = object
-      age: int                            # Nim types are automatically converted into SQL types
+      age: Positive                       # Nim types are automatically converted into SQL types
                                           # and back.
                                           # You can specify how types are converted using
                                           # ``parser``, ``formatter``, ``parseIt``,
@@ -40,6 +40,7 @@ db("petshop.db", "", "", ""):             # Set DB connection credentials.
       name {.
         formatIt: capitalize(it)          # Enforce that ``name`` is stored in DB capitalized.
       .}: string
+      ssn: Option[int]                    # ``Option`` fields are allowed to be NULL in DB.
 
 addHandler newConsoleLogger()
 
@@ -47,17 +48,18 @@ withDb:                                   # Start a DB session.
   createTables(force=true)                # Create tables for objects. Drop tables if they exist.
 
   var bob = User(                         # Create a ``User`` instance as you normally would.
-    name: "bob",                          # Note that the instance is mutable. This is mandatory!
-    age: 23
+    age: 23,                              # Note that the instance is mutable. This is mandatory.
+    name: "bob",
+    ssn: some 456
   )
   bob.insert()                            # Insert ``bob`` into DB.
   dump bob.id                             # ``id`` attr is added by Norm and updated on insertion.
 
-  var bobby = User(name: "bobby", age: 34)
-  bobby.insert()
-
-  var alice = User(name: "alice", age: 12)
+  var alice = User(age: 12, name: "alice", ssn: none int)
   alice.insert()
+
+withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials defined in ``db``.
+  createTables(force=true)
 
 withDb:
   let bobs = User.getMany(                # Read records from DB:
@@ -89,9 +91,9 @@ My goal with Norm was to lubricate the routine of working with DB: creating DB s
 
 ## Contributing
 
-Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
+1.  Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
 
-If you decide to contribute through code, please run the tests after you change the code:
+2.  If you decide to contribute through code, please run the tests after you change the code:
 
 ```shell
 $ docker-compose run tests                        # run all tests in Docker
@@ -100,6 +102,10 @@ $ nimble test                                     # run all tests natively;
                                                   # requires a running PostgreSQL server!
 $ nim c -r tests/testsqlite.nim                   # run a single test suite natively
 ```
+
+3.  Use camelCase instead of snake_case.
+
+4.  New procs must have a documentation comment. If you modify an existing proc, update the comment.
 
 
 ### ❤ Contributors ❤
