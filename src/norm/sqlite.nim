@@ -18,6 +18,19 @@ export sqlite
 export rowutils, objutils, pragmas
 
 
+type
+  DbParamFields* = object
+    stored_connection*: string 
+    stored_user*: string
+    stored_password*: string
+    stored_database*: string
+
+proc databaseParameters*(connection, user, password, database: string): DbParamFields =
+  result.stored_connection = connection
+  result.stored_user = user
+  result.stored_password = password
+  result.stored_database = database
+
 proc `$`*(query: SqlQuery): string = $ string query
 
 proc getTable*(objRepr: ObjRepr): string =
@@ -181,7 +194,7 @@ template genWithDb(connection, user, password, database: string,
                    tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
-  template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
+  template withSpecificDb(customConnection, customUser, customPassword, customDatabase: string,
                          body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require custom DB connection, i.e. not the one defined in ``db``.
     Defines CRUD procs to work with the DB, as well as ``createTables`` and ``dropTables`` procs.
@@ -345,7 +358,27 @@ template genWithDb(connection, user, password, database: string,
       in  a ``withDb`` block.
     ]##
 
-    withCustomDb(connection, user, password, database):
+    withSpecificDb(connection, user, password, database):
+      body
+
+  template withCustomDb*(p: DbParamFields, body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
+    as well as ``createTables`` and ``dropTables`` procs.
+
+      Aforementioned procs and procs defined in a ``db`` block can be used only
+      in  a ``withDb`` block.
+    ]##
+    withSpecificDb(p.stored_connection, p.stored_user, p.stored_password, p.stored_database):
+      body
+
+  template withCustomDb*(p_connection, p_user, p_password, p_database: string, body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
+    as well as ``createTables`` and ``dropTables`` procs.
+
+      Aforementioned procs and procs defined in a ``db`` block can be used only
+      in  a ``withDb`` block.
+    ]##
+    withSpecificDb(p_connection, p_user, p_password, p_database):
       body
 
 
@@ -373,6 +406,7 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
 
     result.add objRepr.toTypeDef()
 
+
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
 
@@ -398,6 +432,33 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       result.add node
 
+  let withDbNode = getAst genWithDb(connection, user, password, database,
+                                    genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+
+  result.insert(0, withDbNode)
+
+
+macro db*(p: DbParamFields, body: untyped): untyped =
+  result = newStmtList()
+
+  var dbObjReprs: seq[ObjRepr]
+
+  for node in body:
+    if node.kind == nnkTypeSection:
+      let typeSection = node.ensureIdFields()
+
+      result.add typeSection
+
+      for typeDef in typeSection:
+        dbObjReprs.add typeDef.toObjRepr()
+
+    else:
+      result.add node
+
+  let connection = parseStmt(repr(p) & ".stored_connection")
+  let user = parseStmt(repr(p) & ".stored_user")
+  let password = parseStmt(repr(p) & ".stored_password")
+  let database = parseStmt(repr(p) & ".stored_database")
   let withDbNode = getAst genWithDb(connection, user, password, database,
                                     genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
 
