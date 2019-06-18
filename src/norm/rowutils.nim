@@ -218,12 +218,12 @@ proc toRow*(obj: object, force = false): Row =
   ]##
 
   runnableExamples:
-    import strutils, sequtils, sugar
+    import strutils, ndb/sqlite
 
     type
       Example = object
         intField: int
-        strField{.formatIt: it.toLowerAscii().}: string
+        strField{.formatIt: dbValue(it.toLowerAscii()).}: string
         floatField: float
 
     let
@@ -253,12 +253,12 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ]##
 
   runnableExamples:
-    import strutils, sequtils, sugar
+    import strutils, sequtils, ndb/sqlite
 
     type
       Example = object
         intField: int
-        strField{.formatIt: it.toLowerAscii().}: string
+        strField{.formatIt: dbValue(it.toLowerAscii()).}: string
         floatField: float
 
     let
