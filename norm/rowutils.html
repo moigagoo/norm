@@ -923,12 +923,12 @@ function main() {
 
 <p><strong class="examples_text">Examples:</strong></p>
 <pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">strutils</span><span class="Other">,</span> <span class="Identifier">sequtils</span><span class="Other">,</span> <span class="Identifier">sugar</span>
+  <span class="Identifier">strutils</span><span class="Other">,</span> <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
 
 <span class="Keyword">type</span>
   <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
     <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
+    <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Identifier">dbValue</span><span class="Other">(</span><span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
     <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
 
 <span class="Keyword">let</span>
@@ -948,12 +948,12 @@ function main() {
 
 <p><strong class="examples_text">Examples:</strong></p>
 <pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">strutils</span><span class="Other">,</span> <span class="Identifier">sequtils</span><span class="Other">,</span> <span class="Identifier">sugar</span>
+  <span class="Identifier">strutils</span><span class="Other">,</span> <span class="Identifier">sequtils</span><span class="Other">,</span> <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
 
 <span class="Keyword">type</span>
   <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
     <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
+    <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Identifier">dbValue</span><span class="Other">(</span><span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
     <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
 
 <span class="Keyword">let</span>
@@ -1095,7 +1095,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-06-17 07:30:08 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-18 06:16:05 UTC</small>
       </div>
     </div>
   </div>
