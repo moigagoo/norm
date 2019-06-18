@@ -34,19 +34,19 @@ template formatter*(op: (any) -> DbValue) {.pragma.}
 template formatIt*(op: untyped) {.pragma.}
   ##[ Pragma to define a format expression for an object field.
 
-  ``op`` should be an expression with ``it`` variable with the object field type and evaluates
-  to ``DbValue``.
+  ``op`` should be an expression with ``it`` variable with the object field type and evaluates to ``DbValue``.
 
-  The expression is invoked in ``toRow`` proc to turn a typed object field into a DbValue
-  within a row.
+  .. important:
+
+    Use explicit proc call syntax to produce ``DbValue``: ``dbValue(expr)`` instead of ``dbValue expr``.
+
+  The expression is invoked in ``toRow`` proc to turn a typed object field into a ``DbValue`` within a row.
   ]##
 
 template to*(row: Row, obj: var object) =
-  ##[ Convert row to an existing object instance. String values from row are converted
-  into types of the respective object fields.
+  ##[ Convert row to an existing object instance. String values from row are converted into types of the respective object fields.
 
-  If object fields don't require initialization, you may use the proc that instantiates the object
-  on the fly. This template though can be safely used for all object kinds.
+  If object fields don't require initialization, you may use the proc that instantiates the object on the fly. This template though can be safely used for all object kinds.
   ]##
 
   runnableExamples:
@@ -146,13 +146,11 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     rows[i].to(objs[i])
 
 proc to*(row: Row, T: typedesc): T =
-  ##[ Instantiate object with type ``T`` with values from ``row``. String values from row
-  are converted into types of the respective object fields.
+  ##[ Instantiate object with type ``T`` with values from ``row``. String values from row are converted into types of the respective object fields.
 
   Use this proc if the object fields have default values and do not require initialization, e.g. ``int``, ``string``, ``float``.
 
-  If fields require initialization, for example, ``times.DateTime``, use template ``to``.
-  It converts a row to a existing object instance.
+  If fields require initialization, for example, ``times.DateTime``, use template ``to``. It converts a row to a existing object instance.
   ]##
 
   runnableExamples:
@@ -175,14 +173,11 @@ proc to*(row: Row, T: typedesc): T =
   row.to(result)
 
 proc to*(rows: openArray[Row], T: typedesc): seq[T] =
-  ##[ Instantiate a sequence of objects with type ``T`` with values
-  from ``rows``. String values from each row are converted into types
-  of the respective object fields.
+  ##[ Instantiate a sequence of objects with type ``T`` with values from ``rows``. String values from each row are converted into types of the respective object fields.
 
   Use this proc if the object fields have default values and do not require initialization, e.g. ``int``, ``string``, ``float``.
 
-  If fields require initialization, for example, ``times.DateTime``, use template ``to``.
-  It converts an open array of rows to an existing object instance openArray.
+  If fields require initialization, for example, ``times.DateTime``, use template ``to``. It converts an open array of rows to an existing object instance openArray.
   ]##
 
   runnableExamples:
@@ -213,8 +208,7 @@ proc to*(rows: openArray[Row], T: typedesc): seq[T] =
 proc toRow*(obj: object, force = false): Row =
   ##[ Convert an object into row, i.e. sequence of strings.
 
-  If a custom formatter is provided for a field, it is used for conversion,
-  otherwise `$` is invoked.
+  If a custom formatter is provided for a field, it is used for conversion, otherwise `$` is invoked.
   ]##
 
   runnableExamples:
@@ -248,8 +242,7 @@ proc toRow*(obj: object, force = false): Row =
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
 
-  If a custom formatter is provided for a field, it is used for conversion,
-  otherwise `$` is invoked.
+  If a custom formatter is provided for a field, it is used for conversion, otherwise `$` is invoked.
   ]##
 
   runnableExamples:
