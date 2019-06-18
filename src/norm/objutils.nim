@@ -78,14 +78,17 @@ proc toSignatureRepr(def: NimNode): SignatureRepr =
       result.exported = true
     of nnkPragmaExpr:
       expectKind(def[0][0], {nnkIdent, nnkPostfix})
+
       case def[0][0].kind
-      of nnkIdent:
-        result.name = $def[0][0]
-      of nnkPostfix:
-        result.name = $def[0][0][1]
-        result.exported = true
-      else: discard
+        of nnkIdent:
+          result.name = $def[0][0]
+        of nnkPostfix:
+          result.name = $def[0][0][1]
+          result.exported = true
+        else: discard
+
       result.pragmas = def[0][1].toPragmaReprs()
+
     else: discard
 
 proc toObjRepr*(typeDef: NimNode): ObjRepr =
