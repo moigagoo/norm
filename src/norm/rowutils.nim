@@ -237,11 +237,11 @@ proc toRow*(obj: object, force = false): Row =
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
       when obj.dot(field).hasCustomPragma(formatter):
-        result.add dbValue obj.dot(field).getCustomPragmaVal(formatter).op value
+        result.add obj.dot(field).getCustomPragmaVal(formatter).op value
       elif obj.dot(field).hasCustomPragma(formatIt):
         block:
           let it {.inject.} = value
-          result.add dbValue obj.dot(field).getCustomPragmaVal(formatIt)
+          result.add obj.dot(field).getCustomPragmaVal(formatIt)
       else:
         result.add dbValue value
 
