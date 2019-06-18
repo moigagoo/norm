@@ -1007,7 +1007,8 @@ function main() {
 
 <p>Pragma to define a format expression for an object field.</p>
 <p><tt class="docutils literal"><span class="pre">op</span></tt> should be an expression with <tt class="docutils literal"><span class="pre">it</span></tt> variable with the object field type and evaluates to <tt class="docutils literal"><span class="pre">DbValue</span></tt>.</p>
-<p>The expression is invoked in <tt class="docutils literal"><span class="pre">toRow</span></tt> proc to turn a typed object field into a DbValue within a row. </p>
+<p>Use explicit proc call syntax to produce <tt class="docutils literal"><span class="pre">DbValue</span></tt>: <tt class="docutils literal"><span class="pre">dbValue(expr)</span></tt> instead of <tt class="docutils literal"><span class="pre">dbValue expr</span></tt>.</p>
+<p>The expression is invoked in <tt class="docutils literal"><span class="pre">toRow</span></tt> proc to turn a typed object field into a <tt class="docutils literal"><span class="pre">DbValue</span></tt> within a row. </p>
 
 
 </dd>
@@ -1095,7 +1096,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-06-18 06:28:56 UTC</small>
+        <small>Made with Nim. Generated: 2019-06-18 10:35:31 UTC</small>
       </div>
     </div>
   </div>
