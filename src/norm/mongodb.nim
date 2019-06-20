@@ -6,11 +6,68 @@ MongoDB Backend
 
 ]##
 
+#
+# Interpreting between BSON and Nim Objects
+#
+# From BSON to Nim Types:
+#
+# | BSON          | Type      | Notes
+# | ------------- | --------- | ---------------------
+# | Double        | float     | default float in Nim already 64-bit
+# | String (UTF8) | string    | string already UTF-8
+# | Oid           | Oid       | https://nim-lang.org/docs/oids.html
+# | Bool          | bool      | 
+# | TimeUTC       | timestamp | https://nim-lang.org/docs/times.html
+# | Null          | Option[T] | Only fields of Option[T] can be null
+# | Int32         | int       | ideally, int32, but it will convert to int, int32, or int64
+# | Int64         | int       | ideally, int64, bit it will convert to int, int32, or int64
+#
+# NOT YET SUPPORTED
+#
+# | Document      | (Object)  | field points to another object type. the other object need not be "dressed" with `db`
+# | Array         | seq[T]    | we ONLY support same-type arrays right now
+# Array (heterogeneous lists not supported yet)
+# DBPointer
+# Binary
+# Timestamp
+#
+# NOT SUPPORTED (ignored):
+#
+# Regexp
+# JSCode
+# JSCodeWithScope
+# MaximumKey
+# MinimumKey
+#
+# From Nim Object to BSON
+#
+# | Type      | BSON          | Notes
+# | --------- | ------------- |---------------------
+# | float     | Double        | default float in Nim already 64-bit
+# | string    | String (UTF8) | string already UTF-8
+# | Oid       | Oid           | https://nim-lang.org/docs/oids.html; all-zeroes count as a MISSING entry; not a null
+# | bool      | Bool          | 
+# | timestamp | TimeUTC       | https://nim-lang.org/docs/times.html; 1970-01-01 00:00:00 counts as MISSING; not null
+# | Option[T] | Null          | Only fields of Option[T] can be null
+# | int       | Int32         |
+#
+# NOT YET SUPPORTED (compile-time error generated):
+#
+# | float32   | Double        | 
+# | float64   | Double        | default float in Nim already 64-bit
+# | (Object)  | Document      | it is not possible to a "Missing" state. The closest analogue is Option[ObjectType]
+# | seq[T]    | Array         | to support null, make it seq[Option[T]]
+# | int32     | Int32         |
+# | int64     | Int64         |
+# Tuples
+# Tables
+#
 
 import strutils, macros, typetraits, logging, options
 import nimongo.bson
 import nimongo.mongo
 import oids
+import times
 
 import rowutils, objutils, pragmas
 
@@ -20,6 +77,7 @@ export rowutils, objutils, pragmas
 export bson
 export mongo
 export oids
+export times
 
 # proc `$`*(query: SqlQuery): string = $ string query
 
@@ -173,13 +231,28 @@ proc getCollectionName*(T: typedesc): string =
 #   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 
-proc genBSON*(obj: object, force = false): Bson =
+# | float     | Double        | default float in Nim already 64-bit
+# | float32   | Double        | 
+# | float64   | Double        | default float in Nim already 64-bit
+# | string    | String (UTF8) | string already UTF-8
+# | Oid       | Oid           | https://nim-lang.org/docs/oids.html; all-zeroes count as a MISSING entry; not a null
+# | bool      | Bool          | 
+# | Time      | TimeUTC       | https://nim-lang.org/docs/times.html; 1970-01-01 00:00:00 counts as MISSING; not null
+# | Option[T] | Null          | Only fields of Option[T] can be null
+# | int       | Int32         |
+# | int32     | Int32         |
+# | int64     | Int64         |
+
+
+proc buildBSON*(obj: object, force = false): Bson =
   result = newBsonDocument()
 
-  let fields = obj.getColumnRefs(force=force)
+  let fields = obj.getColumnRefs(force)
 
   for field in fields:
     case field.fieldType:
+    of "float":
+      result[field.fieldName] = toBson(parseFloat(field.fieldStrValue))
     of "string":
       result[field.fieldName] = toBson(field.fieldStrValue)
     of "Oid":
@@ -187,8 +260,16 @@ proc genBSON*(obj: object, force = false): Bson =
         discard
       else:
         result[field.fieldName] = toBson(parseOid(field.fieldStrValue))
+    of "bool":
+      result[field.fieldName] = toBson(parseBool(field.fieldStrValue))
+    of "Time":
+      let temp = parseTime(field.fieldStrValue, "yyyy-MM-dd\'T\'HH:mm:sszzz", utc())
+      if temp != fromUnix(0):
+        result[field.fieldName] = toBson(parseTime(field.fieldStrValue, "yyyy-MM-dd\'T\'HH:mm:sszzz", utc()))
+    of "int":
+      result[field.fieldName] = toBson(parseInt(field.fieldStrValue))
     else:
-      result[field.fieldName] = toBson(field.fieldStrValue)
+      discard
 
 
 template genWithDb(connection, user, password, database: string): untyped {.dirty.} =
@@ -226,7 +307,7 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
         ]##
 
         let
-          doc = genBSON(obj, true)
+          doc = buildBSON(obj, true)
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
         echo "collection: " & getCollectionName(type(obj))
@@ -241,7 +322,7 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
           obj.id = response.inserted_ids[0].toOid
 
         echo "doc after:"
-        echo $genBSON(obj, true)
+        echo $buildBSON(obj, true)
         echo "object after:"
         echo $obj
 
@@ -418,6 +499,7 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
 #                                     genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
 
 #   result.insert(0, withDbNode)
+
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
