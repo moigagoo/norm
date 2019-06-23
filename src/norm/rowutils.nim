@@ -1,4 +1,4 @@
-import sequtils, options, typetraits
+import sequtils, options, typetraits, strutils
 import sugar
 import macros; export macros
 
@@ -11,6 +11,20 @@ type
     fieldName: string
     fieldType: string
     fieldStrValue: string
+
+proc cleanTypeName(label: string): string =
+  result = label
+  if result.find("system.float") != -1:
+    result = result.replace("system.float", "float")
+  if result.find("system.bool") != -1:
+    result = result.replace("system.bool", "bool")
+  if result.find("system.int") != -1:
+    result = result.replace("system.int", "int")
+  if result.find("times.Time") != -1:
+    result = result.replace("times.Time", "Time")
+  if result.find("oids.Oid") != -1:
+    result = result.replace("oids.Oid", "Oid")
+  echo "here: " & result
 
 proc getColumnRefs*(obj: object, force = false): seq[ColumnDesc] =
   ## Get DB column names for an object as a sequence of strings.
@@ -25,7 +39,7 @@ proc getColumnRefs*(obj: object, force = false): seq[ColumnDesc] =
       else:
         column.fieldName = field
       # handle fieldType
-      column.fieldType = name(type(value))
+      column.fieldType = cleanTypeName(name(type(value)))
       # handle fieldValue
       when obj.dot(field).hasCustomPragma(formatter):
         column.fieldStrValue = $obj.dot(field).getCustomPragmaVal(formatter).op value

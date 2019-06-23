@@ -63,22 +63,58 @@ MongoDB Backend
 # Tables
 #
 
-import strutils, macros, typetraits, logging, options
-import nimongo.bson
-import nimongo.mongo
-import oids
-import times
+import
+  strutils,
+  macros,
+  typetraits,
+  logging,
+  options,
+  tables,
+  oids,
+  times
 
-import rowutils, objutils, pragmas
+import
+  nimongo.bson,
+  nimongo.mongo
+
+import
+  rowutils,
+  objutils,
+  pragmas
 
 
-export strutils, macros, logging, options
-export rowutils, objutils, pragmas
-export bson
-export mongo
-export oids
-export times
+export
+  strutils,
+  macros,
+  logging,
+  options,
+  tables,
+  oids,
+  times
 
+export
+  bson,
+  mongo
+
+export
+  rowutils,
+  objutils,
+  pragmas
+
+const NORM_UNIVERSAL_TYPE_LIST* = @[
+  "float",
+  "string",
+  "Oid",
+  "bool",
+  "Time",
+  "int",
+  "Option[float]",
+  "Option[string]",
+  "Option[Oid]",
+  "Option[bool]",
+  "Option[Time]",
+  "Option[int]"
+]
 # proc `$`*(query: SqlQuery): string = $ string query
 
 # proc getCollectionName*(objRepr: ObjRepr): string =
@@ -244,32 +280,6 @@ proc getCollectionName*(T: typedesc): string =
 # | int64     | Int64         |
 
 
-proc buildBSON*(obj: object, force = false): Bson =
-  result = newBsonDocument()
-
-  let fields = obj.getColumnRefs(force)
-
-  for field in fields:
-    case field.fieldType:
-    of "float":
-      result[field.fieldName] = toBson(parseFloat(field.fieldStrValue))
-    of "string":
-      result[field.fieldName] = toBson(field.fieldStrValue)
-    of "Oid":
-      if field.fieldStrValue == "000000000000000000000000":
-        discard
-      else:
-        result[field.fieldName] = toBson(parseOid(field.fieldStrValue))
-    of "bool":
-      result[field.fieldName] = toBson(parseBool(field.fieldStrValue))
-    of "Time":
-      let temp = parseTime(field.fieldStrValue, "yyyy-MM-dd\'T\'HH:mm:sszzz", utc())
-      if temp != fromUnix(0):
-        result[field.fieldName] = toBson(parseTime(field.fieldStrValue, "yyyy-MM-dd\'T\'HH:mm:sszzz", utc()))
-    of "int":
-      result[field.fieldName] = toBson(parseInt(field.fieldStrValue))
-    else:
-      discard
 
 
 template genWithDb(connection, user, password, database: string): untyped {.dirty.} =
@@ -426,6 +436,82 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
 
 #         obj.id = 0
 
+      proc buildBSON(obj: object, force = false): Bson =
+        result = newBsonDocument()
+
+        let fields = obj.getColumnRefs(force)
+
+        for field in fields:
+          case field.fieldType:
+          #
+          # Plain types
+          #
+          of "float":
+            result[field.fieldName] = toBson(typedGet(float, obj, field.fieldName))
+          of "string":
+            result[field.fieldName] = toBson(typedGet(string, obj, field.fieldName))
+          of "Oid":
+            if field.fieldStrValue == "000000000000000000000000":
+              discard
+            else:
+              result[field.fieldName] = toBson(typedGet(Oid, obj, field.fieldName))
+          of "bool":
+            result[field.fieldName] = toBson(typedGet(bool, obj, field.fieldName))
+          of "Time":
+            let temp = typedGet(Time, obj, field.fieldName)
+            if temp != fromUnix(0):
+              result[field.fieldName] = toBson(temp)
+          of "int":
+            result[field.fieldName] = toBson(typedGet(int, obj, field.fieldName))
+          #
+          # Option[] types
+          #
+          of "Option[float]":
+            let temp = typedGet(Option[float], obj, field.fieldName)
+            echo temp
+            if temp.isNone:
+              result[field.fieldName] = null()
+            else:
+              result[field.fieldName] = toBson(temp.get())
+          of "Option[string]":
+            let temp = typedGet(Option[string], obj, field.fieldName)
+            echo temp
+            if temp.isNone:
+              result[field.fieldName] = null()
+            else:
+              result[field.fieldName] = toBson(temp.get())
+          of "Option[Oid]":
+            let temp = typedGet(Option[Oid], obj, field.fieldName)
+            echo temp
+            if temp.isNone:
+              result[field.fieldName] = null()
+            else:
+              result[field.fieldName] = toBson(temp.get())
+          of "Option[bool]":
+            let temp = typedGet(Option[bool], obj, field.fieldName)
+            echo temp
+            if temp.isNone:
+              result[field.fieldName] = null()
+            else:
+              result[field.fieldName] = toBson(temp.get())
+          of "Option[Time]":
+            let temp = typedGet(Option[Time], obj, field.fieldName)
+            echo temp
+            if temp.isNone:
+              result[field.fieldName] = null()
+            else:
+              result[field.fieldName] = toBson(temp.get())
+          of "Option[int]":
+            let temp = typedGet(Option[int], obj, field.fieldName)
+            echo temp
+            if temp.isNone:
+              result[field.fieldName] = null()
+            else:
+              result[field.fieldName] = toBson(temp.get())
+          else:
+            discard
+
+
       try:
         # let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
         # debug foreignKeyQuery
@@ -469,6 +555,64 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
       objRepr.fields.insert(idField, 0)
 
     result.add objRepr.toTypeDef()
+
+proc reconstructType(n: NimNode): string =
+  if n.kind == nnkIdent:
+    return $n
+  if n.kind == nnkBracketExpr:
+    return "$1[$2]".format($n[0], $n[1])
+  return "unknown"
+
+# This proc generates a string conversion procedures in the form of:
+#
+# proc typedGet(t: type T, obj: Object, field: string): T =
+#   case field:
+#   of "fielda":
+#     return obj.fielda
+#   of "fieldb":
+#     return obj.fieldb
+#   else:
+#     discard
+#
+# where "T" is actually substituted for the type needing to be returned.
+# You can then use this like:
+#
+#    var x:int = typedGet(int, user, "age")
+#
+# As of nim 0.19.x, nim cannot do proc matching on the returned type
+#
+proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
+  result = ""
+  var
+    proc_map = initOrderedTable[string, string]() # object__type name : procedure string
+    objectName = ""
+    typeName = ""
+    fieldName = ""
+    key = ""
+  # create procedure strings
+  for obj in dbObjReprs:
+    objectName = obj.signature.name
+    # create the start of the procs; even for types that are not in the object
+    for typeName in NORM_UNIVERSAL_TYPE_LIST:
+      key = objectName & "__" & typeName
+      proc_map[key] = ""
+      proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
+      proc_map[key] &= "  case field:\n"
+    for field in obj.fields:
+      echo field.typ.treeRepr
+      typeName = reconstructType(field.typ)
+      fieldName = field.signature.name
+      key = objectName & "__" & typeName
+      proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
+      proc_map[key] &=   "    return obj.$1\n".format(fieldName)
+  # finish up procedure string
+  for key, s in proc_map.pairs():
+    proc_map[key] &= "  else:\n"
+    proc_map[key] &= "    discard\n"
+  # join up the procedures and return
+  for key, s in proc_map.pairs():
+    result &= s
+    result &= "\n" # add a blank line between each proc
 
 # macro db*(connection, user, password, database: string, body: untyped): untyped =
 #   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
@@ -525,6 +669,12 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       result.add node
 
-  let withDbNode = getAst genWithDb(connection, user, password, database)
+  #echo $dbObjReprs
+  let x = genObjectAccess(dbObjReprs)
+  echo $x;
 
+  let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
+  result.add(objectAccess)
+
+  let withDbNode = getAst genWithDb(connection, user, password, database)
   result.insert(0, withDbNode)
