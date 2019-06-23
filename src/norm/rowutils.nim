@@ -24,7 +24,7 @@ proc cleanTypeName(label: string): string =
     result = result.replace("times.Time", "Time")
   if result.find("oids.Oid") != -1:
     result = result.replace("oids.Oid", "Oid")
-  echo "here: " & result
+  # echo "here: " & result
 
 proc getColumnRefs*(obj: object, force = false): seq[ColumnDesc] =
   ## Get DB column names for an object as a sequence of strings.

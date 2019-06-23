@@ -113,7 +113,13 @@ const NORM_UNIVERSAL_TYPE_LIST* = @[
   "Option[Oid]",
   "Option[bool]",
   "Option[Time]",
-  "Option[int]"
+  "Option[int]",
+  "seq[float]",
+  "seq[string]",
+  "seq[Oid]",
+  "seq[bool]",
+  "seq[Time]",
+  "seq[int]"
 ]
 # proc `$`*(query: SqlQuery): string = $ string query
 
@@ -464,53 +470,82 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
           of "int":
             result[field.fieldName] = toBson(typedGet(int, obj, field.fieldName))
           #
-          # Option[] types
+          # Option[T] types
           #
           of "Option[float]":
             let temp = typedGet(Option[float], obj, field.fieldName)
-            echo temp
             if temp.isNone:
               result[field.fieldName] = null()
             else:
               result[field.fieldName] = toBson(temp.get())
           of "Option[string]":
             let temp = typedGet(Option[string], obj, field.fieldName)
-            echo temp
             if temp.isNone:
               result[field.fieldName] = null()
             else:
               result[field.fieldName] = toBson(temp.get())
           of "Option[Oid]":
             let temp = typedGet(Option[Oid], obj, field.fieldName)
-            echo temp
             if temp.isNone:
               result[field.fieldName] = null()
             else:
               result[field.fieldName] = toBson(temp.get())
           of "Option[bool]":
             let temp = typedGet(Option[bool], obj, field.fieldName)
-            echo temp
             if temp.isNone:
               result[field.fieldName] = null()
             else:
               result[field.fieldName] = toBson(temp.get())
           of "Option[Time]":
             let temp = typedGet(Option[Time], obj, field.fieldName)
-            echo temp
             if temp.isNone:
               result[field.fieldName] = null()
             else:
               result[field.fieldName] = toBson(temp.get())
           of "Option[int]":
             let temp = typedGet(Option[int], obj, field.fieldName)
-            echo temp
             if temp.isNone:
               result[field.fieldName] = null()
             else:
               result[field.fieldName] = toBson(temp.get())
+          #
+          # seq[T] types
+          #
+          of "seq[float]":
+            result[field.fieldName] = newBsonArray()
+            for entry in typedGet(seq[float], obj, field.fieldName):
+              result[field.fieldName].add toBson(entry)
+          of "seq[string]":
+            result[field.fieldName] = newBsonArray()
+            for entry in typedGet(seq[string], obj, field.fieldName):
+              result[field.fieldName].add toBson(entry)
+          of "seq[Oid]":
+            result[field.fieldName] = newBsonArray()
+            for entry in typedGet(seq[Oid], obj, field.fieldName):
+              result[field.fieldName].add toBson(entry)
+          of "seq[bool]":
+            result[field.fieldName] = newBsonArray()
+            for entry in typedGet(seq[bool], obj, field.fieldName):
+              result[field.fieldName].add toBson(entry)
+          of "seq[Time]":
+            result[field.fieldName] = newBsonArray()
+            for entry in typedGet(seq[Time], obj, field.fieldName):
+              result[field.fieldName].add toBson(entry)
+          of "seq[int]":
+            result[field.fieldName] = newBsonArray()
+            for entry in typedGet(seq[int], obj, field.fieldName):
+              result[field.fieldName].add toBson(entry)
+          #
+          # Option[seq[T]] types
+          #
+          #
+          # seq[Option[T]] types
+          #
+          #
+          # Option[seq[Option[T]]] types
+          #
           else:
             discard
-
 
       try:
         # let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
@@ -598,13 +633,15 @@ proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
       proc_map[key] = ""
       proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
       proc_map[key] &= "  case field:\n"
+    # not apply the fields to those procs
     for field in obj.fields:
       echo field.typ.treeRepr
       typeName = reconstructType(field.typ)
-      fieldName = field.signature.name
       key = objectName & "__" & typeName
-      proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
-      proc_map[key] &=   "    return obj.$1\n".format(fieldName)
+      if key in proc_map:
+        fieldName = field.signature.name
+        proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
+        proc_map[key] &=   "    return obj.$1\n".format(fieldName)
   # finish up procedure string
   for key, s in proc_map.pairs():
     proc_map[key] &= "  else:\n"
