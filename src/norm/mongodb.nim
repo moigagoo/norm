@@ -121,18 +121,8 @@ const NORM_UNIVERSAL_TYPE_LIST* = @[
   "seq[Time]",
   "seq[int]"
 ]
+
 # proc `$`*(query: SqlQuery): string = $ string query
-
-# proc getCollectionName*(objRepr: ObjRepr): string =
-#   ##[ Get the name of the DB table for the given object representation:
-#   ``table`` pragma value if it exists or lowercased type name otherwise.
-#   ]##
-
-#   result = objRepr.signature.name.toLowerAscii()
-
-#   for prag in objRepr.signature.pragmas:
-#     if prag.name == "table" and prag.kind == pkKval:
-#       return $prag.value
 
 proc getCollectionName*(T: typedesc): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
@@ -141,136 +131,6 @@ proc getCollectionName*(T: typedesc): string =
 
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: ($T).toLowerAscii()  
-
-# proc getColumn*(fieldRepr: FieldRepr): string =
-#   ##[ Get the name of DB column for a field: ``dbCol`` pragma value if it exists
-#   or field name otherwise.
-#   ]##
-
-#   result = fieldRepr.signature.name
-
-#   for prag in fieldRepr.signature.pragmas:
-#     if prag.name == "dbCol" and prag.kind == pkKval:
-#       return $prag.value
-
-
-
-# proc getDbType(fieldRepr: FieldRepr): string =
-#   ## SQLite-specific mapping from Nim types to SQL data types.
-
-#   for prag in fieldRepr.signature.pragmas:
-#     if prag.name == "dbType" and prag.kind == pkKval:
-#       return $prag.value
-
-#   result =
-#     if fieldRepr.typ.kind == nnkIdent:
-#       case $fieldRepr.typ:
-#       of "int": "INTEGER NOT NULL"
-#       of "string": "TEXT NOT NULL"
-#       of "float": "REAL NOT NULL"
-#       else: "TEXT NOT NULL"
-#     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
-#       case $fieldRepr.typ[1]:
-#       of "int": "INTEGER"
-#       of "string": "TEXT"
-#       of "float": "REAL"
-#       else: "TEXT"
-#     else: "TEXT NOT NULL"
-
-# proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
-#   ## Generate SQL column statement for a field representation.
-
-#   result.add fieldRepr.getColumn()
-#   result.add " "
-#   result.add getDbType(fieldRepr)
-
-#   for prag in fieldRepr.signature.pragmas:
-#     if prag.name == "pk" and prag.kind == pkFlag:
-#       result.add " PRIMARY KEY"
-#     elif prag.name == "unique" and prag.kind == pkFlag:
-#       result.add " UNIQUE"
-#     elif prag.name == "notNull" and prag.kind == pkFlag:
-#       result.add " NOT NULL"
-#     elif prag.name == "check" and prag.kind == pkKval:
-#       result.add " CHECK $#" % $prag.value
-#     elif prag.name == "default" and prag.kind == pkKval:
-#       result.add " DEFAULT $#" % $prag.value
-#     elif prag.name == "fk" and prag.kind == pkKval:
-#       expectKind(prag.value, {nnkIdent, nnkDotExpr})
-
-#       result.add case prag.value.kind
-#       of nnkIdent:
-#         " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
-#       of nnkDotExpr:
-#         " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
-#       else: ""
-#     elif prag.name == "onUpdate" and prag.kind == pkKval:
-#       result.add " ON UPDATE $#" % $prag.value
-#     elif prag.name == "onDelete" and prag.kind == pkKval:
-#       result.add " ON DELETE $#" % $prag.value
-
-# proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
-#   ## Generate table schema for an object representation.
-
-#   result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
-
-#   var columns: seq[string]
-
-#   for field in dbObjRepr.fields:
-#     columns.add "\t$#" % genColStmt(field, dbObjReprs)
-
-#   result.add columns.join(",\n")
-#   result.add "\n)"
-
-# proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
-#   ## Generate table schemas for a list of object representations.
-
-#   for dbObjRepr in dbObjReprs:
-#     result.add sql genTableSchema(dbObjRepr, dbObjReprs)
-
-# proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[SqlQuery] =
-#   ## Generate ``DROP TABLE`` queries for a list of object representations.
-
-#   for dbObjRepr in dbObjReprs:
-#     result.add sql "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
-
-# proc genInsertQuery*(obj: object, force: bool): SqlQuery =
-#   ## Generate ``INSERT`` query for an object.
-
-#   let
-#     fields = obj.getColumns(force)
-#     placeholders = '?'.repeat(fields.len)
-
-#   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
-#                                                     placeholders.join(", ")]
-
-# proc genGetOneQuery*(obj: object, condition: string): SqlQuery =
-#   ## Generate ``SELECT`` query to fetch a single record for an object.
-
-#   sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
-#                                       type(obj).getTable(), condition]
-
-# proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
-#   ## Generate ``SELECT`` query to fetch multiple records for an object.
-
-#   sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
-#                                                        type(obj).getTable(), condition]
-
-# proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
-#   ## Generate ``UPDATE`` query for an object.
-
-#   var fieldsWithPlaceholders: seq[string]
-
-#   for field in obj.getColumns(force):
-#     fieldsWithPlaceholders.add field & " = ?"
-
-#   result = sql "UPDATE $# SET $# WHERE id = ?" % [type(obj).getTable(),
-#                                                   fieldsWithPlaceholders.join(", ")]
-
-# proc genDeleteQuery*(obj: object): SqlQuery =
-#   ## Generate ``DELETE`` query for an object.
-
-#   sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
 
 
 # | float     | Double        | default float in Nim already 64-bit
@@ -284,8 +144,6 @@ proc getCollectionName*(T: typedesc): string =
 # | int       | Int32         |
 # | int32     | Int32         |
 # | int64     | Int64         |
-
-
 
 
 template genWithDb(connection, user, password, database: string): untyped {.dirty.} =
@@ -326,226 +184,44 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
           doc = buildBSON(obj, true)
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
-        echo "collection: " & getCollectionName(type(obj))
-        echo "doc before:"
-        echo $doc
+        # echo "collection: " & getCollectionName(type(obj))
+        # echo "doc before:"
+        # echo $doc
 
         var response = dbCollection.insert(doc)
 
-        echo "response: " & $response
+        # echo "response: " & $response
 
         if len(response.inserted_ids) > 0:
           obj.id = response.inserted_ids[0].toOid
 
-        echo "doc after:"
-        echo $buildBSON(obj, true)
-        echo "object after:"
-        echo $obj
+        # echo "doc after:"
+        # echo $buildBSON(obj, true)
+        # echo "object after:"
+        # echo $obj
 
-#       template getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue]) {.used.} =
-#         ##[ Read a record from DB by condition and store it into an existing object instance.
+      template getOne(obj: var object, id: Oid) {.used.} =
+        ## Read a record from DB by id and store it into an existing object instance.
 
-#         If multiple records are found, return the first one.
-#         ]##
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
-#         let getOneQuery = genGetOneQuery(obj, cond)
+        let fetched = dbCollection.find(%*{"_id": id}).one()
+        echo $fetched
+        applyBSON(obj, fetched)
 
-#         debug getOneQuery, " <- ", params.join(", ")
+        # let getOneQuery = genGetOneQuery(obj, "id=?")
 
-#         let row = dbConn.getRow(getOneQuery, params)
+        # debug getOneQuery, " <- ", $id
 
-#         if row.isNone():
-#           raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
-#                              [cond, params.join(", ")])
+        # let row = dbConn.getRow(getOneQuery, id)
 
-#         get(row).to(obj)
+        # if row.isNone():
+        #   raise newException(KeyError, "Record with id=$# not found." % $id)
 
-#       proc getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue]): T {.used.} =
-#         ##[ Read a record from DB by condition into a new object instance.
+        # get(row).to(obj)
 
-#         If multiple records are found, return the first one.
-#         ]##
 
-#         result.getOne(cond, params)
-
-#       template getOne(obj: var object, id: int) {.used.} =
-#         ## Read a record from DB by id and store it into an existing object instance.
-
-#         let getOneQuery = genGetOneQuery(obj, "id=?")
-
-#         debug getOneQuery, " <- ", $id
-
-#         let row = dbConn.getRow(getOneQuery, id)
-
-#         if row.isNone():
-#           raise newException(KeyError, "Record with id=$# not found." % $id)
-
-#         get(row).to(obj)
-
-#       proc getOne(T: typedesc, id: int): T {.used.} =
-#         ## Read a record from DB by id into a new object instance.
-
-#         result.getOne(id)
-
-#       proc getMany(objs: var seq[object], limit: int, offset = 0,
-#                    cond = "1", params: varargs[DbValue, dbValue]) {.used.} =
-#         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
-
-#         Filter using ``cond`` condition.
-#         ]##
-
-#         if len(objs) == 0: return
-
-#         let
-#           getManyQuery = genGetManyQuery(objs[0], cond)
-#           params = @params & @[dbValue min(limit, len(objs)), dbValue offset]
-
-#         debug getManyQuery, " <- ", params.join(", ")
-
-#         let rows = dbConn.getAllRows(getManyQuery, params)
-
-#         rows.to(objs)
-
-#       proc getMany(T: typedesc, limit: int, offset = 0,
-#                    cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
-#         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
-#         create the sequence on the fly.
-
-#         Filter using ``cond`` condition.
-#         ]##
-
-#         result.setLen limit
-#         result.getMany(limit, offset, cond, params)
-
-#       template update(obj: object, force = false) {.used.} =
-#         ##[ Update DB record with object field values.
-
-#         By default, readonly fields are not updated. Use ``force=true`` to update all fields.
-#         ]##
-
-#         let
-#           updateQuery = genUpdateQuery(obj, force)
-#           params = obj.toRow(force) & dbValue obj.id
-
-#         debug updateQuery, " <- ", params.join(", ")
-
-#         dbConn.exec(updateQuery, params)
-
-#       template delete(obj: var object) {.used.} =
-#         ## Delete a record in DB by object's id. The id is set to 0 after the deletion.
-
-#         let deleteQuery = genDeleteQuery(obj)
-
-#         debug deleteQuery, " <- ", $obj.id
-
-#         dbConn.exec(deleteQuery, obj.id)
-
-#         obj.id = 0
-
-      proc buildBSON(obj: object, force = false): Bson =
-        result = newBsonDocument()
-
-        let fields = obj.getColumnRefs(force)
-
-        for field in fields:
-          case field.fieldType:
-          #
-          # Plain types
-          #
-          of "float":
-            result[field.fieldName] = toBson(typedGet(float, obj, field.fieldName))
-          of "string":
-            result[field.fieldName] = toBson(typedGet(string, obj, field.fieldName))
-          of "Oid":
-            if field.fieldStrValue == "000000000000000000000000":
-              discard
-            else:
-              result[field.fieldName] = toBson(typedGet(Oid, obj, field.fieldName))
-          of "bool":
-            result[field.fieldName] = toBson(typedGet(bool, obj, field.fieldName))
-          of "Time":
-            let temp = typedGet(Time, obj, field.fieldName)
-            if temp != fromUnix(0):
-              result[field.fieldName] = toBson(temp)
-          of "int":
-            result[field.fieldName] = toBson(typedGet(int, obj, field.fieldName))
-          #
-          # Option[T] types
-          #
-          of "Option[float]":
-            let temp = typedGet(Option[float], obj, field.fieldName)
-            if temp.isNone:
-              result[field.fieldName] = null()
-            else:
-              result[field.fieldName] = toBson(temp.get())
-          of "Option[string]":
-            let temp = typedGet(Option[string], obj, field.fieldName)
-            if temp.isNone:
-              result[field.fieldName] = null()
-            else:
-              result[field.fieldName] = toBson(temp.get())
-          of "Option[Oid]":
-            let temp = typedGet(Option[Oid], obj, field.fieldName)
-            if temp.isNone:
-              result[field.fieldName] = null()
-            else:
-              result[field.fieldName] = toBson(temp.get())
-          of "Option[bool]":
-            let temp = typedGet(Option[bool], obj, field.fieldName)
-            if temp.isNone:
-              result[field.fieldName] = null()
-            else:
-              result[field.fieldName] = toBson(temp.get())
-          of "Option[Time]":
-            let temp = typedGet(Option[Time], obj, field.fieldName)
-            if temp.isNone:
-              result[field.fieldName] = null()
-            else:
-              result[field.fieldName] = toBson(temp.get())
-          of "Option[int]":
-            let temp = typedGet(Option[int], obj, field.fieldName)
-            if temp.isNone:
-              result[field.fieldName] = null()
-            else:
-              result[field.fieldName] = toBson(temp.get())
-          #
-          # seq[T] types
-          #
-          of "seq[float]":
-            result[field.fieldName] = newBsonArray()
-            for entry in typedGet(seq[float], obj, field.fieldName):
-              result[field.fieldName].add toBson(entry)
-          of "seq[string]":
-            result[field.fieldName] = newBsonArray()
-            for entry in typedGet(seq[string], obj, field.fieldName):
-              result[field.fieldName].add toBson(entry)
-          of "seq[Oid]":
-            result[field.fieldName] = newBsonArray()
-            for entry in typedGet(seq[Oid], obj, field.fieldName):
-              result[field.fieldName].add toBson(entry)
-          of "seq[bool]":
-            result[field.fieldName] = newBsonArray()
-            for entry in typedGet(seq[bool], obj, field.fieldName):
-              result[field.fieldName].add toBson(entry)
-          of "seq[Time]":
-            result[field.fieldName] = newBsonArray()
-            for entry in typedGet(seq[Time], obj, field.fieldName):
-              result[field.fieldName].add toBson(entry)
-          of "seq[int]":
-            result[field.fieldName] = newBsonArray()
-            for entry in typedGet(seq[int], obj, field.fieldName):
-              result[field.fieldName].add toBson(entry)
-          #
-          # Option[seq[T]] types
-          #
-          #
-          # seq[Option[T]] types
-          #
-          #
-          # Option[seq[Option[T]]] types
-          #
-          else:
-            discard
 
       try:
         # let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
@@ -624,25 +300,41 @@ proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
     typeName = ""
     fieldName = ""
     key = ""
-  # create procedure strings
+    normObjectNamesRegistry: seq[string] = @[]
+  #
+  # first get all of the object names
+  #
   for obj in dbObjReprs:
     objectName = obj.signature.name
-    # create the start of the procs; even for types that are not in the object
-    for typeName in NORM_UNIVERSAL_TYPE_LIST:
+    normObjectNamesRegistry.add objectName
+  #
+  # create general procedure strings
+  #
+  for obj in dbObjReprs:
+    objectName = obj.signature.name
+    # create the other object reference procs
+    for typeName in normObjectNamesRegistry:
+      if objectName == typeName:
+        continue  # type recursion is forbidden by nim
       key = objectName & "__" & typeName
       proc_map[key] = ""
       proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
       proc_map[key] &= "  case field:\n"
     # not apply the fields to those procs
     for field in obj.fields:
-      echo field.typ.treeRepr
+      # echo field.typ.treeRepr
       typeName = reconstructType(field.typ)
+      fieldName = field.signature.name
       key = objectName & "__" & typeName
-      if key in proc_map:
-        fieldName = field.signature.name
-        proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
-        proc_map[key] &=   "    return obj.$1\n".format(fieldName)
-  # finish up procedure string
+      if not proc_map.contains(key):
+        proc_map[key] = ""
+        proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
+        proc_map[key] &= "  case field:\n"
+      proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
+      proc_map[key] &=   "    return obj.$1\n".format(fieldName)
+  #
+  # finish up all procedure strings
+  #
   for key, s in proc_map.pairs():
     proc_map[key] &= "  else:\n"
     proc_map[key] &= "    discard\n"
@@ -650,36 +342,140 @@ proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
   for key, s in proc_map.pairs():
     result &= s
     result &= "\n" # add a blank line between each proc
+  #
+  # lastly, make the object names a globally accessable variable:
+  result &= "var normObjectNamesRegistry* = @[\n"
+  result &= "  \"" & join(normObjectNamesRegistry, "\", \"") & "\"\n"
+  result &= "]\n"
 
-# macro db*(connection, user, password, database: string, body: untyped): untyped =
-#   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
 
-#   ``connection``, ``user``, ``password``, ``database`` are the same args accepted
-#   by a standard ``dbConn`` instance.
+proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
+  var
+    proc_map = initOrderedTable[string, string]() # object: procedure string
+    objectName = ""
+    typeName = ""
+    fieldName = ""
+    key = ""
+    normObjectNamesRegistry: seq[string] = @[]
 
-#   The macro generates ``withDb`` template that wraps all DB interations.
-#   ]##
+  #
+  # first get all of the object names
+  #
+  for obj in dbObjReprs:
+    normObjectNamesRegistry.add obj.signature.name
+  #
+  # now generate one buildBSON per object
+  #
+  for obj in dbObjReprs:
+    objectName = obj.signature.name
+    key = objectName
+    proc_map[key] =  "proc buildBSON(obj: $1, force = false): Bson =\n".format(objectName)
+    proc_map[key] &= "  result = newBsonDocument()\n"
+    proc_map[key] &= "\n"
+    #
+    # handle universal types first
+    #
+    for field in obj.fields:
+      typeName = reconstructType(field.typ)
+      fieldName = field.signature.name
+      if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
+        continue
+      if typeName == "Oid":
+        proc_map[key] &= "  if $$obj.$1 != \"000000000000000000000000\":\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$1)\n".format(fieldName)
+      elif typeName == "Time":
+        proc_map[key] &= "  if obj.$1 != fromUnix(0):\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$1)\n".format(fieldName)
+      elif typeName.startsWith("Option["):
+        proc_map[key] &= "  if obj.$1.isNone:\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = null()\n".format(fieldName)
+        proc_map[key] &= "  else:\n"
+        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$1.get())\n".format(fieldName)
+      elif typeName.startsWith("seq["):
+        proc_map[key] &= "  result[\"$1\"] = newBsonArray()\n".format(fieldName)
+        proc_map[key] &= "  for entry in obj.$1:\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"].add toBson(entry)\n".format(fieldName)
+      else:
+        proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1)\n".format(fieldName)
+    #
+    # now handle cross-object references
+    #
+    for field in obj.fields:
+      typeName = reconstructType(field.typ)
+      fieldName = field.signature.name
+      if NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
+        continue
+      if normObjectNamesRegistry.contains(typeName):
+        proc_map[key] &= "  result[\"$1\"] = buildBSON(obj.$1, force)\n".format(fieldName)
+  #
+  # finish up all procedure strings
+  #
+  for key, s in proc_map.pairs():
+    result &= s
+    result &= "\n" # add a blank line between each proc
 
-#   result = newStmtList()
 
-#   var dbObjReprs: seq[ObjRepr]
+proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
+  var
+    proc_map = initOrderedTable[string, string]() # object: procedure string
+    objectName = ""
+    typeName = ""
+    fieldName = ""
+    key = ""
+    normObjectNamesRegistry: seq[string] = @[]
 
-#   for node in body:
-#     if node.kind == nnkTypeSection:
-#       let typeSection = node.ensureIdFields()
-
-#       result.add typeSection
-
-#       for typeDef in typeSection:
-#         dbObjReprs.add typeDef.toObjRepr()
-
-#     else:
-#       result.add node
-
-#   let withDbNode = getAst genWithDb(connection, user, password, database,
-#                                     genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
-
-#   result.insert(0, withDbNode)
+  #
+  # first get all of the object names
+  #
+  for obj in dbObjReprs:
+    normObjectNamesRegistry.add obj.signature.name
+  #
+  # now generate one applyBSON per object
+  #
+  for obj in dbObjReprs:
+    objectName = obj.signature.name
+    key = objectName
+    proc_map[key] =  "proc applyBSON(obj: var $1, doc: Bson) =\n".format(objectName)
+    #
+    # handle universal types first
+    #
+    for field in obj.fields:
+      typeName = reconstructType(field.typ)
+      fieldName = field.signature.name
+      if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
+        continue
+      if typeName == "float":
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindDouble:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toFloat64\n".format(fieldName)
+      elif typeName == "string":
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindStringUTF8:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toString\n".format(fieldName)
+      elif typeName == "Oid":
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindOid:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toOid\n".format(fieldName)
+      elif typeName == "bool":
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindBool:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toBool\n".format(fieldName)
+      elif typeName == "Time":
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindTimeUTC:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toTime\n".format(fieldName)
+      elif typeName == "int":
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind in @[BsonKindInt32, BsonKindInt64]:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toInt\n".format(fieldName)
+      else:
+        discard
+  #
+  # finish up all procedure strings
+  #
+  for key, s in proc_map.pairs():
+    result &= s
+    result &= "\n" # add a blank line between each proc
 
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
@@ -697,7 +493,6 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   for node in body:
     if node.kind == nnkTypeSection:
       let typeSection = node.ensureIdFields()
-
       result.add typeSection
 
       for typeDef in typeSection:
@@ -707,11 +502,22 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add node
 
   #echo $dbObjReprs
-  let x = genObjectAccess(dbObjReprs)
+  var x = genObjectAccess(dbObjReprs)
   echo $x;
+  x = genBSONToObject(dbObjReprs)
+  echo $x;
+  x = genObjectToBSON(dbObjReprs)
+  echo $x;
+
 
   let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
   result.add(objectAccess)
+
+  let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
+  result.add(bsonToObject)
+
+  let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
+  result.add(objectToBSON)
 
   let withDbNode = getAst genWithDb(connection, user, password, database)
   result.insert(0, withDbNode)
