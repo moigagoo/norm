@@ -133,18 +133,6 @@ proc getCollectionName*(T: typedesc): string =
   else: ($T).toLowerAscii()  
 
 
-# | float     | Double        | default float in Nim already 64-bit
-# | float32   | Double        | 
-# | float64   | Double        | default float in Nim already 64-bit
-# | string    | String (UTF8) | string already UTF-8
-# | Oid       | Oid           | https://nim-lang.org/docs/oids.html; all-zeroes count as a MISSING entry; not a null
-# | bool      | Bool          | 
-# | Time      | TimeUTC       | https://nim-lang.org/docs/times.html; 1970-01-01 00:00:00 counts as MISSING; not null
-# | Option[T] | Null          | Only fields of Option[T] can be null
-# | int       | Int32         |
-# | int32     | Int32         |
-# | int64     | Int64         |
-
 
 template genWithDb(connection, user, password, database: string): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
@@ -274,82 +262,82 @@ proc reconstructType(n: NimNode): string =
     return "$1[$2]".format($n[0], $n[1])
   return "unknown"
 
-# This proc generates a string conversion procedures in the form of:
-#
-# proc typedGet(t: type T, obj: Object, field: string): T =
-#   case field:
-#   of "fielda":
-#     return obj.fielda
-#   of "fieldb":
-#     return obj.fieldb
-#   else:
-#     discard
-#
-# where "T" is actually substituted for the type needing to be returned.
-# You can then use this like:
-#
-#    var x:int = typedGet(int, user, "age")
-#
-# As of nim 0.19.x, nim cannot do proc matching on the returned type
-#
-proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
-  result = ""
-  var
-    proc_map = initOrderedTable[string, string]() # object__type name : procedure string
-    objectName = ""
-    typeName = ""
-    fieldName = ""
-    key = ""
-    normObjectNamesRegistry: seq[string] = @[]
-  #
-  # first get all of the object names
-  #
-  for obj in dbObjReprs:
-    objectName = obj.signature.name
-    normObjectNamesRegistry.add objectName
-  #
-  # create general procedure strings
-  #
-  for obj in dbObjReprs:
-    objectName = obj.signature.name
-    # create the other object reference procs
-    for typeName in normObjectNamesRegistry:
-      if objectName == typeName:
-        continue  # type recursion is forbidden by nim
-      key = objectName & "__" & typeName
-      proc_map[key] = ""
-      proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
-      proc_map[key] &= "  case field:\n"
-    # not apply the fields to those procs
-    for field in obj.fields:
-      # echo field.typ.treeRepr
-      typeName = reconstructType(field.typ)
-      fieldName = field.signature.name
-      key = objectName & "__" & typeName
-      if not proc_map.contains(key):
-        proc_map[key] = ""
-        proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
-        proc_map[key] &= "  case field:\n"
-      proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
-      proc_map[key] &=   "    return obj.$1\n".format(fieldName)
-  #
-  # finish up all procedure strings
-  #
-  for key, s in proc_map.pairs():
-    proc_map[key] &= "  else:\n"
-    proc_map[key] &= "    discard\n"
-  # join up the procedures and return
-  for key, s in proc_map.pairs():
-    result &= s
-    result &= "\n" # add a blank line between each proc
-  #
-  # lastly, make the object names a globally accessable variable:
-  result &= "var normObjectNamesRegistry* = @[\n"
-  result &= "  \"" & join(normObjectNamesRegistry, "\", \"") & "\"\n"
-  result &= "]\n"
+# # This proc generates a string conversion procedures in the form of:
+# #
+# # proc typedGet(t: type T, obj: Object, field: string): T =
+# #   case field:
+# #   of "fielda":
+# #     return obj.fielda
+# #   of "fieldb":
+# #     return obj.fieldb
+# #   else:
+# #     discard
+# #
+# # where "T" is actually substituted for the type needing to be returned.
+# # You can then use this like:
+# #
+# #    var x:int = typedGet(int, user, "age")
+# #
+# # As of nim 0.19.x, nim cannot do proc matching on the returned type
+# #
+# proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
+#   result = ""
+#   var
+#     proc_map = initOrderedTable[string, string]() # object__type name : procedure string
+#     objectName = ""
+#     typeName = ""
+#     fieldName = ""
+#     key = ""
+#     normObjectNamesRegistry: seq[string] = @[]
+#   #
+#   # first get all of the object names
+#   #
+#   for obj in dbObjReprs:
+#     objectName = obj.signature.name
+#     normObjectNamesRegistry.add objectName
+#   #
+#   # create general procedure strings
+#   #
+#   for obj in dbObjReprs:
+#     objectName = obj.signature.name
+#     # create the other object reference procs
+#     for typeName in normObjectNamesRegistry:
+#       if objectName == typeName:
+#         continue  # type recursion is forbidden by nim
+#       key = objectName & "__" & typeName
+#       proc_map[key] = ""
+#       proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
+#       proc_map[key] &= "  case field:\n"
+#     # not apply the fields to those procs
+#     for field in obj.fields:
+#       # echo field.typ.treeRepr
+#       typeName = reconstructType(field.typ)
+#       fieldName = field.signature.name
+#       key = objectName & "__" & typeName
+#       if not proc_map.contains(key):
+#         proc_map[key] = ""
+#         proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
+#         proc_map[key] &= "  case field:\n"
+#       proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
+#       proc_map[key] &=   "    return obj.$1\n".format(fieldName)
+#   #
+#   # finish up all procedure strings
+#   #
+#   for key, s in proc_map.pairs():
+#     proc_map[key] &= "  else:\n"
+#     proc_map[key] &= "    discard\n"
+#   # join up the procedures and return
+#   for key, s in proc_map.pairs():
+#     result &= s
+#     result &= "\n" # add a blank line between each proc
+#   #
+#   # lastly, make the object names a globally accessable variable:
+#   result &= "var normObjectNamesRegistry* = @[\n"
+#   result &= "  \"" & join(normObjectNamesRegistry, "\", \"") & "\"\n"
+#   result &= "]\n"
 
 
-proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
+proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
     objectName = ""
@@ -414,8 +402,25 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
     result &= s
     result &= "\n" # add a blank line between each proc
 
+const TYPE_TO_BSON_KIND = {
+  "float": "BsonKindDouble",
+  "string": "BsonKindStringUTF8",
+  "Oid": "BsonKindOid",
+  "bool": "BsonKindBool",
+  "Time": "BsonKindTimeUTC",
+  "int": "BsonKindInt64, BsonKindInt32"
+}.toTable
 
-proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
+const TYPE_TO_BSON_PROC = {
+  "float": "toFloat64",
+  "string": "toString",
+  "Oid": "toOid",
+  "bool": "toBool",
+  "Time": "toTime",
+  "int": "toInt"
+}.toTable
+
+proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
     objectName = ""
@@ -423,6 +428,7 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
     fieldName = ""
     key = ""
     normObjectNamesRegistry: seq[string] = @[]
+    center = ""
 
   #
   # first get all of the object names
@@ -444,32 +450,40 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
       fieldName = field.signature.name
       if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
         continue
-      if typeName == "float":
+      if typeName in ["float", "string", "Oid", "bool", "Time"]:
         proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindDouble:\n".format(fieldName)
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toFloat64\n".format(fieldName)
-      elif typeName == "string":
+        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(fieldName, TYPE_TO_BSON_KIND[typeName])
+        proc_map[key] &= "      obj.$1 = doc[\"$1\"].$2\n".format(fieldName, TYPE_TO_BSON_PROC[typeName])
+      elif typeName.startsWith("Option["):
+        center = typeName.replace("Option[", "").replace("]", "")
+        echo $center
         proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindStringUTF8:\n".format(fieldName)
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toString\n".format(fieldName)
-      elif typeName == "Oid":
+        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(fieldName, TYPE_TO_BSON_KIND[center])
+        proc_map[key] &= "      obj.$1 = some doc[\"$1\"].$2\n".format(fieldName, TYPE_TO_BSON_PROC[center])
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindNull:\n".format(fieldName)
+        proc_map[key] &= "      obj.$1 = none($2)\n".format(fieldName, center)
+      elif typeName.startsWith("seq["):
+        center = typeName.replace("seq[", "").replace("]", "")
+        echo $center
         proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindOid:\n".format(fieldName)
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toOid\n".format(fieldName)
-      elif typeName == "bool":
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindBool:\n".format(fieldName)
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toBool\n".format(fieldName)
-      elif typeName == "Time":
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindTimeUTC:\n".format(fieldName)
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toTime\n".format(fieldName)
-      elif typeName == "int":
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind in @[BsonKindInt32, BsonKindInt64]:\n".format(fieldName)
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].toInt\n".format(fieldName)
+        proc_map[key] &= "    obj.$1 = @[]\n".format(fieldName)
+        proc_map[key] &= "    for item in doc[\"$1\"].items:\n".format(fieldName)
+        proc_map[key] &= "      if item.kind in @[$1]:\n".format(TYPE_TO_BSON_KIND[center])
+        proc_map[key] &= "        obj.$1.add item.$2\n".format(fieldName, TYPE_TO_BSON_PROC[center])
       else:
         discard
+    #
+    # now handle cross-object references
+    #
+    for field in obj.fields:
+      typeName = reconstructType(field.typ)
+      fieldName = field.signature.name
+      if NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
+        continue
+      if normObjectNamesRegistry.contains(typeName):
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "    obj.$1 = $2()\n".format(fieldName, typeName)
+        proc_map[key] &= "    applyBSON(obj.$1, doc[\"$1\"])".format(fieldName)
   #
   # finish up all procedure strings
   #
@@ -501,17 +515,14 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       result.add node
 
-  #echo $dbObjReprs
-  var x = genObjectAccess(dbObjReprs)
-  echo $x;
-  x = genBSONToObject(dbObjReprs)
-  echo $x;
-  x = genObjectToBSON(dbObjReprs)
-  echo $x;
+  # echo $dbObjReprs
+  # echo $genObjectAccess(dbObjReprs)
+  echo $genObjectToBSON(dbObjReprs)
+  echo $genBSONToObject(dbObjReprs)
 
 
-  let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
-  result.add(objectAccess)
+  # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
+  # result.add(objectAccess)
 
   let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
   result.add(bsonToObject)

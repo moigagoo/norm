@@ -1,56 +1,10 @@
-import sequtils, options, typetraits, strutils
+import sequtils, options
 import sugar
 import macros; export macros
 
 import ndb/sqlite
 
 import objutils, pragmas
-
-type
-  ColumnDesc* = tuple
-    fieldName: string
-    fieldType: string
-    fieldStrValue: string
-
-proc cleanTypeName(label: string): string =
-  result = label
-  if result.find("system.float") != -1:
-    result = result.replace("system.float", "float")
-  if result.find("system.bool") != -1:
-    result = result.replace("system.bool", "bool")
-  if result.find("system.int") != -1:
-    result = result.replace("system.int", "int")
-  if result.find("times.Time") != -1:
-    result = result.replace("times.Time", "Time")
-  if result.find("oids.Oid") != -1:
-    result = result.replace("oids.Oid", "Oid")
-  # echo "here: " & result
-
-proc getColumnRefs*(obj: object, force = false): seq[ColumnDesc] =
-  ## Get DB column names for an object as a sequence of strings.
-
-  var column: ColumnDesc
-  for field, value in obj.fieldPairs:
-    column = (fieldName: "", fieldType: "", fieldStrValue: "")
-    if force or not obj.dot(field).hasCustomPragma(ro):
-      # handle fieldName
-      when obj.dot(field).hasCustomPragma(dbCol):
-        column.fieldName = obj.dot(field).getCustomPragmaVal(dbCol)
-      else:
-        column.fieldName = field
-      # handle fieldType
-      column.fieldType = cleanTypeName(name(type(value)))
-      # handle fieldValue
-      when obj.dot(field).hasCustomPragma(formatter):
-        column.fieldStrValue = $obj.dot(field).getCustomPragmaVal(formatter).op value
-      elif obj.dot(field).hasCustomPragma(formatIt):
-        block:
-          let it {.inject.} = value
-          column.fieldStrValue = $obj.dot(field).getCustomPragmaVal(formatIt) value
-      else:
-        column.fieldStrValue = $value
-      #
-      result.add column
 
 
 template parser*(op: (DbValue) -> any) {.pragma.}
@@ -290,7 +244,6 @@ proc toRow*(obj: object, force = false): Row =
           result.add dbValue obj.dot(field).getCustomPragmaVal(formatIt)
       else:
         result.add dbValue value
-
 
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
