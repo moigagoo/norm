@@ -336,7 +336,39 @@ proc reconstructType(n: NimNode): string =
 #   result &= "  \"" & join(normObjectNamesRegistry, "\", \"") & "\"\n"
 #   result &= "]\n"
 
-
+# this procedure generates new procedures the convert the values in an
+# existing "type" object to a BSON object.
+#
+# So, for example, with object defined as:
+#
+# ```
+# type
+#   Pet* = object
+#     shortName: string
+#   User* = object
+#     weight*: float
+#     displayName*: string
+#     thePet: Pet
+# ```
+# 
+# you will get a string containing procedures similar to:
+#
+# ```
+# proc buildBSON(obj: Pet, force = false): Bson =
+#   result = newBsonDocument()
+# 
+#   result["shortName"] = toBson(obj.shortName)
+# 
+# proc buildBSON(obj: User, force = false): Bson =
+#   result = newBsonDocument()
+# 
+#   if $obj.id != "000000000000000000000000":
+#     result["_id"] = toBson(obj.id)
+#   result["weight"] = toBson(obj.weight)
+#   result["displayName"] = toBson(obj.displayName)
+#   result["thePet"] = buildBSON(obj.thePet, force)
+# 
+# ```
 proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
@@ -420,6 +452,44 @@ const TYPE_TO_BSON_PROC = {
   "int": "toInt"
 }.toTable
 
+# this procedure generates new procedures that map values found in an
+# existing "type" object to a BSON object.
+#
+# So, for example, with object defined as:
+#
+# ```
+# type
+#   Pet* = object
+#     shortName: string
+#   User* = object
+#     weight*: float
+#     displayName*: string
+#     thePet: Pet
+# ```
+# 
+# you will get a string containing procedures similar to:
+#
+# ```
+# proc applyBSON(obj: var Pet, doc: Bson) =
+#   if doc.contains("shortName"):
+#     if doc["shortName"].kind in @[BsonKindStringUTF8]:
+#       obj.shortName = doc["shortName"].toString
+# 
+# proc applyBSON(obj: var User, doc: Bson) =
+#   if doc.contains("_id"):
+#     if doc["_id"].kind in @[BsonKindOid]:
+#       obj.id = doc["_id"].toOid
+#   if doc.contains("weight"):
+#     if doc["weight"].kind in @[BsonKindDouble]:
+#       obj.weight = doc["weight"].toFloat64
+#   if doc.contains("displaName"):
+#     if doc["displayName"].kind in @[BsonKindStringUTF8]:
+#       obj.display_name = doc["displayName"].toString
+#   if doc.contains("thePet"):
+#     obj.thePet = Pet()
+#     applyBSON(obj.my_pet, doc["thePet"])
+# 
+# ```
 proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
