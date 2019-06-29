@@ -68,7 +68,7 @@ proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
 proc toSignatureRepr(def: NimNode): SignatureRepr =
   ## Convert a signature definition into a ``SignatureRepr``.
 
-  expectKind(def[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
+  expectKind(def[0], {nnkIdent, nnkPostfix, nnkPragmaExpr, nnkSym})
 
   case def[0].kind
     of nnkIdent:
@@ -86,6 +86,8 @@ proc toSignatureRepr(def: NimNode): SignatureRepr =
         result.exported = true
       else: discard
       result.pragmas = def[0][1].toPragmaReprs()
+    of nnkSym:
+      result.name = $def[0]
     else: discard
 
 proc toObjRepr*(typeDef: NimNode): ObjRepr =

@@ -101,6 +101,10 @@ export
   objutils,
   pragmas
 
+# compile-time globals
+var
+  normObjectNamesRegistry {.compileTime.}: seq[string] = @[]
+
 const NORM_UNIVERSAL_TYPE_LIST* = @[
   "float",
   "string",
@@ -133,12 +137,13 @@ proc getCollectionName*(T: typedesc): string =
   else: ($T).toLowerAscii()  
 
 
-
 template genWithDb(connection, user, password, database: string): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
-  template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
-                         body: untyped): untyped {.dirty.} =
+  template withCustomDb*(
+    customConnection, customUser, customPassword, customDatabase: string,
+    body: untyped
+  ): untyped {.dirty.} =
     ##[ A wrapper for actions that require custom DB connection, i.e. not the one defined in ``db``.
     Defines CRUD procs to work with the DB.
 
@@ -218,16 +223,16 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
         body
       finally: discard
 
-#   template withDb*(body: untyped): untyped {.dirty.} =
-#     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
-#     as well as ``createTables`` and ``dropTables`` procs.
+  template withDb*(body: untyped): untyped {.dirty.} =
+    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
+    as well as ``createTables`` and ``dropTables`` procs.
 
-#       Aforementioned procs and procs defined in a ``db`` block can be used only
-#       in  a ``withDb`` block.
-#     ]##
+      Aforementioned procs and procs defined in a ``db`` block can be used only
+      in  a ``withDb`` block.
+    ]##
 
-#     withCustomDb(connection, user, password, database):
-#       body
+    withCustomDb(connection, user, password, database):
+      body
 
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
@@ -260,81 +265,16 @@ proc reconstructType(n: NimNode): string =
     return $n
   if n.kind == nnkBracketExpr:
     return "$1[$2]".format($n[0], $n[1])
+  if n.kind == nnkSym:
+    return $n
   return "unknown"
 
-# # This proc generates a string conversion procedures in the form of:
-# #
-# # proc typedGet(t: type T, obj: Object, field: string): T =
-# #   case field:
-# #   of "fielda":
-# #     return obj.fielda
-# #   of "fieldb":
-# #     return obj.fieldb
-# #   else:
-# #     discard
-# #
-# # where "T" is actually substituted for the type needing to be returned.
-# # You can then use this like:
-# #
-# #    var x:int = typedGet(int, user, "age")
-# #
-# # As of nim 0.19.x, nim cannot do proc matching on the returned type
-# #
-# proc genObjectAccess(dbObjReprs: seq[ObjRepr]): string =
-#   result = ""
-#   var
-#     proc_map = initOrderedTable[string, string]() # object__type name : procedure string
-#     objectName = ""
-#     typeName = ""
-#     fieldName = ""
-#     key = ""
-#     normObjectNamesRegistry: seq[string] = @[]
-#   #
-#   # first get all of the object names
-#   #
-#   for obj in dbObjReprs:
-#     objectName = obj.signature.name
-#     normObjectNamesRegistry.add objectName
-#   #
-#   # create general procedure strings
-#   #
-#   for obj in dbObjReprs:
-#     objectName = obj.signature.name
-#     # create the other object reference procs
-#     for typeName in normObjectNamesRegistry:
-#       if objectName == typeName:
-#         continue  # type recursion is forbidden by nim
-#       key = objectName & "__" & typeName
-#       proc_map[key] = ""
-#       proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
-#       proc_map[key] &= "  case field:\n"
-#     # not apply the fields to those procs
-#     for field in obj.fields:
-#       # echo field.typ.treeRepr
-#       typeName = reconstructType(field.typ)
-#       fieldName = field.signature.name
-#       key = objectName & "__" & typeName
-#       if not proc_map.contains(key):
-#         proc_map[key] = ""
-#         proc_map[key] &= "proc typedGet*(t: type $1, obj: $2, field: string): $1 {.used.} =\n".format(typeName, objectName)
-#         proc_map[key] &= "  case field:\n"
-#       proc_map[key] &=   "  of \"$1\":\n".format(fieldName)
-#       proc_map[key] &=   "    return obj.$1\n".format(fieldName)
-#   #
-#   # finish up all procedure strings
-#   #
-#   for key, s in proc_map.pairs():
-#     proc_map[key] &= "  else:\n"
-#     proc_map[key] &= "    discard\n"
-#   # join up the procedures and return
-#   for key, s in proc_map.pairs():
-#     result &= s
-#     result &= "\n" # add a blank line between each proc
-#   #
-#   # lastly, make the object names a globally accessable variable:
-#   result &= "var normObjectNamesRegistry* = @[\n"
-#   result &= "  \"" & join(normObjectNamesRegistry, "\", \"") & "\"\n"
-#   result &= "]\n"
+proc updateObjectRegistry(dbObjReprs: seq[ObjRepr]) {.compileTime.} =
+  var objName: string
+  for obj in dbObjReprs:
+    objName = obj.signature.name
+    if not normObjectNamesRegistry.contains(objName):
+      normObjectNamesRegistry.add objName
 
 # this procedure generates new procedures the convert the values in an
 # existing "type" object to a BSON object.
@@ -376,20 +316,14 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
     typeName = ""
     fieldName = ""
     key = ""
-    normObjectNamesRegistry: seq[string] = @[]
 
   #
-  # first get all of the object names
-  #
-  for obj in dbObjReprs:
-    normObjectNamesRegistry.add obj.signature.name
-  #
-  # now generate one buildBSON per object
+  # generate one buildBSON per object
   #
   for obj in dbObjReprs:
     objectName = obj.signature.name
     key = objectName
-    proc_map[key] =  "proc buildBSON(obj: $1, force = false): Bson =\n".format(objectName)
+    proc_map[key] =  "proc buildBSON(obj: $1, force = false): Bson {.used.} =\n".format(objectName)
     proc_map[key] &= "  result = newBsonDocument()\n"
     proc_map[key] &= "\n"
     #
@@ -496,48 +430,46 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
     objectName = ""
     typeName = ""
     fieldName = ""
+    bsonFieldName = ""
     key = ""
-    normObjectNamesRegistry: seq[string] = @[]
     center = ""
 
-  #
-  # first get all of the object names
-  #
-  for obj in dbObjReprs:
-    normObjectNamesRegistry.add obj.signature.name
   #
   # now generate one applyBSON per object
   #
   for obj in dbObjReprs:
     objectName = obj.signature.name
     key = objectName
-    proc_map[key] =  "proc applyBSON(obj: var $1, doc: Bson) =\n".format(objectName)
+    proc_map[key] =  "proc applyBSON(obj: var $1, doc: Bson) {.used.} =\n".format(objectName)
+    proc_map[key] &=  "  discard\n" # just in case there are no valid fields
     #
     # handle universal types first
     #
     for field in obj.fields:
       typeName = reconstructType(field.typ)
       fieldName = field.signature.name
+      bsonFieldName = fieldName
+      for p in field.signature.pragmas:
+        if p.name=="dbCol":
+          bsonFieldName = $p.value
       if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
         continue
       if typeName in ["float", "string", "Oid", "bool", "Time"]:
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(fieldName, TYPE_TO_BSON_KIND[typeName])
-        proc_map[key] &= "      obj.$1 = doc[\"$1\"].$2\n".format(fieldName, TYPE_TO_BSON_PROC[typeName])
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(bsonFieldName, TYPE_TO_BSON_KIND[typeName])
+        proc_map[key] &= "      obj.$1 = doc[\"$2\"].$3\n".format(fieldName, bsonFieldName, TYPE_TO_BSON_PROC[typeName])
       elif typeName.startsWith("Option["):
         center = typeName.replace("Option[", "").replace("]", "")
-        echo $center
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(fieldName, TYPE_TO_BSON_KIND[center])
-        proc_map[key] &= "      obj.$1 = some doc[\"$1\"].$2\n".format(fieldName, TYPE_TO_BSON_PROC[center])
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindNull:\n".format(fieldName)
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
+        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(bsonFieldName, TYPE_TO_BSON_KIND[center])
+        proc_map[key] &= "      obj.$1 = some doc[\"$2\"].$3\n".format(fieldName, bsonFieldName, TYPE_TO_BSON_PROC[center])
+        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindNull:\n".format(bsonFieldName)
         proc_map[key] &= "      obj.$1 = none($2)\n".format(fieldName, center)
       elif typeName.startsWith("seq["):
         center = typeName.replace("seq[", "").replace("]", "")
-        echo $center
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
         proc_map[key] &= "    obj.$1 = @[]\n".format(fieldName)
-        proc_map[key] &= "    for item in doc[\"$1\"].items:\n".format(fieldName)
+        proc_map[key] &= "    for item in doc[\"$1\"].items:\n".format(bsonFieldName)
         proc_map[key] &= "      if item.kind in @[$1]:\n".format(TYPE_TO_BSON_KIND[center])
         proc_map[key] &= "        obj.$1.add item.$2\n".format(fieldName, TYPE_TO_BSON_PROC[center])
       else:
@@ -553,7 +485,7 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
       if normObjectNamesRegistry.contains(typeName):
         proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
         proc_map[key] &= "    obj.$1 = $2()\n".format(fieldName, typeName)
-        proc_map[key] &= "    applyBSON(obj.$1, doc[\"$1\"])".format(fieldName)
+        proc_map[key] &= "    applyBSON(obj.$1, doc[\"$1\"])\n".format(fieldName)
   #
   # finish up all procedure strings
   #
@@ -573,6 +505,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   result = newStmtList()
 
   var dbObjReprs: seq[ObjRepr]
+  var normObjectNamesRegistry: seq[string] = @[] # this is later injected into context
 
   for node in body:
     if node.kind == nnkTypeSection:
@@ -580,19 +513,25 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add typeSection
 
       for typeDef in typeSection:
+        # echo typeDef.treeRepr
         dbObjReprs.add typeDef.toObjRepr()
 
     else:
       result.add node
 
+  updateObjectRegistry(dbObjReprs)
+
   # echo $dbObjReprs
   # echo $genObjectAccess(dbObjReprs)
-  echo $genObjectToBSON(dbObjReprs)
-  echo $genBSONToObject(dbObjReprs)
+  # echo $genObjectToBSON(dbObjReprs)
+  # echo $genBSONToObject(dbObjReprs)
 
 
   # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
   # result.add(objectAccess)
+
+  let withDbNode = getAst genWithDb(connection, user, password, database)
+  result.insert(0, withDbNode)
 
   let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
   result.add(bsonToObject)
@@ -600,5 +539,29 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
   result.add(objectToBSON)
 
-  let withDbNode = getAst genWithDb(connection, user, password, database)
+macro dbAddObject*(obj: typed): untyped =
+  result = newStmtList()
+
+  let objName = $obj
+  if normObjectNamesRegistry.contains(objName):
+    raise newException(KeyError, "Macro db_add_object cannot add the same object again ($1).".format(objName))
+  normObjectNamesRegistry.add objName
+
+  var dbObjReprs: seq[ObjRepr]
+
+  let nSymbol = symbol(obj)
+  let typeDef = getImpl(nSymbol)
+  # echo typeDef.treeRepr
+  dbObjReprs.add typeDef.toObjRepr()
+
+  # echo $genObjectToBSON(dbObjReprs)
+  # echo $genBSONToObject(dbObjReprs)
+
+  let withDbNode = getAst genWithDb("mongodb://none:27017", "", "", "TestDb")
   result.insert(0, withDbNode)
+
+  let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
+  result.add(bsonToObject)
+
+  let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
+  result.add(objectToBSON)
