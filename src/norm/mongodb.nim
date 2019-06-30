@@ -74,8 +74,8 @@ import
   times
 
 import
-  nimongo.bson,
-  nimongo.mongo
+  nimongo/bson,
+  nimongo/mongo
 
 import
   rowutils,
@@ -126,7 +126,17 @@ const NORM_UNIVERSAL_TYPE_LIST* = @[
   "seq[int]"
 ]
 
-# proc `$`*(query: SqlQuery): string = $ string query
+proc getCollectionName*(objRepr: ObjRepr): string =
+  ##[ Get the name of the DB table for the given object representation:
+  ``table`` pragma value if it exists or lowercased type name otherwise.
+  ]##
+
+  result = objRepr.signature.name.toLowerAscii()
+
+  for prag in objRepr.signature.pragmas:
+    if prag.name == "table" and prag.kind == pkKval:
+      return $prag.value
+
 
 proc getCollectionName*(T: typedesc): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
@@ -137,8 +147,12 @@ proc getCollectionName*(T: typedesc): string =
   else: ($T).toLowerAscii()  
 
 
-template genWithDb(connection, user, password, database: string): untyped {.dirty.} =
+var allCollections*: seq[string] = @[]
+
+template genWithDb(connection, user, password, database: string, newCollections: seq[string]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
+
+  allCollections.insert(newCollections)
 
   template withCustomDb*(
     customConnection, customUser, customPassword, customDatabase: string,
@@ -166,7 +180,24 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
 
       # there is no 'createTables'; that is a VERY non-mongo thing to do
 
-      template insert(obj: var object, force = false) {.used.} =
+      template dropTables() {.used.} =
+        ## Drops the collections for ALL objects.
+
+        for c in allCollections:
+          let dbCollection = dbConn[customDatabase][c]
+          let removeResult = dbCollection.drop()
+
+      template createTables(force = false) {.used.} =
+        ##[ For other database types, this function create new tables. However,
+        for MongoDB this has less meaning since collections are auto-created.
+        However, if `force` is set to true, it will dropTables first, deleting all
+        the documents.
+        ]##
+
+        if force:
+          dropTables()
+
+      proc insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a document into DB.The object's id is updated after
         the insertion.
 
@@ -174,52 +205,106 @@ template genWithDb(connection, user, password, database: string): untyped {.dirt
         ]##
 
         let
-          doc = buildBSON(obj, true)
+          doc = toBson(obj, force)
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
-        # echo "collection: " & getCollectionName(type(obj))
-        # echo "doc before:"
-        # echo $doc
-
         var response = dbCollection.insert(doc)
-
-        # echo "response: " & $response
 
         if len(response.inserted_ids) > 0:
           obj.id = response.inserted_ids[0].toOid
 
-        # echo "doc after:"
-        # echo $buildBSON(obj, true)
-        # echo "object after:"
-        # echo $obj
-
-      template getOne(obj: var object, id: Oid) {.used.} =
-        ## Read a record from DB by id and store it into an existing object instance.
+      proc pullOne(obj: var object, id: Oid) {.used.} =
+        ## Read a record from DB by id and apply it to an existing object instance.
 
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
         let fetched = dbCollection.find(%*{"_id": id}).one()
-        echo $fetched
         applyBSON(obj, fetched)
 
-        # let getOneQuery = genGetOneQuery(obj, "id=?")
+      proc pullOne(obj: var object, cond: Bson) {.used.} =
+        ## Read a record from DB by search condition and apply it into an existing object instance.
 
-        # debug getOneQuery, " <- ", $id
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
-        # let row = dbConn.getRow(getOneQuery, id)
+        let fetched = dbCollection.find(cond).one()
+        applyBSON(obj, fetched)
 
-        # if row.isNone():
-        #   raise newException(KeyError, "Record with id=$# not found." % $id)
+      proc getOne(T: typedesc, id: Oid): T {.used.} =
+        ## Read a record from DB by id and return a new object
 
-        # get(row).to(obj)
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+
+        let fetched = dbCollection.find(%*{"_id": id}).one()
+        applyBSON(result, fetched)
+
+      proc getOne(T: typedesc, cond: Bson): T {.used.} =
+        ## Read a record from DB by search condition and return a new object
+
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+
+        let fetched = dbCollection.find(cond).one()
+        applyBSON(result, fetched)
+
+      proc getMany(
+        T: typedesc,
+        nLimit: int,
+        offset = 0,
+        cond = %*{},
+        sort = %*{}
+      ): seq[T] {.used.} =
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+        var cursor = dbCollection.find(cond).skip(offset.int32).limit(nLimit.int32)
+        if $sort != $ %*{} :
+          cursor = cursor.orderBy(sort)
+        let fetched = cursor.all()
+        for doc in fetched:
+          var temp = T()
+          applyBSON(temp, doc)
+          result.add temp
+
+      proc pullMany(
+        objs: var seq[object],
+        nLimit: int,
+        offset = 0,
+        cond = %*{},
+        sort = %*{}
+      ) {.used.} =
+        objs = type(objs[^1]).getMany(nLimit, offset, cond, sort)  # this works even on an empty list; which is surprising!
 
 
+      proc update(obj: object, force = false): bool {.used, discardable.} =
+        ##[ Update document with matching ``_id`` with object field values.
+
+        ``force`` parameter ignored.
+
+        returns true if update was successful.
+        ]##
+
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
+        var doc = obj.toBson()
+        let response = dbCollection.update(%*{"_id": obj.id}, doc, false, false)
+        if response.n == 1:
+          return true
+        return false
+
+      proc delete(obj: var object): bool {.used, discardable.} =
+        ## Delete a record in DB by object's id. The id is set to all zeroes after the deletion.
+
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
+        let response = dbCollection.remove(%*{"_id": obj.id}, 1)
+        obj.id = Oid()
+        if response.n == 1:
+          return true
+        return false
 
       try:
-        # let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
-        # debug foreignKeyQuery
-        # dbConn.exec foreignKeyQuery
         body
       finally: discard
 
@@ -276,54 +361,57 @@ proc updateObjectRegistry(dbObjReprs: seq[ObjRepr]) {.compileTime.} =
     if not normObjectNamesRegistry.contains(objName):
       normObjectNamesRegistry.add objName
 
-# this procedure generates new procedures the convert the values in an
-# existing "type" object to a BSON object.
-#
-# So, for example, with object defined as:
-#
-# ```
-# type
-#   Pet* = object
-#     shortName: string
-#   User* = object
-#     weight*: float
-#     displayName*: string
-#     thePet: Pet
-# ```
-# 
-# you will get a string containing procedures similar to:
-#
-# ```
-# proc buildBSON(obj: Pet, force = false): Bson =
-#   result = newBsonDocument()
-# 
-#   result["shortName"] = toBson(obj.shortName)
-# 
-# proc buildBSON(obj: User, force = false): Bson =
-#   result = newBsonDocument()
-# 
-#   if $obj.id != "000000000000000000000000":
-#     result["_id"] = toBson(obj.id)
-#   result["weight"] = toBson(obj.weight)
-#   result["displayName"] = toBson(obj.displayName)
-#   result["thePet"] = buildBSON(obj.thePet, force)
-# 
-# ```
 proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
+  ##[
+  this procedure generates new procedures the convert the values in an
+  existing "type" object to a BSON object.
+
+  So, for example, with object defined as:
+
+  ```
+  type
+    Pet* = object
+      shortName: string
+    User* = object
+      weight*: float
+      displayName*: string
+      thePet: Pet
+  ```
+
+  you will get a string containing procedures similar to:
+
+  ```
+  proc toBson(obj: Pet, force = false): Bson =
+    result = newBsonDocument()
+
+    result["shortName"] = toBson(obj.shortName)
+
+  proc toBson(obj: User, force = false): Bson =
+    result = newBsonDocument()
+
+    if $obj.id != "000000000000000000000000":
+      result["_id"] = toBson(obj.id)
+    result["weight"] = toBson(obj.weight)
+    result["displayName"] = toBson(obj.displayName)
+    result["thePet"] = toBson(obj.thePet, force)
+
+  ```
+  ]##
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
     objectName = ""
     typeName = ""
     fieldName = ""
+    bsonFieldName = ""
     key = ""
 
   #
-  # generate one buildBSON per object
+  # generate one toBson per object
   #
   for obj in dbObjReprs:
     objectName = obj.signature.name
     key = objectName
-    proc_map[key] =  "proc buildBSON(obj: $1, force = false): Bson {.used.} =\n".format(objectName)
+    proc_map[key] =  "proc toBson(obj: $1, force = false): Bson {.used.} =\n".format(objectName)
     proc_map[key] &= "  result = newBsonDocument()\n"
     proc_map[key] &= "\n"
     #
@@ -332,25 +420,29 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
     for field in obj.fields:
       typeName = reconstructType(field.typ)
       fieldName = field.signature.name
+      bsonFieldName = fieldName
+      for p in field.signature.pragmas:
+        if p.name=="dbCol":
+          bsonFieldName = $p.value
       if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
         continue
       if typeName == "Oid":
         proc_map[key] &= "  if $$obj.$1 != \"000000000000000000000000\":\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$1)\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$2)\n".format(bsonFieldName, fieldName)
       elif typeName == "Time":
         proc_map[key] &= "  if obj.$1 != fromUnix(0):\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$1)\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$2)\n".format(bsonFieldName, fieldName)
       elif typeName.startsWith("Option["):
         proc_map[key] &= "  if obj.$1.isNone:\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"] = null()\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = null()\n".format(bsonFieldName)
         proc_map[key] &= "  else:\n"
-        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$1.get())\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$2.get())\n".format(bsonFieldName, fieldName)
       elif typeName.startsWith("seq["):
-        proc_map[key] &= "  result[\"$1\"] = newBsonArray()\n".format(fieldName)
+        proc_map[key] &= "  result[\"$1\"] = newBsonArray()\n".format(bsonFieldName)
         proc_map[key] &= "  for entry in obj.$1:\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"].add toBson(entry)\n".format(fieldName)
+        proc_map[key] &= "    result[\"$1\"].add toBson(entry)\n".format(bsonFieldName)
       else:
-        proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1)\n".format(fieldName)
+        proc_map[key] &= "  result[\"$1\"] = toBson(obj.$2)\n".format(bsonFieldName, fieldName)
     #
     # now handle cross-object references
     #
@@ -360,7 +452,7 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
       if NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
         continue
       if normObjectNamesRegistry.contains(typeName):
-        proc_map[key] &= "  result[\"$1\"] = buildBSON(obj.$1, force)\n".format(fieldName)
+        proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1, force)\n".format(fieldName)
   #
   # finish up all procedure strings
   #
@@ -386,45 +478,47 @@ const TYPE_TO_BSON_PROC = {
   "int": "toInt"
 }.toTable
 
-# this procedure generates new procedures that map values found in an
-# existing "type" object to a BSON object.
-#
-# So, for example, with object defined as:
-#
-# ```
-# type
-#   Pet* = object
-#     shortName: string
-#   User* = object
-#     weight*: float
-#     displayName*: string
-#     thePet: Pet
-# ```
-# 
-# you will get a string containing procedures similar to:
-#
-# ```
-# proc applyBSON(obj: var Pet, doc: Bson) =
-#   if doc.contains("shortName"):
-#     if doc["shortName"].kind in @[BsonKindStringUTF8]:
-#       obj.shortName = doc["shortName"].toString
-# 
-# proc applyBSON(obj: var User, doc: Bson) =
-#   if doc.contains("_id"):
-#     if doc["_id"].kind in @[BsonKindOid]:
-#       obj.id = doc["_id"].toOid
-#   if doc.contains("weight"):
-#     if doc["weight"].kind in @[BsonKindDouble]:
-#       obj.weight = doc["weight"].toFloat64
-#   if doc.contains("displaName"):
-#     if doc["displayName"].kind in @[BsonKindStringUTF8]:
-#       obj.display_name = doc["displayName"].toString
-#   if doc.contains("thePet"):
-#     obj.thePet = Pet()
-#     applyBSON(obj.my_pet, doc["thePet"])
-# 
-# ```
 proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
+  ##[
+  this procedure generates new procedures that map values found in an
+  existing "type" object to a BSON object.
+
+  So, for example, with object defined as:
+
+  ```
+  type
+    Pet* = object
+      shortName: string
+    User* = object
+      weight*: float
+      displayName*: string
+      thePet: Pet
+  ```
+
+  you will get a string containing procedures similar to:
+
+  ```
+  proc applyBSON(obj: var Pet, doc: Bson) =
+    if doc.contains("shortName"):
+      if doc["shortName"].kind in @[BsonKindStringUTF8]:
+        obj.shortName = doc["shortName"].toString
+
+  proc applyBSON(obj: var User, doc: Bson) =
+    if doc.contains("_id"):
+      if doc["_id"].kind in @[BsonKindOid]:
+        obj.id = doc["_id"].toOid
+    if doc.contains("weight"):
+      if doc["weight"].kind in @[BsonKindDouble]:
+        obj.weight = doc["weight"].toFloat64
+    if doc.contains("displaName"):
+      if doc["displayName"].kind in @[BsonKindStringUTF8]:
+        obj.display_name = doc["displayName"].toString
+    if doc.contains("thePet"):
+      obj.thePet = Pet()
+      applyBSON(obj.my_pet, doc["thePet"])
+
+  ```
+  ]##
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
     objectName = ""
@@ -506,6 +600,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   var dbObjReprs: seq[ObjRepr]
   var normObjectNamesRegistry: seq[string] = @[] # this is later injected into context
+  var newCollections: seq[string]
 
   for node in body:
     if node.kind == nnkTypeSection:
@@ -520,6 +615,8 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add node
 
   updateObjectRegistry(dbObjReprs)
+  for o in dbObjReprs:
+    newCollections.add o.getCollectionName
 
   # echo $dbObjReprs
   # echo $genObjectAccess(dbObjReprs)
@@ -530,7 +627,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
   # result.add(objectAccess)
 
-  let withDbNode = getAst genWithDb(connection, user, password, database)
+  let withDbNode = getAst genWithDb(connection, user, password, database, newCollections)
   result.insert(0, withDbNode)
 
   let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
@@ -548,16 +645,20 @@ macro dbAddObject*(obj: typed): untyped =
   normObjectNamesRegistry.add objName
 
   var dbObjReprs: seq[ObjRepr]
+  var newCollections: seq[string]
 
   let nSymbol = symbol(obj)
   let typeDef = getImpl(nSymbol)
   # echo typeDef.treeRepr
   dbObjReprs.add typeDef.toObjRepr()
 
+  for o in dbObjReprs:
+    newCollections.add o.getCollectionName
+
   # echo $genObjectToBSON(dbObjReprs)
   # echo $genBSONToObject(dbObjReprs)
 
-  let withDbNode = getAst genWithDb("mongodb://none:27017", "", "", "TestDb")
+  let withDbNode = getAst genWithDb("mongodb://none:27017", "", "", "TestDb", newCollections)
   result.insert(0, withDbNode)
 
   let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
