@@ -53,7 +53,7 @@ suite "Conversion with custom parser and formatter expressions":
     row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetimeString]
 
   setup:
-    var tmpUser = UserDatetimeAsString(createdAt: now())
+    var tmpUser {.used.} = UserDatetimeAsString(createdAt: now())
 
   test "Object -> row":
     check user.toRow() == row
@@ -88,7 +88,7 @@ suite "Conversion with custom parser and formatter procs":
     row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetime.toTimestamp()]
 
   setup:
-    var tmpUser = UserDatetimeAsTimestamp(createdAt: now())
+    var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
 
   test "Object -> row":
     check user.toRow() == row
@@ -162,7 +162,7 @@ suite "Bulk conversion with custom parser and formatter expressions":
     ]
 
   setup:
-    var tmpUsers = @[
+    var tmpUsers {.used.} = @[
       UserDatetimeAsString(createdAt: now()),
       UserDatetimeAsString(createdAt: now()),
       UserDatetimeAsString(createdAt: now())
@@ -209,7 +209,7 @@ suite "Bulk conversion with custom parser and formatter procs":
     ]
 
   setup:
-    var tmpUsers = @[
+    var tmpUsers {.used.} = @[
       UserDatetimeAsTimestamp(createdAt: now()),
       UserDatetimeAsTimestamp(createdAt: now()),
       UserDatetimeAsTimestamp(createdAt: now())
