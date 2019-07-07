@@ -12,6 +12,14 @@ const
   dbName = "TestDb"
   customDbName = "TestCustomDb"
 
+type
+  Copyright = object
+    legal_name: string
+    year: int
+    # year {.dbCol: "yr".}: int
+
+dbAddObject(Copyright)
+
 db(dbConnection, "", "", dbName):
   type
     User {.table: "users".} = object
@@ -25,14 +33,18 @@ db(dbConnection, "", "", dbName):
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
       ratings: seq[float]
+      copyright: Copyright
 
   # TODO proc getBookById(id: Oid): Book = withDb(Book.getOne id)
   # TODO add and test foreign key pulls in mongo
 
-  type
-    Edition {.table: "editions".} = object
-      title: string
-      book: Book
+type
+  Edition {.table: "editions".} = object
+    id {.dbCol: "_id".}: Oid
+    title: string
+    book: Book
+
+dbAddCollection(Edition)
 
 suite "Creating and dropping tables, CRUD":
   setup:
@@ -59,7 +71,8 @@ suite "Creating and dropping tables, CRUD":
             title: "Book $#" % $i, 
             authorEmail: user.email,
             publisherTitle: publisher.title,
-            ratings: @[4.5, 9.6, 7.0]
+            ratings: @[4.5, 9.6, 7.0],
+            copyright: Copyright(legal_name: "XY $# Corp" % $i, year: 1990 + i)
           )
           edition = Edition(
             title: "Edition $#" % $i
@@ -71,7 +84,6 @@ suite "Creating and dropping tables, CRUD":
         publisher_reference_id[i] = publisher.id
         book.insert()
         book_reference_id[i] = book.id
-
         edition.book = book
         edition.insert()
         edition_reference_id[i] = edition.id
@@ -95,6 +107,8 @@ suite "Creating and dropping tables, CRUD":
 
       check books[5].title == "Book 6"
       check books[5].ratings == @[4.5, 9.6, 7.0]
+      check books[5].copyright.legal_name == "XY 6 Corp"
+      check books[5].copyright.year == 1996
 
       check editions[7].title == "Edition 8"
       check editions[7].book == books[7]
@@ -203,40 +217,3 @@ suite "Creating and dropping tables, CRUD":
       expect NotFound:
         discard Edition.getOne edition_reference_id[2]
 
-  # test "Custom DB":
-  #   withCustomDb(customDbName, "", "", ""):
-  #     createTables(force=true)
-
-  #   withCustomDb(customDbName, "", "", ""):
-  #     let query = "PRAGMA table_info($#);"
-
-  #     check dbConn.getAllRows(sql query % "users") == @[
-  #       @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-  #       @[dbValue 1, dbValue "email", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-  #       @[dbValue 2, dbValue "ssn", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0],
-  #       @[dbValue 3, dbValue "birthDate", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 0]
-  #     ]
-  #     check dbConn.getAllRows(sql query % "books") == @[
-  #       @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-  #       @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-  #       @[dbValue 2, dbValue "authorEmail", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-  #       @[dbValue 3, dbValue "publisherTitle", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-  #     ]
-  #     check dbConn.getAllRows(sql query % "editions") == @[
-  #       @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-  #       @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-  #       @[dbValue 2, dbValue "bookId", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 0]
-  #     ]
-
-  #   withCustomDb(customDbName, "", "", ""):
-  #     dropTables()
-
-  #     expect DbError:
-  #       dbConn.exec sql "SELECT NULL FROM users"
-  #       dbConn.exec sql "SELECT NULL FROM publishers"
-  #       dbConn.exec sql "SELECT NULL FROM books"
-  #       dbConn.exec sql "SELECT NULL FROM editions"
-
-  #   removeFile customDbName
-
-  # removeFile dbName

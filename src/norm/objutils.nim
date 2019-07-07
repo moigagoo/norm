@@ -77,9 +77,11 @@ proc toSignatureRepr(def: NimNode): SignatureRepr =
       result.name = $def[0][1]
       result.exported = true
     of nnkPragmaExpr:
-      expectKind(def[0][0], {nnkIdent, nnkPostfix})
+      expectKind(def[0][0], {nnkIdent, nnkSym, nnkPostfix})
       case def[0][0].kind
       of nnkIdent:
+        result.name = $def[0][0]
+      of nnkSym:
         result.name = $def[0][0]
       of nnkPostfix:
         result.name = $def[0][0][1]

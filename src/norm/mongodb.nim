@@ -65,6 +65,7 @@ MongoDB Backend
 
 import
   strutils,
+  sequtils,
   macros,
   typetraits,
   logging,
@@ -85,6 +86,7 @@ import
 
 export
   strutils,
+  sequtils,
   macros,
   logging,
   options,
@@ -147,12 +149,27 @@ proc getCollectionName*(T: typedesc): string =
   else: ($T).toLowerAscii()  
 
 
-var allCollections*: seq[string] = @[]
+var
+  allCollections*: seq[string] = @[]
+  normConnection*: string
+  normUser*: string
+  normPassword*: string
+  normDatabase*: string
 
-template genWithDb(connection, user, password, database: string, newCollections: seq[string]): untyped {.dirty.} =
+template genWithoutDb(newCollections: seq[string]): untyped {.dirty.} =
+  ## simply add to global allCollections
+
+  allCollections.insert(newCollections)
+
+template genWithDb(connection, user, password, database: string, useParams: int, newCollections: seq[string]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
   allCollections.insert(newCollections)
+  if useParams == -1:
+    normConnection = connection
+    normUser = user
+    normPassword = password
+    normDatabase = database
 
   template withCustomDb*(
     customConnection, customUser, customPassword, customDatabase: string,
@@ -174,11 +191,7 @@ template genWithDb(connection, user, password, database: string, newCollections:
     block:
       var dbConn = newMongoWithURI(customConnection)
       let
-        dbConnResult = dbConn.connect()
-
-      # there is no 'dropTables'; that is a VERY non-mongo thing to do
-
-      # there is no 'createTables'; that is a VERY non-mongo thing to do
+        dbConnResult = dbConn.connect()  ## TODO: Add more error handling
 
       template dropTables() {.used.} =
         ## Drops the collections for ALL objects.
@@ -316,7 +329,7 @@ template genWithDb(connection, user, password, database: string, newCollections:
       in  a ``withDb`` block.
     ]##
 
-    withCustomDb(connection, user, password, database):
+    withCustomDb(normConnection, normUser, normPassword, normDatabase):
       body
 
 
@@ -453,6 +466,11 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
         continue
       if normObjectNamesRegistry.contains(typeName):
         proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1, force)\n".format(fieldName)
+      else:
+        raise newException(
+          KeyError, 
+          "In object $1, the field $2's type is not known to norm/mongodb. If it is a subtending object, is $3 defined by dB, dbAddCollection, or dbAddObject yet?".format(objectName, fieldName, typeName)
+        )
   #
   # finish up all procedure strings
   #
@@ -548,7 +566,7 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
           bsonFieldName = $p.value
       if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
         continue
-      if typeName in ["float", "string", "Oid", "bool", "Time"]:
+      if typeName in ["float", "string", "Oid", "bool", "Time", "int"]:
         proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
         proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(bsonFieldName, TYPE_TO_BSON_KIND[typeName])
         proc_map[key] &= "      obj.$1 = doc[\"$2\"].$3\n".format(fieldName, bsonFieldName, TYPE_TO_BSON_PROC[typeName])
@@ -589,11 +607,12 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
 
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
-  ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
+  ##[
+    DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
 
-  ``connection``, ``user``, ``password``, ``database`` are the same args accepted by a standard ``dbConn`` instance.
+    ``connection``, ``user``, ``password``, ``database`` are the same args accepted by a standard ``dbConn`` instance.
 
-  The macro generates ``withDb`` template that wraps all DB interations.
+    The macro generates ``withDb`` template that wraps all DB interations.
   ]##
 
   result = newStmtList()
@@ -627,7 +646,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
   # result.add(objectAccess)
 
-  let withDbNode = getAst genWithDb(connection, user, password, database, newCollections)
+  let withDbNode = getAst genWithDb(connection, user, password, database, -1, newCollections)  # -1 = true
   result.insert(0, withDbNode)
 
   let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
@@ -636,12 +655,17 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
   result.add(objectToBSON)
 
-macro dbAddObject*(obj: typed): untyped =
+macro dbAddCollection*(obj: typed): untyped =
+  ##[
+    Add a DB models for an object that has already been defined.
+
+    The macro generates ``withDb`` template that wraps all DB interations.
+  ]##
   result = newStmtList()
 
   let objName = $obj
   if normObjectNamesRegistry.contains(objName):
-    raise newException(KeyError, "Macro db_add_object cannot add the same object again ($1).".format(objName))
+    raise newException(KeyError, "Macro dbAddCollection cannot add the same object again ($1).".format(objName))
   normObjectNamesRegistry.add objName
 
   var dbObjReprs: seq[ObjRepr]
@@ -658,7 +682,42 @@ macro dbAddObject*(obj: typed): untyped =
   # echo $genObjectToBSON(dbObjReprs)
   # echo $genBSONToObject(dbObjReprs)
 
-  let withDbNode = getAst genWithDb("mongodb://none:27017", "", "", "TestDb", newCollections)
+  let withDbNode = getAst genWithDb("", "", "", "", 0, newCollections)
+  result.insert(0, withDbNode)
+
+  let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
+  result.add(bsonToObject)
+
+  let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
+  result.add(objectToBSON)
+
+macro dbAddObject*(obj: typed): untyped =
+  ##[
+    Add an object for use a subtending JSON object. This macro does NOT create
+    a new collection.
+  ]##
+  result = newStmtList()
+
+  let objName = $obj
+  if normObjectNamesRegistry.contains(objName):
+    raise newException(KeyError, "Macro dbAddObject cannot add the same object again ($1).".format(objName))
+  normObjectNamesRegistry.add objName
+
+  var dbObjReprs: seq[ObjRepr]
+  var newCollections: seq[string]
+
+  let nSymbol = symbol(obj)
+  let typeDef = getImpl(nSymbol)
+  # echo typeDef.treeRepr
+  dbObjReprs.add typeDef.toObjRepr()
+
+  for o in dbObjReprs:
+    newCollections.add o.getCollectionName
+
+  # echo $genObjectToBSON(dbObjReprs)
+  # echo $genBSONToObject(dbObjReprs)
+
+  let withDbNode = getAst genWithoutDb(newCollections)
   result.insert(0, withDbNode)
 
   let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
