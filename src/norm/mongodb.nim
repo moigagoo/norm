@@ -139,6 +139,8 @@ proc getCollectionName*(objRepr: ObjRepr): string =
     if prag.name == "table" and prag.kind == pkKval:
       return $prag.value
 
+proc getTableName*(objRepr: ObjRepr): string =
+  getCollectionName(objRepr)
 
 proc getCollectionName*(T: typedesc): string =
   ##[ Get the name of the DB table for the given type: ``table`` pragma value if it exists
@@ -148,6 +150,8 @@ proc getCollectionName*(T: typedesc): string =
   when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: ($T).toLowerAscii()  
 
+proc getTableName*(T: typedesc): string =
+  getCollectionName(T)
 
 var
   allCollections*: seq[string] = @[]
@@ -156,7 +160,7 @@ var
   normPassword*: string
   normDatabase*: string
 
-template genWithoutDb(newCollections: seq[string]): untyped {.dirty.} =
+template addObjectsToCollection(newCollections: seq[string]): untyped {.dirty.} =
   ## simply add to global allCollections
 
   allCollections.insert(newCollections)
@@ -220,29 +224,28 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         let
           doc = toBson(obj, force)
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
+          response = dbCollection.insert(doc)
 
-        var response = dbCollection.insert(doc)
-
-        if len(response.inserted_ids) > 0:
+        if len(response.inserted_ids) == 1:  # TODO: handle or document not-1 failure scenarios
           obj.id = response.inserted_ids[0].toOid
 
-      proc pullOne(obj: var object, id: Oid) {.used.} =
+      proc getOne(obj: var object, id: Oid) {.used.} =
         ## Read a record from DB by id and apply it to an existing object instance.
 
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
         let fetched = dbCollection.find(%*{"_id": id}).one()
-        applyBSON(obj, fetched)
+        applyBson(obj, fetched)
 
-      proc pullOne(obj: var object, cond: Bson) {.used.} =
+      proc getOne(obj: var object, cond: Bson) {.used.} =
         ## Read a record from DB by search condition and apply it into an existing object instance.
 
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
         let fetched = dbCollection.find(cond).one()
-        applyBSON(obj, fetched)
+        applyBson(obj, fetched)
 
       proc getOne(T: typedesc, id: Oid): T {.used.} =
         ## Read a record from DB by id and return a new object
@@ -251,7 +254,7 @@ template genWithDb(connection, user, password, database: string, useParams: int,
           dbCollection = dbConn[customDatabase][getCollectionName(T)]
 
         let fetched = dbCollection.find(%*{"_id": id}).one()
-        applyBSON(result, fetched)
+        applyBson(result, fetched)
 
       proc getOne(T: typedesc, cond: Bson): T {.used.} =
         ## Read a record from DB by search condition and return a new object
@@ -260,7 +263,7 @@ template genWithDb(connection, user, password, database: string, useParams: int,
           dbCollection = dbConn[customDatabase][getCollectionName(T)]
 
         let fetched = dbCollection.find(cond).one()
-        applyBSON(result, fetched)
+        applyBson(result, fetched)
 
       proc getMany(
         T: typedesc,
@@ -277,10 +280,10 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         let fetched = cursor.all()
         for doc in fetched:
           var temp = T()
-          applyBSON(temp, doc)
+          applyBson(temp, doc)
           result.add temp
 
-      proc pullMany(
+      proc getMany(
         objs: var seq[object],
         nLimit: int,
         offset = 0,
@@ -359,6 +362,11 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
     result.add objRepr.toTypeDef()
 
 proc reconstructType(n: NimNode): string =
+  ##[
+    For the node passed in, generate a normalized string representation of the type.
+
+    This function handles both plain types as well as compound types such as seq[T] and Option[T].
+  ]##
   if n.kind == nnkIdent:
     return $n
   if n.kind == nnkBracketExpr:
@@ -368,13 +376,19 @@ proc reconstructType(n: NimNode): string =
   return "unknown"
 
 proc updateObjectRegistry(dbObjReprs: seq[ObjRepr]) {.compileTime.} =
+  ##[
+    Add a new entry in into the global variable `normObjectNamesRegistry`.
+
+    This registry only exists at compile-time and is used by various
+    macros.
+  ]##
   var objName: string
   for obj in dbObjReprs:
     objName = obj.signature.name
     if not normObjectNamesRegistry.contains(objName):
       normObjectNamesRegistry.add objName
 
-proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
+proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
   ##[
   this procedure generates new procedures the convert the values in an
   existing "type" object to a BSON object.
@@ -478,28 +492,28 @@ proc genObjectToBSON(dbObjReprs: seq[ObjRepr]): string =
     result &= s
     result &= "\n" # add a blank line between each proc
 
-const TYPE_TO_BSON_KIND = {
-  "float": "BsonKindDouble",
-  "string": "BsonKindStringUTF8",
-  "Oid": "BsonKindOid",
-  "bool": "BsonKindBool",
-  "Time": "BsonKindTimeUTC",
-  "int": "BsonKindInt64, BsonKindInt32"
-}.toTable
+const
+  TYPE_TO_BSON_KIND = {
+    "float": "BsonKindDouble",
+    "string": "BsonKindStringUTF8",
+    "Oid": "BsonKindOid",
+    "bool": "BsonKindBool",
+    "Time": "BsonKindTimeUTC",
+    "int": "BsonKindInt64, BsonKindInt32"
+  }.toTable
+  TYPE_TO_BSON_PROC = {
+    "float": "toFloat64",
+    "string": "toString",
+    "Oid": "toOid",
+    "bool": "toBool",
+    "Time": "toTime",
+    "int": "toInt"
+  }.toTable
 
-const TYPE_TO_BSON_PROC = {
-  "float": "toFloat64",
-  "string": "toString",
-  "Oid": "toOid",
-  "bool": "toBool",
-  "Time": "toTime",
-  "int": "toInt"
-}.toTable
-
-proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
+proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
   ##[
   this procedure generates new procedures that map values found in an
-  existing "type" object to a BSON object.
+  existing "type" object to a Bson object.
 
   So, for example, with object defined as:
 
@@ -516,12 +530,12 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
   you will get a string containing procedures similar to:
 
   ```
-  proc applyBSON(obj: var Pet, doc: Bson) =
+  proc applyBson(obj: var Pet, doc: Bson) =
     if doc.contains("shortName"):
       if doc["shortName"].kind in @[BsonKindStringUTF8]:
         obj.shortName = doc["shortName"].toString
 
-  proc applyBSON(obj: var User, doc: Bson) =
+  proc applyBson(obj: var User, doc: Bson) =
     if doc.contains("_id"):
       if doc["_id"].kind in @[BsonKindOid]:
         obj.id = doc["_id"].toOid
@@ -533,7 +547,7 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
         obj.display_name = doc["displayName"].toString
     if doc.contains("thePet"):
       obj.thePet = Pet()
-      applyBSON(obj.my_pet, doc["thePet"])
+      applyBson(obj.my_pet, doc["thePet"])
 
   ```
   ]##
@@ -547,12 +561,12 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
     center = ""
 
   #
-  # now generate one applyBSON per object
+  # now generate one applyBson per object
   #
   for obj in dbObjReprs:
     objectName = obj.signature.name
     key = objectName
-    proc_map[key] =  "proc applyBSON(obj: var $1, doc: Bson) {.used.} =\n".format(objectName)
+    proc_map[key] =  "proc applyBson(obj: var $1, doc: Bson) {.used.} =\n".format(objectName)
     proc_map[key] &=  "  discard\n" # just in case there are no valid fields
     #
     # handle universal types first
@@ -597,7 +611,7 @@ proc genBSONToObject(dbObjReprs: seq[ObjRepr]): string =
       if normObjectNamesRegistry.contains(typeName):
         proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
         proc_map[key] &= "    obj.$1 = $2()\n".format(fieldName, typeName)
-        proc_map[key] &= "    applyBSON(obj.$1, doc[\"$1\"])\n".format(fieldName)
+        proc_map[key] &= "    applyBson(obj.$1, doc[\"$1\"])\n".format(fieldName)
   #
   # finish up all procedure strings
   #
@@ -639,8 +653,8 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   # echo $dbObjReprs
   # echo $genObjectAccess(dbObjReprs)
-  # echo $genObjectToBSON(dbObjReprs)
-  # echo $genBSONToObject(dbObjReprs)
+  # echo $genObjectToBson(dbObjReprs)
+  # echo $genBsonToObject(dbObjReprs)
 
 
   # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
@@ -649,13 +663,13 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   let withDbNode = getAst genWithDb(connection, user, password, database, -1, newCollections)  # -1 = true
   result.insert(0, withDbNode)
 
-  let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
+  let bsonToObject = parseStmt(genBsonToObject(dbObjReprs))
   result.add(bsonToObject)
 
-  let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
-  result.add(objectToBSON)
+  let objectToBson = parseStmt(genObjectToBson(dbObjReprs))
+  result.add(objectToBson)
 
-macro dbAddCollection*(obj: typed): untyped =
+macro dbAddTable*(obj: typed): untyped =
   ##[
     Add a DB models for an object that has already been defined.
 
@@ -679,22 +693,55 @@ macro dbAddCollection*(obj: typed): untyped =
   for o in dbObjReprs:
     newCollections.add o.getCollectionName
 
-  # echo $genObjectToBSON(dbObjReprs)
-  # echo $genBSONToObject(dbObjReprs)
+  # echo $genObjectToBson(dbObjReprs)
+  # echo $genBsonToObject(dbObjReprs)
 
   let withDbNode = getAst genWithDb("", "", "", "", 0, newCollections)
   result.insert(0, withDbNode)
 
-  let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
+  let bsonToObject = parseStmt(genBsonToObject(dbObjReprs))
   result.add(bsonToObject)
 
-  let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
-  result.add(objectToBSON)
+  let objectToBson = parseStmt(genObjectToBson(dbObjReprs))
+  result.add(objectToBson)
+
+template dbAddCollection*(obj: typed): untyped =
+  ##[
+    Alias for dbAddTable
+  ]##
+  dbAddTable(obj)
 
 macro dbAddObject*(obj: typed): untyped =
   ##[
-    Add an object for use a subtending JSON object. This macro does NOT create
-    a new collection.
+    Add an object for use a subtending object.
+
+    For example:
+
+        type
+          Address = object
+            street: string
+            city: string
+            state: string
+            postalCode: string
+
+        dbAddObject(Address)
+
+        db("127.0.0.1", "", "", "dbTest"):
+          type
+            User = object
+              name: string
+              age: int
+              homeAddress: Address
+
+    Without using dbAddObject, the library would not know how to handle the
+    ``homeAddress`` field of ``User``.
+
+    By using dbAddObject there will NOT be a collection called
+    "address". Instead, the Address object will be strictly limited to use in
+    other collections.
+
+    Because nim is a single pass compiler, you will need to add these objects
+    before they are referenced by later objects.
   ]##
   result = newStmtList()
 
@@ -714,14 +761,14 @@ macro dbAddObject*(obj: typed): untyped =
   for o in dbObjReprs:
     newCollections.add o.getCollectionName
 
-  # echo $genObjectToBSON(dbObjReprs)
-  # echo $genBSONToObject(dbObjReprs)
+  # echo $genObjectToBson(dbObjReprs)
+  # echo $genBsonToObject(dbObjReprs)
 
-  let withDbNode = getAst genWithoutDb(newCollections)
+  let withDbNode = getAst addObjectsToCollection(newCollections)
   result.insert(0, withDbNode)
 
-  let bsonToObject = parseStmt(genBSONToObject(dbObjReprs))
+  let bsonToObject = parseStmt(genBsonToObject(dbObjReprs))
   result.add(bsonToObject)
 
-  let objectToBSON = parseStmt(genObjectToBSON(dbObjReprs))
-  result.add(objectToBSON)
+  let objectToBson = parseStmt(genObjectToBson(dbObjReprs))
+  result.add(objectToBson)

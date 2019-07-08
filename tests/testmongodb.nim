@@ -14,7 +14,7 @@ const
 
 type
   Copyright = object
-    legal_name: string
+    legalName: string
     year: int
     # year {.dbCol: "yr".}: int
 
@@ -72,7 +72,7 @@ suite "Creating and dropping tables, CRUD":
             authorEmail: user.email,
             publisherTitle: publisher.title,
             ratings: @[4.5, 9.6, 7.0],
-            copyright: Copyright(legal_name: "XY $# Corp" % $i, year: 1990 + i)
+            copyright: Copyright(legalName: "XY $# Corp" % $i, year: 1990 + i)
           )
           edition = Edition(
             title: "Edition $#" % $i
@@ -107,7 +107,7 @@ suite "Creating and dropping tables, CRUD":
 
       check books[5].title == "Book 6"
       check books[5].ratings == @[4.5, 9.6, 7.0]
-      check books[5].copyright.legal_name == "XY 6 Corp"
+      check books[5].copyright.legalName == "XY 6 Corp"
       check books[5].copyright.year == 1996
 
       check editions[7].title == "Edition 8"
@@ -122,10 +122,10 @@ suite "Creating and dropping tables, CRUD":
         books = Book().repeat 10
         editions = Edition().repeat 10
 
-      users.pullMany(20, offset=5, sort = %*{"ssn": 1})
-      publishers.pullMany(20, offset=5, sort = %*{"title": 1})
-      books.pullMany(20, offset=5, sort = %*{"title": 1})
-      editions.pullMany(20, offset=5, sort = %*{"title": 1})
+      users.getMany(20, offset=5, sort = %*{"ssn": 1})
+      publishers.getMany(20, offset=5, sort = %*{"title": 1})
+      books.getMany(20, offset=5, sort = %*{"title": 1})
+      editions.getMany(20, offset=5, sort = %*{"title": 1})
 
       check len(users) == 4
       check users[0].ssn.get() == 6
@@ -149,10 +149,10 @@ suite "Creating and dropping tables, CRUD":
         book = Book()
         edition = Edition()
 
-      user.pullOne user_reference_id[8]
-      publisher.pullOne publisher_reference_id[8]
-      book.pullOne book_reference_id[8]
-      edition.pullOne edition_reference_id[8]
+      user.getOne user_reference_id[8]
+      publisher.getOne publisher_reference_id[8]
+      book.getOne book_reference_id[8]
+      edition.getOne edition_reference_id[8]
 
       check user.ssn == some 8
       check publisher.title == "Publisher 8"
@@ -177,9 +177,9 @@ suite "Creating and dropping tables, CRUD":
       check bBook.id == book_reference_id[2]
 
       var vBook = Book()
-      vBook.pullOne(book_reference_id[6])
+      vBook.getOne(book_reference_id[6])
       check vBook.title == "Book 6"
-      vBook.pullOne(%*{"authorEmail": "test-4@example.com"})
+      vBook.getOne(%*{"authorEmail": "test-4@example.com"})
       check vBook.title == "Book 4"
       check vBook.id == book_reference_id[4]
 
