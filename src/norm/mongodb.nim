@@ -72,7 +72,8 @@ import
   options,
   tables,
   oids,
-  times
+  times,
+  algorithm # <- only used at compile-time, no need to export
 
 import
   nimongo/bson,
@@ -106,27 +107,66 @@ export
 # compile-time globals
 var
   normObjectNamesRegistry {.compileTime.}: seq[string] = @[]
+  varCounter {.compileTime.}: int = 1
+  normBasicTypeList {.compileTime.} = @[
+    "float",
+    "string",
+    "Oid",
+    "bool",
+    "Time",
+    "int"
+  ]
+  normTypeToBsonKind {.compileTime.} = {
+    "float": "BsonKindDouble",
+    "string": "BsonKindStringUTF8",
+    "Oid": "BsonKindOid",
+    "bool": "BsonKindBool",
+    "Time": "BsonKindTimeUTC",
+    "int": "BsonKindInt64, BsonKindInt32"
+  }.toTable
+  normTypeToBsonProc {.compileTime.} = {
+    "float": "toFloat64",
+    "string": "toString",
+    "Oid": "toOid",
+    "bool": "toBool",
+    "Time": "toTime",
+    "int": "toInt"
+  }.toTable
 
-const NORM_UNIVERSAL_TYPE_LIST* = @[
-  "float",
-  "string",
-  "Oid",
-  "bool",
-  "Time",
-  "int",
-  "Option[float]",
-  "Option[string]",
-  "Option[Oid]",
-  "Option[bool]",
-  "Option[Time]",
-  "Option[int]",
-  "seq[float]",
-  "seq[string]",
-  "seq[Oid]",
-  "seq[bool]",
-  "seq[Time]",
-  "seq[int]"
-]
+when defined(useNullable):
+  normBasicTypeList &= @[
+    "nint",
+    "nstring",
+    "nfloat",
+    "nbool",
+    "nOid",
+    "nTime"
+  ]
+  normTypeToBsonKind &= {
+    "nfloat": "BsonKindDouble",
+    "nstring": "BsonKindStringUTF8",
+    "nOid": "BsonKindOid",
+    "nbool": "BsonKindBool",
+    "nTime": "BsonKindTimeUTC",
+    "nint": "BsonKindInt64, BsonKindInt32"
+  }.toTable
+  normTypeToBsonProc &= {
+    "nfloat": "toFloat64",
+    "nstring": "toString",
+    "nOid": "toOid",
+    "nbool": "toBool",
+    "nTime": "toTime",
+    "nint": "toInt"
+  }.toTable
+  nullableTypeToNative &= {
+    "nfloat": "float",
+    "nstring": "string",
+    "nOid": "Oid",
+    "nbool": "bool",
+    "nTime": "Time",
+    "nint": "int"
+  }.toTable
+
 
 proc getCollectionName*(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
@@ -164,6 +204,11 @@ template addObjectsToCollection(newCollections: seq[string]): untyped {.dirty.} 
   ## simply add to global allCollections
 
   allCollections.insert(newCollections)
+
+proc nextVar(prefix: string): string =
+  ## get a new variable name
+  result = prefix & $varCounter
+  varCounter += 1
 
 template genWithDb(connection, user, password, database: string, useParams: int, newCollections: seq[string]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
@@ -370,10 +415,52 @@ proc reconstructType(n: NimNode): string =
   if n.kind == nnkIdent:
     return $n
   if n.kind == nnkBracketExpr:
-    return "$1[$2]".format($n[0], $n[1])
+    var inner = ""
+    if n[1].kind == nnkBracketExpr:
+      inner = reconstructType(n[1])
+    else:
+      inner = $n[1]
+    return "$1[$2]".format($n[0], inner)
   if n.kind == nnkSym:
     return $n
   return "unknown"
+
+proc seqTypeNames(name: string): seq[string] = 
+  ##[
+    Turn a bracketed string type and turn it into a sequence of elements.
+    For example: seq[Option[int]] would become @["seq", "Option", "int"]
+  ]##
+  var
+    s = name
+    temp: seq[string] 
+
+  while true:
+    if '[' in s:
+      temp = split(s, '[', 1)
+      result.add temp[0]
+      if len(temp)==1:
+        break
+      s = temp[1]
+      if ']' in s:
+        temp = rsplit(s, ']', 1)
+        s = temp[0]
+    else:
+      break
+      
+  result.add s
+
+proc restoreSeqType(s: seq[string]): string = 
+  ##[
+    The opposite of seqTypeNames, turns a sequence of parts back
+    into a string. Used for building intermediate conditions in applyBson.
+  ]##
+  var
+    temp = reversed(s)
+  for index, entry in temp.pairs():
+    if index==0:
+      result = entry
+    else:
+      result = "$1[$2]".format(entry, result)
 
 proc updateObjectRegistry(dbObjReprs: seq[ObjRepr]) {.compileTime.} =
   ##[
@@ -387,6 +474,83 @@ proc updateObjectRegistry(dbObjReprs: seq[ObjRepr]) {.compileTime.} =
     objName = obj.signature.name
     if not normObjectNamesRegistry.contains(objName):
       normObjectNamesRegistry.add objName
+
+proc genBasicToBson(srcField, dest, typeName: string, tab: int, fromSeq = false): string =
+  let t = spaces(tab)
+  if typeName == "Oid":
+    result &= t & "if $$$1 != \"000000000000000000000000\":\n".format(srcField)
+    result &= t & "  $1 = toBson($2)\n".format(dest, srcField)
+  elif typeName == "Time":
+    result &= t & "if $1 != fromUnix(0):\n".format(srcField)
+    result &= t & "  $1 = toBson($2)\n".format(dest, srcField)
+  else:
+    when defined(useNullable):
+      if typeName in ["nfloat", "nstring", "nOid", "nbool", "nTime", "nint"]:
+        result &= t & "if $1.hasValue:\n".format(srcField)
+        result &= t & "  $1 = toBson($2.get_value())\n".format(dest, srcField)
+        result &= t & "if $1.isNull or $1.hasError:\n".format(srcField)
+        result &= t & "  $1 = null()\n".format(dest)          
+        # note: obj.X.isNothing is skipped, so no code is generated here
+      # else: TODO: re-verify we don't need this when useNullable
+      #   result &= t & "$1 = toBson($2)\n".format(targetBson, srcField)
+    else:
+      result &= t & "$1 = toBson($2)\n".format(dest, srcField)
+
+
+proc genSeqToBson(fieldName, dest: string, seqTypes: seq[string], tab: int): string
+
+proc genOptionToBson(fieldName, dest: string, seqTypes: seq[string], tab: int): string =
+  let t = spaces(tab)
+  if len(seqTypes) < 2:
+    raise newException(
+      KeyError, 
+      "$1 as malformed type $2 at depth $3".format(fieldName, $seqTypes, tab)
+    )
+  let nextType = seqTypes[1]
+  result &= t & "if $1.isNone:\n".format(fieldName)
+  result &= t & "  $1 = null()\n".format(dest)
+  result &= t & "else:\n"
+  if nextType == "Option":
+    result &= genOptionToBson(fieldName, dest, seqTypes[1 .. seqTypes.high], tab+2)
+  elif nextType == "seq":
+    result &= genSeqToBson(fieldName, dest, seqTypes[1 .. seqTypes.high], tab+2)
+  elif nextType in normBasicTypeList:
+    result &= genBasicToBson("$1.get()".format(fieldName), dest, nextType, tab+2)
+  else:
+    raise newException(
+      KeyError, 
+      "Field \"$1\"'s type of $2 is not known to norm/mongodb.".format(fieldName, nextType)
+    )
+
+proc genSeqToBson(fieldName, dest: string, seqTypes: seq[string], tab: int): string =
+  let t = spaces(tab)
+
+  if len(seqTypes) < 2:
+    raise newException(
+      KeyError, 
+      "$1 as malformed type $2 at depth $3".format(fieldName, $seqTypes, tab)
+    )
+  let nextType = seqTypes[1]
+  let entry = nextVar("entry")
+  let inner = nextVar("inner")
+  # let innerTypeName = restoreSeqType(seqTypes[1 .. seqTypes.high])
+
+  result &= t & "$1 = newBsonArray()\n".format(dest)
+  result &= t & "for $1 in $2:\n".format(entry, fieldName)
+  result &= t & "  var $1 = null() # defaults to null\n".format(inner)
+  if nextType == "Option":
+    result &= genOptionToBson(entry, inner, seqTypes[1 .. seqTypes.high], tab+2)
+  elif nextType == "seq":
+    result &= genSeqToBson(entry, inner, seqTypes[1 .. seqTypes.high], tab+2)
+  elif nextType in normBasicTypeList:
+    result &= genBasicToBson(entry, inner, nextType, tab+2, fromSeq=true)
+  else:
+    raise newException(
+      KeyError, 
+      "Field \"$2\"'s type of $2 is not known to norm/mongodb.".format(fieldName, nextType)
+    )
+  result &= t & "  $1.add $2\n".format(dest, inner)
+
 
 proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
   ##[
@@ -427,10 +591,13 @@ proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
   var
     proc_map = initOrderedTable[string, string]() # object: procedure string
     objectName = ""
+    fullTypeName = ""
     typeName = ""
     fieldName = ""
     bsonFieldName = ""
     key = ""
+    tab = 2
+    seqTypes: seq[string] = @[]
 
   #
   # generate one toBson per object
@@ -442,49 +609,29 @@ proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
     proc_map[key] &= "  result = newBsonDocument()\n"
     proc_map[key] &= "\n"
     #
-    # handle universal types first
-    #
     for field in obj.fields:
-      typeName = reconstructType(field.typ)
+      fullTypeName = reconstructType(field.typ)
+      seqTypes = seqTypeNames(fullTypeName)
+      typeName = seqTypes[0]
       fieldName = field.signature.name
       bsonFieldName = fieldName
       for p in field.signature.pragmas:
         if p.name=="dbCol":
           bsonFieldName = $p.value
-      if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
-        continue
-      if typeName == "Oid":
-        proc_map[key] &= "  if $$obj.$1 != \"000000000000000000000000\":\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$2)\n".format(bsonFieldName, fieldName)
-      elif typeName == "Time":
-        proc_map[key] &= "  if obj.$1 != fromUnix(0):\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$2)\n".format(bsonFieldName, fieldName)
-      elif typeName.startsWith("Option["):
-        proc_map[key] &= "  if obj.$1.isNone:\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"] = null()\n".format(bsonFieldName)
-        proc_map[key] &= "  else:\n"
-        proc_map[key] &= "    result[\"$1\"] = toBson(obj.$2.get())\n".format(bsonFieldName, fieldName)
-      elif typeName.startsWith("seq["):
-        proc_map[key] &= "  result[\"$1\"] = newBsonArray()\n".format(bsonFieldName)
-        proc_map[key] &= "  for entry in obj.$1:\n".format(fieldName)
-        proc_map[key] &= "    result[\"$1\"].add toBson(entry)\n".format(bsonFieldName)
+      if normBasicTypeList.contains(typeName):
+        proc_map[key] &= genBasicToBson("obj.$1".format(fieldName), "result[\"$1\"]".format(bsonFieldName), typeName, tab)
+      elif typeName=="seq":
+        proc_map[key] &= genSeqToBson("obj.$1".format(fieldName), "result[\"$1\"]".format(bsonFieldName), seqTypes, tab)
+      elif typeName=="Option":
+        proc_map[key] &= genOptionToBson("obj.$1".format(fieldName), "result[\"$1\"]".format(bsonFieldName), seqTypes, tab)
       else:
-        proc_map[key] &= "  result[\"$1\"] = toBson(obj.$2)\n".format(bsonFieldName, fieldName)
-    #
-    # now handle cross-object references
-    #
-    for field in obj.fields:
-      typeName = reconstructType(field.typ)
-      fieldName = field.signature.name
-      if NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
-        continue
-      if normObjectNamesRegistry.contains(typeName):
-        proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1, force)\n".format(fieldName)
-      else:
-        raise newException(
-          KeyError, 
-          "In object $1, the field $2's type is not known to norm/mongodb. If it is a subtending object, is $3 defined by dB, dbAddCollection, or dbAddObject yet?".format(objectName, fieldName, typeName)
-        )
+        if normObjectNamesRegistry.contains(typeName):
+          proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1, force)\n".format(fieldName)
+        else:
+          raise newException(
+            KeyError, 
+            "In object $1, the field $2's type is not known to norm/mongodb. If it is a subtending object, is $3 defined by dB, dbAddCollection, or dbAddObject yet?".format(objectName, fieldName, typeName)
+          )
   #
   # finish up all procedure strings
   #
@@ -492,23 +639,124 @@ proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
     result &= s
     result &= "\n" # add a blank line between each proc
 
-const
-  TYPE_TO_BSON_KIND = {
-    "float": "BsonKindDouble",
-    "string": "BsonKindStringUTF8",
-    "Oid": "BsonKindOid",
-    "bool": "BsonKindBool",
-    "Time": "BsonKindTimeUTC",
-    "int": "BsonKindInt64, BsonKindInt32"
-  }.toTable
-  TYPE_TO_BSON_PROC = {
-    "float": "toFloat64",
-    "string": "toString",
-    "Oid": "toOid",
-    "bool": "toBool",
-    "Time": "toTime",
-    "int": "toInt"
-  }.toTable
+
+proc genBsonToBasic(
+  src, bsonFieldName, fieldName, typeName: string, 
+  tab: int,
+  skipCheck = false, 
+  fromSeq = false,
+  fromOption = false
+): string =
+  let t = spaces(tab)
+  var assignment = " ="
+  # if fromSeq:
+  #   assignment = ".add"
+  if fromOption:
+    assignment &= " some"
+  if typeName in ["float", "string", "Oid", "bool", "Time", "int"]:
+    if skip_check:
+      result &= t & "if $1.kind in @[$2]:\n".format(src, normTypeToBsonKind[typeName])
+      result &= t & "  $1$2 $3.$4\n".format(fieldName, assignment, src, normTypeToBsonProc[typeName])
+    else:
+      result &= t & "if $1.contains(\"$2\"):\n".format(src, bsonFieldName)
+      result &= t & "  if $1[\"$2\"].kind in @[$3]:\n".format(src, bsonFieldName, normTypeToBsonKind[typeName])
+      result &= t & "    $1$2 $3[\"$4\"].$5\n".format(fieldName, assignment, src, bsonFieldName, normTypeToBsonProc[typeName])
+  when defined(useNullable):
+    if typeName in ["nfloat", "nstring", "nOid", "nbool", "nTime", "nint"]:
+      result &= t & "if $1.contains(\"$2\"):\n".format(src, bsonFieldName)
+      result &= t & "  if $1[\"$2\"].kind in @[$3]:\n".format(src, bsonFieldName, normTypeToBsonKind[typeName])
+      result &= t & "    $1$2 $3[\"$4\"].$5\n".format(fieldName, assignment, src, bsonFieldName, normTypeToBsonProc[typeName])
+      result &= t & "  elif $1[\"$2\"].kind == BsonKindNull:\n".format(src, bsonFieldName)
+      result &= t & "    $1$2 null($3)\n".format(fieldName, assignment, nullableTypeToNative[typeName])
+      result &= t & "  else:\n"
+      result &= t & "    $1$2 nothing($3)\n".format(fieldName, assignment, nullableTypeToNative[typeName])
+      result &= t & "else:\n"
+      result &= t & "    $1$2 nothing($3)\n".format(fieldName, assignment, nullableTypeToNative[typeName])
+
+proc genBsonToSeq(src, bsonFieldName, fieldName: string, typeSeq: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string
+
+proc genBsonToOption(src, bsonFieldName, fieldName: string, typeSeq: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string =
+  let t = spaces(tab)
+
+  if len(typeSeq) < 2:
+    raise newException(
+      KeyError, 
+      "$1 has a malformed type $2 at depth $3".format(fieldName, $typeSeq, tab)
+    )
+  let nextType = typeSeq[1]
+  let subTypeName = restoreSeqType(typeSeq[1 .. typeSeq.high])
+  var assignment = " ="
+  # if fromSeq:
+  #   assignment = ".add "
+
+  result &= t & "# INSIDE genBsonToOption Option next=$1\n".format(nextType)
+
+  if skipCheck:
+    result &= t & "if $1.kind == BsonKindNull:\n".format(src)
+    result &= t & "  $1$2 none($3)\n".format(fieldName, assignment, subTypeName)
+    if nextType in normBasicTypeList:
+      result &= genBsonToBasic(
+        src,
+        bsonFieldName,
+        fieldName,
+        nextType,
+        tab,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=true,
+      )
+  else:
+    result &= t & "if $1.contains(\"$2\"):\n".format(src, bsonFieldName)
+    result &= t & "  if doc[\"$1\"].kind == BsonKindNull:\n".format(bsonFieldName)
+    result &= t & "    $1$2 none($3)\n".format(fieldName, assignment, subTypeName)
+    if nextType in normBasicTypeList:
+      result &= genBsonToBasic(
+        "doc[\"$1\"]".format(bsonFieldName),
+        bsonFieldName,
+        fieldName,
+        nextType,
+        tab+2,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=true
+      )
+
+
+proc genBsonToSeq(src, bsonFieldName, fieldName: string, typeSeq: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string =
+  let t = spaces(tab)
+
+  if len(typeSeq) < 2:
+    raise newException(
+      KeyError, 
+      "$1 has a malformed type $2 at depth $3".format(fieldName, $typeSeq, tab)
+    )
+  let nextType = typeSeq[1]
+  let subTypeName = restoreSeqType(typeSeq[1 .. typeSeq.high])
+  let item = nextVar("item")
+  result &= t & "# INSIDE genBsonToSeq seq next=$1\n".format(nextType)
+  let temp = nextVar("temp")
+  if skipCheck:
+    result &= t & "for $1 in $2.items:\n".format(item, src)
+    result &= t & "  var $1: $2\n".format(temp, subTypeName)
+    if nextType in normBasicTypeList:
+      result &= genBsonToBasic(item, bsonFieldName, temp, nextType, tab+2, skipCheck=true, fromSeq=true)
+    elif nextType == "seq":
+      result &= genBsontoSeq(item, bsonFieldName, temp, typeSeq[1 .. typeSeq.high], tab+2, skipCheck=true, fromSeq=false)
+    elif nextType == "Option":
+      result &= genBsontoOption(item, bsonFieldName, temp, typeSeq[1 .. typeSeq.high], tab+2, skipCheck=true, fromSeq=false)
+    result &= t & "  $1.add $2\n".format(fieldName, temp) # if we are in the loop, we ALWAYS add an item for each iteration
+  else:
+    result &= t & "if $1.contains(\"$2\"):\n".format(src, bsonFieldName)
+    result &= t & "  $1 = @[]\n".format(fieldName)
+    result &= t & "  for $1 in doc[\"$2\"].items:\n".format(item, bsonFieldName)
+    result &= t & "    var $1: $2\n".format(temp, subTypeName)
+    if nextType in normBasicTypeList:
+      result &= genBsonToBasic(item, bsonFieldName, temp, nextType, tab+4, skipCheck=true, fromSeq=true)
+    elif nextType == "seq":
+      result &= genBsontoSeq(item, bsonFieldName, temp, typeSeq[1 .. typeSeq.high], tab+4, skipCheck=true, fromSeq=true)
+    elif nextType == "Option":
+      result &= genBsontoOption(item, bsonFieldName, temp, typeSeq[1 .. typeSeq.high], tab+4, skipCheck=true, fromSeq=true)
+    result &= t & "    $1.add $2\n".format(fieldName, temp) # if we are in the loop, we ALWAYS add an item for each iteration
 
 proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
   ##[
@@ -558,7 +806,6 @@ proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
     fieldName = ""
     bsonFieldName = ""
     key = ""
-    center = ""
 
   #
   # now generate one applyBson per object
@@ -569,49 +816,37 @@ proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
     proc_map[key] =  "proc applyBson(obj: var $1, doc: Bson) {.used.} =\n".format(objectName)
     proc_map[key] &=  "  discard\n" # just in case there are no valid fields
     #
-    # handle universal types first
     #
     for field in obj.fields:
-      typeName = reconstructType(field.typ)
+      let fullTypeName = reconstructType(field.typ)
+      var tseq = seqTypeNames(fullTypeName)
+      typeName = tseq[0]
       fieldName = field.signature.name
       bsonFieldName = fieldName
+      proc_map[key] &= "  #START: $1\n".format($tseq)
       for p in field.signature.pragmas:
         if p.name=="dbCol":
           bsonFieldName = $p.value
-      if not NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
-        continue
-      if typeName in ["float", "string", "Oid", "bool", "Time", "int"]:
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(bsonFieldName, TYPE_TO_BSON_KIND[typeName])
-        proc_map[key] &= "      obj.$1 = doc[\"$2\"].$3\n".format(fieldName, bsonFieldName, TYPE_TO_BSON_PROC[typeName])
-      elif typeName.startsWith("Option["):
-        center = typeName.replace("Option[", "").replace("]", "")
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
-        proc_map[key] &= "    if doc[\"$1\"].kind in @[$2]:\n".format(bsonFieldName, TYPE_TO_BSON_KIND[center])
-        proc_map[key] &= "      obj.$1 = some doc[\"$2\"].$3\n".format(fieldName, bsonFieldName, TYPE_TO_BSON_PROC[center])
-        proc_map[key] &= "    if doc[\"$1\"].kind == BsonKindNull:\n".format(bsonFieldName)
-        proc_map[key] &= "      obj.$1 = none($2)\n".format(fieldName, center)
-      elif typeName.startsWith("seq["):
-        center = typeName.replace("seq[", "").replace("]", "")
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(bsonFieldName)
-        proc_map[key] &= "    obj.$1 = @[]\n".format(fieldName)
-        proc_map[key] &= "    for item in doc[\"$1\"].items:\n".format(bsonFieldName)
-        proc_map[key] &= "      if item.kind in @[$1]:\n".format(TYPE_TO_BSON_KIND[center])
-        proc_map[key] &= "        obj.$1.add item.$2\n".format(fieldName, TYPE_TO_BSON_PROC[center])
+      if typeName in normBasicTypeList:
+        proc_map[key] &= genBsonToBasic(
+          "doc", bsonFieldName, "obj.$1".format(fieldName), typeName, 2,
+          skipCheck=false, fromSeq=false, fromOption=false
+        )
+      elif typeName=="seq":
+        proc_map[key] &= genBsonToSeq(
+          "doc", bsonFieldName, "obj.$1".format(fieldName), tseq, 2,
+          skipCheck=false, fromSeq=false, fromOption=false
+        )
+      elif typeName=="Option":
+        proc_map[key] &= genBsonToOption(
+          "doc", bsonFieldName, "obj.$1".format(fieldName), tseq, 2,
+          skipCheck=false, fromSeq=false, fromOption=false
+        )
       else:
-        discard
-    #
-    # now handle cross-object references
-    #
-    for field in obj.fields:
-      typeName = reconstructType(field.typ)
-      fieldName = field.signature.name
-      if NORM_UNIVERSAL_TYPE_LIST.contains(typeName):
-        continue
-      if normObjectNamesRegistry.contains(typeName):
-        proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
-        proc_map[key] &= "    obj.$1 = $2()\n".format(fieldName, typeName)
-        proc_map[key] &= "    applyBson(obj.$1, doc[\"$1\"])\n".format(fieldName)
+        if normObjectNamesRegistry.contains(typeName):
+          proc_map[key] &= "  if doc.contains(\"$1\"):\n".format(fieldName)
+          proc_map[key] &= "    obj.$1 = $2()\n".format(fieldName, typeName)
+          proc_map[key] &= "    applyBson(obj.$1, doc[\"$1\"])\n".format(fieldName)
   #
   # finish up all procedure strings
   #
@@ -653,20 +888,20 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   # echo $dbObjReprs
   # echo $genObjectAccess(dbObjReprs)
-  # echo $genObjectToBson(dbObjReprs)
-  # echo $genBsonToObject(dbObjReprs)
-
-
   # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
   # result.add(objectAccess)
 
   let withDbNode = getAst genWithDb(connection, user, password, database, -1, newCollections)  # -1 = true
   result.insert(0, withDbNode)
 
-  let bsonToObject = parseStmt(genBsonToObject(dbObjReprs))
+  let bsonToObjectSource = genBsonToObject(dbObjReprs)
+  echo bsonToObjectSource
+  let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
-  let objectToBson = parseStmt(genObjectToBson(dbObjReprs))
+  let objectToBsonSource = genObjectToBson(dbObjReprs)
+  echo objectToBsonSource
+  let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
 macro dbAddTable*(obj: typed): untyped =
@@ -693,16 +928,17 @@ macro dbAddTable*(obj: typed): untyped =
   for o in dbObjReprs:
     newCollections.add o.getCollectionName
 
-  # echo $genObjectToBson(dbObjReprs)
-  # echo $genBsonToObject(dbObjReprs)
-
   let withDbNode = getAst genWithDb("", "", "", "", 0, newCollections)
   result.insert(0, withDbNode)
 
-  let bsonToObject = parseStmt(genBsonToObject(dbObjReprs))
+  let bsonToObjectSource = genBsonToObject(dbObjReprs)
+  echo bsonToObjectSource
+  let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
-  let objectToBson = parseStmt(genObjectToBson(dbObjReprs))
+  let objectToBsonSource = genObjectToBson(dbObjReprs)
+  echo objectToBsonSource
+  let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
 template dbAddCollection*(obj: typed): untyped =
@@ -761,14 +997,15 @@ macro dbAddObject*(obj: typed): untyped =
   for o in dbObjReprs:
     newCollections.add o.getCollectionName
 
-  # echo $genObjectToBson(dbObjReprs)
-  # echo $genBsonToObject(dbObjReprs)
-
   let withDbNode = getAst addObjectsToCollection(newCollections)
   result.insert(0, withDbNode)
 
-  let bsonToObject = parseStmt(genBsonToObject(dbObjReprs))
+  let bsonToObjectSource = genBsonToObject(dbObjReprs)
+  echo bsonToObjectSource
+  let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
-  let objectToBson = parseStmt(genObjectToBson(dbObjReprs))
+  let objectToBsonSource = genObjectToBson(dbObjReprs)
+  echo objectToBsonSource
+  let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)

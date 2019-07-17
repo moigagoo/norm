@@ -33,6 +33,7 @@ db(dbConnection, "", "", dbName):
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
       ratings: seq[float]
+      poss_ratings: seq[seq[Option[float]]]
       copyright: Copyright
 
   # TODO proc getBookById(id: Oid): Book = withDb(Book.getOne id)
