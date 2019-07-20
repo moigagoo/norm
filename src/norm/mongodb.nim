@@ -210,6 +210,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
 
       template dropTables() {.used.} =
         ## Drops the collections for ALL objects.
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
 
         for c in allCollections:
           let dbCollection = dbConn[customDatabase][c]
@@ -223,6 +225,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         ]##
 
         if force:
+          if dbConnResult == false:
+            raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
           dropTables()
 
       proc insert(obj: var object, force = false) {.used.} =
@@ -232,6 +236,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         The ``force`` parameter is ignored by the mongodb library.
         ]##
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           doc = toBson(obj, force)
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
@@ -243,6 +249,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getOne(obj: var object, id: Oid) {.used.} =
         ## Read a record from DB by id and apply it to an existing object instance.
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
@@ -252,6 +260,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getOne(obj: var object, cond: Bson) {.used.} =
         ## Read a record from DB by search condition and apply it into an existing object instance.
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
 
@@ -261,6 +271,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getOne(T: typedesc, id: Oid): T {.used.} =
         ## Read a record from DB by id and return a new object
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(T)]
 
@@ -270,11 +282,49 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getOne(T: typedesc, cond: Bson): T {.used.} =
         ## Read a record from DB by search condition and return a new object
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(T)]
 
         let fetched = dbCollection.find(cond).one()
         applyBson(result, fetched)
+
+      proc getOneOption(T: typedesc, id: Oid): Option[T] {.used.} =
+        ## Read a record from DB by id and return a new object
+
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+
+        var fetched: Bson
+        try:
+          fetched = dbCollection.find(%*{"_id": id}).one()
+        except NotFound:
+          result = none(T)
+          return
+        var inner = T()
+        applyBson(inner, fetched)
+        result = some inner
+
+      proc getOneOption(T: typedesc, cond: Bson): Option[T] {.used.} =
+        ## Read a record from DB by search condition and return a new object
+
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
+        let
+          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+
+        var fetched: Bson
+        try:
+          fetched = dbCollection.find(cond).one()
+        except NotFound:
+          result = none(T)
+          return
+        var inner = T()
+        applyBson(inner, fetched)
+        result = some inner
 
       proc getMany(
         T: typedesc,
@@ -283,6 +333,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         cond = %*{},
         sort = %*{}
       ): seq[T] {.used.} =
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(T)]
         var cursor = dbCollection.find(cond).skip(offset.int32).limit(nLimit.int32)
@@ -301,6 +353,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         cond = %*{},
         sort = %*{}
       ) {.used.} =
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         objs = type(objs[^1]).getMany(nLimit, offset, cond, sort)  # this works even on an empty list; which is surprising!
 
 
@@ -312,6 +366,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         returns true if update was successful.
         ]##
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
         var doc = obj.toBson()
@@ -323,6 +379,8 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc delete(obj: var object): bool {.used, discardable.} =
         ## Delete a record in DB by object's id. The id is set to all zeroes after the deletion.
 
+        if dbConnResult == false:
+          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
         let response = dbCollection.remove(%*{"_id": obj.id}, 1)
@@ -378,18 +436,17 @@ proc reconstructType(n: NimNode): string =
 
     This function handles both plain types as well as compound types such as seq[T] and Option[T].
   ]##
-  if n.kind == nnkIdent:
-    return $n
-  if n.kind == nnkBracketExpr:
+  if n.kind in @[nnkIdent, nnkSym]:
+    result = $n
+  elif n.kind == nnkBracketExpr:
     var inner = ""
     if n[1].kind == nnkBracketExpr:
       inner = reconstructType(n[1])
     else:
       inner = $n[1]
-    return "$1[$2]".format($n[0], inner)
-  if n.kind == nnkSym:
-    return $n
-  return "unknown"
+    result = "$1[$2]".format($n[0], inner)
+  else:
+    result = "unknown"
 
 proc seqTypeNames(name: string): seq[string] = 
   ##[
@@ -454,6 +511,7 @@ proc genBasicToBson(srcField, dest, typeName: string, tab: int, fromSeq = false)
 
 
 proc genSeqToBson(fieldName, dest: string, typeList: seq[string], tab: int): string
+proc genNToBson(fieldName, dest: string, typeList: seq[string], tab: int): string
 
 proc genOptionToBson(fieldName, dest: string, typeList: seq[string], tab: int): string =
   let t = spaces(tab)
@@ -472,6 +530,37 @@ proc genOptionToBson(fieldName, dest: string, typeList: seq[string], tab: int): 
     result &= genSeqToBson("$1.get()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
   elif nextType in normBasicTypeList:
     result &= genBasicToBson("$1.get()".format(fieldName), dest, nextType, tab+2)
+  elif nextType == "N":
+    result &= genNToBson("$1.get()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
+  else:
+    raise newException(
+      KeyError, 
+      "Field \"$1\"'s type of $2 is not known to norm/mongodb.".format(fieldName, nextType)
+    )
+
+proc genNToBson(fieldName, dest: string, typeList: seq[string], tab: int): string =
+  let t = spaces(tab)
+  if len(typeList) < 2:
+    raise newException(
+      KeyError, 
+      "$1 as malformed type $2 at depth $3".format(fieldName, $typeList, tab)
+    )
+  let nextType = typeList[1]
+  result &= t & "if $1.isNull:\n".format(fieldName)
+  result &= t & "  $1 = null()\n".format(dest)
+  result &= t & "elif $1.isNothing:\n".format(fieldName)
+  result &= t & "  discard\n".format(dest)
+  result &= t & "elif $1.hasError:\n".format(fieldName)
+  result &= t & "  $1 = null()\n".format(dest)
+  result &= t & "else:\n"
+  if nextType == "Option":
+    result &= genOptionToBson("$1.getValue()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
+  elif nextType == "seq":
+    result &= genSeqToBson("$1.getValue()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
+  elif nextType in normBasicTypeList:
+    result &= genBasicToBson("$1.getValue()".format(fieldName), dest, nextType, tab+2)
+  elif nextType == "N":
+    result &= genNToBson("$1.getValue()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
   else:
     raise newException(
       KeyError, 
@@ -493,13 +582,15 @@ proc genSeqToBson(fieldName, dest: string, typeList: seq[string], tab: int): str
 
   result &= t & "$1 = newBsonArray()\n".format(dest)
   result &= t & "for $1 in $2:\n".format(entry, fieldName)
-  result &= t & "  var $1 = null() # defaults to null\n".format(inner)
+  result &= t & "  var $1 = null()\n".format(inner)
   if nextType == "Option":
     result &= genOptionToBson(entry, inner, typeList[1 .. typeList.high], tab+2)
   elif nextType == "seq":
     result &= genSeqToBson(entry, inner, typeList[1 .. typeList.high], tab+2)
   elif nextType in normBasicTypeList:
     result &= genBasicToBson(entry, inner, nextType, tab+2, fromSeq=true)
+  elif nextType == "N":
+    result &= genNToBson(entry, inner, typeList[1 .. typeList.high], tab+2)
   else:
     raise newException(
       KeyError, 
@@ -517,31 +608,31 @@ proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
 
   ```
   type
-    Pet* = object
+    Pet = object
       shortName: string
-    User* = object
-      weight*: float
-      displayName*: string
+    User = object
+      displayName: string
+      weight: Option[float]
       thePet: Pet
   ```
 
   you will get a string containing procedures similar to:
 
   ```
-  proc toBson(obj: Pet, force = false): Bson =
+  proc toBson(obj: Pet, force = false): Bson {.used.} =
     result = newBsonDocument()
 
     result["shortName"] = toBson(obj.shortName)
 
-  proc toBson(obj: User, force = false): Bson =
+  proc toBson(obj: User, force = false): Bson {.used.} =
     result = newBsonDocument()
 
-    if $obj.id != "000000000000000000000000":
-      result["_id"] = toBson(obj.id)
-    result["weight"] = toBson(obj.weight)
     result["displayName"] = toBson(obj.displayName)
+    if obj.weight.isNone:
+      result["weight"] = null()
+    else:
+      result["weight"] = toBson(obj.weight.get())
     result["thePet"] = toBson(obj.thePet, force)
-
   ```
   ]##
   var
@@ -580,6 +671,8 @@ proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
         proc_map[key] &= genSeqToBson("obj.$1".format(fieldName), "result[\"$1\"]".format(bsonFieldName), typeList, tab)
       elif typeName=="Option":
         proc_map[key] &= genOptionToBson("obj.$1".format(fieldName), "result[\"$1\"]".format(bsonFieldName), typeList, tab)
+      elif typeName=="N":
+        proc_map[key] &= genNToBson("obj.$1".format(fieldName), "result[\"$1\"]".format(bsonFieldName), typeList, tab)
       else:
         if normObjectNamesRegistry.contains(typeName):
           proc_map[key] &= "  result[\"$1\"] = toBson(obj.$1, force)\n".format(fieldName)
@@ -601,14 +694,15 @@ proc genBsonToBasic(
   tab: int,
   skipCheck = false, 
   fromSeq = false,
-  fromOption = false
+  fromOption = false,
+  fromN = false
 ): string =
   let t = spaces(tab)
   var assignment = " ="
-  # if fromSeq:
-  #   assignment = ".add"
   if fromOption:
     assignment &= " some"
+  if fromN:
+    assignment = ".set"
   if skip_check:
     result &= t & "if $1.kind in @[$2]:\n".format(src, normTypeToBsonKind[typeName])
     result &= t & "  $1$2 $3.$4\n".format(fieldName, assignment, src, normTypeToBsonProc[typeName])
@@ -618,6 +712,7 @@ proc genBsonToBasic(
     result &= t & "    $1$2 $3.$4\n".format(fieldName, assignment, src, normTypeToBsonProc[typeName])
 
 proc genBsonToSeq(src, fieldName: string, typeList: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string
+proc genBsonToN(src, fieldName: string, typeList: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string
 
 proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string =
   let t = spaces(tab)
@@ -630,8 +725,6 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
   let nextType = typeList[1]
   let subTypeName = restoreSeqType(typeList[1 .. typeList.high])
   var assignment = " ="
-  # if fromSeq:
-  #   assignment = ".add "
 
   # result &= t & "# INSIDE genBsonToOption Option next=$1\n".format(nextType)
 
@@ -647,28 +740,33 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
         skipCheck=true,
         fromSeq=fromSeq,
         fromOption=true,
+        fromN=false
       )
     elif nextType=="seq":
+      result &= t & "else:\n"
       let temp = nextVar("temp")
       result &= t & "  var $1: $2\n".format(temp, subTypeName)
       result &= genBsonToSeq(
         src, 
         temp, 
         typeList[1 .. typeList.high],
-        tab,
+        tab+2,
         skipCheck=true,
         fromSeq=fromSeq,
         fromOption=true
       )
       result &= t & "  $1 = some $2\n".format(fieldName, temp)
     elif nexttype=="Option":
+      raise newException(RangeError, "MongoDb library cannot directly nested Option[Option[T]] sequences as they are not translatable to BSON. (Option[$1])".format(subTypeName))
+    elif nexttype=="N":
+      result &= t & "else:\n"
       let temp = nextVar("temp")
       result &= t & "  var $1: $2\n".format(temp, subTypeName)
-      result &= genBsonToOption(
+      result &= genBsonToN(
         src, 
         temp, 
         typeList[1 .. typeList.high],
-        tab,
+        tab+2,
         skipCheck=true,
         fromSeq=fromSeq,
         fromOption=true
@@ -686,7 +784,123 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
         tab+2,
         skipCheck=true,
         fromSeq=fromSeq,
+        fromOption=true,
+        fromN=false
+      )
+    elif nextType=="seq":
+      let temp = nextVar("temp")
+      result &= t & "  else:\n"
+      result &= t & "    var $1: $2\n".format(temp, subTypeName)
+      result &= genBsonToSeq(
+        src, 
+        temp, 
+        typeList[1 .. typeList.high],
+        tab+4,
+        skipCheck=true,
+        fromSeq=fromSeq,
         fromOption=true
+      )
+      result &= t & "    $1 = some $2\n".format(fieldName, temp)
+    elif nexttype=="Option":
+      raise newException(RangeError, "MongoDb library cannot directly nested Option[Option[T]] sequences as they are not translatable to BSON. (Option[$1])".format(subTypeName))
+    elif nexttype=="N":
+      let temp = nextVar("temp")
+      result &= t & "  else:\n"
+      result &= t & "    var $1: $2\n".format(temp, subTypeName)
+      result &= genBsonToN(
+        src, 
+        temp, 
+        typeList[1 .. typeList.high],
+        tab+4,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=true
+      )
+      result &= t & "    $1 = some $2\n".format(fieldName, temp)
+
+proc genBsonToN(src, fieldName: string, typeList: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string =
+  let t = spaces(tab)
+
+  if len(typeList) < 2:
+    raise newException(
+      KeyError, 
+      "$1 has a malformed type $2 at depth $3".format(fieldName, $typeList, tab)
+    )
+  let nextType = typeList[1]
+  let subTypeName = restoreSeqType(typeList[1 .. typeList.high])
+  var assignment = " ="
+
+  # result &= t & "# INSIDE genBsonToOption Option next=$1\n".format(nextType)
+
+  if skipCheck:
+    result &= t & "if $1.kind == BsonKindNull:\n".format(src)
+    result &= t & "  $1$2 null($3)\n".format(fieldName, assignment, subTypeName)
+    if nextType in normBasicTypeList:
+      result &= genBsonToBasic(
+        src,
+        fieldName,
+        nextType,
+        tab,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=false,
+        fromN=true
+      )
+    elif nextType=="seq":
+      let temp = nextVar("temp")
+      result &= t & "  var $1: $2\n".format(temp, subTypeName)
+      result &= genBsonToSeq(
+        src, 
+        temp, 
+        typeList[1 .. typeList.high],
+        tab,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=false
+      )
+      result &= t & "  $1 = $2\n".format(fieldName, temp)
+    elif nexttype=="Option":
+      let temp = nextVar("temp")
+      result &= t & "  var $1: $2\n".format(temp, subTypeName)
+      result &= genBsonToOption(
+        src, 
+        temp, 
+        typeList[1 .. typeList.high],
+        tab,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=false
+      )
+      result &= t & "  $1 = $2\n".format(fieldName, temp)
+    elif nexttype=="N":
+      let temp = nextVar("temp")
+      result &= t & "  var $1: $2\n".format(temp, subTypeName)
+      result &= genBsonToN(
+        src, 
+        temp, 
+        typeList[1 .. typeList.high],
+        tab,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=false
+      )
+      result &= t & "  $1 = $2\n".format(fieldName, temp)
+  else:
+    result &= t & "if $1.isNil:\n".format(src)
+    result &= t & "  $1$2 nothing($3)\n".format(fieldName, assignment, subTypeName)
+    result &= t & "else:\n"
+    result &= t & "  if $1.kind == BsonKindNull:\n".format(src)
+    result &= t & "    $1$2 null($3)\n".format(fieldName, assignment, subTypeName)
+    if nextType in normBasicTypeList:
+      result &= genBsonToBasic(
+        src,
+        fieldName,
+        nextType,
+        tab+2,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=false,
+        fromN=true
       )
     elif nextType=="seq":
       let temp = nextVar("temp")
@@ -698,9 +912,9 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
         tab+2,
         skipCheck=true,
         fromSeq=fromSeq,
-        fromOption=true
+        fromOption=false
       )
-      result &= t & "  $1 = some $2\n".format(fieldName, temp)
+      result &= t & "  $1 = $2\n".format(fieldName, temp)
     elif nexttype=="Option":
       let temp = nextVar("temp")
       result &= t & "  var $1: $2\n".format(temp, subTypeName)
@@ -711,10 +925,22 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
         tab+2,
         skipCheck=true,
         fromSeq=fromSeq,
-        fromOption=true
+        fromOption=false
       )
-      result &= t & "  $1 = some $2\n".format(fieldName, temp)
-
+      result &= t & "  $1 = $2\n".format(fieldName, temp)
+    elif nexttype=="N":
+      let temp = nextVar("temp")
+      result &= t & "  var $1: $2\n".format(temp, subTypeName)
+      result &= genBsonToN(
+        src, 
+        temp, 
+        typeList[1 .. typeList.high],
+        tab+2,
+        skipCheck=true,
+        fromSeq=fromSeq,
+        fromOption=false
+      )
+      result &= t & "  $1 = $2\n".format(fieldName, temp)
 
 proc genBsonToSeq(src, fieldName: string, typeList: seq[string], tab:int, skipCheck=false, fromSeq=false, fromOption=false): string =
   let t = spaces(tab)
@@ -738,6 +964,8 @@ proc genBsonToSeq(src, fieldName: string, typeList: seq[string], tab:int, skipCh
       result &= genBsontoSeq(item, inner, typeList[1 .. typeList.high], tab+2, skipCheck=true, fromSeq=false)
     elif nextType == "Option":
       result &= genBsontoOption(item, inner, typeList[1 .. typeList.high], tab+2, skipCheck=true, fromSeq=false)
+    elif nextType == "N":
+      result &= genBsontoN(item, inner, typeList[1 .. typeList.high], tab+2, skipCheck=true, fromSeq=false)
     result &= t & "  $1.add $2\n".format(fieldName, inner) # if we are in the loop, we ALWAYS add an item for each iteration
   else:
     result &= t & "if not $1.isNil:\n".format(src)
@@ -750,6 +978,8 @@ proc genBsonToSeq(src, fieldName: string, typeList: seq[string], tab:int, skipCh
       result &= genBsontoSeq(item, inner, typeList[1 .. typeList.high], tab+4, skipCheck=true, fromSeq=true)
     elif nextType == "Option":
       result &= genBsontoOption(item, inner, typeList[1 .. typeList.high], tab+4, skipCheck=true, fromSeq=true)
+    elif nextType == "N":
+      result &= genBsontoN(item, inner, typeList[1 .. typeList.high], tab+4, skipCheck=true, fromSeq=true)
     result &= t & "    $1.add $2\n".format(fieldName, inner) # if we are in the loop, we ALWAYS add an item for each iteration
 
 proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
@@ -761,36 +991,36 @@ proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
 
   ```
   type
-    Pet* = object
+    Pet = object
       shortName: string
-    User* = object
-      weight*: float
-      displayName*: string
+    User = object
+      displayName: string
+      weight: Option[float]
       thePet: Pet
   ```
 
   you will get a string containing procedures similar to:
 
   ```
-  proc applyBson(obj: var Pet, doc: Bson) =
-    if doc.contains("shortName"):
+  proc applyBson(obj: var Pet, doc: Bson) {.used.} =
+    discard
+    if not doc["shortName"].isNil:
       if doc["shortName"].kind in @[BsonKindStringUTF8]:
         obj.shortName = doc["shortName"].toString
 
-  proc applyBson(obj: var User, doc: Bson) =
-    if doc.contains("_id"):
-      if doc["_id"].kind in @[BsonKindOid]:
-        obj.id = doc["_id"].toOid
-    if doc.contains("weight"):
-      if doc["weight"].kind in @[BsonKindDouble]:
-        obj.weight = doc["weight"].toFloat64
-    if doc.contains("displaName"):
+  proc applyBson(obj: var User, doc: Bson) {.used.} =
+    discard
+    if not doc["displayName"].isNil:
       if doc["displayName"].kind in @[BsonKindStringUTF8]:
-        obj.display_name = doc["displayName"].toString
+        obj.displayName = doc["displayName"].toString
+    if not doc["weight"].isNil:
+      if doc["weight"].kind == BsonKindNull:
+        obj.weight = none(float)
+      if doc["weight"].kind in @[BsonKindDouble]:
+        obj.weight = some doc["weight"].toFloat64
     if doc.contains("thePet"):
       obj.thePet = Pet()
-      applyBson(obj.my_pet, doc["thePet"])
-
+      applyBson(obj.thePet, doc["thePet"])
   ```
   ]##
   var
@@ -833,6 +1063,11 @@ proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
         )
       elif typeName=="Option":
         proc_map[key] &= genBsonToOption(
+          "doc[\"$1\"]".format(bsonFieldName), "obj.$1".format(fieldName), tseq, 2,
+          skipCheck=false, fromSeq=false, fromOption=false
+        )
+      elif typeName=="N":
+        proc_map[key] &= genBsonToN(
           "doc[\"$1\"]".format(bsonFieldName), "obj.$1".format(fieldName), tseq, 2,
           skipCheck=false, fromSeq=false, fromOption=false
         )
@@ -889,12 +1124,12 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  echo bsonToObjectSource
+  # echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  echo objectToBsonSource
+  # echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
@@ -914,9 +1149,8 @@ macro dbAddTable*(obj: typed): untyped =
   var dbObjReprs: seq[ObjRepr]
   var newCollections: seq[string]
 
-  let nSymbol = symbol(obj)
-  let typeDef = getImpl(nSymbol)
-  # echo typeDef.treeRepr
+  let typeDef = getImpl(obj)
+
   dbObjReprs.add typeDef.toObjRepr()
 
   for o in dbObjReprs:
@@ -926,12 +1160,12 @@ macro dbAddTable*(obj: typed): untyped =
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  echo bsonToObjectSource
+  # echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  echo objectToBsonSource
+  # echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
@@ -983,9 +1217,7 @@ macro dbAddObject*(obj: typed): untyped =
   var dbObjReprs: seq[ObjRepr]
   var newCollections: seq[string]
 
-  let nSymbol = symbol(obj)
-  let typeDef = getImpl(nSymbol)
-  # echo typeDef.treeRepr
+  let typeDef = getImpl(obj)
   dbObjReprs.add typeDef.toObjRepr()
 
   for o in dbObjReprs:
@@ -995,11 +1227,11 @@ macro dbAddObject*(obj: typed): untyped =
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  echo bsonToObjectSource
+  # echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  echo objectToBsonSource
+  # echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)

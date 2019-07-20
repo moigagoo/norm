@@ -176,6 +176,8 @@ suite "Creating and dropping tables, CRUD":
       check aBook.title == "Book 7"
       let bBook = Book.getOne(%*{"authorEmail": "test-2@example.com"})
       check bBook.id == book_reference_id[2]
+      let oBook = Book.getOneOption(%*{"authorEmail": "test-2@example.com"})
+      check oBook.get().id == book_reference_id[2]
 
       var vBook = Book()
       vBook.getOne(book_reference_id[6])
@@ -218,3 +220,21 @@ suite "Creating and dropping tables, CRUD":
       expect NotFound:
         discard Edition.getOne edition_reference_id[2]
 
+  test "Error Handling":
+    # test a "not found" for getMany
+    withCustomDb(dbConnection, "", "", dbName):
+      var users = User.getMany(20, cond = %*{"ssn": 99}, sort = %*{"ssn": 1})
+      check len(users) == 0
+
+    # test a "not found" for getOne and getOneOption
+    withCustomDb(dbConnection, "", "", dbName):
+      expect NotFound:
+        var user = User.getOne(%*{"ssn": 99})
+      var oUser = User.getOneOption(%*{"ssn": 99})
+      check oUser == none(User)
+
+    # test a bad connection
+    let badAddress = "mongodb://mongodb_1:27018"
+    withCustomDb(badAddress, "", "", ""):
+      expect CommunicationError:
+        var users = User.getMany(20, sort = %*{"ssn": 1})

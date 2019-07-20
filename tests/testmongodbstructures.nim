@@ -52,11 +52,17 @@ db(dbConnection, "", "", dbName):
       nano: Option[seq[Option[Oid]]]
       nans: Option[seq[Option[string]]]
       nant: Option[seq[Option[Time]]]
+      crazy3DSeq: seq[seq[seq[int]]]
 
 const
   REFOID = "012345678901234567890123"
   REFTIME = "2018-03-25T12:00:12"
   TIMEFMT = "yyyy-MM-dd\'T\'HH:mm:ss"
+  CRAZYSEQ = @[ @[ @[1, 2, 3] ], @[ @[4, 5, 6] ] ]
+var
+  EMPTYCRAZYSEQ: seq[seq[seq[int]]] = @[]
+EMPTYCRAZYSEQ.add @[]
+EMPTYCRAZYSEQ[0].add @[]
 
 suite "Inserting field structures":
   setup:
@@ -94,7 +100,8 @@ suite "Inserting field structures":
         nani: some @[some 1, some -2, some 3],
         nano: some @[some parseOid(REFOID), some parseOid(REFOID)],
         nans: some @[some "a", some "", some "c"],
-        nant: some @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())]
+        nant: some @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())],
+        crazy3DSeq: CRAZYSEQ
       )
       clean.insert()
 
@@ -130,6 +137,7 @@ suite "Inserting field structures":
         nano: some @[none(Oid), none(Oid)],
         nans: some @[none(string), none(string), none(string)],
         nant: some @[none(Time), none(Time)],
+        crazy3DSeq: EMPTYCRAZYSEQ
       )
       nulled.insert()
 
@@ -175,4 +183,37 @@ suite "Inserting field structures":
       check mixes[0].nano == some @[some parseOid(REFOID), some parseOid(REFOID)]
       check mixes[0].nans == some @[some "a", some "", some "c"]
       check mixes[0].nant == some @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())]
+      check mixes[0].crazy3DSeq == CRAZYSEQ
 
+      check mixes[1].name == "nulled"
+      check mixes[1].ab == @[true, false, true]
+      check mixes[1].af == @[1.2, -3.4, 5.6]
+      check mixes[1].ai == @[1, -2, 3]
+      check mixes[1].ao == @[parseOid(REFOID), parseOid(REFOID)]
+      check mixes[1].xas == @["a", "", "c"]
+      check mixes[1].at == @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())]
+      check mixes[1].nb == none(bool)
+      check mixes[1].nf == none(float)
+      check mixes[1].ni == none(int)
+      check mixes[1].no == none(Oid)
+      check mixes[1].ns == none(string)
+      check mixes[1].nt == none(Time)
+      check mixes[1].anb == @[none(bool), none(bool), none(bool)]
+      check mixes[1].anf == @[none(float), none(float), none(float)]
+      check mixes[1].ani == @[none(int), none(int), none(int)]
+      check mixes[1].ano == @[none(Oid), none(Oid)]
+      check mixes[1].ans == @[none(string), none(string), none(string)]
+      check mixes[1].xant == @[none(Time), none(Time)]
+      check mixes[1].nab == none(seq[bool])
+      check mixes[1].naf == none(seq[float])
+      check mixes[1].nai == none(seq[int])
+      check mixes[1].nao == none(seq[Oid])
+      check mixes[1].nas == none(seq[string])
+      check mixes[1].nat == none(seq[Time])
+      check mixes[1].nanb == some @[none(bool), none(bool), none(bool)]
+      check mixes[1].nanf == some @[none(float), none(float), none(float)]
+      check mixes[1].nani == some @[none(int), none(int), none(int)]
+      check mixes[1].nano == some @[none(Oid), none(Oid)]
+      check mixes[1].nans == some @[none(string), none(string), none(string)]
+      check mixes[1].nant == some @[none(Time), none(Time)]
+      check mixes[1].crazy3DSeq == EMPTYCRAZYSEQ
