@@ -206,7 +206,7 @@ template genWithDb(connection, user, password, database: string, useParams: int,
     block:
       var dbConn = newMongoWithURI(customConnection)
       let
-        dbConnResult = dbConn.connect()  ## TODO: Add more error handling
+        dbConnResult = dbConn.connect()
 
       template dropTables() {.used.} =
         ## Drops the collections for ALL objects.
