@@ -1155,6 +1155,18 @@ macro dbAddTable*(obj: typed): untyped =
 
   for o in dbObjReprs:
     newCollections.add o.getCollectionName
+    # for objects added AFTER their type definition, check and make sure
+    # the 'id' field exists since it is not possible to add it after-the-fact.
+    var idFound = false
+    for f in o.fields:
+      if f.signature.name == "id":
+        if f.signature.exported:
+          for p in f.signature.pragmas:
+            if p.name == "dbCol":
+              if p.kind == pkKval:
+                idFound = true
+    if not idFound: 
+      raise newException(KeyError, "Object ($1) is missing an exported 'id' field that has a dbCol pragma for '_id'.".format(objName))
 
   let withDbNode = getAst genWithDb("", "", "", "", 0, newCollections)
   result.insert(0, withDbNode)
