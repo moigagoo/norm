@@ -41,7 +41,7 @@ db(dbConnection, "", "", dbName):
 
 type
   Edition {.table: "editions".} = object
-    id {.dbCol: "_id".}: Oid
+    id* {.dbCol: "_id".}: Oid
     title: string
     book: Book
 

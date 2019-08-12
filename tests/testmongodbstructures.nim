@@ -13,9 +13,10 @@ const
   customDbName = "TestCustomDb"
 
 type
-  LittleMix = object
-    af: seq[float]
-    nt: Option[Time]
+  Zzz = object
+    s: string
+
+dbAddObject(Zzz)
 
 db(dbConnection, "", "", dbName):
   type
@@ -27,12 +28,14 @@ db(dbConnection, "", "", dbName):
       ao: seq[Oid]
       xas: seq[string]
       at: seq[Time]
+      az: seq[Zzz]
       nb: Option[bool]
       nf: Option[float]
       ni: Option[int]
       no: Option[Oid]
       ns: Option[string]
       nt: Option[Time]
+      nz: Option[Zzz]
       ant: seq[Option[Time]]
       anb: seq[Option[bool]]
       anf: seq[Option[float]]
@@ -40,18 +43,21 @@ db(dbConnection, "", "", dbName):
       ano: seq[Option[Oid]]
       ans: seq[Option[string]]
       xant: seq[Option[Time]]
+      anz: seq[Option[Zzz]]
       nab: Option[seq[bool]]
       naf: Option[seq[float]]
       nai: Option[seq[int]]
       nao: Option[seq[Oid]]
       nas: Option[seq[string]]
       nat: Option[seq[Time]]
+      naz: Option[seq[Zzz]]
       nanb: Option[seq[Option[bool]]]
       nanf: Option[seq[Option[float]]]
       nani: Option[seq[Option[int]]]
       nano: Option[seq[Option[Oid]]]
       nans: Option[seq[Option[string]]]
       nant: Option[seq[Option[Time]]]
+      nanz: Option[seq[Option[Zzz]]]
       crazy3DSeq: seq[seq[seq[int]]]
 
 const
@@ -59,8 +65,8 @@ const
   REFTIME = "2018-03-25T12:00:12"
   TIMEFMT = "yyyy-MM-dd\'T\'HH:mm:ss"
   CRAZYSEQ = @[ @[ @[1, 2, 3] ], @[ @[4, 5, 6] ] ]
-var
-  EMPTYCRAZYSEQ: seq[seq[seq[int]]] = @[]
+
+var EMPTYCRAZYSEQ: seq[seq[seq[int]]] = @[]
 EMPTYCRAZYSEQ.add @[]
 EMPTYCRAZYSEQ[0].add @[]
 
@@ -77,30 +83,35 @@ suite "Inserting field structures":
         ao: @[parseOid(REFOID), parseOid(REFOID)],
         xas: @["a", "", "c"],  # "as" is a keyword, so I stuck a x on the front
         at: @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())],
+        az: @[Zzz(s: "hello"), Zzz(s: "world")],
         nb: some true,
         nf: some 1.2,
         ni: some 1,
         no: some parseOid(REFOID),
         ns: some "a",
         nt: some parseTime(REFTIME, TIMEFMT, utc()),
+        nz: some Zzz(s: "howdy"),
         anb: @[some true, some false, some true],
         anf: @[some 1.2, some -3.4, some 5.6],
         ani: @[some 1, some -2, some 3],
         ano: @[some parseOid(REFOID), some parseOid(REFOID)],
         ans: @[some "a", some "", some "c"],
         xant: @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())],
+        anz: @[some Zzz(s: "one"), some Zzz(s: "more")],
         nab: some @[true, false, true],
         naf: some @[1.2, -3.4, 5.6],
         nai: some @[1, -2, 3],
         nao: some @[parseOid(REFOID), parseOid(REFOID)],
         nas: some @["a", "", "c"],
         nat: some @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())],
+        naz: some @[Zzz(s: "ping"), Zzz(s: "pong")],
         nanb: some @[some true, some false, some true],
         nanf: some @[some 1.2, some -3.4, some 5.6],
         nani: some @[some 1, some -2, some 3],
         nano: some @[some parseOid(REFOID), some parseOid(REFOID)],
         nans: some @[some "a", some "", some "c"],
         nant: some @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())],
+        nanz: some @[some Zzz(s: "big"), some Zzz(s: "time")],
         crazy3DSeq: CRAZYSEQ
       )
       clean.insert()
@@ -113,30 +124,35 @@ suite "Inserting field structures":
         ao: @[parseOid(REFOID), parseOid(REFOID)],
         xas: @["a", "", "c"],
         at: @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())],
+        az: @[],
         nb: none(bool),
         nf: none(float),
         ni: none(int),
         no: none(Oid),
         ns: none(string),
         nt: none(Time),
+        nz: none(Zzz),
         anb: @[none(bool), none(bool), none(bool)],
         anf: @[none(float), none(float), none(float)],
         ani: @[none(int), none(int), none(int)],
         ano: @[none(Oid), none(Oid)],
         ans: @[none(string), none(string), none(string)],
         xant: @[none(Time), none(Time)],
+        anz: @[none (Zzz), none(Zzz)],
         nab: none(seq[bool]),
         naf: none(seq[float]),
         nai: none(seq[int]),
         nao: none(seq[Oid]),
         nas: none(seq[string]),
         nat: none(seq[Time]),
+        naz: none(seq[Zzz]),
         nanb: some @[none(bool), none(bool), none(bool)],
         nanf: some @[none(float), none(float), none(float)],
         nani: some @[none(int), none(int), none(int)],
         nano: some @[none(Oid), none(Oid)],
         nans: some @[none(string), none(string), none(string)],
         nant: some @[none(Time), none(Time)],
+        nanz: some @[none(Zzz), none(Zzz)],
         crazy3DSeq: EMPTYCRAZYSEQ
       )
       nulled.insert()
@@ -159,30 +175,35 @@ suite "Inserting field structures":
       check mixes[0].ao == @[parseOid(REFOID), parseOid(REFOID)]
       check mixes[0].xas == @["a", "", "c"]
       check mixes[0].at == @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())]
+      check mixes[0].az == @[Zzz(s: "hello"), Zzz(s: "world")]
       check mixes[0].nb == some true
       check mixes[0].nf == some 1.2
       check mixes[0].ni == some 1
       check mixes[0].no == some parseOid(REFOID)
       check mixes[0].ns == some "a"
       check mixes[0].nt == some parseTime(REFTIME, TIMEFMT, utc())
+      check mixes[0].nz == some Zzz(s: "howdy")
       check mixes[0].anb == @[some true, some false, some true]
       check mixes[0].anf == @[some 1.2, some -3.4, some 5.6]
       check mixes[0].ani == @[some 1, some -2, some 3]
       check mixes[0].ano == @[some parseOid(REFOID), some parseOid(REFOID)]
       check mixes[0].ans == @[some "a", some "", some "c"]
       check mixes[0].xant == @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())]
+      check mixes[0].anz == @[some Zzz(s: "one"), some Zzz(s: "more")]
       check mixes[0].nab == some @[true, false, true]
       check mixes[0].naf == some @[1.2, -3.4, 5.6]
       check mixes[0].nai == some @[1, -2, 3]
       check mixes[0].nao == some @[parseOid(REFOID), parseOid(REFOID)]
       check mixes[0].nas == some @["a", "", "c"]
       check mixes[0].nat == some @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())]
+      check mixes[0].naz == some @[Zzz(s: "ping"), Zzz(s: "pong")]
       check mixes[0].nanb == some @[some true, some false, some true]
       check mixes[0].nanf == some @[some 1.2, some -3.4, some 5.6]
       check mixes[0].nani == some @[some 1, some -2, some 3]
       check mixes[0].nano == some @[some parseOid(REFOID), some parseOid(REFOID)]
       check mixes[0].nans == some @[some "a", some "", some "c"]
       check mixes[0].nant == some @[some parseTime(REFTIME, TIMEFMT, utc()), some parseTime(REFTIME, TIMEFMT, utc())]
+      check mixes[0].nanz == some @[some Zzz(s: "big"), some Zzz(s: "time")]
       check mixes[0].crazy3DSeq == CRAZYSEQ
 
       check mixes[1].name == "nulled"
@@ -192,24 +213,28 @@ suite "Inserting field structures":
       check mixes[1].ao == @[parseOid(REFOID), parseOid(REFOID)]
       check mixes[1].xas == @["a", "", "c"]
       check mixes[1].at == @[parseTime(REFTIME, TIMEFMT, utc()), parseTime(REFTIME, TIMEFMT, utc())]
+      check len(mixes[1].az) == 0
       check mixes[1].nb == none(bool)
       check mixes[1].nf == none(float)
       check mixes[1].ni == none(int)
       check mixes[1].no == none(Oid)
       check mixes[1].ns == none(string)
       check mixes[1].nt == none(Time)
+      check mixes[1].nz == none(Zzz)
       check mixes[1].anb == @[none(bool), none(bool), none(bool)]
       check mixes[1].anf == @[none(float), none(float), none(float)]
       check mixes[1].ani == @[none(int), none(int), none(int)]
       check mixes[1].ano == @[none(Oid), none(Oid)]
       check mixes[1].ans == @[none(string), none(string), none(string)]
       check mixes[1].xant == @[none(Time), none(Time)]
+      check mixes[1].anz == @[none(Zzz), none(Zzz)]
       check mixes[1].nab == none(seq[bool])
       check mixes[1].naf == none(seq[float])
       check mixes[1].nai == none(seq[int])
       check mixes[1].nao == none(seq[Oid])
       check mixes[1].nas == none(seq[string])
       check mixes[1].nat == none(seq[Time])
+      check mixes[1].naz == none(seq[Zzz])
       check mixes[1].nanb == some @[none(bool), none(bool), none(bool)]
       check mixes[1].nanf == some @[none(float), none(float), none(float)]
       check mixes[1].nani == some @[none(int), none(int), none(int)]

@@ -133,7 +133,6 @@ var
     "int": "toInt"
   }.toTable
 
-
 proc getCollectionName*(objRepr: ObjRepr): string =
   ##[ Get the name of the DB table for the given object representation:
   ``table`` pragma value if it exists or lowercased type name otherwise.
@@ -197,7 +196,7 @@ template genWithDb(connection, user, password, database: string, useParams: int,
 
     The 'user' and 'password' parameters are not used.
 
-    'database' should contain the database shard.
+    'database' should contain the database name.
 
     Aforementioned procs and procs defined in a ``db`` block can be used only
     in  a ``withDb`` block.
@@ -530,12 +529,14 @@ proc genOptionToBson(fieldName, dest: string, typeList: seq[string], tab: int): 
     result &= genSeqToBson("$1.get()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
   elif nextType in normBasicTypeList:
     result &= genBasicToBson("$1.get()".format(fieldName), dest, nextType, tab+2)
+  elif nextType in normObjectNamesRegistry:
+    result &= t & "  $1 = $2.get().toBson()\n".format(dest, fieldName)
   elif nextType == "N":
     result &= genNToBson("$1.get()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
   else:
     raise newException(
       KeyError, 
-      "Field \"$1\"'s type of $2 is not known to norm/mongodb.".format(fieldName, nextType)
+      "Field \"$1\"'s type of $2 is not known to norm/mongodb[1].".format(fieldName, nextType)
     )
 
 proc genNToBson(fieldName, dest: string, typeList: seq[string], tab: int): string =
@@ -559,12 +560,14 @@ proc genNToBson(fieldName, dest: string, typeList: seq[string], tab: int): strin
     result &= genSeqToBson("$1.getValue()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
   elif nextType in normBasicTypeList:
     result &= genBasicToBson("$1.getValue()".format(fieldName), dest, nextType, tab+2)
+  elif nextType in normObjectNamesRegistry:
+    result &= t & "  $1 = $2.get().toBson()\n".format(dest, fieldName)
   elif nextType == "N":
     result &= genNToBson("$1.getValue()".format(fieldName), dest, typeList[1 .. typeList.high], tab+2)
   else:
     raise newException(
       KeyError, 
-      "Field \"$1\"'s type of $2 is not known to norm/mongodb.".format(fieldName, nextType)
+      "Field \"$1\"'s type of $2 is not known to norm/mongodb[2].".format(fieldName, nextType)
     )
 
 proc genSeqToBson(fieldName, dest: string, typeList: seq[string], tab: int): string =
@@ -582,19 +585,23 @@ proc genSeqToBson(fieldName, dest: string, typeList: seq[string], tab: int): str
 
   result &= t & "$1 = newBsonArray()\n".format(dest)
   result &= t & "for $1 in $2:\n".format(entry, fieldName)
-  result &= t & "  var $1 = null()\n".format(inner)
   if nextType == "Option":
+    result &= t & "  var $1 = null()\n".format(inner)
     result &= genOptionToBson(entry, inner, typeList[1 .. typeList.high], tab+2)
   elif nextType == "seq":
+    result &= t & "  var $1 = null()\n".format(inner)
     result &= genSeqToBson(entry, inner, typeList[1 .. typeList.high], tab+2)
   elif nextType in normBasicTypeList:
+    result &= t & "  var $1 = null()\n".format(inner)
     result &= genBasicToBson(entry, inner, nextType, tab+2, fromSeq=true)
+  elif nextType in normObjectNamesRegistry:
+    result &= t & "  var $1 = toBson($2, force)\n".format(inner, entry)
   elif nextType == "N":
     result &= genNToBson(entry, inner, typeList[1 .. typeList.high], tab+2)
   else:
     raise newException(
       KeyError, 
-      "Field \"$2\"'s type of $2 is not known to norm/mongodb.".format(fieldName, nextType)
+      "Field \"$2\"'s type of $2 is not known to norm/mongodb[3].".format(fieldName, nextType)
     )
   result &= t & "  $1.add $2\n".format(dest, inner)
 
@@ -679,7 +686,7 @@ proc genObjectToBson(dbObjReprs: seq[ObjRepr]): string =
         else:
           raise newException(
             KeyError, 
-            "In object $1, the field $2's type is not known to norm/mongodb. If it is a subtending object, is $3 defined by dB, dbAddCollection, or dbAddObject yet?".format(objectName, fieldName, typeName)
+            "In object $1, the field $2's type is not known to norm/mongodb[4]. If it is a subtending object, is $3 defined by dB, dbAddCollection, or dbAddObject yet?".format(objectName, fieldName, typeName)
           )
   #
   # finish up all procedure strings
@@ -742,6 +749,12 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
         fromOption=true,
         fromN=false
       )
+    elif nextType in normObjectNamesRegistry:
+      let temp = nextVar("temp")
+      result &= t & "else:\n"
+      result &= t & "  var $1: $2\n".format(temp, subTypeName)
+      result &= t & "  applyBson($1, $2)\n".format(temp, src)
+      result &= t & "  $1$2 some $3\n".format(fieldName, assignment, temp)
     elif nextType=="seq":
       result &= t & "else:\n"
       let temp = nextVar("temp")
@@ -787,6 +800,12 @@ proc genBsonToOption(src, fieldName: string, typeList: seq[string], tab:int, ski
         fromOption=true,
         fromN=false
       )
+    elif nextType in normObjectNamesRegistry:
+      let temp = nextVar("temp")
+      result &= t & "  else:\n"
+      result &= t & "    var $1: $2\n".format(temp, subTypeName)
+      result &= t & "    applyBson($1, $2)\n".format(temp, src)
+      result &= t & "    $1$2 some $3\n".format(fieldName, assignment, temp)
     elif nextType=="seq":
       let temp = nextVar("temp")
       result &= t & "  else:\n"
@@ -846,6 +865,12 @@ proc genBsonToN(src, fieldName: string, typeList: seq[string], tab:int, skipChec
         fromOption=false,
         fromN=true
       )
+    elif nextType in normObjectNamesRegistry:
+      let temp = nextVar("temp")
+      result &= t & "else:\n"
+      result &= t & "  var $1: $2\n".format(temp, subTypeName)
+      result &= t & "  applyBson($1, $2)\n".format(temp, src)
+      result &= t & "  $1$2 $3\n".format(fieldName, assignment, temp)
     elif nextType=="seq":
       let temp = nextVar("temp")
       result &= t & "  var $1: $2\n".format(temp, subTypeName)
@@ -902,6 +927,12 @@ proc genBsonToN(src, fieldName: string, typeList: seq[string], tab:int, skipChec
         fromOption=false,
         fromN=true
       )
+    elif nextType in normObjectNamesRegistry:
+      let temp = nextVar("temp")
+      result &= t & "  else:\n"
+      result &= t & "    var $1: $2\n".format(temp, subTypeName)
+      result &= t & "    applyBson($1, $2)\n".format(temp, src)
+      result &= t & "    $1$2 $3\n".format(fieldName, assignment, temp)
     elif nextType=="seq":
       let temp = nextVar("temp")
       result &= t & "  var $1: $2\n".format(temp, subTypeName)
@@ -960,6 +991,8 @@ proc genBsonToSeq(src, fieldName: string, typeList: seq[string], tab:int, skipCh
     result &= t & "  var $1: $2\n".format(inner, subTypeName)
     if nextType in normBasicTypeList:
       result &= genBsonToBasic(item, inner, nextType, tab+2, skipCheck=true, fromSeq=true)
+    elif nextType in normObjectNamesRegistry:
+      result &= t & "  applyBson($1, $2)\n".format(inner, item)
     elif nextType == "seq":
       result &= genBsontoSeq(item, inner, typeList[1 .. typeList.high], tab+2, skipCheck=true, fromSeq=false)
     elif nextType == "Option":
@@ -974,6 +1007,8 @@ proc genBsonToSeq(src, fieldName: string, typeList: seq[string], tab:int, skipCh
     result &= t & "    var $1: $2\n".format(inner, subTypeName)
     if nextType in normBasicTypeList:
       result &= genBsonToBasic(item, inner, nextType, tab+4, skipCheck=true, fromSeq=true)
+    elif nextType in normObjectNamesRegistry:
+      result &= t & "    applyBson($1, $2)\n".format(inner, item)
     elif nextType == "seq":
       result &= genBsontoSeq(item, inner, typeList[1 .. typeList.high], tab+4, skipCheck=true, fromSeq=true)
     elif nextType == "Option":
@@ -1038,7 +1073,8 @@ proc genBsonToObject(dbObjReprs: seq[ObjRepr]): string =
     objectName = obj.signature.name
     key = objectName
     proc_map[key] =  "proc applyBson(obj: var $1, doc: Bson) {.used.} =\n".format(objectName)
-    proc_map[key] &=  "  discard\n" # just in case there are no valid fields
+    proc_map[key] &= "  if doc.kind != BsonKindDocument:\n"
+    proc_map[key] &= "    return\n"
     #
     #
     for field in obj.fields:
@@ -1124,12 +1160,12 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  # echo bsonToObjectSource
+  echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  # echo objectToBsonSource
+  echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
@@ -1172,12 +1208,12 @@ macro dbAddTable*(obj: typed): untyped =
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  # echo bsonToObjectSource
+  echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  # echo objectToBsonSource
+  echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
@@ -1239,11 +1275,11 @@ macro dbAddObject*(obj: typed): untyped =
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  # echo bsonToObjectSource
+  echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  # echo objectToBsonSource
+  echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
