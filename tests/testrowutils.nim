@@ -16,7 +16,7 @@ suite "Basic object <-> row conversion":
 
   let
     user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123, employed: some true)
-    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123, dbValue "true"]
+    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123, dbValue 1]
     userWithoutOptionals = SimpleUser(
       name: "Alice",
       age: 23,
@@ -256,3 +256,34 @@ suite "Bulk conversion with custom parser and formatter procs":
   test "Rows -> objects -> rows":
     rows.to(tmpUsers)
     check tmpUsers.toRows() == rows
+
+suite "Boolean field conversion":
+  type
+    Car = object
+      manufacturer: string
+      model: string
+      used: bool
+      owned: Option[bool]
+      yellow: Option[bool]
+
+  let
+    car = Car(
+      manufacturer: "Toyota",
+      model: "true",
+      used: false,
+      owned: some true,
+      yellow: none bool
+    )
+    row = @[dbValue "Toyota", dbValue "true", dbValue 0, dbValue 1, dbValue nil]
+
+  test "Object -> row":
+    check car.toRow() == row
+
+  test "Row -> object":
+    check row.to(Car) == car
+
+  test "Object -> row -> object":
+    check car.toRow().to(Car) == car
+
+  test "Row -> object -> row":
+    check row.to(Car).toRow() == row
