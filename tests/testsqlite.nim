@@ -23,6 +23,7 @@ db(dbName, "", "", ""):
       .}: DateTime
     Publisher {.table: "publishers".} = object
       title {.unique.}: string
+      licensed: bool
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
@@ -52,7 +53,7 @@ suite "Creating and dropping tables, CRUD":
         var
           user = User(email: "test-$#@example.com" % $i, ssn: some i,
                       birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
-          publisher = Publisher(title: "Publisher $#" % $i)
+          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i<6: true else: false)
           book = Book(title: "Book $#" % $i, authorEmail: user.email,
                       publisherTitle: publisher.title)
           edition = Edition(title: "Edition $#" % $i)
