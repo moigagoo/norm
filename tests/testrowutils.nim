@@ -12,28 +12,35 @@ suite "Basic object <-> row conversion":
       age: Natural
       height: float
       ssn: Option[int]
+      employed: Option[bool]
 
   let
-    user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123)
-    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123]
-    userWithoutSsn = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: none int)
-    rowWithoutSsn = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue nil]
+    user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123, employed: some true)
+    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123, dbValue "true"]
+    userWithoutOptionals = SimpleUser(
+      name: "Alice",
+      age: 23,
+      height: 168.2,
+      ssn: none int,
+      employed: none bool
+    )
+    rowWithoutOptionals = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue nil, dbValue nil]
 
 
   test "Object -> row":
     check user.toRow() == row
-    check userWithoutSsn.toRow() == rowWithoutSsn
+    check userWithoutOptionals.toRow() == rowWithoutOptionals
 
   test "Row -> object":
     check row.to(SimpleUser) == user
-    check rowWithoutSsn.to(SimpleUser) == userWithoutSsn
+    check rowWithoutOptionals.to(SimpleUser) == userWithoutOptionals
 
   test "Object -> row -> object":
     check user.toRow().to(SimpleUser) == user
-    check userWithoutSsn.toRow().to(SimpleUser) == userWithoutSsn
+    check userWithoutOptionals.toRow().to(SimpleUser) == userWithoutOptionals
 
   test "Row -> object -> row":
-    check rowWithoutSsn.to(SimpleUser).toRow() == rowWithoutSsn
+    check rowWithoutOptionals.to(SimpleUser).toRow() == rowWithoutOptionals
 
 suite "Conversion with custom parser and formatter expressions":
   type

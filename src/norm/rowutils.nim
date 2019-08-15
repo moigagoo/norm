@@ -277,6 +277,8 @@ proc toRow*(obj: object, force = false): Row =
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
       elif typeof(value) is bool:
         result.add dbValue $value
+      elif typeof(value) is Option[bool]:
+        result.add if value.isSome: dbValue $get(value) else: dbValue nil
       else:
         result.add dbValue value
 
