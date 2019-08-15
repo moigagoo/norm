@@ -1,4 +1,4 @@
-import strutils, sequtils, options
+import sequtils, options
 import sugar
 import macros; export macros
 
@@ -67,7 +67,7 @@ template to*(row: Row, obj: var object) =
       dbValue 123,
       dbValue "foo",
       dbValue 123.321,
-      dbValue "true",
+      dbValue 1,
       dbValue "2019-01-21 15:03:21+04:00"
     ]
 
@@ -97,7 +97,7 @@ template to*(row: Row, obj: var object) =
     elif typeof(value) is float:
       obj.dot(field) = row[i].f
     elif typeof(value) is bool:
-      obj.dot(field) = parseBool(row[i].s)
+      obj.dot(field) = if row[i].i == 0: false else: true
     elif typeof(value) is Option:
       when typeof(get(value)) is string:
         obj.dot(field) = if row[i].kind == dvkNull: none string else: some row[i].s
@@ -106,7 +106,9 @@ template to*(row: Row, obj: var object) =
       elif typeof(get(value)) is float:
         obj.dot(field) = if row[i].kind == dvkNull: none float else: some row[i].f
       elif typeof(get(value)) is bool:
-        obj.dot(field) = if row[i].kind == dvkNull: none bool else: some parseBool(row[i].s)
+        obj.dot(field) =
+          if row[i].kind == dvkNull: none bool
+          else: some if row[i].i == 0: false else: true
     else:
       raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
 
@@ -139,21 +141,21 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
         dbValue 123,
         dbValue "foo",
         dbValue 123.321,
-        dbValue "true",
+        dbValue 1,
         dbValue "2019-01-21 15:03:21+04:00"
       ],
       @[
         dbValue 456,
         dbValue "bar",
         dbValue 456.654,
-        dbValue "false",
+        dbValue 0,
         dbValue "2019-02-22 16:14:32+04:00"
       ],
       @[
         dbValue 789,
         dbValue "baz",
         dbValue 789.987,
-        dbValue "true",
+        dbValue 1,
         dbValue "2019-03-23 17:25:43+04:00"
       ]
     ]
@@ -197,7 +199,7 @@ proc to*(row: Row, T: typedesc): T =
         boolField: bool
 
     let
-      row = @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue "false"]
+      row = @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue 0]
       obj = row.to(Example)
 
     doAssert obj.intField == 123
@@ -227,9 +229,9 @@ proc to*(rows: openArray[Row], T: typedesc): seq[T] =
 
     let
       rows = @[
-        @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue "true"],
-        @[dbValue 456, dbValue "bar", dbValue 456.654, dbValue "false"],
-        @[dbValue 789, dbValue "baz", dbValue 789.987, dbValue "true"]
+        @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue 1],
+        @[dbValue 456, dbValue "bar", dbValue 456.654, dbValue 0],
+        @[dbValue 789, dbValue "baz", dbValue 789.987, dbValue 1]
       ]
       examples = rows.to(Example)
 
@@ -265,7 +267,7 @@ proc toRow*(obj: object, force = false): Row =
     doAssert row[0].i == 123
     doAssert row[1].s == "foo"
     doAssert row[2].f == 123.321
-    doAssert row[3].s == "true"
+    doAssert row[3].i == 1
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -276,9 +278,12 @@ proc toRow*(obj: object, force = false): Row =
           let it {.inject.} = value
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
       elif typeof(value) is bool:
-        result.add dbValue $value
+        result.add dbValue(if value: 1 else: 0)
       elif typeof(value) is Option[bool]:
-        result.add if value.isSome: dbValue $get(value) else: dbValue nil
+        result.add(
+          if value.isSome: dbValue if get(value): 1 else: 0
+          else: dbValue nil
+        )
       else:
         result.add dbValue value
 
@@ -309,6 +314,6 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
     doAssert rows[0][0].i == 123
     doAssert rows[1][1].s == "bar"
     doAssert rows[2][2].f == 789.987
-    doAssert rows[1][3].s == "false"
+    doAssert rows[1][3].i == 0
 
   objs.mapIt(it.toRow(force))
