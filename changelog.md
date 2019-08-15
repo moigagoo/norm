@@ -7,7 +7,7 @@
 -   ✅—test suite improvement
 
 
-## 1.0.12 (WIP)
+## 1.0.12 (August 15, 2019)
 
 -   ➕ SQLite: Added boolean type conversion. Nim bools are stored as 1 and 0 in SQLite. SQLite's 0's are converted to `false`, any other number—to `true`.
 
