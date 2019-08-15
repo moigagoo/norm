@@ -9,6 +9,7 @@
 
 ## 1.0.12 (August 15, 2019)
 
+-   ❗ `formatIt` expression must evaluate to `DbValue`, implicit conversion has been removed.
 -   ➕ SQLite: Added boolean type conversion. Nim bools are stored as 1 and 0 in SQLite. SQLite's 0's are converted to `false`, any other number—to `true`.
 
 
