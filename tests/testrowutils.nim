@@ -12,28 +12,35 @@ suite "Basic object <-> row conversion":
       age: Natural
       height: float
       ssn: Option[int]
+      employed: Option[bool]
 
   let
-    user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123)
-    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123]
-    userWithoutSsn = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: none int)
-    rowWithoutSsn = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue nil]
+    user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123, employed: some true)
+    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123, dbValue 1]
+    userWithoutOptionals = SimpleUser(
+      name: "Alice",
+      age: 23,
+      height: 168.2,
+      ssn: none int,
+      employed: none bool
+    )
+    rowWithoutOptionals = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue nil, dbValue nil]
 
 
   test "Object -> row":
     check user.toRow() == row
-    check userWithoutSsn.toRow() == rowWithoutSsn
+    check userWithoutOptionals.toRow() == rowWithoutOptionals
 
   test "Row -> object":
     check row.to(SimpleUser) == user
-    check rowWithoutSsn.to(SimpleUser) == userWithoutSsn
+    check rowWithoutOptionals.to(SimpleUser) == userWithoutOptionals
 
   test "Object -> row -> object":
     check user.toRow().to(SimpleUser) == user
-    check userWithoutSsn.toRow().to(SimpleUser) == userWithoutSsn
+    check userWithoutOptionals.toRow().to(SimpleUser) == userWithoutOptionals
 
   test "Row -> object -> row":
-    check rowWithoutSsn.to(SimpleUser).toRow() == rowWithoutSsn
+    check rowWithoutOptionals.to(SimpleUser).toRow() == rowWithoutOptionals
 
 suite "Conversion with custom parser and formatter expressions":
   type
@@ -53,7 +60,7 @@ suite "Conversion with custom parser and formatter expressions":
     row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetimeString]
 
   setup:
-    var tmpUser = UserDatetimeAsString(createdAt: now())
+    var tmpUser {.used.} = UserDatetimeAsString(createdAt: now())
 
   test "Object -> row":
     check user.toRow() == row
@@ -88,7 +95,7 @@ suite "Conversion with custom parser and formatter procs":
     row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetime.toTimestamp()]
 
   setup:
-    var tmpUser = UserDatetimeAsTimestamp(createdAt: now())
+    var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
 
   test "Object -> row":
     check user.toRow() == row
@@ -162,7 +169,7 @@ suite "Bulk conversion with custom parser and formatter expressions":
     ]
 
   setup:
-    var tmpUsers = @[
+    var tmpUsers {.used.} = @[
       UserDatetimeAsString(createdAt: now()),
       UserDatetimeAsString(createdAt: now()),
       UserDatetimeAsString(createdAt: now())
@@ -209,7 +216,7 @@ suite "Bulk conversion with custom parser and formatter procs":
     ]
 
   setup:
-    var tmpUsers = @[
+    var tmpUsers {.used.} = @[
       UserDatetimeAsTimestamp(createdAt: now()),
       UserDatetimeAsTimestamp(createdAt: now()),
       UserDatetimeAsTimestamp(createdAt: now())
@@ -249,3 +256,34 @@ suite "Bulk conversion with custom parser and formatter procs":
   test "Rows -> objects -> rows":
     rows.to(tmpUsers)
     check tmpUsers.toRows() == rows
+
+suite "Boolean field conversion":
+  type
+    Car = object
+      manufacturer: string
+      model: string
+      used: bool
+      owned: Option[bool]
+      yellow: Option[bool]
+
+  let
+    car = Car(
+      manufacturer: "Toyota",
+      model: "true",
+      used: false,
+      owned: some true,
+      yellow: none bool
+    )
+    row = @[dbValue "Toyota", dbValue "true", dbValue 0, dbValue 1, dbValue nil]
+
+  test "Object -> row":
+    check car.toRow() == row
+
+  test "Row -> object":
+    check row.to(Car) == car
+
+  test "Object -> row -> object":
+    check car.toRow().to(Car) == car
+
+  test "Row -> object -> row":
+    check row.to(Car).toRow() == row

@@ -161,7 +161,7 @@ suite "Creating and dropping tables, CRUD":
       check someBook.id == 2
 
       expect KeyError:
-        let notExistingBook = Book.getOne("title=?", "Does not exist")
+        let notExistingBook {.used.} = Book.getOne("title=?", "Does not exist")
 
   test "Update records":
     withDb:

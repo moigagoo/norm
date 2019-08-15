@@ -15,8 +15,8 @@ Quickstart
 ==========
 
 .. code-block:: nim
-    import norm/sqlite                      # Import SQLite backend.
-    # import norm/postgres                  # Import PostgreSQL backend.
+    import norm/sqlite                        # Import SQLite backend.
+    # import norm/postgres                    # Import PostgreSQL backend.
     import logging                            # Import logging to inspect the generated SQL statements.
     import unicode, sugar, options
 

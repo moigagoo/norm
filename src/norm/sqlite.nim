@@ -69,17 +69,17 @@ proc getDbType(fieldRepr: FieldRepr): string =
 
   result =
     if fieldRepr.typ.kind == nnkIdent:
-      case $fieldRepr.typ:
-      of "int": "INTEGER NOT NULL"
-      of "string": "TEXT NOT NULL"
-      of "float": "REAL NOT NULL"
-      else: "TEXT NOT NULL"
+      case $fieldRepr.typ
+        of "int": "INTEGER NOT NULL"
+        of "string": "TEXT NOT NULL"
+        of "float": "REAL NOT NULL"
+        else: "TEXT NOT NULL"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
-      case $fieldRepr.typ[1]:
-      of "int": "INTEGER"
-      of "string": "TEXT"
-      of "float": "REAL"
-      else: "TEXT"
+      case $fieldRepr.typ[1]
+        of "int": "INTEGER"
+        of "string": "TEXT"
+        of "float": "REAL"
+        else: "TEXT"
     else: "TEXT NOT NULL"
 
 proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
@@ -102,13 +102,12 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
       result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
       expectKind(prag.value, {nnkIdent, nnkDotExpr})
-
       result.add case prag.value.kind
-      of nnkIdent:
-        " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
-      of nnkDotExpr:
-        " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
-      else: ""
+        of nnkIdent:
+          " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
+        of nnkDotExpr:
+          " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
+        else: ""
     elif prag.name == "onUpdate" and prag.kind == pkKval:
       result.add " ON UPDATE $#" % $prag.value
     elif prag.name == "onDelete" and prag.kind == pkKval:

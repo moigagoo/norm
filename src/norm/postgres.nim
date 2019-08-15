@@ -67,10 +67,10 @@ proc getDbType(fieldRepr: FieldRepr): string =
       return "SERIAL"
 
   result = case $fieldRepr.typ
-  of "int": "INTEGER"
-  of "string": "TEXT"
-  of "float": "REAL"
-  else: "TEXT"
+    of "int": "INTEGER"
+    of "string": "TEXT"
+    of "float": "REAL"
+    else: "TEXT"
 
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbType" and prag.kind == pkKval:
@@ -96,16 +96,15 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
       result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
       expectKind(prag.value, {nnkIdent, nnkDotExpr})
-
       result.add case prag.value.kind
-      of nnkIdent:
-        ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value).getTable()]
-      of nnkDotExpr:
-        ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.getColumn(),
-                                                    dbObjReprs.getByName($prag.value[0]).getTable(),
-                                                    $prag.value[1]]
-      else: ""
+        of nnkIdent:
+          ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
+                                                      dbObjReprs.getByName($prag.value).getTable()]
+        of nnkDotExpr:
+          ", FOREIGN KEY ($#) REFERENCES $# ($#)" % [fieldRepr.getColumn(),
+                                                      dbObjReprs.getByName($prag.value[0]).getTable(),
+                                                      $prag.value[1]]
+        else: ""
     elif prag.name == "onDelete" and prag.kind == pkKval:
       result.add " ON DELETE $#" % $prag.value
     elif prag.name == "onUpdate" and prag.kind == pkKval:

@@ -1,4 +1,6 @@
 .vscode
+*.sublime-project
+*.sublime-workspace
 
 *.exe
 *.html
