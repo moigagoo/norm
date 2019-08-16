@@ -4,6 +4,22 @@
 SQLite Backend
 ##############
 
+The following Nim types are converted automatically:
+
+================== ====================
+Nim Type           SQLite Type
+================== ====================
+``int``            ``INTEGER NOT NULL``
+``string``         ``TEXT NOT NULL``
+``float``          ``REAL NOT NULL``
+``bool``           ``INTEGER NOT NULL``
+``Option[int]``    ``INTEGER``
+``Option[string]`` ``TEXT``
+``Option[float]``  ``REAL``
+``Option[bool]``   ``INTEGER``
+================== ====================
+
+Nim ``true`` and ``false`` values are stored as ``1`` and ``0`` in SQLite.
 ]##
 
 
