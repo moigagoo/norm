@@ -4,6 +4,16 @@
 PostgreSQL Backend
 ##################
 
+The following Nim types are converted automatically:
+
+================== ====================
+Nim Type           SQLite Type
+================== ====================
+``int``            ``INTEGER``
+``string``         ``TEXT``
+``float``          ``REAL``
+``bool``           ``BOOLEAN``
+================== ====================
 ]##
 
 
