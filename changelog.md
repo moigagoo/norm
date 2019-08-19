@@ -6,6 +6,11 @@
 -   🔨—refactoring
 -   ✅—test suite improvement
 
+## 1.0.14 (WIP)
+
+-   ➕ Postgres: Added boolean type support.
+
+
 ## 1.0.13 (August 16, 2019)
 
 -   👌 SQLite: `TEXT` type fields would be created for `bool` type object fields, whereas `INTEGER` should have been used.

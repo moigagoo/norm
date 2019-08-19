@@ -53,7 +53,7 @@ suite "Creating and dropping tables, CRUD":
         var
           user = User(email: "test-$#@example.com" % $i, ssn: some i,
                       birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
-          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i<6: true else: false)
+          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
           book = Book(title: "Book $#" % $i, authorEmail: user.email,
                       publisherTitle: publisher.title)
           edition = Edition(title: "Edition $#" % $i)
