@@ -70,6 +70,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
     of "int": "INTEGER"
     of "string": "TEXT"
     of "float": "REAL"
+    of "bool": "BOOLEAN"
     else: "TEXT"
 
   for prag in fieldRepr.signature.pragmas:
