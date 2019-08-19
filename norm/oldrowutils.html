@@ -942,13 +942,15 @@ function main() {
     <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
     <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
     <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
+    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
 
 <span class="Keyword">let</span>
-  <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">intField</span><span class="Other">:</span> <span class="DecNumber">123</span><span class="Other">,</span> <span class="Identifier">strField</span><span class="Other">:</span> <span class="StringLit">&quot;Foo&quot;</span><span class="Other">,</span> <span class="Identifier">floatField</span><span class="Other">:</span> <span class="FloatNumber">123.321</span><span class="Other">)</span>
+  <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">intField</span><span class="Other">:</span> <span class="DecNumber">123</span><span class="Other">,</span> <span class="Identifier">strField</span><span class="Other">:</span> <span class="StringLit">&quot;Foo&quot;</span><span class="Other">,</span> <span class="Identifier">floatField</span><span class="Other">:</span> <span class="FloatNumber">123.321</span><span class="Other">,</span> <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">)</span>
   <span class="Identifier">row</span> <span class="Other">=</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">toRow</span><span class="Other">(</span><span class="Other">)</span>
 <span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span> <span class="Operator">==</span> <span class="StringLit">&quot;123&quot;</span>
 <span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span> <span class="Operator">==</span> <span class="StringLit">&quot;foo&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span> <span class="Operator">==</span> <span class="StringLit">&quot;123.321&quot;</span></pre>
+<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span> <span class="Operator">==</span> <span class="StringLit">&quot;123.321&quot;</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">3</span><span class="Other">]</span> <span class="Operator">==</span> <span class="StringLit">&quot;t&quot;</span></pre>
 
 </dd>
 <a id="toRows,openArray[]"></a>
@@ -1049,14 +1051,16 @@ Check if row is empty, i.e. all its items are <tt class="docutils literal"><span
     <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
     <span class="Identifier">strField</span><span class="Other">:</span> <span class="Identifier">string</span>
     <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
+    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
     <span class="Identifier">dtField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">parser</span><span class="Other">:</span> <span class="Identifier">parseDateTime</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">DateTime</span>
 
-<span class="Keyword">let</span> <span class="Identifier">row</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="StringLit">&quot;123&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;foo&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;123.321&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;2019-01-21 15:03:21+04:00&quot;</span><span class="Other">]</span>
+<span class="Keyword">let</span> <span class="Identifier">row</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="StringLit">&quot;123&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;foo&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;123.321&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;t&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;2019-01-21 15:03:21+04:00&quot;</span><span class="Other">]</span>
 <span class="Keyword">var</span> <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">dtField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span>
 <span class="Identifier">row</span><span class="Other">.</span><span class="Identifier">to</span><span class="Other">(</span><span class="Identifier">example</span><span class="Other">)</span>
 <span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">intField</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
 <span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">strField</span> <span class="Operator">==</span> <span class="StringLit">&quot;foo&quot;</span>
 <span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">floatField</span> <span class="Operator">==</span> <span class="FloatNumber">123.321</span>
+<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">boolField</span> <span class="Operator">==</span> <span class="Identifier">true</span>
 <span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">dtField</span> <span class="Operator">==</span> <span class="StringLit">&quot;2019-01-21 15:03:21+04:00&quot;</span><span class="Other">.</span><span class="Identifier">parseDateTime</span><span class="Other">(</span><span class="Other">)</span></pre>
 
 </dd>
@@ -1104,7 +1108,7 @@ Check if row is empty, i.e. all its items are <tt class="docutils literal"><span
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-16 09:58:59 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-19 08:23:29 UTC</small>
       </div>
     </div>
   </div>
