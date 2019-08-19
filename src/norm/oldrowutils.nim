@@ -60,9 +60,10 @@ template to*(row: Row, obj: var object) =
         intField: int
         strField: string
         floatField: float
+        boolField: bool
         dtField {.parser: parseDateTime.}: DateTime
 
-    let row = @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"]
+    let row = @["123", "foo", "123.321", "t", "2019-01-21 15:03:21+04:00"]
 
     var example = Example(dtField: now())
 
@@ -71,6 +72,7 @@ template to*(row: Row, obj: var object) =
     doAssert example.intField == 123
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
+    doAssert example.boolField == true
     doAssert example.dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
 
   var i: int
@@ -88,6 +90,8 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = parseInt row[i]
     elif type(value) is float:
       obj.dot(field) = parseFloat row[i]
+    elif type(value) is bool:
+      obj.dot(field) = if row[i] == "f": false else: true
     else:
       raise newException(ValueError, "Parser for $# is undefined." % type(value))
 
@@ -213,14 +217,16 @@ proc toRow*(obj: object, force = false): Row =
         intField: int
         strField{.formatIt: it.toLowerAscii().}: string
         floatField: float
+        boolField: bool
 
     let
-      example = Example(intField: 123, strField: "Foo", floatField: 123.321)
+      example = Example(intField: 123, strField: "Foo", floatField: 123.321, boolField: true)
       row = example.toRow()
 
     doAssert row[0] == "123"
     doAssert row[1] == "foo"
     doAssert row[2] == "123.321"
+    doAssert row[3] == "t"
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -230,6 +236,8 @@ proc toRow*(obj: object, force = false): Row =
         block:
           let it {.inject.} = value
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
+      elif typeof(value) is bool:
+        result.add if value: "t" else: "f"
       else:
         result.add $value
 
