@@ -210,9 +210,9 @@ suite "Bulk conversion with custom parser and formatter procs":
       UserDatetimeAsTimestamp(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
     ]
     rows = @[
-      @[dbValue "Alice", dbValue  23, dbValue 168.2, dbValue datetime.toTime().toUnix()],
-      @[dbValue "Bob", dbValue  34, dbValue 172.5, dbValue datetime.toTime().toUnix()],
-      @[dbValue "Michael", dbValue  45, dbValue 180.0, dbValue datetime.toTime().toUnix()]
+      @[dbValue "Alice", dbValue  23, dbValue 168.2, datetime.toTimestamp()],
+      @[dbValue "Bob", dbValue  34, dbValue 172.5, datetime.toTimestamp()],
+      @[dbValue "Michael", dbValue  45, dbValue 180.0, datetime.toTimestamp()]
     ]
 
   setup:
