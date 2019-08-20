@@ -321,3 +321,32 @@ suite "Boolean field conversion":
 
   test "Row -> object -> row":
     check row.to(Car).toRow() == row
+
+suite "DateTime field conversion":
+  type
+    Person = object
+      lastLogin: DateTime
+
+  let
+    person = Person(
+      lastLogin: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz"),
+    )
+    row = @["2019-08-19 23:32:53+04"]
+
+  setup:
+    var tmpPerson {.used.} = Person(lastLogin: now())
+
+  test "Object -> row":
+    check person.toRow() == row
+
+  test "Row -> object":
+    row.to(tmpPerson)
+    check tmpPerson == person
+
+  test "Object -> row -> object":
+    person.toRow().to(tmpPerson)
+    check tmpPerson == person
+
+  test "Row -> object -> row":
+    row.to(tmpPerson)
+    check tmpPerson.toRow() == row
