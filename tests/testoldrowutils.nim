@@ -331,7 +331,7 @@ suite "DateTime field conversion":
     person = Person(
       lastLogin: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz"),
     )
-    row = @["2019-08-19 23:32:53+04"]
+    row = @["2019-08-19 19:32:53+00"]
 
   setup:
     var tmpPerson {.used.} = Person(lastLogin: now())

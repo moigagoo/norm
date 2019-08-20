@@ -248,7 +248,7 @@ proc toRow*(obj: object, force = false): Row =
     doAssert row[1] == "foo"
     doAssert row[2] == "123.321"
     doAssert row[3] == "t"
-    doAssert row[4] == "2019-08-20 14:27:55+04"
+    doAssert row[4] == "2019-08-20 10:27:55+00"
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
