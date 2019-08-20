@@ -1,4 +1,4 @@
-import strutils, sequtils
+import strutils, sequtils, times
 import sugar
 import macros; export macros
 
@@ -6,6 +6,9 @@ import objutils, pragmas
 
 
 type Row = seq[string]
+
+
+const PG_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:sszz"
 
 
 template parser*(op: (string) -> any) {.pragma.}
@@ -53,7 +56,7 @@ template to*(row: Row, obj: var object) =
   runnableExamples:
     import times, sugar
 
-    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszz")
 
     type
       Example = object
@@ -62,10 +65,18 @@ template to*(row: Row, obj: var object) =
         floatField: float
         boolField: bool
         dtField {.parser: parseDateTime.}: DateTime
+        tsField: DateTime
 
-    let row = @["123", "foo", "123.321", "t", "2019-01-21 15:03:21+04:00"]
+    let row = @[
+      "123",
+      "foo",
+      "123.321",
+      "t",
+      "2019-01-21 15:03:21+04",
+      "2019-08-20 14:27:55+04"
+    ]
 
-    var example = Example(dtField: now())
+    var example = Example(dtField: now(), tsField: now())
 
     row.to(example)
 
@@ -73,7 +84,8 @@ template to*(row: Row, obj: var object) =
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
     doAssert example.boolField == true
-    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
+    doAssert example.dtField == "2019-01-21 15:03:21+04".parseDateTime()
+    doAssert example.tsField == "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz")
 
   var i: int
 
@@ -84,16 +96,19 @@ template to*(row: Row, obj: var object) =
       block:
         let it {.inject.} = row[i]
         obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
-    elif type(value) is string:
+    elif typeof(value) is string:
       obj.dot(field) = row[i]
-    elif type(value) is int:
+    elif typeof(value) is int:
       obj.dot(field) = parseInt row[i]
-    elif type(value) is float:
+    elif typeof(value) is float:
       obj.dot(field) = parseFloat row[i]
-    elif type(value) is bool:
+    elif typeof(value) is bool:
       obj.dot(field) = if row[i] == "f": false else: true
+    elif typeof(value) is DateTime:
+      echo row[i]
+      obj.dot(field) = row[i].parse(PG_DATETIME_FORMAT)
     else:
-      raise newException(ValueError, "Parser for $# is undefined." % type(value))
+      raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
 
     inc i
 
@@ -108,7 +123,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
   runnableExamples:
     import times, sugar
 
-    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszz")
 
     type
       Example = object
@@ -118,9 +133,9 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
         dtField {.parser: parseDateTime.}: DateTime
 
     let rows = @[
-      @["123", "foo", "123.321", "2019-01-21 15:03:21+04:00"],
-      @["456", "bar", "456.654", "2019-02-22 16:14:32+04:00"],
-      @["789", "baz", "789.987", "2019-03-23 17:25:43+04:00"]
+      @["123", "foo", "123.321", "2019-01-21 15:03:21+04"],
+      @["456", "bar", "456.654", "2019-02-22 16:14:32+04"],
+      @["789", "baz", "789.987", "2019-03-23 17:25:43+04"]
     ]
 
     var examples = @[
@@ -134,7 +149,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     doAssert examples[0].intField == 123
     doAssert examples[1].strField == "bar"
     doAssert examples[2].floatField == 789.987
-    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parseDateTime()
+    doAssert examples[0].dtField == "2019-01-21 15:03:21+04".parseDateTime()
 
   objs.setLen min(len(rows), len(objs))
 
@@ -210,7 +225,7 @@ proc toRow*(obj: object, force = false): Row =
   ]##
 
   runnableExamples:
-    import strutils, sequtils, sugar
+    import strutils, sequtils, times, sugar
 
     type
       Example = object
@@ -218,15 +233,23 @@ proc toRow*(obj: object, force = false): Row =
         strField{.formatIt: it.toLowerAscii().}: string
         floatField: float
         boolField: bool
+        tsField: DateTime
 
     let
-      example = Example(intField: 123, strField: "Foo", floatField: 123.321, boolField: true)
+      example = Example(
+        intField: 123,
+        strField: "Foo",
+        floatField: 123.321,
+        boolField: true,
+        tsField: "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz")
+      )
       row = example.toRow()
 
     doAssert row[0] == "123"
     doAssert row[1] == "foo"
     doAssert row[2] == "123.321"
     doAssert row[3] == "t"
+    doAssert row[4] == "2019-08-20 14:27:55+04"
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -238,6 +261,8 @@ proc toRow*(obj: object, force = false): Row =
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
       elif typeof(value) is bool:
         result.add if value: "t" else: "f"
+      elif typeof(value) is DateTime:
+        result.add value.format(PG_DATETIME_FORMAT)
       else:
         result.add $value
 
