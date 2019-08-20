@@ -35,13 +35,13 @@ suite "Conversion with custom parser and formatter expressions":
       height: float
       employed: bool
       createdAt {.
-        formatIt: $it.format("yyyy-MM-dd HH:mm:sszzz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+        formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz", utc())
       .}: DateTime
 
   let
     datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz", utc())
     user = UserDatetimeAsString(
       name: "Alice",
       age: 23,
@@ -83,7 +83,7 @@ suite "Conversion with custom parser and formatter procs":
       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
   let
-    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
     user = UserDatetimeAsTimestamp(
       name: "Alice",
       age: 23,
@@ -151,13 +151,13 @@ suite "Bulk conversion with custom parser and formatter expressions":
       height: float
       employed: bool
       createdAt {.
-        formatIt: $it.format("yyyy-MM-dd HH:mm:sszzz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+        formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz", utc())
       .}: DateTime
 
   let
     datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz", utc())
     users = @[
       UserDatetimeAsString(
         name: "Alice",
@@ -223,7 +223,7 @@ suite "Bulk conversion with custom parser and formatter procs":
       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
   let
-    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
     users = @[
       UserDatetimeAsTimestamp(
         name: "Alice",

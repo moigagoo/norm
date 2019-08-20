@@ -56,7 +56,7 @@ suite "Creating and dropping tables, CRUD":
             email: "test-$#@example.com" % $i,
             ssn: some i,
             birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
-            lastLogin: parse("2019-08-19 23:32:5$1+04:00" % $i, "yyyy-MM-dd HH:mm:sszzz")
+            lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
           )
           publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
           book = Book(title: "Book $#" % $i, authorEmail: user.email,
