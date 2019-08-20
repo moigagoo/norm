@@ -105,7 +105,6 @@ template to*(row: Row, obj: var object) =
     elif typeof(value) is bool:
       obj.dot(field) = if row[i] == "f": false else: true
     elif typeof(value) is DateTime:
-      echo row[i]
       obj.dot(field) = row[i].parse(PG_DATETIME_FORMAT)
     else:
       raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
