@@ -287,3 +287,42 @@ suite "Boolean field conversion":
 
   test "Row -> object -> row":
     check row.to(Car).toRow() == row
+
+suite "DateTime field conversion":
+  type
+    Person = object
+      birthDate: DateTime
+      weddingDate: Option[DateTime]
+      lastLogin: DateTime
+      lastLogout: Option[DateTime]
+
+  let
+    person = Person(
+      birthDate: "1995-07-18".parse("yyyy-MM-dd", utc()),
+      weddingDate: some "2015-11-08".parse("yyyy-MM-dd", utc()),
+      lastLogin: "2019-08-19 23:32:53+04:00".parse("yyyy-MM-dd HH:mm:sszzz"),
+      lastLogout: none DateTime
+    )
+    row = @[dbValue 806025600, dbValue 1446940800, dbValue 1566243173, dbValue nil]
+
+  setup:
+    var tmpPerson {.used.} = Person(
+      birthDate: now(),
+      weddingDate: some now(),
+      lastLogin: now(),
+      lastLogout: none DateTime)
+
+  test "Object -> row":
+    check person.toRow() == row
+
+  test "Row -> object":
+    row.to(tmpPerson)
+    check tmpPerson == person
+
+  test "Object -> row -> object":
+    person.toRow().to(tmpPerson)
+    check tmpPerson == person
+
+  test "Row -> object -> row":
+    row.to(tmpPerson)
+    check tmpPerson.toRow() == row
