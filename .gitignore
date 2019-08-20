@@ -8,5 +8,5 @@
 tests/testobjutils
 tests/testpostgres
 tests/testrowutils
-#tests/testoldrowutils
+tests/testoldrowutils
 tests/testsqlite
