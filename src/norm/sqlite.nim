@@ -86,13 +86,13 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind == nnkIdent:
       case $fieldRepr.typ
-        of "int", "bool": "INTEGER NOT NULL"
+        of "int", "bool", "DateTime": "INTEGER NOT NULL"
         of "string": "TEXT NOT NULL"
         of "float": "REAL NOT NULL"
         else: "TEXT NOT NULL"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "bool": "INTEGER"
+        of "int", "bool", "DateTime": "INTEGER"
         of "string": "TEXT"
         of "float": "REAL"
         else: "TEXT"
