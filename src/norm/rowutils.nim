@@ -1,4 +1,4 @@
-import sequtils, options
+import sequtils, options, times
 import sugar
 import macros; export macros
 
@@ -53,7 +53,7 @@ template to*(row: Row, obj: var object) =
     import times, sugar
     import ndb/sqlite
 
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz")
 
     type
       Example = object
@@ -62,24 +62,26 @@ template to*(row: Row, obj: var object) =
         floatField: float
         boolField: bool
         dtField {.parser: parseDateTime.}: DateTime
+        tsField: DateTime
 
     let row = @[
       dbValue 123,
       dbValue "foo",
       dbValue 123.321,
       dbValue 1,
-      dbValue "2019-01-21 15:03:21+04:00"
+      dbValue "2019-01-21 15:03:21+04",
+      dbValue 1566243173
     ]
 
-    var example = Example(dtField: now())
-
+    var example = Example(dtField: now(), tsField: now())
     row.to(example)
 
     doAssert example.intField == 123
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
     doAssert example.boolField == true
-    doAssert example.dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    doAssert example.dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz")
+    doAssert example.tsField == "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz")
 
   var i: int
 
@@ -98,6 +100,8 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = row[i].f
     elif typeof(value) is bool:
       obj.dot(field) = if row[i].i == 0: false else: true
+    elif typeof(value) is DateTime:
+      obj.dot(field) = row[i].i.fromUnix().utc()
     elif typeof(value) is Option:
       when typeof(get(value)) is string:
         obj.dot(field) = if row[i].kind == dvkNull: none string else: some row[i].s
@@ -109,6 +113,9 @@ template to*(row: Row, obj: var object) =
         obj.dot(field) =
           if row[i].kind == dvkNull: none bool
           else: some if row[i].i == 0: false else: true
+      elif typeof(get(value)) is DateTime:
+        obj.dot(field) =
+          if row[i].kind == dvkNull: none DateTime else: some row[i].i.fromUnix().utc()
     else:
       raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
 
@@ -126,7 +133,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     import times, sugar
     import ndb/sqlite
 
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszzz")
+    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz")
 
     type
       Example = object
@@ -142,21 +149,21 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
         dbValue "foo",
         dbValue 123.321,
         dbValue 1,
-        dbValue "2019-01-21 15:03:21+04:00"
+        dbValue "2019-01-21 15:03:21+04"
       ],
       @[
         dbValue 456,
         dbValue "bar",
         dbValue 456.654,
         dbValue 0,
-        dbValue "2019-02-22 16:14:32+04:00"
+        dbValue "2019-02-22 16:14:32+04"
       ],
       @[
         dbValue 789,
         dbValue "baz",
         dbValue 789.987,
         dbValue 1,
-        dbValue "2019-03-23 17:25:43+04:00"
+        dbValue "2019-03-23 17:25:43+04"
       ]
     ]
 
@@ -173,7 +180,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     doAssert examples[1].strField == "bar"
     doAssert examples[2].floatField == 789.987
     doAssert examples[0].boolField == true
-    doAssert examples[0].dtField == "2019-01-21 15:03:21+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    doAssert examples[0].dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz")
 
   objs.setLen min(len(rows), len(objs))
 
@@ -251,7 +258,7 @@ proc toRow*(obj: object, force = false): Row =
   ]##
 
   runnableExamples:
-    import strutils, ndb/sqlite
+    import strutils, times, ndb/sqlite
 
     type
       Example = object
@@ -259,15 +266,23 @@ proc toRow*(obj: object, force = false): Row =
         strField{.formatIt: dbValue(it.toLowerAscii()).}: string
         floatField: float
         boolField: bool
+        tsField: DateTime
 
     let
-      example = Example(intField: 123, strField: "Foo", floatField: 123.321, boolField: true)
+      example = Example(
+        intField: 123,
+        strField: "Foo",
+        floatField: 123.321,
+        boolField: true,
+        tsField: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz")
+      )
       row = example.toRow()
 
     doAssert row[0].i == 123
     doAssert row[1].s == "foo"
     doAssert row[2].f == 123.321
     doAssert row[3].i == 1
+    doAssert row[4].i == 1566243173
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -284,6 +299,10 @@ proc toRow*(obj: object, force = false): Row =
           if value.isSome: dbValue if get(value): 1 else: 0
           else: dbValue nil
         )
+      elif typeof(value) is DateTime:
+        result.add dbValue value.toTime().toUnix()
+      elif typeof(value) is Option[DateTime]:
+        result.add if value.isSome: dbValue get(value).toTime().toUnix() else: dbValue nil
       else:
         result.add dbValue value
 

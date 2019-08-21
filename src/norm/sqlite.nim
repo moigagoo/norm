@@ -6,20 +6,24 @@ SQLite Backend
 
 The following Nim types are converted automatically:
 
-================== ====================
-Nim Type           SQLite Type
-================== ====================
-``int``            ``INTEGER NOT NULL``
-``string``         ``TEXT NOT NULL``
-``float``          ``REAL NOT NULL``
-``bool``           ``INTEGER NOT NULL``
-``Option[int]``    ``INTEGER``
-``Option[string]`` ``TEXT``
-``Option[float]``  ``REAL``
-``Option[bool]``   ``INTEGER``
-================== ====================
+==================== ====================
+Nim Type             SQLite Type
+==================== ====================
+``int``              ``INTEGER NOT NULL``
+``string``           ``TEXT NOT NULL``
+``float``            ``REAL NOT NULL``
+``bool``             ``INTEGER NOT NULL``
+``DateTime``         ``INTEGER NOT NULL``
+``Option[int]``      ``INTEGER``
+``Option[string]``   ``TEXT``
+``Option[float]``    ``REAL``
+``Option[bool]``     ``INTEGER``
+``Option[DateTime]`` ``INTEGER``
+==================== ====================
 
-Nim ``true`` and ``false`` values are stored as ``1`` and ``0`` in SQLite.
+Nim ``true`` and ``false`` values are stored as ``1`` and ``0``.
+
+Nim ``times.DateTime`` values are stored as ``INTEGER`` Unix epoch timestamps.
 ]##
 
 
@@ -86,13 +90,13 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind == nnkIdent:
       case $fieldRepr.typ
-        of "int", "bool": "INTEGER NOT NULL"
+        of "int", "bool", "DateTime": "INTEGER NOT NULL"
         of "string": "TEXT NOT NULL"
         of "float": "REAL NOT NULL"
         else: "TEXT NOT NULL"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "bool": "INTEGER"
+        of "int", "bool", "DateTime": "INTEGER"
         of "string": "TEXT"
         of "float": "REAL"
         else: "TEXT"

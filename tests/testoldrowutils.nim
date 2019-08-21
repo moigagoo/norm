@@ -35,13 +35,13 @@ suite "Conversion with custom parser and formatter expressions":
       height: float
       employed: bool
       createdAt {.
-        formatIt: $it.format("yyyy-MM-dd HH:mm:sszzz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+        formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    datetimeString = "2019-01-30 12:34:56+00"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
     user = UserDatetimeAsString(
       name: "Alice",
       age: 23,
@@ -83,7 +83,7 @@ suite "Conversion with custom parser and formatter procs":
       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
   let
-    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
     user = UserDatetimeAsTimestamp(
       name: "Alice",
       age: 23,
@@ -151,13 +151,13 @@ suite "Bulk conversion with custom parser and formatter expressions":
       height: float
       employed: bool
       createdAt {.
-        formatIt: $it.format("yyyy-MM-dd HH:mm:sszzz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+        formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    datetimeString = "2019-01-30 12:34:56+00"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
     users = @[
       UserDatetimeAsString(
         name: "Alice",
@@ -223,7 +223,7 @@ suite "Bulk conversion with custom parser and formatter procs":
       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
   let
-    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
     users = @[
       UserDatetimeAsTimestamp(
         name: "Alice",
@@ -321,3 +321,32 @@ suite "Boolean field conversion":
 
   test "Row -> object -> row":
     check row.to(Car).toRow() == row
+
+suite "DateTime field conversion":
+  type
+    Person = object
+      lastLogin: DateTime
+
+  let
+    person = Person(
+      lastLogin: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz"),
+    )
+    row = @["2019-08-19 19:32:53+00"]
+
+  setup:
+    var tmpPerson {.used.} = Person(lastLogin: now())
+
+  test "Object -> row":
+    check person.toRow() == row
+
+  test "Row -> object":
+    row.to(tmpPerson)
+    check tmpPerson == person
+
+  test "Object -> row -> object":
+    person.toRow().to(tmpPerson)
+    check tmpPerson == person
+
+  test "Row -> object -> row":
+    row.to(tmpPerson)
+    check tmpPerson.toRow() == row
