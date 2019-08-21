@@ -886,11 +886,14 @@ function main() {
 <tr><td><tt class="docutils literal"><span class="pre">string</span></tt></td><td><tt class="docutils literal"><span class="pre">TEXT NOT NULL</span></tt></td></tr>
 <tr><td><tt class="docutils literal"><span class="pre">float</span></tt></td><td><tt class="docutils literal"><span class="pre">REAL NOT NULL</span></tt></td></tr>
 <tr><td><tt class="docutils literal"><span class="pre">bool</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER NOT NULL</span></tt></td></tr>
+<tr><td><tt class="docutils literal"><span class="pre">DateTime</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER NOT NULL</span></tt></td></tr>
 <tr><td><tt class="docutils literal"><span class="pre">Option[int]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
 <tr><td><tt class="docutils literal"><span class="pre">Option[string]</span></tt></td><td><tt class="docutils literal"><span class="pre">TEXT</span></tt></td></tr>
 <tr><td><tt class="docutils literal"><span class="pre">Option[float]</span></tt></td><td><tt class="docutils literal"><span class="pre">REAL</span></tt></td></tr>
 <tr><td><tt class="docutils literal"><span class="pre">Option[bool]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
-</table><p>Nim <tt class="docutils literal"><span class="pre">true</span></tt> and <tt class="docutils literal"><span class="pre">false</span></tt> values are stored as <tt class="docutils literal"><span class="pre">1</span></tt> and <tt class="docutils literal"><span class="pre">0</span></tt> in SQLite. </p>
+<tr><td><tt class="docutils literal"><span class="pre">Option[DateTime]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
+</table><p>Nim <tt class="docutils literal"><span class="pre">true</span></tt> and <tt class="docutils literal"><span class="pre">false</span></tt> values are stored as <tt class="docutils literal"><span class="pre">1</span></tt> and <tt class="docutils literal"><span class="pre">0</span></tt>.</p>
+<p>Nim <tt class="docutils literal"><span class="pre">times.DateTime</span></tt> values are stored as <tt class="docutils literal"><span class="pre">INTEGER</span></tt> Unix epoch timestamps. </p>
 </p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -1016,7 +1019,7 @@ Generate <tt class="docutils literal"><span class="pre">DELETE</span></tt> query
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-19 11:29:24 UTC</small>
+        <small>Made with Nim. Generated: 2019-08-21 07:16:55 UTC</small>
       </div>
     </div>
   </div>
