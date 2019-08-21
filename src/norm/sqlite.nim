@@ -28,7 +28,7 @@ Nim ``times.DateTime`` values are stored as ``INTEGER`` Unix epoch timestamps.
 
 
 import strutils, macros, typetraits, logging, options
-import ndb/sqlite
+import ndb / sqlite
 
 import rowutils, objutils, pragmas
 
@@ -305,7 +305,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           getManyQuery = genGetManyQuery(objs[0], cond)
-          params = @params & @[dbValue min(limit, len(objs)), dbValue offset]
+          params = @params & @[?min(limit, len(objs)), ?offset]
 
         debug getManyQuery, " <- ", params.join(", ")
 
@@ -332,7 +332,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           updateQuery = genUpdateQuery(obj, force)
-          params = obj.toRow(force) & dbValue obj.id
+          params = obj.toRow(force) & ?obj.id
 
         debug updateQuery, " <- ", params.join(", ")
 

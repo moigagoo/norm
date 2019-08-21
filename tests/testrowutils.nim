@@ -2,7 +2,7 @@ import unittest
 import times, options
 import norm / rowutils
 
-import ndb/sqlite
+import ndb / sqlite
 
 
 suite "Basic object <-> row conversion":
@@ -16,7 +16,7 @@ suite "Basic object <-> row conversion":
 
   let
     user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123, employed: some true)
-    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue 123, dbValue 1]
+    row = @[?"Alice", ?23, ?168.2, ?123, ?1]
     userWithoutOptionals = SimpleUser(
       name: "Alice",
       age: 23,
@@ -24,7 +24,7 @@ suite "Basic object <-> row conversion":
       ssn: none int,
       employed: none bool
     )
-    rowWithoutOptionals = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue nil, dbValue nil]
+    rowWithoutOptionals = @[?"Alice", ?23, ?168.2, ?nil, ?nil]
 
 
   test "Object -> row":
@@ -57,7 +57,7 @@ suite "Conversion with custom parser and formatter expressions":
     datetimeString = "2019-01-30 12:34:56Z"
     datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
     user = UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
-    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetimeString]
+    row = @[?"Alice", ?23, ?168.2, ?datetimeString]
 
   setup:
     var tmpUser {.used.} = UserDatetimeAsString(createdAt: now())
@@ -78,7 +78,7 @@ suite "Conversion with custom parser and formatter expressions":
     check tmpUser.toRow() == row
 
 suite "Conversion with custom parser and formatter procs":
-  proc toTimestamp(dt: DateTime): DbValue = dbValue dt.toTime().toUnix()
+  proc toTimestamp(dt: DateTime): DbValue = ?dt.toTime().toUnix()
 
   proc toDatetime(ts: DbValue): DateTime = ts.i.fromUnix().utc()
 
@@ -92,7 +92,7 @@ suite "Conversion with custom parser and formatter procs":
   let
     datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
     user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
-    row = @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetime.toTimestamp()]
+    row = @[?"Alice", ?23, ?168.2, ?datetime.toTimestamp()]
 
   setup:
     var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
@@ -126,9 +126,9 @@ suite "Basic bulk object <-> row conversion":
       SimpleUser(name: "Michael", age: 45, height: 180.0)
     ]
     rows = @[
-      @[dbValue "Alice", dbValue 23, dbValue 168.2],
-      @[dbValue "Bob", dbValue 34, dbValue 172.5],
-      @[dbValue "Michael", dbValue 45, dbValue 180.0]
+      @[?"Alice", ?23, ?168.2],
+      @[?"Bob", ?34, ?172.5],
+      @[?"Michael", ?45, ?180.0]
     ]
 
   test "Objects -> rows":
@@ -163,9 +163,9 @@ suite "Bulk conversion with custom parser and formatter expressions":
       UserDatetimeAsString(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
     ]
     rows = @[
-      @[dbValue "Alice", dbValue 23, dbValue 168.2, dbValue datetimeString],
-      @[dbValue "Bob", dbValue 34, dbValue 172.5, dbValue datetimeString],
-      @[dbValue "Michael", dbValue 45, dbValue 180.0, dbValue datetimeString]
+      @[?"Alice", ?23, ?168.2, ?datetimeString],
+      @[?"Bob", ?34, ?172.5, ?datetimeString],
+      @[?"Michael", ?45, ?180.0, ?datetimeString]
     ]
 
   setup:
@@ -191,7 +191,7 @@ suite "Bulk conversion with custom parser and formatter expressions":
     check tmpUsers.toRows() == rows
 
 suite "Bulk conversion with custom parser and formatter procs":
-  proc toTimestamp(dt: DateTime): DbValue = dbValue dt.toTime().toUnix()
+  proc toTimestamp(dt: DateTime): DbValue = ?dt.toTime().toUnix()
 
   proc toDatetime(ts: DbValue): DateTime = ts.i.fromUnix().utc()
 
@@ -210,9 +210,9 @@ suite "Bulk conversion with custom parser and formatter procs":
       UserDatetimeAsTimestamp(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
     ]
     rows = @[
-      @[dbValue "Alice", dbValue  23, dbValue 168.2, datetime.toTimestamp()],
-      @[dbValue "Bob", dbValue  34, dbValue 172.5, datetime.toTimestamp()],
-      @[dbValue "Michael", dbValue  45, dbValue 180.0, datetime.toTimestamp()]
+      @[?"Alice", ?23, ?168.2, datetime.toTimestamp()],
+      @[?"Bob", ?34, ?172.5, datetime.toTimestamp()],
+      @[?"Michael", ?45, ?180.0, datetime.toTimestamp()]
     ]
 
   setup:
@@ -274,7 +274,7 @@ suite "Boolean field conversion":
       owned: some true,
       yellow: none bool
     )
-    row = @[dbValue "Toyota", dbValue "true", dbValue 0, dbValue 1, dbValue nil]
+    row = @[?"Toyota", ?"true", ?0, ?1, ?nil]
 
   test "Object -> row":
     check car.toRow() == row
@@ -303,7 +303,7 @@ suite "DateTime field conversion":
       lastLogin: "2019-08-19 23:32:53+04:00".parse("yyyy-MM-dd HH:mm:sszzz"),
       lastLogout: none DateTime
     )
-    row = @[dbValue 806025600, dbValue 1446940800, dbValue 1566243173, dbValue nil]
+    row = @[?806025600, ?1446940800, ?1566243173, ?nil]
 
   setup:
     var tmpPerson {.used.} = Person(

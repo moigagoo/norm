@@ -2,7 +2,7 @@ import sequtils, options, times
 import sugar
 import macros; export macros
 
-import ndb/sqlite
+import ndb / sqlite
 
 import objutils, pragmas
 
@@ -36,10 +36,6 @@ template formatIt*(op: untyped) {.pragma.}
 
   ``op`` should be an expression with ``it`` variable with the object field type and evaluates to ``DbValue``.
 
-  .. important:
-
-    Use explicit proc call syntax to produce ``DbValue``: ``dbValue(expr)`` instead of ``dbValue expr``.
-
   The expression is invoked in ``toRow`` proc to turn a typed object field into a ``DbValue`` within a row.
   ]##
 
@@ -65,12 +61,12 @@ template to*(row: Row, obj: var object) =
         tsField: DateTime
 
     let row = @[
-      dbValue 123,
-      dbValue "foo",
-      dbValue 123.321,
-      dbValue 1,
-      dbValue "2019-01-21 15:03:21+04",
-      dbValue 1566243173
+      ?123,
+      ?"foo",
+      ?123.321,
+      ?1,
+      ?"2019-01-21 15:03:21+04",
+      ?1566243173
     ]
 
     var example = Example(dtField: now(), tsField: now())
@@ -145,25 +141,25 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
 
     let rows = @[
       @[
-        dbValue 123,
-        dbValue "foo",
-        dbValue 123.321,
-        dbValue 1,
-        dbValue "2019-01-21 15:03:21+04"
+        ?123,
+        ?"foo",
+        ?123.321,
+        ?1,
+        ?"2019-01-21 15:03:21+04"
       ],
       @[
-        dbValue 456,
-        dbValue "bar",
-        dbValue 456.654,
-        dbValue 0,
-        dbValue "2019-02-22 16:14:32+04"
+        ?456,
+        ?"bar",
+        ?456.654,
+        ?0,
+        ?"2019-02-22 16:14:32+04"
       ],
       @[
-        dbValue 789,
-        dbValue "baz",
-        dbValue 789.987,
-        dbValue 1,
-        dbValue "2019-03-23 17:25:43+04"
+        ?789,
+        ?"baz",
+        ?789.987,
+        ?1,
+        ?"2019-03-23 17:25:43+04"
       ]
     ]
 
@@ -206,7 +202,7 @@ proc to*(row: Row, T: typedesc): T =
         boolField: bool
 
     let
-      row = @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue 0]
+      row = @[?123, ?"foo", ?123.321, ?0]
       obj = row.to(Example)
 
     doAssert obj.intField == 123
@@ -236,9 +232,9 @@ proc to*(rows: openArray[Row], T: typedesc): seq[T] =
 
     let
       rows = @[
-        @[dbValue 123, dbValue "foo", dbValue 123.321, dbValue 1],
-        @[dbValue 456, dbValue "bar", dbValue 456.654, dbValue 0],
-        @[dbValue 789, dbValue "baz", dbValue 789.987, dbValue 1]
+        @[?123, ?"foo", ?123.321, ?1],
+        @[?456, ?"bar", ?456.654, ?0],
+        @[?789, ?"baz", ?789.987, ?1]
       ]
       examples = rows.to(Example)
 
@@ -296,15 +292,15 @@ proc toRow*(obj: object, force = false): Row =
         result.add dbValue(if value: 1 else: 0)
       elif typeof(value) is Option[bool]:
         result.add(
-          if value.isSome: dbValue if get(value): 1 else: 0
-          else: dbValue nil
+          if value.isSome: ?(if get(value): 1 else: 0)
+          else: ?nil
         )
       elif typeof(value) is DateTime:
-        result.add dbValue value.toTime().toUnix()
+        result.add ?value.toTime().toUnix()
       elif typeof(value) is Option[DateTime]:
-        result.add if value.isSome: dbValue get(value).toTime().toUnix() else: dbValue nil
+        result.add if value.isSome: ?get(value).toTime().toUnix() else: ?nil
       else:
-        result.add dbValue value
+        result.add ?value
 
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
