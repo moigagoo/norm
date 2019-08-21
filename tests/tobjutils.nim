@@ -2,7 +2,7 @@ import unittest
 
 import macros
 
-import norm / objutils
+import norm/objutils
 
 
 suite "Getting and setting object fields using bracket notation":

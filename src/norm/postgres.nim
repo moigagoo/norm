@@ -21,12 +21,12 @@ Nim Type           SQLite Type
 import strutils, macros, typetraits, logging
 import db_postgres
 
-import oldrowutils, objutils, pragmas
+import postgres/rowutils, objutils, pragmas
 
 
 export strutils, macros, logging
 export db_postgres
-export oldrowutils, objutils, pragmas
+export rowutils, objutils, pragmas
 
 proc `$`*(query: SqlQuery): string = $ string query
 

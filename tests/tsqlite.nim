@@ -2,23 +2,24 @@ import unittest
 
 import os, strutils, sequtils, times
 
-import norm / postgres
+import norm/sqlite
 
 
 const
-  dbHost = "postgres_1"
-  customDbHost = "postgres_2"
+  dbName = "test.db"
+  customDbName = "custom_test.db"
 
 
-db(dbHost, "postgres", "", "postgres"):
+db(dbName, "", "", ""):
   type
     User {.table: "users".} = object
       email {.unique.}: string
+      ssn: Option[int]
       birthDate {.
-        dbType: "DATE",
-        default: "CURRENT_TIMESTAMP",
-        parseIt: it.parse("yyyy-MM-dd", utc()),
-        formatIt: it.format("yyyy-MM-dd")
+        dbType: "INTEGER",
+        notNull,
+        parseIt: it.i.fromUnix().local(),
+        formatIt: dbValue(it.toTime().toUnix())
       .}: DateTime
       lastLogin: DateTime
     Publisher {.table: "publishers".} = object
@@ -29,17 +30,18 @@ db(dbHost, "postgres", "", "postgres"):
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
 
-  proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
+  proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
   type
     Edition {.table: "editions".} = object
       title: string
       book {.
-        dbCol: "bookid",
+        dbCol: "bookId",
         dbType: "INTEGER",
+        notNull,
         fk: Book
         parser: getBookById,
-        formatIt: $it.id,
+        formatIt: dbValue(it.id),
         onDelete: "CASCADE"
       .}: Book
 
@@ -52,6 +54,7 @@ suite "Creating and dropping tables, CRUD":
         var
           user = User(
             email: "test-$#@example.com" % $i,
+            ssn: some i,
             birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
             lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
           )
@@ -73,27 +76,40 @@ suite "Creating and dropping tables, CRUD":
 
   test "Create tables":
     withDb:
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+      let query = "PRAGMA table_info($#);"
 
-      check dbConn.getAllRows(query, "users") == @[
-        @["id"],
-        @["email"],
-        @["birthdate"],
-        @["lastlogin"]
+      check dbConn.getAllRows(sql query % "users") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
+        @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
       ]
-      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"], @["licensed"]]
-      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
-                                                   @["publishertitle"]]
-      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+      check dbConn.getAllRows(sql query % "books") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
+      ]
+      check dbConn.getAllRows(sql query % "editions") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
+      ]
 
   test "Create records":
     withDb:
       let
+        publishers = Publisher.getMany 100
         books = Book.getMany 100
         editions = Edition.getMany 100
 
+      check len(publishers) == 9
       check len(books) == 9
       check len(editions) == 9
+
+      check publishers[3].id == 4
+      check publishers[3].title == "Publisher 4"
 
       check books[5].id == 6
       check books[5].title == "Book 6"
@@ -161,13 +177,13 @@ suite "Creating and dropping tables, CRUD":
   test "Query records":
     withDb:
       let someBooks = Book.getMany(10, cond="title IN (?, ?) ORDER BY title DESC",
-                                   params=["Book 1", "Book 5"])
+                                   params=[?"Book 1", ?"Book 5"])
 
       check len(someBooks) == 2
       check someBooks[0].title == "Book 5"
       check someBooks[1].authorEmail == "test-1@example.com"
 
-      let someBook = Book.getOne("authoremail=?", "test-2@example.com")
+      let someBook = Book.getOne("authorEmail=?", "test-2@example.com")
       check someBook.id == 2
 
       expect KeyError:
@@ -215,26 +231,32 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM editions"
 
   test "Custom DB":
-    echo "Need to setup multiple PostgreSQL databases with Docker Compose to properly test this."
-
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
+    withCustomDb(customDbName, "", "", ""):
       createTables(force=true)
 
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+    withCustomDb(customDbName, "", "", ""):
+      let query = "PRAGMA table_info($#);"
 
-      check dbConn.getAllRows(query, "users") == @[
-        @["id"],
-        @["email"],
-        @["birthdate"],
-        @["lastlogin"]
+      check dbConn.getAllRows(sql query % "users") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
+        @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
       ]
-      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"], @["licensed"]]
-      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
-                                                    @["publishertitle"]]
-      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+      check dbConn.getAllRows(sql query % "books") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
+      ]
+      check dbConn.getAllRows(sql query % "editions") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
+      ]
 
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
+    withCustomDb(customDbName, "", "", ""):
       dropTables()
 
       expect DbError:
@@ -242,3 +264,7 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
+
+    removeFile customDbName
+
+  removeFile dbName

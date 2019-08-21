@@ -2,7 +2,7 @@ import strutils, sequtils, times
 import sugar
 import macros; export macros
 
-import objutils, pragmas
+import ../objutils, ../pragmas
 
 
 type Row = seq[string]

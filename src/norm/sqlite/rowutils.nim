@@ -2,9 +2,9 @@ import sequtils, options, times
 import sugar
 import macros; export macros
 
-import ndb / sqlite
+import ndb/sqlite
 
-import objutils, pragmas
+import ../objutils, ../pragmas
 
 
 template parser*(op: (DbValue) -> any) {.pragma.}

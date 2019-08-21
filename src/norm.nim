@@ -72,6 +72,6 @@ Quickstart
       dropTables()                            # Drop all tables.
 ]##
 
-import norm / [rowutils, objutils]
-import norm / pragmas
-import norm / [sqlite, postgres]
+import norm/[rowutils, objutils]
+import norm/pragmas
+import norm/[sqlite, postgres]
