@@ -23,7 +23,7 @@ Nim Type             SQLite Type
 
 Nim ``true`` and ``false`` values are stored as ``1`` and ``0``.
 
-Nim ``times.DateTime`` values are stored as INTEGER Unix epoch timestamps.
+Nim ``times.DateTime`` values are stored as ``INTEGER`` Unix epoch timestamps.
 ]##
 
 
