@@ -4,11 +4,31 @@
 SQLite Backend
 ##############
 
+The following Nim types are converted automatically:
+
+==================== ====================
+Nim Type             SQLite Type
+==================== ====================
+``int``              ``INTEGER NOT NULL``
+``string``           ``TEXT NOT NULL``
+``float``            ``REAL NOT NULL``
+``bool``             ``INTEGER NOT NULL``
+``DateTime``         ``INTEGER NOT NULL``
+``Option[int]``      ``INTEGER``
+``Option[string]``   ``TEXT``
+``Option[float]``    ``REAL``
+``Option[bool]``     ``INTEGER``
+``Option[DateTime]`` ``INTEGER``
+==================== ====================
+
+Nim ``true`` and ``false`` values are stored as ``1`` and ``0``.
+
+Nim ``times.DateTime`` values are stored as ``INTEGER`` Unix epoch timestamps.
 ]##
 
 
 import strutils, macros, typetraits, logging, options
-import ndb/sqlite
+import ndb / sqlite
 
 import rowutils, objutils, pragmas
 
@@ -70,13 +90,13 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind == nnkIdent:
       case $fieldRepr.typ
-        of "int", "bool": "INTEGER NOT NULL"
+        of "int", "bool", "DateTime": "INTEGER NOT NULL"
         of "string": "TEXT NOT NULL"
         of "float": "REAL NOT NULL"
         else: "TEXT NOT NULL"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "bool": "INTEGER"
+        of "int", "bool", "DateTime": "INTEGER"
         of "string": "TEXT"
         of "float": "REAL"
         else: "TEXT"
@@ -285,7 +305,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           getManyQuery = genGetManyQuery(objs[0], cond)
-          params = @params & @[dbValue min(limit, len(objs)), dbValue offset]
+          params = @params & @[?min(limit, len(objs)), ?offset]
 
         debug getManyQuery, " <- ", params.join(", ")
 
@@ -312,7 +332,7 @@ template genWithDb(connection, user, password, database: string,
 
         let
           updateQuery = genUpdateQuery(obj, force)
-          params = obj.toRow(force) & dbValue obj.id
+          params = obj.toRow(force) & ?obj.id
 
         debug updateQuery, " <- ", params.join(", ")
 

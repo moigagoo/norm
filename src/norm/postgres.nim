@@ -4,6 +4,17 @@
 PostgreSQL Backend
 ##################
 
+The following Nim types are converted automatically:
+
+================== ====================
+Nim Type           SQLite Type
+================== ====================
+``int``            ``INTEGER``
+``string``         ``TEXT``
+``float``          ``REAL``
+``bool``           ``BOOLEAN``
+``DateTime``       ``TIMESTAMP WITH TIME ZONE``
+================== ====================
 ]##
 
 
@@ -70,6 +81,8 @@ proc getDbType(fieldRepr: FieldRepr): string =
     of "int": "INTEGER"
     of "string": "TEXT"
     of "float": "REAL"
+    of "bool": "BOOLEAN"
+    of "DateTime": "TIMESTAMP WITH TIME ZONE"
     else: "TEXT"
 
   for prag in fieldRepr.signature.pragmas:

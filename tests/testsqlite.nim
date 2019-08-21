@@ -21,6 +21,7 @@ db(dbName, "", "", ""):
         parseIt: it.i.fromUnix().local(),
         formatIt: dbValue(it.toTime().toUnix())
       .}: DateTime
+      lastLogin: DateTime
     Publisher {.table: "publishers".} = object
       title {.unique.}: string
       licensed: bool
@@ -51,9 +52,13 @@ suite "Creating and dropping tables, CRUD":
 
       for i in 1..9:
         var
-          user = User(email: "test-$#@example.com" % $i, ssn: some i,
-                      birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
-          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i<6: true else: false)
+          user = User(
+            email: "test-$#@example.com" % $i,
+            ssn: some i,
+            birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
+            lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
+          )
+          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
           book = Book(title: "Book $#" % $i, authorEmail: user.email,
                       publisherTitle: publisher.title)
           edition = Edition(title: "Edition $#" % $i)
@@ -74,21 +79,22 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-        @[dbValue 1, dbValue "email", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 2, dbValue "ssn", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0],
-        @[dbValue 3, dbValue "birthDate", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
+        @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
       ]
       check dbConn.getAllRows(sql query % "books") == @[
-        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 2, dbValue "authorEmail", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 3, dbValue "publisherTitle", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
       ]
       check dbConn.getAllRows(sql query % "editions") == @[
-        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 2, dbValue "bookId", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
       ]
 
   test "Create records":
@@ -116,16 +122,16 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       var
         users = @[
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now())
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now())
         ]
         publishers = Publisher().repeat 10
         books = Book().repeat 10
@@ -153,7 +159,7 @@ suite "Creating and dropping tables, CRUD":
       check editions[^1].id == 9
 
       var
-        user = User(birthDate: now())
+        user = User(birthDate: now(), lastLogin: now())
         publisher = Publisher()
         book = Book()
         edition = Edition()
@@ -171,7 +177,7 @@ suite "Creating and dropping tables, CRUD":
   test "Query records":
     withDb:
       let someBooks = Book.getMany(10, cond="title IN (?, ?) ORDER BY title DESC",
-                                   params=[dbValue "Book 1", dbValue "Book 5"])
+                                   params=[?"Book 1", ?"Book 5"])
 
       check len(someBooks) == 2
       check someBooks[0].title == "Book 5"
@@ -232,21 +238,22 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-        @[dbValue 1, dbValue "email", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 2, dbValue "ssn", dbValue "INTEGER", dbValue 0, dbValue nil, dbValue 0],
-        @[dbValue 3, dbValue "birthDate", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
+        @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
       ]
       check dbConn.getAllRows(sql query % "books") == @[
-        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 2, dbValue "authorEmail", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 3, dbValue "publisherTitle", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
       ]
       check dbConn.getAllRows(sql query % "editions") == @[
-        @[dbValue 0, dbValue "id", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 1],
-        @[dbValue 1, dbValue "title", dbValue "TEXT", dbValue 1, dbValue nil, dbValue 0],
-        @[dbValue 2, dbValue "bookId", dbValue "INTEGER", dbValue 1, dbValue nil, dbValue 0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
       ]
 
     withCustomDb(customDbName, "", "", ""):

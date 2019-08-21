@@ -20,8 +20,10 @@ db(dbHost, "postgres", "", "postgres"):
         parseIt: it.parse("yyyy-MM-dd", utc()),
         formatIt: it.format("yyyy-MM-dd")
       .}: DateTime
+      lastLogin: DateTime
     Publisher {.table: "publishers".} = object
       title {.unique.}: string
+      licensed: bool
     Book {.table: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
@@ -48,9 +50,12 @@ suite "Creating and dropping tables, CRUD":
 
       for i in 1..9:
         var
-          user = User(email: "test-$#@example.com" % $i,
-                      birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"))
-          publisher = Publisher(title: "Publisher $#" % $i)
+          user = User(
+            email: "test-$#@example.com" % $i,
+            birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
+            lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
+          )
+          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
           book = Book(title: "Book $#" % $i, authorEmail: user.email,
                       publisherTitle: publisher.title)
           edition = Edition(title: "Edition $#" % $i)
@@ -70,8 +75,13 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
 
-      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
-      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"]]
+      check dbConn.getAllRows(query, "users") == @[
+        @["id"],
+        @["email"],
+        @["birthdate"],
+        @["lastlogin"]
+      ]
+      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"], @["licensed"]]
       check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
                                                    @["publishertitle"]]
       check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
@@ -96,16 +106,16 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       var
         users = @[
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now()),
-          User(birthDate: now())
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now()),
+          User(birthDate: now(), lastLogin: now())
         ]
         publishers = Publisher().repeat 10
         books = Book().repeat 10
@@ -133,7 +143,7 @@ suite "Creating and dropping tables, CRUD":
       check editions[^1].id == 9
 
       var
-        user = User(birthDate: now())
+        user = User(birthDate: now(), lastLogin: now())
         publisher = Publisher()
         book = Book()
         edition = Edition()
@@ -213,8 +223,13 @@ suite "Creating and dropping tables, CRUD":
     withCustomDb(customDbHost, "postgres", "", "postgres"):
       let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
 
-      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["birthdate"]]
-      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"]]
+      check dbConn.getAllRows(query, "users") == @[
+        @["id"],
+        @["email"],
+        @["birthdate"],
+        @["lastlogin"]
+      ]
+      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"], @["licensed"]]
       check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
                                                     @["publishertitle"]]
       check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
