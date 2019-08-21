@@ -36,12 +36,12 @@ suite "Conversion with custom parser and formatter expressions":
       employed: bool
       createdAt {.
         formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz", utc())
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz", utc())
+    datetimeString = "2019-01-30 12:34:56+00"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
     user = UserDatetimeAsString(
       name: "Alice",
       age: 23,
@@ -152,12 +152,12 @@ suite "Bulk conversion with custom parser and formatter expressions":
       employed: bool
       createdAt {.
         formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz", utc())
+        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz", utc())
+    datetimeString = "2019-01-30 12:34:56+00"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
     users = @[
       UserDatetimeAsString(
         name: "Alice",
