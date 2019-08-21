@@ -7,7 +7,7 @@
 -   [t]—test suite improvement
 
 
-## 1.0.14 (WIP)
+## 1.0.14 (August 21, 2019)
 
 -   [+] PostgreSQL: Support `bool` type.
 -   [+] SQLite, PostgreSQL: Support `times.DateTime` type.
