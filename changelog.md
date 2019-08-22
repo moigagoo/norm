@@ -7,6 +7,11 @@
 -   [t]—test suite improvement
 
 
+## 1.0.15 (WIP)
+
+-   [r] Split rowutils into backend-specific submodules.
+
+
 ## 1.0.14 (August 21, 2019)
 
 -   [+] PostgreSQL: Support `bool` type.
