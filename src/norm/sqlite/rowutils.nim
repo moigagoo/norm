@@ -1,3 +1,14 @@
+##[
+
+######################################
+SQL Row to Nim Object Conversion Procs
+######################################
+
+This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
+
+``Row`` is a sequence of ``ndb.DbValue``s, which allows to store ``options.none`` values as ``NULL``s and vice versa.
+]##
+
 import sequtils, options, times
 import sugar
 import macros; export macros

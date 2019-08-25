@@ -1,3 +1,14 @@
+##[
+
+######################################
+SQL Row to Nim Object Conversion Procs
+######################################
+
+This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
+
+``Row`` is a sequence of ``string``s, as in Nim stdlib`s ``db_*`` modules. ``NULL`` values are therefore not supported.
+]##
+
 import strutils, sequtils, times
 import sugar
 import macros; export macros
