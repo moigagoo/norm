@@ -4,9 +4,9 @@
 SQL Row to Nim Object Conversion Procs
 ######################################
 
-This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
+This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
 
-``Row`` is a sequence of ``ndb.DbValue``s, which allows to store ``options.none`` values as ``NULL``s and vice versa.
+``Row`` is a sequence of ``ndb.DbValue``, which allows to store ``options.none`` values as ``NULL`` and vice versa.
 ]##
 
 import sequtils, options, times
@@ -60,7 +60,7 @@ template to*(row: Row, obj: var object) =
     import times, sugar
     import ndb/sqlite
 
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz")
+    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz", utc())
 
     type
       Example = object
@@ -87,8 +87,8 @@ template to*(row: Row, obj: var object) =
     doAssert example.strField == "foo"
     doAssert example.floatField == 123.321
     doAssert example.boolField == true
-    doAssert example.dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz")
-    doAssert example.tsField == "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz")
+    doAssert example.dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
+    doAssert example.tsField == "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
 
   var i: int
 
@@ -140,7 +140,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     import times, sugar
     import ndb/sqlite
 
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz")
+    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz", utc())
 
     type
       Example = object
@@ -187,7 +187,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
     doAssert examples[1].strField == "bar"
     doAssert examples[2].floatField == 789.987
     doAssert examples[0].boolField == true
-    doAssert examples[0].dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz")
+    doAssert examples[0].dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
 
   objs.setLen min(len(rows), len(objs))
 
@@ -281,7 +281,7 @@ proc toRow*(obj: object, force = false): Row =
         strField: "Foo",
         floatField: 123.321,
         boolField: true,
-        tsField: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz")
+        tsField: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
       )
       row = example.toRow()
 

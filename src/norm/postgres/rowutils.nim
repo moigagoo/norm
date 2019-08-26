@@ -4,9 +4,9 @@
 SQL Row to Nim Object Conversion Procs
 ######################################
 
-This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
+This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
 
-``Row`` is a sequence of ``string``s, as in Nim stdlib's ``db_*`` modules. ``NULL`` values are therefore not supported.
+``Row`` is a sequence of ``string`` as in Nim stdlib's ``db_*`` modules, therefore ``NULL`` values are not supported.
 ]##
 
 import strutils, sequtils, times
@@ -19,7 +19,7 @@ import ../objutils, ../pragmas
 type Row = seq[string]
 
 
-const PG_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:sszz"
+const pgDatetimeFmt = "yyyy-MM-dd HH:mm:sszz"
 
 
 template parser*(op: (string) -> any) {.pragma.}
@@ -67,7 +67,7 @@ template to*(row: Row, obj: var object) =
   runnableExamples:
     import times, sugar
 
-    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszz")
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszz", utc())
 
     type
       Example = object
@@ -96,7 +96,7 @@ template to*(row: Row, obj: var object) =
     doAssert example.floatField == 123.321
     doAssert example.boolField == true
     doAssert example.dtField == "2019-01-21 15:03:21+04".parseDateTime()
-    doAssert example.tsField == "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz")
+    doAssert example.tsField == "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
 
   var i: int
 
@@ -116,7 +116,7 @@ template to*(row: Row, obj: var object) =
     elif typeof(value) is bool:
       obj.dot(field) = if row[i] == "f": false else: true
     elif typeof(value) is DateTime:
-      obj.dot(field) = row[i].parse(PG_DATETIME_FORMAT)
+      obj.dot(field) = row[i].parse(pgDatetimeFmt, utc())
     else:
       raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
 
@@ -133,7 +133,7 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
   runnableExamples:
     import times, sugar
 
-    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszz")
+    proc parseDateTime(s: string): DateTime = s.parse("yyyy-MM-dd HH:mm:sszz", utc())
 
     type
       Example = object
@@ -240,7 +240,7 @@ proc toRow*(obj: object, force = false): Row =
     type
       Example = object
         intField: int
-        strField{.formatIt: it.toLowerAscii().}: string
+        strField {.formatIt: it.toLowerAscii().}: string
         floatField: float
         boolField: bool
         tsField: DateTime
@@ -251,7 +251,7 @@ proc toRow*(obj: object, force = false): Row =
         strField: "Foo",
         floatField: 123.321,
         boolField: true,
-        tsField: "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz")
+        tsField: "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
       )
       row = example.toRow()
 
@@ -259,7 +259,7 @@ proc toRow*(obj: object, force = false): Row =
     doAssert row[1] == "foo"
     doAssert row[2] == "123.321"
     doAssert row[3] == "t"
-    doAssert row[4] == "2019-08-20 10:27:55+00"
+    doAssert row[4] == "2019-08-20 10:27:55Z"
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -272,7 +272,7 @@ proc toRow*(obj: object, force = false): Row =
       elif typeof(value) is bool:
         result.add if value: "t" else: "f"
       elif typeof(value) is DateTime:
-        result.add value.format(PG_DATETIME_FORMAT)
+        result.add value.toTime().format(pgDatetimeFmt, utc())
       else:
         result.add $value
 
