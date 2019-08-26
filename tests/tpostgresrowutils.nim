@@ -1,6 +1,7 @@
 import unittest
 import times, strutils
-import norm / oldrowutils
+
+import norm/postgres/rowutils
 
 
 suite "Basic object <-> row conversion":

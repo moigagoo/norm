@@ -1,8 +1,9 @@
 import unittest
 import times, options
-import norm / rowutils
 
-import ndb / sqlite
+import norm/sqlite/rowutils
+
+import ndb/sqlite
 
 
 suite "Basic object <-> row conversion":

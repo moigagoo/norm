@@ -28,9 +28,9 @@ Nim ``times.DateTime`` values are stored as ``INTEGER`` Unix epoch timestamps.
 
 
 import strutils, macros, typetraits, logging, options
-import ndb / sqlite
+import ndb/sqlite
 
-import rowutils, objutils, pragmas
+import sqlite/rowutils, objutils, pragmas
 
 
 export strutils, macros, logging, options
