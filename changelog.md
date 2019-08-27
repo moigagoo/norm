@@ -9,6 +9,7 @@
 
 ## 1.0.15 (WIP)
 
+-   [f] PostgreSQL: `times.Datetime` are now explicitly stored in UTC timezone.
 -   [r] Split rowutils into backend-specific submodules.
 
 
