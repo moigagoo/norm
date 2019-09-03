@@ -88,7 +88,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
       return $prag.value
 
   result =
-    if fieldRepr.typ.kind == nnkIdent:
+    if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
       case $fieldRepr.typ
         of "int", "bool", "DateTime": "INTEGER NOT NULL"
         of "string": "TEXT NOT NULL"
@@ -121,9 +121,9 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
     elif prag.name == "default" and prag.kind == pkKval:
       result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
-      expectKind(prag.value, {nnkIdent, nnkDotExpr})
+      expectKind(prag.value, {nnkIdent, nnkSym, nnkDotExpr})
       result.add case prag.value.kind
-        of nnkIdent:
+        of nnkIdent, nnkSym:
           " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
         of nnkDotExpr:
           " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
@@ -367,6 +367,28 @@ template genWithDb(connection, user, password, database: string,
     withCustomDb(connection, user, password, database):
       body
 
+proc ensureIdField(typeDef: NimNode): NimNode =
+  ## Check if ``id`` field is in the object definition, insert it if it's not.
+
+  result = newNimNode(nnkTypeDef)
+
+  var objRepr = typeDef.toObjRepr()
+
+  if "id" notin objRepr.fieldNames:
+    let idField = FieldRepr(
+      signature: SignatureRepr(
+        name: "id",
+        exported: true,
+        pragmas: @[
+          PragmaRepr(name: "pk", kind: pkFlag),
+          PragmaRepr(name: "ro", kind: pkFlag)
+        ]
+      ),
+      typ: ident "int"
+    )
+    objRepr.fields.insert(idField, 0)
+
+  result = objRepr.toTypeDef()
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
   ## Check if ``id`` field is in the object definition, insert it if it's not.
@@ -374,23 +396,39 @@ proc ensureIdFields(typeSection: NimNode): NimNode =
   result = newNimNode(nnkTypeSection)
 
   for typeDef in typeSection:
-    var objRepr = typeDef.toObjRepr()
+    result.add ensureIdField(typeDef)
+
+macro dbTypes*(body: untyped): untyped =
+  result = newStmtList()
+
+  for node in body:
+    expectKind(node, nnkTypeSection)
+    result.add ensureIdFields(node)
+
+macro dbFromTypes*(connection, user, password, database: string,
+                   types: openArray[typedesc]): untyped =
+  ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
+
+  ``connection``, ``user``, ``password``, ``database`` are the same args accepted
+  by a standard ``dbConn`` instance.
+
+  ``types`` is a list of predefined types to create table schemas from.
+
+  The macro generates ``withDb`` template that wraps all DB interations.
+  ]##
+
+  var dbObjReprs: seq[ObjRepr]
+
+  for typ in types:
+    let objRepr = getImpl(typ).toObjRepr()
 
     if "id" notin objRepr.fieldNames:
-      let idField = FieldRepr(
-        signature: SignatureRepr(
-          name: "id",
-          exported: true,
-          pragmas: @[
-            PragmaRepr(name: "pk", kind: pkFlag),
-            PragmaRepr(name: "ro", kind: pkFlag)
-          ]
-        ),
-        typ: ident "int"
-      )
-      objRepr.fields.insert(idField, 0)
+      error "Type '$#' is missing 'id' field. Put it under 'ensureIdFields' macro." % $typ
 
-    result.add objRepr.toTypeDef()
+    dbObjReprs.add getImpl(typ).toObjRepr()
+
+  result = getAst genWithDb(connection, user, password, database,
+                            genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
@@ -407,7 +445,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   for node in body:
     if node.kind == nnkTypeSection:
-      let typeSection = node.ensureIdFields()
+      let typeSection = ensureIdFields(node)
 
       result.add typeSection
 
