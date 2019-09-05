@@ -3,6 +3,9 @@ import strutils, macros
 import pragmas
 
 
+export pragmas
+
+
 type
   PragmaKind* = enum
     ## There are two kinds of pragmas: flags and key-value pairs:
