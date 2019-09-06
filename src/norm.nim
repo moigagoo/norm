@@ -16,7 +16,6 @@ Quickstart
 
 .. code-block:: nim
     import norm/sqlite                        # Import SQLite backend.
-    # import norm/postgres                    # Import PostgreSQL backend.
     import logging                            # Import logging to inspect the generated SQL statements.
     import unicode, sugar, options
 
@@ -70,8 +69,39 @@ Quickstart
 
     withDb:
       dropTables()                            # Drop all tables.
+
+Alernatively to defining the entire schema under ``db`` macro, you can reuse type definitions from other modules. Mark the types to use in schema with ``dbTypes`` and use ``dbFromTypes`` instead of ``db``:
+
+.. code-block:: nim
+  #### user.nim ####
+  dbTypes:
+    type
+      User* = object
+        age: Positive
+        name: string
+
+
+  #### pet.nim ####
+  import user
+
+  dbTypes:
+    type:
+      Pet* = object
+        name: string
+        ownerId {.
+          fk: User,
+          onDelete: "CASCADE"
+        .}: int
+
+
+  #### main.nim ####
+  import user, pet
+
+  dbFromTypes("petshop.db", "", "", "",
+              [User, Pet])
+
+
+
 ]##
 
-import norm / [rowutils, objutils]
-import norm / pragmas
-import norm / [sqlite, postgres]
+import norm/[objutils, pragmas, sqlite, postgres]

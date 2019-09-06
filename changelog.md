@@ -7,6 +7,15 @@
 -   [t]—test suite improvement
 
 
+## 1.0.15 (September 06, 2019)
+
+-   [+] Add `dbTypes` macro to mark existing type sections to be usable in DB schema generation.
+-   [+] Add `dbFromTypes` macro to define DB schema from existing types. This is an alternative to defining the entire schema under `db` macro.
+-   [f] PostgreSQL: `times.Datetime` are now explicitly stored in UTC timezone.
+-   [r] Move row-object conversion and SQL query generation into backend-specific submodules: `sqlite/rowutils.nim`, `sqlite/sqlgen.nim`, `postgres/rowutils.nim`, `postgres/sqlgen.nim`.
+-   [r] Move procs to inject `id` field in type definitions into a separate module `typedefutils.nim`.
+
+
 ## 1.0.14 (August 21, 2019)
 
 -   [+] PostgreSQL: Support `bool` type.

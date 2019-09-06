@@ -5,8 +5,10 @@
 *.exe
 *.html
 
-tests/testobjutils
-tests/testpostgres
-tests/testrowutils
-tests/testoldrowutils
-tests/testsqlite
+tests/tobjutils
+tests/tpostgres
+tests/tpostgresfromtypes
+tests/tpostgresrowutils
+tests/tsqlite
+tests/tsqlitefromtype
+stests/tsqliterowutils
