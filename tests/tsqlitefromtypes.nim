@@ -34,7 +34,7 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       let query = "PRAGMA table_info($#);"
 
-      check dbConn.getAllRows(sql query % "user") == @[
+      check dbConn.getAllRows(sql query % "users") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
         @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
         @[?2, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
@@ -102,7 +102,7 @@ suite "Creating and dropping tables, CRUD":
     withCustomDb(customDbName, "", "", ""):
       let query = "PRAGMA table_info($#);"
 
-      check dbConn.getAllRows(sql query % "user") == @[
+      check dbConn.getAllRows(sql query % "users") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
         @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
         @[?2, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
