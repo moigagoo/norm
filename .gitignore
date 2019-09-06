@@ -7,6 +7,8 @@
 
 tests/tobjutils
 tests/tpostgres
+tests/tpostgresfromtypes
 tests/tpostgresrowutils
 tests/tsqlite
-tests/tsqliterowutils
+tests/tsqlitefromtype
+stests/tsqliterowutils
