@@ -45,6 +45,7 @@ db(dbName, "", "", ""):
         onDelete: "CASCADE"
       .}: Book
 
+
 suite "Creating and dropping tables, CRUD":
   setup:
     withDb:
