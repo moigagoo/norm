@@ -1,3 +1,14 @@
+##[
+
+##################################################
+Procs to Inject ``id`` Field into Type Definitions
+##################################################
+
+In order for a type to be usable in DB schema generation, it must have ``id`` field marked with ``pk`` and ``ro`` pragmas.
+
+This module contains procs to do that for a single type definition and entire type section.
+]##
+
 import macros
 
 import objutils
