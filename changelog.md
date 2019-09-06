@@ -7,7 +7,7 @@
 -   [t]—test suite improvement
 
 
-## 1.0.15 (WIP)
+## 1.0.15 (September 06, 2019)
 
 -   [+] Add `dbTypes` macro to mark existing type sections to be usable in DB schema generation.
 -   [+] Add `dbFromTypes` macro to define DB schema from existing types. This is an alternative to defining the entire schema under `db` macro.
