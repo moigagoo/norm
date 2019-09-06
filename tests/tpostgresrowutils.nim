@@ -36,12 +36,12 @@ suite "Conversion with custom parser and formatter expressions":
       height: float
       employed: bool
       createdAt {.
-        formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
+        formatIt: $it.toTime().format("yyyy-MM-dd HH:mm:sszz", utc()),
         parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56+00"
+    datetimeString = "2019-01-30 12:34:56Z"
     datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
     user = UserDatetimeAsString(
       name: "Alice",
@@ -152,12 +152,12 @@ suite "Bulk conversion with custom parser and formatter expressions":
       height: float
       employed: bool
       createdAt {.
-        formatIt: $it.format("yyyy-MM-dd HH:mm:sszz"),
+        formatIt: $it.toTime().format("yyyy-MM-dd HH:mm:sszz", utc()),
         parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
       .}: DateTime
 
   let
-    datetimeString = "2019-01-30 12:34:56+00"
+    datetimeString = "2019-01-30 12:34:56Z"
     datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
     users = @[
       UserDatetimeAsString(
@@ -332,7 +332,7 @@ suite "DateTime field conversion":
     person = Person(
       lastLogin: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz"),
     )
-    row = @["2019-08-19 19:32:53+00"]
+    row = @["2019-08-19 19:32:53Z"]
 
   setup:
     var tmpPerson {.used.} = Person(lastLogin: now())

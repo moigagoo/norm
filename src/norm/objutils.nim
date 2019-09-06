@@ -1,6 +1,26 @@
+##[
+
+###############################################
+Compile-Time Representation of Type Definitions
+###############################################
+
+This module implements convenience types and procs to convert type definition NimNodes into structured representations.
+
+``ObjRepr`` is a representation of an object definition. It consists of a ``SignatureRepr`` and multiple ``FieldRepr``.
+
+``SignatureRepr`` represents a type of field signature: name, exported mark, and pragmas.
+
+``PragmaRepr`` represents a single pragma of kind ``pkFlag`` (``{. flag .}``) or ``pkKval`` (``{. key: val .}``).
+
+``FieldRepr`` represents signature and type of a single field.
+]##
+
 import strutils, macros
 
 import pragmas
+
+
+export pragmas
 
 
 type
@@ -61,26 +81,25 @@ proc toPragmaReprs(pragmaDefs: NimNode): seq[PragmaRepr] =
 
   for pragmaDef in pragmaDefs:
     result.add case pragmaDef.kind
-      of nnkIdent: PragmaRepr(kind: pkFlag, name: $pragmaDef)
+      of nnkIdent, nnkSym: PragmaRepr(kind: pkFlag, name: $pragmaDef)
       of nnkExprColonExpr: PragmaRepr(kind: pkKval, name: $pragmaDef[0], value: pragmaDef[1])
       else: PragmaRepr()
 
 proc toSignatureRepr(def: NimNode): SignatureRepr =
   ## Convert a signature definition into a ``SignatureRepr``.
 
-  expectKind(def[0], {nnkIdent, nnkPostfix, nnkPragmaExpr})
+  expectKind(def[0], {nnkIdent, nnkSym, nnkPostfix, nnkPragmaExpr})
 
   case def[0].kind
-    of nnkIdent:
+    of nnkIdent, nnkSym:
       result.name = $def[0]
     of nnkPostfix:
       result.name = $def[0][1]
       result.exported = true
     of nnkPragmaExpr:
-      expectKind(def[0][0], {nnkIdent, nnkPostfix})
-
+      expectKind(def[0][0], {nnkIdent, nnkSym, nnkPostfix})
       case def[0][0].kind
-        of nnkIdent:
+        of nnkIdent, nnkSym:
           result.name = $def[0][0]
         of nnkPostfix:
           result.name = $def[0][0][1]
