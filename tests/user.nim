@@ -5,6 +5,6 @@ import norm/sqlite
 
 dbTypes:
   type
-    User* = object
+    User* {.table: "users".} = object
       email*: string
       lastLogin*: DateTime
