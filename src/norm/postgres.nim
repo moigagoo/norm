@@ -196,6 +196,38 @@ template genWithDb(connection, user, password, database: string,
     withCustomDb(connection, user, password, database):
       body
 
+macro dbTypes*(body: untyped): untyped =
+  result = newStmtList()
+
+  for node in body:
+    expectKind(node, nnkTypeSection)
+    result.add ensureIdFields(node)
+
+macro dbFromTypes*(connection, user, password, database: string,
+                   types: openArray[typedesc]): untyped =
+  ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
+
+  ``connection``, ``user``, ``password``, ``database`` are the same args accepted
+  by a standard ``dbConn`` instance.
+
+  ``types`` is a list of predefined types to create table schemas from.
+
+  The macro generates ``withDb`` template that wraps all DB interations.
+  ]##
+
+  var dbObjReprs: seq[ObjRepr]
+
+  for typ in types:
+    let objRepr = getImpl(typ).toObjRepr()
+
+    if "id" notin objRepr.fieldNames:
+      error "Type '$#' is missing 'id' field. Put it under 'ensureIdFields' macro." % $typ
+
+    dbObjReprs.add getImpl(typ).toObjRepr()
+
+  result = getAst genWithDb(connection, user, password, database,
+                            genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
 
