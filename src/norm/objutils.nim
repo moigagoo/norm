@@ -1,3 +1,20 @@
+##[
+
+###############################################
+Compile-Time Representation of Type Definitions
+###############################################
+
+This module implements convenience types and procs to convert type definition NimNodes into structured representations.
+
+``ObjRepr`` is a representation of an object definition. It consists of a ``SignatureRepr`` and multiple ``FieldRepr``.
+
+``SignatureRepr`` represents a type of field signature: name, exported mark, and pragmas.
+
+``PragmaRepr`` represents a single pragma of kind ``pkFlag`` (``{. flag .}``) or ``pkKval`` (``{. key: val .}``).
+
+``FieldRepr`` represents signature and type of a single field.
+]##
+
 import strutils, macros
 
 import pragmas
