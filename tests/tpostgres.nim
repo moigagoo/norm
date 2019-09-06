@@ -215,8 +215,6 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM editions"
 
   test "Custom DB":
-    echo "Need to setup multiple PostgreSQL databases with Docker Compose to properly test this."
-
     withCustomDb(customDbHost, "postgres", "", "postgres"):
       createTables(force=true)
 
