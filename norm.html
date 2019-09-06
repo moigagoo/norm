@@ -842,7 +842,6 @@ function main() {
 <li><a class="reference external" href="https://github.com/moigagoo/norm-sample-webapp">Sample app →</a></li>
 </ul>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">norm</span><span class="Operator">/</span><span class="Identifier">sqlite</span>                        <span class="Comment"># Import SQLite backend.</span>
-<span class="Comment"># import norm/postgres                    # Import PostgreSQL backend.</span>
 <span class="Keyword">import</span> <span class="Identifier">logging</span>                            <span class="Comment"># Import logging to inspect the generated SQL statements.</span>
 <span class="Keyword">import</span> <span class="Identifier">unicode</span><span class="Punctuation">,</span> <span class="Identifier">sugar</span><span class="Punctuation">,</span> <span class="Identifier">options</span>
 
@@ -895,7 +894,33 @@ function main() {
   <span class="Identifier">dump</span> <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">id</span>                             <span class="Comment"># ``id`` is 0 for objects not stored in DB.</span>
 
 <span class="Identifier">withDb</span><span class="Punctuation">:</span>
-  <span class="Identifier">dropTables</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                            <span class="Comment"># Drop all tables.</span></pre></p>
+  <span class="Identifier">dropTables</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                            <span class="Comment"># Drop all tables.</span></pre><p>Alernatively to defining the entire schema under <tt class="docutils literal"><span class="pre">db</span></tt> macro, you can reuse type definitions from other modules. Mark the types to use in schema with <tt class="docutils literal"><span class="pre">dbTypes</span></tt> and use <tt class="docutils literal"><span class="pre">dbFromTypes</span></tt> instead of <tt class="docutils literal"><span class="pre">db</span></tt>:</p>
+<pre class="listing"><span class="Comment">#### user.nim ####</span>
+<span class="Identifier">dbTypes</span><span class="Punctuation">:</span>
+  <span class="Keyword">type</span>
+    <span class="Identifier">User</span><span class="Operator">*</span> <span class="Operator">=</span> <span class="Keyword">object</span>
+      <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="Identifier">Positive</span>
+      <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="Identifier">string</span>
+
+
+<span class="Comment">#### pet.nim ####</span>
+<span class="Keyword">import</span> <span class="Identifier">user</span>
+
+<span class="Identifier">dbTypes</span><span class="Punctuation">:</span>
+  <span class="Keyword">type</span><span class="Punctuation">:</span>
+    <span class="Identifier">Pet</span><span class="Operator">*</span> <span class="Operator">=</span> <span class="Keyword">object</span>
+      <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="Identifier">string</span>
+      <span class="Identifier">ownerId</span> <span class="Punctuation">{</span><span class="Operator">.</span>
+        <span class="Identifier">fk</span><span class="Punctuation">:</span> <span class="Identifier">User</span><span class="Punctuation">,</span>
+        <span class="Identifier">onDelete</span><span class="Punctuation">:</span> <span class="StringLit">&quot;CASCADE&quot;</span>
+      <span class="Operator">.</span><span class="Punctuation">}</span><span class="Punctuation">:</span> <span class="Identifier">int</span>
+
+
+<span class="Comment">#### main.nim ####</span>
+<span class="Keyword">import</span> <span class="Identifier">user</span><span class="Punctuation">,</span> <span class="Identifier">pet</span>
+
+<span class="Identifier">dbFromTypes</span><span class="Punctuation">(</span><span class="StringLit">&quot;petshop.db&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span>
+            <span class="Punctuation">[</span><span class="Identifier">User</span><span class="Punctuation">,</span> <span class="Identifier">Pet</span><span class="Punctuation">]</span><span class="Punctuation">)</span></pre></p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
@@ -909,7 +934,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-08-27 07:24:14 UTC</small>
+        <small>Made with Nim. Generated: 2019-09-06 11:22:06 UTC</small>
       </div>
     </div>
   </div>
