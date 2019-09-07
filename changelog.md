@@ -7,6 +7,11 @@
 -   [t]—test suite improvement
 
 
+## 1.0.16 (WIP)
+
+-   [f] Added missing `strutils` export to eliminate `Error: undeclared identifier: '%'`.
+
+
 ## 1.0.15 (September 06, 2019)
 
 -   [+] Add `dbTypes` macro to mark existing type sections to be usable in DB schema generation.
