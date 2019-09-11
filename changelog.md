@@ -9,7 +9,8 @@
 
 ## 1.0.16 (WIP)
 
--   [f] Added missing `strutils` export to eliminate `Error: undeclared identifier: '%'`.
+-   [f] Added missing `strutils` export to eliminate `Error: undeclared identifier: '%'` and fix [#27](https://github.com/moigagoo/norm/issues/27).
+-   [r] `genTableSchema` now returns `SqlQuery` instead of `string` to be in line with the other `gen*` procs.
 
 
 ## 1.0.15 (September 06, 2019)
