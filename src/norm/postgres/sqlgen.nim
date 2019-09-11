@@ -108,24 +108,28 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
     elif prag.name == "onUpdate" and prag.kind == pkKval:
       result.add " ON UPDATE $#" % $prag.value
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
+proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): SqlQuery =
   ## Generate table schema for an object representation.
 
-  result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
+  var schema: string
+
+  schema.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
 
   var columns: seq[string]
 
   for field in dbObjRepr.fields:
     columns.add "\t$#" % genColStmt(field, dbObjReprs)
 
-  result.add columns.join(",\n")
-  result.add "\n)"
+  schema.add columns.join(",\n")
+  schema.add "\n)"
+
+  result = sql schema
 
 proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
   ## Generate table schemas for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add sql genTableSchema(dbObjRepr, dbObjReprs)
+    result.add genTableSchema(dbObjRepr, dbObjReprs)
 
 proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[SqlQuery] =
   ## Generate ``DROP TABLE`` queries for a list of object representations.
