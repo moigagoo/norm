@@ -33,7 +33,7 @@ import ndb/sqlite
 import sqlite/[rowutils, sqlgen], objutils, typedefutils
 
 
-export logging, options
+export strutils, logging, options
 export sqlite
 export rowutils, sqlgen, objutils
 

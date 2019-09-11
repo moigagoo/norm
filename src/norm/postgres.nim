@@ -24,7 +24,7 @@ import db_postgres
 import postgres/[rowutils, sqlgen], objutils, typedefutils
 
 
-export logging
+export strutils, logging
 export db_postgres
 export rowutils, sqlgen, objutils
 

@@ -7,6 +7,12 @@
 -   [t]—test suite improvement
 
 
+## 1.0.16 (September 11, 2019)
+
+-   [f] Added missing `strutils` export to eliminate `Error: undeclared identifier: '%'` and fix [#27](https://github.com/moigagoo/norm/issues/27).
+-   [r] `genTableSchema` now returns `SqlQuery` instead of `string` to be in line with the other `gen*` procs.
+
+
 ## 1.0.15 (September 06, 2019)
 
 -   [+] Add `dbTypes` macro to mark existing type sections to be usable in DB schema generation.
