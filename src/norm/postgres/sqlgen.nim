@@ -63,7 +63,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
       return "SERIAL"
 
   result = case $fieldRepr.typ
-    of "int": "INTEGER"
+    of "int", "Positive", "Natural": "INTEGER"
     of "string": "TEXT"
     of "float": "REAL"
     of "bool": "BOOLEAN"
