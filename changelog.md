@@ -10,6 +10,7 @@
 
 -   [f] Fixed table schema generation for `Positive` and `Natural` types: they used to be stored as `TEXT`, now they are stored as `INTEGER`. Also, fixed [#28](https://github.com/moigagoo/norm/issues/28).
 
+
 ## 1.0.16 (September 11, 2019)
 
 -   [f] Added missing `strutils` export to eliminate `Error: undeclared identifier: '%'` and fix [#27](https://github.com/moigagoo/norm/issues/27).
