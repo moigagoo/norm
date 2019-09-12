@@ -65,7 +65,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
       case $fieldRepr.typ
-        of "int", "bool", "DateTime": "INTEGER NOT NULL"
+        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL"
         of "string": "TEXT NOT NULL"
         of "float": "REAL NOT NULL"
         else: "TEXT NOT NULL"
