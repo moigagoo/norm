@@ -6,6 +6,11 @@
 -   [r]—refactoring
 -   [t]—test suite improvement
 
+## 1.0.18 (WIP)
+
+-   [+] Allow creating and dropping individual tables with `createTable` and `dropTable` templates.
+
+
 ## 1.0.17 (September 12, 2019)
 
 -   [f] Fixed table schema generation for `Positive` and `Natural` types: they used to be stored as `TEXT`, now they are stored as `INTEGER`. Also, fixed [#28](https://github.com/moigagoo/norm/issues/28).
