@@ -285,8 +285,6 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
     else:
       result.add node
 
-  let tableSchemas = genTableSchemas(dbObjReprs)
-
   let withDbNode = getAst genWithDb(connection, user, password, database,
                                     genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
 
