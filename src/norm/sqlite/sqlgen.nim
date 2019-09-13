@@ -108,34 +108,30 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
     elif prag.name == "onDelete" and prag.kind == pkKval:
       result.add " ON DELETE $#" % $prag.value
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): SqlQuery =
+proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate table schema for an object representation.
 
-  var schema: string
-
-  schema.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
+  result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
 
   var columns: seq[string]
 
   for field in dbObjRepr.fields:
     columns.add "\t$#" % genColStmt(field, dbObjReprs)
 
-  schema.add columns.join(",\n")
-  schema.add "\n)"
+  result.add columns.join(",\n")
+  result.add "\n)"
 
-  result = sql schema
-
-proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
+proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[(string, string)] =
   ## Generate table schemas for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add genTableSchema(dbObjRepr, dbObjReprs)
+    result.add (dbObjRepr.getTable(), genTableSchema(dbObjRepr, dbObjReprs))
 
-proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[SqlQuery] =
+proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
   ## Generate ``DROP TABLE`` queries for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add sql "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
+    result.add (dbObjRepr.getTable(), "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.

@@ -49,6 +49,9 @@ db(dbName, "", "", ""):
 suite "Creating and dropping tables, CRUD":
   setup:
     withDb:
+      User.createTable(force=true)
+
+    withDb:
       createTables(force=true)
 
       for i in 1..9:
@@ -223,10 +226,15 @@ suite "Creating and dropping tables, CRUD":
 
   test "Drop tables":
     withDb:
-      dropTables()
+      User.dropTable()
 
       expect DbError:
         dbConn.exec sql "SELECT NULL FROM users"
+
+    withDb:
+      dropTables()
+
+      expect DbError:
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"

@@ -54,13 +54,32 @@ template genWithDb(connection, user, password, database: string,
     block:
       let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
+      template dropTable(T: typedesc) {.used.} =
+        for dropTableQuery in dropTableQueries:
+          if dropTableQuery[0] == T.getTable():
+            debug dropTableQuery[1]
+
+            dbConn.exec sql dropTableQuery[1]
+
       template dropTables() {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
         for dropTableQuery in dropTableQueries:
-          debug dropTableQuery
+          debug dropTableQuery[1]
 
-          dbConn.exec sql dropTableQuery
+          dbConn.exec sql dropTableQuery[1]
+
+      template createTable(T: typedesc, force = false) {.used.} =
+        ## Create table for a type. If ``force`` is ``true``, drop the table beforehand.
+
+        for tableSchema in tableSchemas:
+          if tableSchema[0] == T.getTable():
+            if force:
+              T.dropTable()
+
+            debug tableSchema[1]
+
+            dbConn.exec sql tableSchema[1]
 
       template createTables(force = false) {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
@@ -72,9 +91,9 @@ template genWithDb(connection, user, password, database: string,
           dropTables()
 
         for tableSchema in tableSchemas:
-          debug tableSchema
+          debug tableSchema[1]
 
-          dbConn.exec sql tableSchema
+          dbConn.exec sql tableSchema[1]
 
       template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -265,6 +284,8 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
     else:
       result.add node
+
+  let tableSchemas = genTableSchemas(dbObjReprs)
 
   let withDbNode = getAst genWithDb(connection, user, password, database,
                                     genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
