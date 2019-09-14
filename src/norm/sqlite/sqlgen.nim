@@ -45,6 +45,13 @@ proc getColumn*(fieldRepr: FieldRepr): string =
     if prag.name == "dbCol" and prag.kind == pkKval:
       return $prag.value
 
+proc getColumns*(dbObjRepr: ObjRepr, force = false): seq[string] =
+  ## Get DB column names for an object representation as a sequence of strings.
+
+  for fieldRepr in dbObjRepr.fields:
+    if force or "ro" notin fieldRepr.signature.pragmaNames:
+      result.add fieldRepr.getColumn()
+
 proc getColumns*(obj: object, force = false): seq[string] =
   ## Get DB column names for an object as a sequence of strings.
 
@@ -54,19 +61,6 @@ proc getColumns*(obj: object, force = false): seq[string] =
         result.add obj.dot(field).getCustomPragmaVal(dbCol)
       else:
         result.add field
-
-macro getColumns*(T: typedesc, force = false): untyped =
-  ## Get DB column names for a type as a sequence of strings.
-
-  var columns: seq[string]
-
-  let objRepr = T.getImpl().toObjRepr()
-
-  for fieldRepr in objRepr.fields:
-    columns.add fieldRepr.getColumn()
-
-  quote do:
-    `columns`
 
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
@@ -138,20 +132,32 @@ proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[(string, string)] =
   ## Generate table schemas for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add (dbObjRepr.getTable(), genTableSchema(dbObjRepr, dbObjReprs))
+    result.add (dbObjRepr.signature.name, genTableSchema(dbObjRepr, dbObjReprs))
 
 proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
   ## Generate ``DROP TABLE`` queries for a list of object representations.
 
   for dbObjRepr in dbObjReprs:
-    result.add (dbObjRepr.getTable(), "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
+    result.add (dbObjRepr.signature.name, "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
 
-proc genCopyQuery*(S, D: typedesc): SqlQuery =
+macro genCopyQuery*(S, D: typedesc): untyped =
   ## Generate query to copy data from one table to another.
 
-  let columns = S.getColumns(force=true).filterIt(it in D.getColumns(force=true))
+  let
+    srcObjRepr = S.getImpl().toObjRepr()
+    dstObjRepr = D.getImpl().toObjRepr()
 
-  sql "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [D.getTable(), columns.join(", "). S.getTable()]
+    srcCols = srcObjRepr.getColumns(force=true)
+    dstCols = dstObjRepr.getColumns(force=true)
+    columns = srcCols.filterIt(it in dstCols)
+
+    srcTable = srcObjRepr.getTable()
+    dstTable = dstObjRepr.getTable()
+
+    query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [dstTable, columns.join(", "), srcTable]
+
+  result = quote do:
+    `query`
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
