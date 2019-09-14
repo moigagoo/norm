@@ -56,7 +56,7 @@ template genWithDb(connection, user, password, database: string,
 
       template dropTable(T: typedesc) {.used.} =
         for dropTableQuery in dropTableQueries:
-          if dropTableQuery[0] == T.getTable():
+          if dropTableQuery[0] == $T:
             debug dropTableQuery[1]
 
             dbConn.exec sql dropTableQuery[1]
@@ -73,7 +73,7 @@ template genWithDb(connection, user, password, database: string,
         ## Create table for a type. If ``force`` is ``true``, drop the table beforehand.
 
         for tableSchema in tableSchemas:
-          if tableSchema[0] == T.getTable():
+          if tableSchema[0] == $T:
             if force:
               T.dropTable()
 
@@ -100,7 +100,7 @@ template genWithDb(connection, user, password, database: string,
 
         debug copyQuery
 
-        dbConn.exec copyQuery
+        dbConn.exec sql copyQuery
 
       template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
