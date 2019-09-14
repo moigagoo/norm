@@ -95,6 +95,13 @@ template genWithDb(connection, user, password, database: string,
 
           dbConn.exec sql tableSchema[1]
 
+      template copyTo(S, D: typedesc) {.used.} =
+        let copyQuery = genCopyQuery(S, D)
+
+        debug copyQuery
+
+        dbConn.exec copyQuery
+
       template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
         the insertion.
@@ -211,10 +218,14 @@ template genWithDb(connection, user, password, database: string,
         obj.id = 0
 
       try:
-        let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
+        let foreignKeyQuery = sql "PRAGMA foreign_keys = ON"
+
         debug foreignKeyQuery
+
         dbConn.exec foreignKeyQuery
+
         body
+
       finally: dbConn.close()
 
   template withDb*(body: untyped): untyped {.dirty.} =

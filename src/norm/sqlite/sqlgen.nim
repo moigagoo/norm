@@ -7,7 +7,7 @@ SQL Query Generation for SQLite Backend
 Procs to generate SQL queries to modify tables and records.
 ]##
 
-import strutils, macros
+import strutils, sequtils, macros
 import ndb/sqlite
 
 import ../objutils, ../pragmas
@@ -54,6 +54,19 @@ proc getColumns*(obj: object, force = false): seq[string] =
         result.add obj.dot(field).getCustomPragmaVal(dbCol)
       else:
         result.add field
+
+macro getColumns*(T: typedesc, force = false): untyped =
+  ## Get DB column names for a type as a sequence of strings.
+
+  var columns: seq[string]
+
+  let objRepr = T.getImpl().toObjRepr()
+
+  for fieldRepr in objRepr.fields:
+    columns.add fieldRepr.getColumn()
+
+  quote do:
+    `columns`
 
 proc getDbType(fieldRepr: FieldRepr): string =
   ## SQLite-specific mapping from Nim types to SQL data types.
@@ -132,6 +145,13 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
 
   for dbObjRepr in dbObjReprs:
     result.add (dbObjRepr.getTable(), "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
+
+proc genCopyQuery*(S, D: typedesc): SqlQuery =
+  ## Generate query to copy data from one table to another.
+
+  let columns = S.getColumns(force=true).filterIt(it in D.getColumns(force=true))
+
+  sql "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [D.getTable(), columns.join(", "). S.getTable()]
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
