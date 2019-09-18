@@ -4,7 +4,7 @@ import os, strutils, sequtils, times
 
 import norm/postgres
 
-import user, pet
+import models/[user, pet]
 
 
 const
