@@ -9,6 +9,7 @@
 ## 1.0.18 (WIP)
 
 -   [+] Allow creating and dropping individual tables with `createTable` and `dropTable` templates.
+-   [+] Allow copying data between tables with ``copyTo`` template.
 
 
 ## 1.0.17 (September 12, 2019)
