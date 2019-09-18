@@ -159,7 +159,7 @@ macro genCopyQuery*(src, dst: typedesc): untyped =
         cols = srcObjRepr.getColumns(force=true).filterIt(it in dstObjRepr.getColumns(force=true))
 
       query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [dstObjRepr.getTable(), cols.join(", "),
-                                                           srcObjRepr.getTable()]
+                                                         srcObjRepr.getTable()]
     of nnkDotExpr:
       let
         (srcObjRepr, dstObjRepr) = (src[0].getImpl().toObjRepr(), dst[0].getImpl().toObjRepr())
@@ -167,7 +167,7 @@ macro genCopyQuery*(src, dst: typedesc): untyped =
                             dstObjRepr.fields.getByName($dst[1]).getColumn())
 
       query = "UPDATE $# SET ($#) = (SELECT $# FROM $#)" % [dstObjRepr.getTable(), srcCol, dstCol,
-                                                              srcObjRepr.getTable()]
+                                                            srcObjRepr.getTable()]
 
     else: discard
 
