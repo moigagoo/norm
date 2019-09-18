@@ -140,7 +140,28 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
   for dbObjRepr in dbObjReprs:
     result.add (dbObjRepr.signature.name, "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
 
-macro genCopyQuery*(S, D: typedesc): untyped =
+macro genCopyColumnQuery*(srcField, dstField: typedesc): untyped =
+  ## Generate query to copy data from one table column to another.
+
+  expectKind(srcField, nnkDotExpr)
+  expectKind(dstField, nnkDotExpr)
+
+  let
+    srcObjRepr = srcField[0].getImpl().toObjRepr()
+    dstObjRepr = dstField[0].getImpl().toObjRepr()
+
+    srcTable = srcObjRepr.getTable()
+    dstTable = dstObjRepr.getTable()
+
+    srcCol = srcObjRepr.fields.getByName($srcField[1]).getColumn()
+    dstCol = dstObjRepr.fields.getByName($dstField[1]).getColumn()
+
+    query = "INSERT INTO $# ($#) SELECT $# FROM $#" % [dstTable, srcCol, dstCol, srcTable]
+
+  result = quote do:
+    `query`
+
+macro genCopyTableQuery*(S, D: typedesc): untyped =
   ## Generate query to copy data from one table to another.
 
   let
