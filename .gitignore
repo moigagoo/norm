@@ -6,6 +6,7 @@
 *.html
 
 tests/tmigrate
+tests/tmigratefromtypes
 tests/tobjutils
 tests/tpostgres
 tests/tpostgresfromtypes
