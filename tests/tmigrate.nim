@@ -45,9 +45,12 @@ suite "Migration":
     withDb:
       Tmp.createTable(force=true)
       Person.copyTo Tmp
+
       Person.dropTable()
+
       PersonNew.createTable()
       Tmp.copyTo PersonNew
+
       Tmp.dropTable()
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
