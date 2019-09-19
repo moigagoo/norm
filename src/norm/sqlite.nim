@@ -226,7 +226,8 @@ template genWithDb(connection, user, password, database: string,
 
         body
 
-      finally: dbConn.close()
+      finally:
+        dbConn.close()
 
   template withDb*(body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
