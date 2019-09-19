@@ -166,7 +166,7 @@ macro genCopyQuery*(src, dst: typedesc): untyped =
         (srcCol, dstCol) = (srcObjRepr.fields.getByName($src[1]).getColumn(),
                             dstObjRepr.fields.getByName($dst[1]).getColumn())
 
-      query = "UPDATE $# SET ($#) = (SELECT $# FROM $#)" % [dstObjRepr.getTable(), srcCol, dstCol,
+      query = "UPDATE $# SET ($#) = (SELECT $# FROM $#)" % [dstObjRepr.getTable(), dstCol, srcCol,
                                                             srcObjRepr.getTable()]
 
     else: discard
