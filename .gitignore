@@ -5,7 +5,7 @@
 *.exe
 *.html
 
-tests/tmigrate
+tests/tmodifytable
 tests/tmigratefromtypes
 tests/tobjutils
 tests/tpostgres
