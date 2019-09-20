@@ -28,13 +28,6 @@ db(dbName, "", "", ""):
     TmpRemoveColumn  = object
       name: string
 
-    PersonRenameColumn {.table: "person".} = object
-      fullname: Option[string]
-      age: int
-    TmpRenameColumn  = object
-      fullname: Option[string]
-      age: int
-
     PersonRenameTable {.table: "personrenamed".} = object
       name: string
       age: int
@@ -112,21 +105,9 @@ suite "Modify table":
         @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
       ]
 
-      check dbConn.getAllRows(sql "SELECT name FROM sqlite_master where type='table'") == @[
-        @[?"person"]
-      ]
-
-      check len(PersonRenameColumn.getMany(100)) == 9
-
   test "Rename table":
     withDb:
       Person.renameTo "personrenamed"
-
-      check dbConn.getAllRows(sql "PRAGMA table_info(personrenamed)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
-      ]
 
       check dbConn.getAllRows(sql "SELECT name FROM sqlite_master where type='table'") == @[
         @[?"personrenamed"]
