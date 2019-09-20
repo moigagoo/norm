@@ -140,36 +140,43 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
   for dbObjRepr in dbObjReprs:
     result.add (dbObjRepr.signature.name, "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
 
-macro genCopyQuery*(src, dst: typedesc): untyped =
-  ##[ Generate query to copy data from one table to another.
+macro genRenameQuery*(orig: typedesc, newName: string): untyped =
+  ## Generate query to rename a table or column.
 
-  If object fields are specified, copy data only between specific columns.
-  ]##
-
-  expectKind(src, {nnkSym, nnkDotExpr})
-  expectKind(dst, {nnkSym, nnkDotExpr})
-  expectKind(src, dst.kind)
+  expectKind(orig, {nnkSym, nnkDotExpr})
 
   var query: string
 
-  case src.kind
+  case orig.kind
     of nnkSym:
-      let
-        (srcObjRepr, dstObjRepr) = (src.getImpl().toObjRepr(), dst.getImpl().toObjRepr())
-        cols = srcObjRepr.getColumns(force=true).filterIt(it in dstObjRepr.getColumns(force=true))
+      query = "ALTER TABLE $# RENAME TO $#" % [orig.getImpl().toObjRepr().getTable(),
+                                               newName.strVal]
 
-      query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [dstObjRepr.getTable(), cols.join(", "),
-                                                         srcObjRepr.getTable()]
     of nnkDotExpr:
       let
-        (srcObjRepr, dstObjRepr) = (src[0].getImpl().toObjRepr(), dst[0].getImpl().toObjRepr())
-        (srcCol, dstCol) = (srcObjRepr.fields.getByName($src[1]).getColumn(),
-                            dstObjRepr.fields.getByName($dst[1]).getColumn())
+        objRepr = orig[0].getImpl().toObjRepr()
+        fieldRepr = objRepr.fields.getByName($orig[1])
 
-      query = "UPDATE $# SET ($#) = (SELECT $# FROM $#)" % [dstObjRepr.getTable(), dstCol, srcCol,
-                                                            srcObjRepr.getTable()]
+      query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), fieldRepr.getColumn(),
+                                                         newName.strVal]
 
     else: discard
+
+  result = quote do:
+    `query`
+
+macro genCopyQuery*(S, D: typedesc): untyped =
+  ## Generate query to copy data from one table to another.
+
+  expectKind(S, nnkSym)
+  expectKind(D, nnkSym)
+
+  let
+    (srcObjRepr, dstObjRepr) = (S.getImpl().toObjRepr(), D.getImpl().toObjRepr())
+    cols = srcObjRepr.getColumns(force=true).filterIt(it in dstObjRepr.getColumns(force=true))
+
+    query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [dstObjRepr.getTable(), cols.join(", "),
+                                                       srcObjRepr.getTable()]
 
   result = quote do:
     `query`
