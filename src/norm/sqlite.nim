@@ -95,12 +95,19 @@ template genWithDb(connection, user, password, database: string,
 
           dbConn.exec sql tableSchema[1]
 
-      template copyTo(src, dst: typedesc) {.used.} =
-        let copyQuery = genCopyQuery(src, dst)
+      template copyTo(S, D: typedesc) {.used.} =
+        let copyQuery = genCopyQuery(S, D)
 
         debug copyQuery
 
         dbConn.exec sql copyQuery
+
+      template renameTo(orig: typedesc, newName: string) {.used.} =
+        let renameQuery = genRenameQuery(orig, newName)
+
+        debug renameQuery
+
+        dbConn.exec sql renameQuery
 
       template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
