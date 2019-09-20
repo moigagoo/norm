@@ -104,17 +104,11 @@ suite "Modify table":
 
   test "Rename column":
     withDb:
-      TmpRenameColumn.createTable(force=true)
-      Person.copyTo TmpRenameColumn
-      Person.name.copyTo TmpRenameColumn.fullname
-      Person.dropTable()
-      PersonRenameColumn.createTable(force=true)
-      TmpRenameColumn.copyTo PersonRenameColumn
-      TmpRenameColumn.dropTable()
+      Person.name.renameTo "fullname"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"fullname", ?"TEXT", ?0, ?nil, ?0],
+        @[?1, ?"fullname", ?"TEXT", ?1, ?nil, ?0],
         @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
       ]
 
@@ -126,12 +120,7 @@ suite "Modify table":
 
   test "Rename table":
     withDb:
-      TmpRenameTable.createTable(force=true)
-      Person.copyTo TmpRenameTable
-      Person.dropTable()
-      PersonRenameTable.createTable(force=true)
-      TmpRenameTable.copyTo PersonRenameTable
-      TmpRenameTable.dropTable()
+      Person.renameTo "personrenamed"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(personrenamed)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],

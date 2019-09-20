@@ -5,7 +5,6 @@
 *.exe
 *.html
 
-tests/tmodifytable
 tests/tmigratefromtypes
 tests/tobjutils
 tests/tpostgres
@@ -13,4 +12,5 @@ tests/tpostgresfromtypes
 tests/tpostgresrowutils
 tests/tsqlite
 tests/tsqlitefromtype
+tests/tsqlitemigrate
 stests/tsqliterowutils
