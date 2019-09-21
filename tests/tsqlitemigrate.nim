@@ -36,7 +36,7 @@ db(dbName, "", "", ""):
       age: int
 
 
-suite "Modify table":
+suite "Migrations":
   setup:
     withDb:
       Person.createTable(force=true)
@@ -44,14 +44,6 @@ suite "Modify table":
       for i in 1..9:
         var person = Person(name: "Person $#" % $i, age: 20+i)
         person.insert()
-
-  test "Create table":
-    withDb:
-      check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0]
-      ]
 
   test "Add column":
     withDb:
