@@ -129,13 +129,19 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string 
   result.add "\n)"
 
 proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[(string, string)] =
-  ## Generate table schemas for a list of object representations.
+  ##[ Generate table schemas for a list of object representations.
+
+  Result is a sequence of pairs "typeName-tableSchema."
+  ]##
 
   for dbObjRepr in dbObjReprs:
     result.add (dbObjRepr.signature.name, genTableSchema(dbObjRepr, dbObjReprs))
 
 proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
-  ## Generate ``DROP TABLE`` queries for a list of object representations.
+  ##[ Generate ``DROP TABLE`` queries for a list of object representations.
+
+  Result is a sequence of pairs "typeName-dropTableQuery."
+  ]##
 
   for dbObjRepr in dbObjReprs:
     result.add (dbObjRepr.signature.name, "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
