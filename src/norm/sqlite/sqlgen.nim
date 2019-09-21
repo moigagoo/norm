@@ -123,7 +123,7 @@ proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string 
   var columns: seq[string]
 
   for field in dbObjRepr.fields:
-    columns.add "\t$#" % genColStmt(field, dbObjReprs)
+    columns.add "\t" & genColStmt(field, dbObjReprs)
 
   result.add columns.join(",\n")
   result.add "\n)"
