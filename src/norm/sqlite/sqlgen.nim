@@ -140,27 +140,25 @@ proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
   for dbObjRepr in dbObjReprs:
     result.add (dbObjRepr.signature.name, "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
 
-macro genRenameQuery*(orig: typedesc, newName: string): untyped =
-  ## Generate query to rename a table or column.
+macro genRenameTableQuery*(T: typedesc, newName: string): untyped =
+  ## Generate query to rename a table.
 
-  expectKind(orig, {nnkSym, nnkDotExpr})
+  expectKind(T, nnkSym)
 
-  var query: string
+  let query = "ALTER TABLE $# RENAME TO $#" % [T.getImpl().toObjRepr().getTable(), newName.strVal]
 
-  case orig.kind
-    of nnkSym:
-      query = "ALTER TABLE $# RENAME TO $#" % [orig.getImpl().toObjRepr().getTable(),
-                                               newName.strVal]
+  result = quote do:
+    `query`
 
-    of nnkDotExpr:
-      let
-        objRepr = orig[0].getImpl().toObjRepr()
-        fieldRepr = objRepr.fields.getByName($orig[1])
+macro genRenameColQuery*(field: typedesc, newName: string): untyped =
+  ## Generate query to rename a column.
 
-      query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), fieldRepr.getColumn(),
-                                                         newName.strVal]
+  let
+    objRepr = field[0].getImpl().toObjRepr()
+    fieldRepr = objRepr.fields.getByName($field[1])
 
-    else: discard
+    query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), fieldRepr.getColumn(),
+                                                       newName.strVal]
 
   result = quote do:
     `query`

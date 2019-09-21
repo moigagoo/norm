@@ -97,7 +97,7 @@ suite "Modify table":
 
   test "Rename column":
     withDb:
-      Person.name.renameTo "fullname"
+      Person.name.renameColTo "fullname"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
@@ -107,7 +107,7 @@ suite "Modify table":
 
   test "Rename table":
     withDb:
-      Person.renameTo "personrenamed"
+      Person.renameTableTo "personrenamed"
 
       check dbConn.getAllRows(sql "SELECT name FROM sqlite_master where type='table'") == @[
         @[?"personrenamed"]
