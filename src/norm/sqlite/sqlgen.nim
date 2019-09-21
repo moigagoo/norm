@@ -118,33 +118,31 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
   ## Generate table schema for an object representation.
 
-  result.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
+  var colStmts: seq[string]
 
-  var columns: seq[string]
+  for fieldRepr in dbObjRepr.fields:
+    colStmts.add "\t" & genColStmt(fieldRepr, dbObjReprs)
 
-  for field in dbObjRepr.fields:
-    columns.add "\t" & genColStmt(field, dbObjReprs)
+  result = colStmts.join(",\n")
 
-  result.add columns.join(",\n")
-  result.add "\n)"
-
-proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[(string, string)] =
+proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[(string, string, string)] =
   ##[ Generate table schemas for a list of object representations.
 
-  Result is a sequence of pairs "typeName-tableSchema."
+  Result is a sequence of triplets "typeName-tableName-tableSchema."
   ]##
 
   for dbObjRepr in dbObjReprs:
-    result.add (dbObjRepr.signature.name, genTableSchema(dbObjRepr, dbObjReprs))
+    result.add (dbObjRepr.signature.name, dbObjRepr.getTable(), genTableSchema(dbObjRepr, dbObjReprs))
 
-proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[(string, string)] =
-  ##[ Generate ``DROP TABLE`` queries for a list of object representations.
+proc genCreateTableQuery*(tableSchema, tableName: string): SqlQuery =
+  ## Generate query to create a table given its name and schema.
 
-  Result is a sequence of pairs "typeName-dropTableQuery."
-  ]##
+  sql "CREATE TABLE $# (\n$#\n)" % [tableName, tableSchema]
 
-  for dbObjRepr in dbObjReprs:
-    result.add (dbObjRepr.signature.name, "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable())
+proc genDropTableQuery*(tableName: string): SqlQuery =
+  ## Generate query to drop a table given its name.
+
+  sql "DROP TABLE IF EXISTS $#" % tableName
 
 macro genRenameTableQuery*(T: typedesc, newName: string): untyped =
   ## Generate query to rename a table.

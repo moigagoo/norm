@@ -39,7 +39,7 @@ export rowutils, sqlgen, objutils
 
 
 template genWithDb(connection, user, password, database: string,
-                   tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
+                   tableSchemas: openArray[(string, string, string)]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
   template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
@@ -55,31 +55,35 @@ template genWithDb(connection, user, password, database: string,
       let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
       template dropTable(T: typedesc) {.used.} =
-        for dropTableQuery in dropTableQueries:
-          if dropTableQuery[0] == $T:
-            debug dropTableQuery[1]
+        let dropTableQuery = genDropTableQuery(T.getTable())
 
-            dbConn.exec sql dropTableQuery[1]
+        debug dropTableQuery
+
+        dbConn.exec dropTableQuery
 
       template dropTables() {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
-        for dropTableQuery in dropTableQueries:
-          debug dropTableQuery[1]
+        for tableSchema in tableSchemas:
+          let dropTableQuery = genDropTableQuery(tableSchema[1])
 
-          dbConn.exec sql dropTableQuery[1]
+          debug dropTableQuery
+
+          dbConn.exec dropTableQuery
 
       template createTable(T: typedesc, force = false) {.used.} =
         ## Create table for a type. If ``force`` is ``true``, drop the table beforehand.
 
         for tableSchema in tableSchemas:
           if tableSchema[0] == $T:
+            let createTableQuery = genCreateTableQuery(tableSchema[2], T.getTable())
+
             if force:
               T.dropTable()
 
-            debug tableSchema[1]
+            debug createTableQuery
 
-            dbConn.exec sql tableSchema[1]
+            dbConn.exec createTableQuery
 
       template createTables(force = false) {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
@@ -91,9 +95,11 @@ template genWithDb(connection, user, password, database: string,
           dropTables()
 
         for tableSchema in tableSchemas:
-          debug tableSchema[1]
+          let createTableQuery = genCreateTableQuery(tableSchema[2], tableSchema[1])
 
-          dbConn.exec sql tableSchema[1]
+          debug createTableQuery
+
+          dbConn.exec createTableQuery
 
       template copyTo(S, D: typedesc) {.used.} =
         let copyQuery = genCopyQuery(S, D)
@@ -284,7 +290,7 @@ macro dbFromTypes*(connection, user, password, database: string,
     dbObjReprs.add getImpl(typ).toObjRepr()
 
   result = getAst genWithDb(connection, user, password, database,
-                            genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+                            genTableSchemas(dbObjReprs))
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
@@ -312,6 +318,6 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add node
 
   let withDbNode = getAst genWithDb(connection, user, password, database,
-                                    genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+                                    genTableSchemas(dbObjReprs))
 
   result.insert(0, withDbNode)
