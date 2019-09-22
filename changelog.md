@@ -10,6 +10,7 @@
 
 -   [+] Allow creating and dropping individual tables with `createTable` and `dropTable` templates.
 -   [+] Allow copying data between tables with ``copyTo`` template.
+-   [r] Decouple schema generation from create table query generation, which simplified some proc signatures and allows to generate queries for individual columns.
 
 
 ## 1.0.17 (September 12, 2019)
