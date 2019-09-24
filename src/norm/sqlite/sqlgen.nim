@@ -157,6 +157,8 @@ macro genRenameTableQuery*(T: typedesc, newName: string): untyped =
 macro genRenameColQuery*(field: typedesc, newName: string): untyped =
   ## Generate query to rename a column.
 
+  expectKind(field, nnkDotExpr)
+
   let
     objRepr = field[0].getImpl().toObjRepr()
     fieldRepr = objRepr.fields.getByName($field[1])
