@@ -85,6 +85,8 @@ template genWithDb(connection, user, password, database: string,
 
             dbConn.exec createTableQuery
 
+            break
+
       template createTables(force = false) {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
 
