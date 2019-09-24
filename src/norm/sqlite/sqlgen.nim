@@ -151,8 +151,7 @@ macro genRenameTableQuery*(T: typedesc, newName: string): untyped =
 
   let query = "ALTER TABLE $# RENAME TO $#" % [T.getImpl().toObjRepr().getTable(), newName.strVal]
 
-  result = quote do:
-    `query`
+  result = newLit query
 
 macro genRenameColQuery*(field: typedesc, newName: string): untyped =
   ## Generate query to rename a column.
@@ -166,8 +165,7 @@ macro genRenameColQuery*(field: typedesc, newName: string): untyped =
     query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), fieldRepr.getColumn(),
                                                        newName.strVal]
 
-  result = quote do:
-    `query`
+  result = newLit query
 
 macro genCopyQuery*(S, D: typedesc): untyped =
   ## Generate query to copy data from one table to another.
@@ -182,8 +180,7 @@ macro genCopyQuery*(S, D: typedesc): untyped =
     query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [dstObjRepr.getTable(), cols.join(", "),
                                                        srcObjRepr.getTable()]
 
-  result = quote do:
-    `query`
+  result = newLit query
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
