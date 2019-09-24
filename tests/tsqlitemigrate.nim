@@ -31,9 +31,6 @@ db(dbName, "", "", ""):
     PersonRenameTable {.table: "personrenamed".} = object
       name: string
       age: int
-    TmpRenameTable = object
-      name: string
-      age: int
 
 
 suite "Migrations":
