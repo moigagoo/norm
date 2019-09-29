@@ -84,7 +84,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
         else: "TEXT"
     else: "TEXT NOT NULL"
 
-proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
+proc genColStmt(fieldRepr: FieldRepr): string =
   ## Generate SQL column statement for a field representation.
 
   result.add fieldRepr.getColumn()
@@ -106,38 +106,41 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
       expectKind(prag.value, {nnkIdent, nnkSym, nnkDotExpr})
       result.add case prag.value.kind
         of nnkIdent, nnkSym:
-          " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
+          " REFERENCES $# (id)" % prag.value.getImpl().toObjRepr().getTable()
         of nnkDotExpr:
-          " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
+          let
+            refObjRepr = prag.value[0].getImpl().toObjRepr()
+            refTable = refObjRepr.getTable()
+            refCol = refObjRepr.fields.getByName($prag.value[1]).getColumn()
+
+          " REFERENCES $# ($#)" % [refTable, refCol]
         else: ""
     elif prag.name == "onUpdate" and prag.kind == pkKval:
       result.add " ON UPDATE $#" % $prag.value
     elif prag.name == "onDelete" and prag.kind == pkKval:
       result.add " ON DELETE $#" % $prag.value
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): string =
+proc genTableSchema*(dbObjRepr: ObjRepr): string =
   ## Generate table schema for an object representation.
 
   var colStmts: seq[string]
 
   for fieldRepr in dbObjRepr.fields:
-    colStmts.add "\t" & genColStmt(fieldRepr, dbObjReprs)
+    colStmts.add "\t" & genColStmt(fieldRepr)
 
   result = colStmts.join(",\n")
 
-proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[(string, string, string)] =
-  ##[ Generate table schemas for a list of object representations.
+proc genCreateTableQuery*(objRepr: ObjRepr): string =
+  ## Generate query to create a table from an object representation.
 
-  Result is a sequence of triplets "typeName-tableName-tableSchema."
-  ]##
+  "CREATE TABLE $# (\n$#\n)" % [objRepr.getTable(), genTableSchema(objRepr)]
 
-  for dbObjRepr in dbObjReprs:
-    result.add (dbObjRepr.signature.name, dbObjRepr.getTable(), genTableSchema(dbObjRepr, dbObjReprs))
+macro genCreateTableQuery*(T: typedesc): string =
+  ## Generate query to create a table from a type.
 
-proc genCreateTableQuery*(tableSchema, tableName: string): SqlQuery =
-  ## Generate query to create a table given its name and schema.
+  let tableSchema = genCreateTableQuery(T.getImpl().toObjRepr())
 
-  sql "CREATE TABLE $# (\n$#\n)" % [tableName, tableSchema]
+  result = newLit tableSchema
 
 proc genDropTableQuery*(tableName: string): SqlQuery =
   ## Generate query to drop a table given its name.
