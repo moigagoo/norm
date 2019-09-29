@@ -93,9 +93,9 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
     elif prag.name == "default" and prag.kind == pkKval:
       result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
-      expectKind(prag.value, {nnkIdent, nnkDotExpr})
+      expectKind(prag.value, {nnkIdent, nnkSym, nnkDotExpr})
       result.add case prag.value.kind
-        of nnkIdent:
+        of nnkIdent, nnkSym:
           ", FOREIGN KEY ($#) REFERENCES $# (id)" % [fieldRepr.getColumn(),
                                                       dbObjReprs.getByName($prag.value).getTable()]
         of nnkDotExpr:
@@ -111,19 +111,19 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
 proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): SqlQuery =
   ## Generate table schema for an object representation.
 
-  var schema: string
+  var tableSchema: string
 
-  schema.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
+  tableSchema.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
 
   var columns: seq[string]
 
   for field in dbObjRepr.fields:
     columns.add "\t$#" % genColStmt(field, dbObjReprs)
 
-  schema.add columns.join(",\n")
-  schema.add "\n)"
+  tableSchema.add columns.join(",\n")
+  tableSchema.add "\n)"
 
-  result = sql schema
+  result = sql tableSchema
 
 proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
   ## Generate table schemas for a list of object representations.
