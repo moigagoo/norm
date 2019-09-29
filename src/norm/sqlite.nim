@@ -38,8 +38,7 @@ export sqlite
 export rowutils, sqlgen, objutils
 
 
-template genWithDb(connection, user, password, database: string,
-                   tableSchemas: openArray[(string, string, string)]): untyped {.dirty.} =
+template genWithDb(connection, user, password, database: string, dbTypeNames: openArray[string]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
   template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
@@ -61,47 +60,50 @@ template genWithDb(connection, user, password, database: string,
 
         dbConn.exec dropTableQuery
 
-      template dropTables() {.used.} =
+      macro dropTables(): untyped {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
-        for tableSchema in tableSchemas:
-          let dropTableQuery = genDropTableQuery(tableSchema[1])
+        result = newStmtList()
 
-          debug dropTableQuery
-
-          dbConn.exec dropTableQuery
+        for dbTypeName in dbTypeNames:
+          result.add newCall(
+            newDotExpr(
+              ident dbTypeName,
+              bindSym "dropTable"
+            )
+          )
 
       template createTable(T: typedesc, force = false) {.used.} =
         ## Create table for a type. If ``force`` is ``true``, drop the table beforehand.
 
-        for tableSchema in tableSchemas:
-          if tableSchema[0] == $T:
-            let createTableQuery = genCreateTableQuery(tableSchema[2], T.getTable())
+        if force:
+          T.dropTable()
 
-            if force:
-              T.dropTable()
+        let createTableQuery = genCreateTableQuery(T)
 
-            debug createTableQuery
+        debug createTableQuery
 
-            dbConn.exec createTableQuery
+        dbConn.exec sql createTableQuery
 
-            break
-
-      template createTables(force = false) {.used.} =
+      macro createTables(force = false): untyped {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
 
         If ``force`` is ``true``, drop tables beforehand.
         ]##
 
-        if force:
-          dropTables()
+        result = newStmtList()
 
-        for tableSchema in tableSchemas:
-          let createTableQuery = genCreateTableQuery(tableSchema[2], tableSchema[1])
-
-          debug createTableQuery
-
-          dbConn.exec createTableQuery
+        for dbTypeName in dbTypeNames:
+          result.add newCall(
+            newDotExpr(
+              ident dbTypeName,
+              bindSym "createTable"
+            ),
+            newNimNode(nnkExprEqExpr).add(
+              ident "force",
+              force
+            )
+          )
 
       template copyTo(S, D: typedesc) {.used.} =
         let copyQuery = genCopyQuery(S, D)
@@ -281,18 +283,17 @@ macro dbFromTypes*(connection, user, password, database: string,
   The macro generates ``withDb`` template that wraps all DB interations.
   ]##
 
-  var dbObjReprs: seq[ObjRepr]
+  var dbTypeNames: seq[string]
 
   for typ in types:
-    let objRepr = getImpl(typ).toObjRepr()
+    let objRepr = typ.getImpl().toObjRepr()
 
     if "id" notin objRepr.fieldNames:
-      error "Type '$#' is missing 'id' field. Put it under 'ensureIdFields' macro." % $typ
+      error "Type '$#' is missing 'id' field. Wrap it with 'dbTypes' macro." % $typ
 
-    dbObjReprs.add getImpl(typ).toObjRepr()
+    dbTypeNames.add objRepr.signature.name
 
-  result = getAst genWithDb(connection, user, password, database,
-                            genTableSchemas(dbObjReprs))
+  result = getAst genWithDb(connection, user, password, database, dbTypeNames)
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
@@ -305,7 +306,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   result = newStmtList()
 
-  var dbObjReprs: seq[ObjRepr]
+  var dbTypeNames: seq[string]
 
   for node in body:
     if node.kind == nnkTypeSection:
@@ -314,12 +315,11 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add typeSection
 
       for typeDef in typeSection:
-        dbObjReprs.add typeDef.toObjRepr()
+        dbTypeNames.add typeDef.toObjRepr().signature.name
 
     else:
       result.add node
 
-  let withDbNode = getAst genWithDb(connection, user, password, database,
-                                    genTableSchemas(dbObjReprs))
+  let withDbNode = getAst genWithDb(connection, user, password, database, dbTypeNames)
 
   result.insert(0, withDbNode)
