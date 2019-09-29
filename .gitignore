@@ -11,6 +11,6 @@ tests/tpostgres
 tests/tpostgresfromtypes
 tests/tpostgresrowutils
 tests/tsqlite
-tests/tsqlitefromtype
+tests/tsqlitefromtypes
 tests/tsqlitemigrate
 stests/tsqliterowutils
