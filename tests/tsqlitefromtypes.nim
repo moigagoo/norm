@@ -1,6 +1,6 @@
 import unittest
 
-import os, strutils, sequtils, times
+import os, strutils, times
 
 import norm/sqlite
 
