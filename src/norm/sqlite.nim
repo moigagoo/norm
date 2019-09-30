@@ -79,11 +79,11 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         if force:
           T.dropTable()
 
-        let createTableQuery = genCreateTableQuery(T)
+        let createTableQuery = genCreateTableQuery(T.getTable(), genTableSchema(T))
 
         debug createTableQuery
 
-        dbConn.exec sql createTableQuery
+        dbConn.exec createTableQuery
 
       macro createTables(force = false): untyped {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
@@ -111,6 +111,20 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         debug copyQuery
 
         dbConn.exec sql copyQuery
+
+      template addColumn(field: typedesc) {.used.} =
+        let addColQuery = genAddColQuery(field)
+
+        debug addColQuery
+
+        dbConn.exec sql addColQuery
+
+      template updateColumns(T: typedesc) {.used.} =
+        let
+          createTmpTableQuery = genCreateTableQuery("tmp" & T.getTable(), genTableSchema(T))
+
+        echo createTmpTableQuery
+
 
       template renameTableTo(T: typedesc, newName: string) {.used.} =
         let renameTableQuery = genRenameTableQuery(T, newName)
