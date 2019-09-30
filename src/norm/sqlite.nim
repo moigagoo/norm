@@ -144,7 +144,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         dbConn.exec renameTableQuery
 
-      template renameColTo(field: typedesc, newName: string) {.used.} =
+      template renameColumnTo(field: typedesc, newName: string) {.used.} =
         let renameColQuery = genRenameColQuery(field, newName)
 
         debug renameColQuery

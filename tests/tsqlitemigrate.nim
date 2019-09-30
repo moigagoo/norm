@@ -70,7 +70,7 @@ suite "Migrations":
 
   test "Rename column":
     withDb:
-      Person.name.renameColTo "fullname"
+      Person.name.renameColumnTo "fullname"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
