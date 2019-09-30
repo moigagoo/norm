@@ -174,10 +174,10 @@ macro genAddColQuery*(field: typedesc): untyped =
 
   result = newLit query
 
-template genRenameTableQuery*(T: typedesc, newName: string): SqlQuery =
+proc genRenameTableQuery*(oldName, newName: string): SqlQuery =
   ## Generate query to rename a table.
 
-  sql "ALTER TABLE $# RENAME TO $#" % [T.getTable(), newName]
+  sql "ALTER TABLE $# RENAME TO $#" % [oldName, newName]
 
 macro genRenameColQuery*(field: typedesc, newName: string): untyped =
   ## Generate query to rename a column.
