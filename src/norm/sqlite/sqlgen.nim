@@ -130,22 +130,44 @@ proc genTableSchema*(dbObjRepr: ObjRepr): string =
 
   result = colStmts.join(",\n")
 
-proc genCreateTableQuery*(objRepr: ObjRepr): string =
-  ## Generate query to create a table from an object representation.
+macro genTableSchema*(T: typedesc): string =
+  ## Generate table schema for a type.
 
-  "CREATE TABLE $# (\n$#\n)" % [objRepr.getTable(), genTableSchema(objRepr)]
+  let tableSchema = genTableSchema(T.getImpl().toObjRepr())
+
+  result = newLit tableSchema
+
+proc genCreateTableQuery*(tableName, tableSchema: string): SqlQuery =
+  ## Generate query to create a table.
+
+  sql "CREATE TABLE $# (\n$#\n)" % [tableName, tableSchema]
 
 macro genCreateTableQuery*(T: typedesc): string =
   ## Generate query to create a table from a type.
 
-  let tableSchema = genCreateTableQuery(T.getImpl().toObjRepr())
+  let
+    objRepr = T.getImpl().toObjRepr()
+    query = "CREATE TABLE $# (\n$#\n)" % [objRepr.getTable(), genTableSchema(objRepr)]
 
-  result = newLit tableSchema
+  result = newLit query
 
 proc genDropTableQuery*(tableName: string): SqlQuery =
   ## Generate query to drop a table given its name.
 
   sql "DROP TABLE IF EXISTS $#" % tableName
+
+macro genAddColQuery*(field: typedesc): untyped =
+  ## Generate query to add column to table.
+
+  expectKind(field, nnkDotExpr)
+
+  let
+    objRepr = field[0].getImpl().toObjRepr()
+    fieldRepr = objRepr.fields.getByName($field[1])
+
+    query = "ALTER TABLE $# ADD COLUMN $#" % [objRepr.getTable(), fieldRepr.genColStmt()]
+
+  result = newLit query
 
 macro genRenameTableQuery*(T: typedesc, newName: string): untyped =
   ## Generate query to rename a table.
