@@ -18,10 +18,6 @@ db(dbName, "", "", ""):
       name: string
       age: int
       ssn: Option[int]
-    TmpAddColumn  = object
-      name: string
-      age: int
-      ssn: Option[int]
 
     PersonRemoveColumn {.table: "person".} = object
       name: string
@@ -44,12 +40,7 @@ suite "Migrations":
 
   test "Add column":
     withDb:
-      TmpAddColumn.createTable(force=true)
-      Person.copyTo TmpAddColumn
-      Person.dropTable()
-      PersonAddColumn.createTable(force=true)
-      TmpAddColumn.copyTo PersonAddColumn
-      TmpAddColumn.dropTable()
+      addColumn(PersonAddColumn.ssn)
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
@@ -66,6 +57,8 @@ suite "Migrations":
 
   test "Remove column":
     withDb:
+      updateColumns(PersonRemoveColumn)
+
       TmpRemoveColumn.createTable(force=true)
       Person.copyTo TmpRemoveColumn
       Person.dropTable()
