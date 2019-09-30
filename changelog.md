@@ -8,9 +8,8 @@
 
 ## 1.0.18 (WIP)
 
--   [+] Allow creating and dropping individual tables with `createTable` and `dropTable` templates.
--   [+] Allow copying data between tables with ``copyTo`` template.
--   [r] Decouple schema generation from create table query generation, which simplified some proc signatures and allows to generate queries for individual columns.
+-   [+] Add means to write migrations: `addTable` to add tables, `updateColumns` to remove tables, `renameColumnTo` to rename columns, and `renameTableTo` to rename tables.
+-   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.
 
 
 ## 1.0.17 (September 12, 2019)
@@ -83,7 +82,7 @@
 
 ## 1.0.7 (March 21, 2019)
 
--   [+] Add ``orderBy`` argument to ``getMany`` procs.
+-   [+] Add `orderBy` argument to `getMany` procs.
 
 
 ## 1.0.6 (March 21, 2019)
@@ -93,31 +92,31 @@
 
 ## 1.0.5 (March 18, 2019)
 
--   [+] Do not require ``chronicles`` package.
+-   [+] Do not require `chronicles` package.
 
 
 ## 1.0.4 (March 3, 2019)
 
--   [+] Add ``WHERE`` lookup to ``getMany`` procs.
+-   [+] Add `WHERE` lookup to `getMany` procs.
 
 
 ## 1.0.3 (March 2, 2019)
 
--   [r] Objutils: Rename ``[]`` field accessor to ``dot`` to avoid collisions with ``tables`` module.
+-   [r] Objutils: Rename `[]` field accessor to `dot` to avoid collisions with `tables` module.
 
 
 ## 1.0.2 (March 1, 2019)
 
--   [!] Procs defined in ``db`` macro are now passed as is to the resulting code and are not forced inside ``withDb`` template.
--   [+] Allow to override column names for fields with ``dbCol`` pragma.
+-   [!] Procs defined in `db` macro are now passed as is to the resulting code and are not forced inside `withDb` template.
+-   [+] Allow to override column names for fields with `dbCol` pragma.
 
 
 ## 1.0.1 (February 28, 2019)
 
 -   [+] Respect custom field parsers and formatters.
--   [+] Rowutils: Respect ``ro`` pragma in ``toRow`` proc.
--   [+] Objutils: Respect ``ro`` pragma in ``fieldNames`` proc.
--   [t] Type conversion: Fix issue with incorrect conversion of field named ``name``.
+-   [+] Rowutils: Respect `ro` pragma in `toRow` proc.
+-   [+] Objutils: Respect `ro` pragma in `fieldNames` proc.
+-   [t] Type conversion: Fix issue with incorrect conversion of field named `name`.
 
 
 ## 1.0.0 (February 27, 2019)
