@@ -169,14 +169,10 @@ macro genAddColQuery*(field: typedesc): untyped =
 
   result = newLit query
 
-macro genRenameTableQuery*(T: typedesc, newName: string): untyped =
+template genRenameTableQuery*(T: typedesc, newName: string): SqlQuery =
   ## Generate query to rename a table.
 
-  expectKind(T, nnkSym)
-
-  let query = "ALTER TABLE $# RENAME TO $#" % [T.getImpl().toObjRepr().getTable(), newName.strVal]
-
-  result = newLit query
+  sql "ALTER TABLE $# RENAME TO $#" % [T.getTable(), newName]
 
 macro genRenameColQuery*(field: typedesc, newName: string): untyped =
   ## Generate query to rename a column.
@@ -192,18 +188,16 @@ macro genRenameColQuery*(field: typedesc, newName: string): untyped =
 
   result = newLit query
 
-macro genCopyQuery*(S, D: typedesc): untyped =
+macro genCopyQuery*(T: typedesc, targetTable: string): untyped =
   ## Generate query to copy data from one table to another.
 
-  expectKind(S, nnkSym)
-  expectKind(D, nnkSym)
+  expectKind(T, nnkSym)
 
   let
-    (srcObjRepr, dstObjRepr) = (S.getImpl().toObjRepr(), D.getImpl().toObjRepr())
-    cols = srcObjRepr.getColumns(force=true).filterIt(it in dstObjRepr.getColumns(force=true))
+    objRepr = T.getImpl().toObjRepr()
+    cols = objRepr.getColumns(force=true)
 
-    query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [dstObjRepr.getTable(), cols.join(", "),
-                                                       srcObjRepr.getTable()]
+    query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [targetTable.strVal, cols.join(", "), objRepr.getTable()]
 
   result = newLit query
 
