@@ -121,17 +121,28 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
       template updateColumns(T: typedesc) {.used.} =
         let
-          createTmpTableQuery = genCreateTableQuery("tmp" & T.getTable(), genTableSchema(T))
+          tmpTableName = "tmp" & T.getTable()
+          createTmpTableQuery = genCreateTableQuery(tmpTableName, genTableSchema(T))
+          copyQuery = genCopyQuery(T, tmpTableName)
+          renameTmpTableQuery = genRenameTableQuery(tmpTableName, T.getTable())
 
-        echo createTmpTableQuery
+        debug createTmpTableQuery
+        dbConn.exec createTmpTableQuery
 
+        debug copyQuery
+        dbConn.exec copyQuery
+
+        T.dropTable()
+
+        debug renameTmpTableQuery
+        dbConn.exec renameTmpTableQuery
 
       template renameTableTo(T: typedesc, newName: string) {.used.} =
-        let renameTableQuery = genRenameTableQuery(T, newName)
+        let renameTableQuery = genRenameTableQuery(T.getTable(), newName)
 
         debug renameTableQuery
 
-        dbConn.exec sql renameTableQuery
+        dbConn.exec renameTableQuery
 
       template renameColTo(field: typedesc, newName: string) {.used.} =
         let renameColQuery = genRenameColQuery(field, newName)
