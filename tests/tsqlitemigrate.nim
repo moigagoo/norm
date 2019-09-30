@@ -21,8 +21,6 @@ db(dbName, "", "", ""):
 
     PersonRemoveColumn {.table: "person".} = object
       name: string
-    TmpRemoveColumn  = object
-      name: string
 
     PersonRenameTable {.table: "personrenamed".} = object
       name: string
@@ -58,13 +56,6 @@ suite "Migrations":
   test "Remove column":
     withDb:
       updateColumns(PersonRemoveColumn)
-
-      TmpRemoveColumn.createTable(force=true)
-      Person.copyTo TmpRemoveColumn
-      Person.dropTable()
-      PersonRemoveColumn.createTable(force=true)
-      TmpRemoveColumn.copyTo PersonRemoveColumn
-      TmpRemoveColumn.dropTable()
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
