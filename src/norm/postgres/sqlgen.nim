@@ -1,14 +1,14 @@
 ##[
 
-#######################################
-SQL Query Generation for SQLite Backend
-#######################################
+###########################################
+SQL Query Generation for PostgreSQL Backend
+###########################################
 
 Procs to generate SQL queries to modify tables and records.
 ]##
 
 import strutils, macros
-import ndb/sqlite
+import db_postgres
 
 import ../objutils, ../pragmas
 
