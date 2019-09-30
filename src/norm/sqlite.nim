@@ -105,13 +105,6 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
             )
           )
 
-      template copyTo(S, D: typedesc) {.used.} =
-        let copyQuery = genCopyQuery(S, D)
-
-        debug copyQuery
-
-        dbConn.exec sql copyQuery
-
       template addColumn(field: typedesc) {.used.} =
         let addColQuery = genAddColQuery(field)
 
