@@ -29,8 +29,7 @@ export db_postgres
 export rowutils, sqlgen, objutils
 
 
-template genWithDb(connection, user, password, database: string,
-                    tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
+template genWithDb(connection, user, password, database: string, dbTypeNames: openArray[string]): untyped {.dirty.} =
   ## Generate ``withDb`` template.
 
   template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
@@ -45,27 +44,97 @@ template genWithDb(connection, user, password, database: string,
     block:
       let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
-      template dropTables() {.used.} =
+      template dropTable(T: typedesc) {.used.} =
+        let dropTableQuery = genDropTableQuery(T.getTable())
+
+        debug dropTableQuery
+
+        dbConn.exec dropTableQuery
+
+      macro dropTables(): untyped {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
-        for dropTableQuery in dropTableQueries:
-          debug dropTableQuery
 
-          dbConn.exec sql dropTableQuery
+        result = newStmtList()
 
-      template createTables(force = false) {.used.} =
+        for dbTypeName in dbTypeNames:
+          result.add newCall(
+            newDotExpr(
+              ident dbTypeName,
+              bindSym "dropTable"
+            )
+          )
+
+      template createTable(T: typedesc, force = false) {.used.} =
+        ## Create table for a type. If ``force`` is ``true``, drop the table beforehand.
+
+        if force:
+          T.dropTable()
+
+        let createTableQuery = genCreateTableQuery(T.getTable(), genTableSchema(T))
+
+        debug createTableQuery
+
+        dbConn.exec createTableQuery
+
+      macro createTables(force = false) {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
 
         If ``force`` is ``true``, drop tables beforehand.
         ]##
 
-        if force:
-          dropTables()
+        result = newStmtList()
 
-        for tableSchema in tableSchemas:
-          debug tableSchema
+        for dbTypeName in dbTypeNames:
+          result.add newCall(
+            newDotExpr(
+              ident dbTypeName,
+              bindSym "createTable"
+            ),
+            newNimNode(nnkExprEqExpr).add(
+              ident "force",
+              force
+            )
+          )
 
-          dbConn.exec sql tableSchema
+      template addColumn(field: typedesc) {.used.} =
+        let addColQuery = genAddColQuery(field)
+
+        debug addColQuery
+
+        dbConn.exec sql addColQuery
+
+      template updateColumns(T: typedesc) {.used.} =
+        let
+          tmpTableName = "tmp" & T.getTable()
+          createTmpTableQuery = genCreateTableQuery(tmpTableName, genTableSchema(T))
+          copyQuery = genCopyQuery(T, tmpTableName)
+          renameTmpTableQuery = genRenameTableQuery(tmpTableName, T.getTable())
+
+        debug createTmpTableQuery
+        dbConn.exec createTmpTableQuery
+
+        debug copyQuery
+        dbConn.exec copyQuery
+
+        T.dropTable()
+
+        debug renameTmpTableQuery
+        dbConn.exec renameTmpTableQuery
+
+      template renameTableTo(T: typedesc, newName: string) {.used.} =
+        let renameTableQuery = genRenameTableQuery(T.getTable(), newName)
+
+        debug renameTableQuery
+
+        dbConn.exec renameTableQuery
+
+      template renameColumnTo(field: typedesc, newName: string) {.used.} =
+        let renameColQuery = genRenameColQuery(field, newName)
+
+        debug renameColQuery
+
+        dbConn.exec sql renameColQuery
 
       template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -182,8 +251,11 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = 0
 
-      try: body
-      finally: dbConn.close()
+      try:
+        body
+
+      finally:
+        dbConn.close()
 
   template withDb*(body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
@@ -215,18 +287,17 @@ macro dbFromTypes*(connection, user, password, database: string,
   The macro generates ``withDb`` template that wraps all DB interations.
   ]##
 
-  var dbObjReprs: seq[ObjRepr]
+  var dbTypeNames: seq[string]
 
   for typ in types:
-    let objRepr = getImpl(typ).toObjRepr()
+    let objRepr = typ.getImpl().toObjRepr()
 
     if "id" notin objRepr.fieldNames:
-      error "Type '$#' is missing 'id' field. Put it under 'ensureIdFields' macro." % $typ
+      error "Type '$#' is missing 'id' field. Wrap it with 'dbTypes' macro." % $typ
 
-    dbObjReprs.add getImpl(typ).toObjRepr()
+    dbTypeNames.add objRepr.signature.name
 
-  result = getAst genWithDb(connection, user, password, database,
-                            genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+  result = getAst genWithDb(connection, user, password, database, dbTypeNames)
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
@@ -239,7 +310,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   result = newStmtList()
 
-  var dbObjReprs: seq[ObjRepr]
+  var dbTypeNames: seq[string]
 
   for node in body:
     if node.kind == nnkTypeSection:
@@ -248,12 +319,11 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add typeSection
 
       for typeDef in typeSection:
-        dbObjReprs.add typeDef.toObjRepr()
+        dbTypeNames.add typeDef.toObjRepr().signature.name
 
     else:
       result.add node
 
-  let withDbNode = getAst genWithDb(connection, user, password, database,
-                                    genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+  let withDbNode = getAst genWithDb(connection, user, password, database, dbTypeNames)
 
   result.insert(0, withDbNode)
