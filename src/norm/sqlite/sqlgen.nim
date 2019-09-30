@@ -52,6 +52,11 @@ proc getColumns*(dbObjRepr: ObjRepr, force = false): seq[string] =
     if force or "ro" notin fieldRepr.signature.pragmaNames:
       result.add fieldRepr.getColumn()
 
+macro getColumns*(T: typedesc, force = false): untyped =
+  let cols = T.getImpl().toObjRepr().getColumns(force=force.boolVal)
+
+  result = newLit cols
+
 proc getColumns*(obj: object, force = false): seq[string] =
   ## Get DB column names for an object as a sequence of strings.
 
@@ -188,18 +193,10 @@ macro genRenameColQuery*(field: typedesc, newName: string): untyped =
 
   result = newLit query
 
-macro genCopyQuery*(T: typedesc, targetTable: string): untyped =
+template genCopyQuery*(T: typedesc, targetTable: string): SqlQuery =
   ## Generate query to copy data from one table to another.
 
-  expectKind(T, nnkSym)
-
-  let
-    objRepr = T.getImpl().toObjRepr()
-    cols = objRepr.getColumns(force=true)
-
-    query = "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [targetTable.strVal, cols.join(", "), objRepr.getTable()]
-
-  result = newLit query
+  sql "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [targetTable, T.getColumns(force=true).join(", "), T.getTable()]
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
