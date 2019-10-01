@@ -53,9 +53,23 @@ suite "Migrations":
 
       check len(PersonAddColumn.getMany(100)) == 9
 
-  test "Remove column":
+  test "Drop columns":
     withDb:
       PersonRemoveColumn.dropColumns ["age"]
+
+      let
+        getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+        getTablesQuery = sql "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+
+      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["name"]]
+
+      check dbConn.getAllRows(getTablesQuery) == @[@["person"]]
+
+      check len(PersonRemoveColumn.getMany(100)) == 9
+
+  test "Drop unused columns":
+    withDb:
+      PersonRemoveColumn.dropUnusedColumns()
 
       let
         getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"

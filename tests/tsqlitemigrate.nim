@@ -53,9 +53,9 @@ suite "Migrations":
 
       check len(PersonAddColumn.getMany(100)) == 9
 
-  test "Remove column":
+  test "Drop unused columns":
     withDb:
-      PersonRemoveColumn.dropColumns()
+      PersonRemoveColumn.dropUnusedColumns()
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
