@@ -9,7 +9,8 @@
 ## 1.0.18 (WIP)
 
 -   [+] Add `createTable` and `dropTable`.
--   [+] Add means to write migrations: `addTable` to add tables, `removeColumns` to remove columns, `renameColumnFrom` to update column names, and `renameTableFrom` to update table names.
+-   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
+-   [+] PostgreSQL: Add means to writemigrations: `addColumn`, `dropColumns`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
 -   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.
 
 
