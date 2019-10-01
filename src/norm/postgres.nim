@@ -106,25 +106,14 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         dbConn.exec sql addColQuery
 
-      template removeColumns(T: typedesc) {.used.} =
+      template dropColumns(T: typedesc, cols: openArray[string]) {.used.} =
         ## Update table schema after removing object fields.
 
-        let
-          tmpTableName = "tmp" & T.getTable()
-          createTmpTableQuery = genCreateTableQuery(tmpTableName, genTableSchema(T))
-          copyQuery = genCopyQuery(T, tmpTableName)
-          renameTmpTableQuery = genRenameTableQuery(tmpTableName, T.getTable())
+        let dropColsQuery = genDropColsQuery(T, cols)
 
-        debug createTmpTableQuery
-        dbConn.exec createTmpTableQuery
+        debug dropColsQuery
 
-        debug copyQuery
-        dbConn.exec copyQuery
-
-        T.dropTable()
-
-        debug renameTmpTableQuery
-        dbConn.exec renameTmpTableQuery
+        dbConn.exec dropColsQuery
 
       template renameColumnFrom(field: typedesc, oldName: string) {.used.} =
         ##[ Update column name in a table schema after an object field gets renamed or its ``dbCol`` pragma value is updated.

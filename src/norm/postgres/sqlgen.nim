@@ -172,6 +172,16 @@ macro genAddColQuery*(field: typedesc): untyped =
 
   result = newLit query
 
+proc genDropColsQuery*(T: typedesc, cols: openArray[string]): SqlQuery =
+  ## Generate query to drop columns from table.
+
+  var dropColStmts: seq[string]
+
+  for col in cols:
+    dropColStmts.add "DROP COLUMN IF EXISTS $# CASCADE" % col
+
+  result = sql "ALTER TABLE $# $#" % [T.getTable(), dropColStmts.join(", ")]
+
 macro genRenameColQuery*(field: typedesc, oldName: string): untyped =
   ## Generate query to rename a column.
 

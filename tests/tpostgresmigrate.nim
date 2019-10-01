@@ -55,7 +55,7 @@ suite "Migrations":
 
   test "Remove column":
     withDb:
-      PersonRemoveColumn.removeColumns()
+      PersonRemoveColumn.dropColumns ["age"]
 
       let
         getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
