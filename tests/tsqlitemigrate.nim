@@ -55,7 +55,7 @@ suite "Migrations":
 
   test "Remove column":
     withDb:
-      updateColumns(PersonRemoveColumn)
+      PersonRemoveColumn.removeColumns()
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
