@@ -172,12 +172,7 @@ macro genAddColQuery*(field: typedesc): untyped =
 
   result = newLit query
 
-proc genRenameTableQuery*(oldName, newName: string): SqlQuery =
-  ## Generate query to rename a table.
-
-  sql "ALTER TABLE $# RENAME TO $#" % [oldName, newName]
-
-macro genRenameColQuery*(field: typedesc, newName: string): untyped =
+macro genRenameColQuery*(field: typedesc, oldName: string): untyped =
   ## Generate query to rename a column.
 
   expectKind(field, nnkDotExpr)
@@ -186,10 +181,14 @@ macro genRenameColQuery*(field: typedesc, newName: string): untyped =
     objRepr = field[0].getImpl().toObjRepr()
     fieldRepr = objRepr.fields.getByName($field[1])
 
-    query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), fieldRepr.getColumn(),
-                                                       newName.strVal]
+    query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), oldName.strVal, fieldRepr.getColumn()]
 
   result = newLit query
+
+proc genRenameTableQuery*(oldName, newName: string): SqlQuery =
+  ## Generate query to rename a table.
+
+  sql "ALTER TABLE $# RENAME TO $#" % [oldName, newName]
 
 template genCopyQuery*(T: typedesc, targetTable: string): SqlQuery =
   ## Generate query to copy data from one table to another.

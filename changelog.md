@@ -9,7 +9,7 @@
 ## 1.0.18 (WIP)
 
 -   [+] Add `createTable` and `dropTable`.
--   [+] Add means to write migrations: `addTable` to add tables, `updateColumns` to remove tables, `renameColumnTo` to rename columns, and `renameTableTo` to rename tables.
+-   [+] Add means to write migrations: `addTable` to add tables, `updateColumns` to remove tables, `renameColumnFrom` to update column names, and `renameTableFrom` to update table names.
 -   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.
 
 
