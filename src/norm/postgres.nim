@@ -54,7 +54,6 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
       macro dropTables(): untyped {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
-
         result = newStmtList()
 
         for dbTypeName in dbTypeNames:
@@ -107,7 +106,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         dbConn.exec sql addColQuery
 
       template dropColumns(T: typedesc, cols: openArray[string]) {.used.} =
-        ## Update table schema after removing object fields.
+        ## Drop columns from a table.
 
         let dropColsQuery = genDropColsQuery(T, cols)
 
