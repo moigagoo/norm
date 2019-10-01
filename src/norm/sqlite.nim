@@ -114,7 +114,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         dbConn.exec sql addColQuery
 
-      template removeColumns(T: typedesc) {.used.} =
+      template dropColumns(T: typedesc) {.used.} =
         ## Update table schema after removing object fields.
 
         let
