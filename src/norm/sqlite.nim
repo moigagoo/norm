@@ -106,6 +106,8 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
           )
 
       template addColumn(field: typedesc) {.used.} =
+        ## Add column to a table schema from a new object field.
+
         let addColQuery = genAddColQuery(field)
 
         debug addColQuery
@@ -113,6 +115,8 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         dbConn.exec sql addColQuery
 
       template updateColumns(T: typedesc) {.used.} =
+        ## Update table schema after removing object fields. Essentially, this is "remove columns."
+
         let
           tmpTableName = "tmp" & T.getTable()
           createTmpTableQuery = genCreateTableQuery(tmpTableName, genTableSchema(T))
@@ -131,6 +135,11 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         dbConn.exec renameTmpTableQuery
 
       template renameColumnFrom(field: typedesc, oldName: string) {.used.} =
+        ##[ Update column name in a table schema after an object field gets renamed or its ``dbCol`` pragma value is updated.
+
+        The old column name must be provided so that Norm would be able to find the existing column to rename.
+        ]##
+
         let renameColQuery = genRenameColQuery(field, oldName)
 
         debug renameColQuery
@@ -138,6 +147,11 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         dbConn.exec sql renameColQuery
 
       template renameTableFrom(T: typedesc, oldName: string) {.used.} =
+        ##[ Update table name in a table schema after an object gets renamed or its ``table`` pragma value is updated.
+
+        The old table name must be provided so that Norm would be able to find the existing table to rename.
+        ]##
+
         let renameTableQuery = genRenameTableQuery(oldName, T.getTable())
 
         debug renameTableQuery
