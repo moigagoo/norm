@@ -49,9 +49,6 @@ db(dbName, "", "", ""):
 suite "Creating and dropping tables, CRUD":
   setup:
     withDb:
-      User.createTable(force=true)
-
-    withDb:
       createTables(force=true)
 
       for i in 1..9:

@@ -22,6 +22,10 @@ db(dbName, "", "", ""):
     PersonRemoveColumn {.table: "person".} = object
       name: string
 
+    PersonRenameColumn {.table: "person".} = object
+      name {.dbCol: "fullname".}: string
+      years: int
+
     PersonRenameTable {.table: "personrenamed".} = object
       name: string
       age: int
@@ -47,10 +51,6 @@ suite "Migrations":
         @[?3, ?"ssn", ?"INTEGER", ?0, ?nil, ?0]
       ]
 
-      check dbConn.getAllRows(sql "SELECT name FROM sqlite_master where type='table'") == @[
-        @[?"person"]
-      ]
-
       check len(PersonAddColumn.getMany(100)) == 9
 
   test "Remove column":
@@ -70,17 +70,20 @@ suite "Migrations":
 
   test "Rename column":
     withDb:
-      Person.name.renameColumnTo "fullname"
+      PersonRenameColumn.name.renameColumnFrom "name"
+      PersonRenameColumn.years.renameColumnFrom "age"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
         @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
         @[?1, ?"fullname", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
+        @[?2, ?"years", ?"INTEGER", ?1, ?nil, ?0],
       ]
+
+      check len(PersonRenameColumn.getMany(100)) == 9
 
   test "Rename table":
     withDb:
-      Person.renameTableTo "personrenamed"
+      PersonRenameTable.renameTableFrom "person"
 
       check dbConn.getAllRows(sql "SELECT name FROM sqlite_master where type='table'") == @[
         @[?"personrenamed"]
