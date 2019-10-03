@@ -42,6 +42,10 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
     ]##
 
     block:
+      type RollbackError = object of CatchableError
+
+      proc rollback {.raises: RollbackError.} = raise newException(RollbackError, "Rollback transaction.")
+
       let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
       template dropTable(T: typedesc) {.used.} =
@@ -272,6 +276,31 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         dbConn.exec(deleteQuery, obj.id)
 
         obj.id = 0
+
+      template transaction(transactionBody: untyped): untyped =
+        let
+          beginQuery = sql "BEGIN"
+          commitQuery = sql "COMMIT"
+          rollbackQuery = sql "ROLLBACK"
+
+        try:
+          debug beginQuery
+          dbConn.exec beginQuery
+
+          transactionBody
+
+          debug commitQuery
+          dbConn.exec commitQuery
+
+        except RollbackError:
+          debug rollbackQuery
+          dbConn.exec rollbackQuery
+
+        except:
+          debug rollbackQuery
+          dbConn.exec rollbackQuery
+
+          raise
 
       try:
         body

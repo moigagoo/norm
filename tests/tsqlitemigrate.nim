@@ -91,6 +91,36 @@ suite "Migrations":
 
       check len(PersonRenameTable.getMany(100)) == 9
 
+  test "Transaction":
+    withDb:
+      transaction:
+        PersonRenameColumn.name.renameColumnFrom "name"
+        PersonRenameColumn.years.renameColumnFrom "age"
+
+      check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"fullname", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"years", ?"INTEGER", ?1, ?nil, ?0],
+      ]
+
+  test "Rollback transaction":
+    withDb:
+      transaction:
+        addColumn PersonAddColumn.ssn
+        rollback()
+
+      check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
+        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
+        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0]
+      ]
+
+    expect IOError:
+      withDb:
+        transaction:
+          addColumn PersonAddColumn.ssn
+          raise newException(IOError, "This should be raised.")
+
   teardown:
     withDb:
       dropTables()

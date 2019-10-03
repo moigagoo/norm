@@ -102,6 +102,32 @@ suite "Migrations":
 
       check len(PersonRenameTable.getMany(100)) == 9
 
+  test "Transaction":
+    withDb:
+      transaction:
+        PersonRenameColumn.name.renameColumnFrom "name"
+        PersonRenameColumn.years.renameColumnFrom "age"
+
+      let getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+
+      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["fullname"], @["years"]]
+
+  test "Rollback transaction":
+    withDb:
+      transaction:
+        addColumn PersonAddColumn.ssn
+        rollback()
+
+      let getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+
+      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["name"], @["age"]]
+
+    expect IOError:
+      withDb:
+        transaction:
+          addColumn PersonAddColumn.ssn
+          raise newException(IOError, "This should be raised.")
+
   teardown:
     withDb:
       dropTables()
