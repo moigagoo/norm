@@ -840,12 +840,18 @@ function main() {
     title="getTable(T: typedesc): string"><wbr />get<wbr />Table<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getColumn%2CFieldRepr"
     title="getColumn(fieldRepr: FieldRepr): string"><wbr />get<wbr />Column<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#getColumns%2CObjRepr"
+    title="getColumns(dbObjRepr: ObjRepr; force = false): seq[string]"><wbr />get<wbr />Columns<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#getColumns"
     title="getColumns(obj: object; force = false): seq[string]"><wbr />get<wbr />Columns<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#genTableSchemas%2CopenArray%5BObjRepr%5D"
-    title="genTableSchemas(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery]"><wbr />gen<wbr />Table<wbr />Schemas<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#genDropTableQueries%2Cseq%5BT%5D%5BObjRepr%5D"
-    title="genDropTableQueries(dbObjReprs: seq[ObjRepr]): seq[SqlQuery]"><wbr />gen<wbr />Drop<wbr />Table<wbr />Queries<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genTableSchema%2CObjRepr"
+    title="genTableSchema(dbObjRepr: ObjRepr): string"><wbr />gen<wbr />Table<wbr />Schema<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genCreateTableQuery%2Cstring%2Cstring"
+    title="genCreateTableQuery(tableName, tableSchema: string): SqlQuery"><wbr />gen<wbr />Create<wbr />Table<wbr />Query<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genDropTableQuery%2Cstring"
+    title="genDropTableQuery(tableName: string): SqlQuery"><wbr />gen<wbr />Drop<wbr />Table<wbr />Query<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genRenameTableQuery%2Cstring%2Cstring"
+    title="genRenameTableQuery(oldName, newName: string): SqlQuery"><wbr />gen<wbr />Rename<wbr />Table<wbr />Query<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#genInsertQuery%2C%2Cbool"
     title="genInsertQuery(obj: object; force: bool): SqlQuery"><wbr />gen<wbr />Insert<wbr />Query<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#genGetOneQuery%2C%2Cstring"
@@ -856,6 +862,30 @@ function main() {
     title="genUpdateQuery(obj: object; force: bool): SqlQuery"><wbr />gen<wbr />Update<wbr />Query<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#genDeleteQuery"
     title="genDeleteQuery(obj: object): SqlQuery"><wbr />gen<wbr />Delete<wbr />Query<span class="attachedType"></span></a></li>
+
+  </ul>
+</li>
+<li>
+  <a class="reference reference-toplevel" href="#17" id="67">Macros</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#getColumns.m%2Ctypedesc"
+    title="getColumns(T: typedesc; force = false): untyped"><wbr />get<wbr />Columns<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genTableSchema.m%2Ctypedesc"
+    title="genTableSchema(T: typedesc): string"><wbr />gen<wbr />Table<wbr />Schema<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genCreateTableQuery.m%2Ctypedesc"
+    title="genCreateTableQuery(T: typedesc): string"><wbr />gen<wbr />Create<wbr />Table<wbr />Query<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genAddColQuery.m%2Ctypedesc"
+    title="genAddColQuery(field: typedesc): untyped"><wbr />gen<wbr />Add<wbr />Col<wbr />Query<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#genRenameColQuery.m%2Ctypedesc%2Cstring"
+    title="genRenameColQuery(field: typedesc; oldName: string): untyped"><wbr />gen<wbr />Rename<wbr />Col<wbr />Query<span class="attachedType"></span></a></li>
+
+  </ul>
+</li>
+<li>
+  <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
+  <ul class="simple simple-toc-section">
+      <li><a class="reference" href="#genCopyQuery.t%2Ctypedesc%2Cstring"
+    title="genCopyQuery(T: typedesc; targetTable: string): SqlQuery"><wbr />gen<wbr />Copy<wbr />Query<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -904,6 +934,14 @@ Get the name of the DB table for the given type: <tt class="docutils literal"><s
 Get the name of DB column for a field: <tt class="docutils literal"><span class="pre">dbCol</span></tt> pragma value if it exists or field name otherwise. 
 
 </dd>
+<a id="getColumns,ObjRepr"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#getColumns%2CObjRepr"><span class="Identifier">getColumns</span></a><span class="Other">(</span><span class="Identifier">dbObjRepr</span><span class="Other">:</span> <a href="../objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Get DB column names for an object representation as a sequence of strings.
+
+</dd>
 <a id="getColumns"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getColumns"><span class="Identifier">getColumns</span></a><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">object</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
@@ -911,20 +949,35 @@ Get the name of DB column for a field: <tt class="docutils literal"><span class=
 Get DB column names for an object as a sequence of strings.
 
 </dd>
-<a id="genTableSchemas,openArray[ObjRepr]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#genTableSchemas%2CopenArray%5BObjRepr%5D"><span class="Identifier">genTableSchemas</span></a><span class="Other">(</span><span class="Identifier">dbObjReprs</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><a href="../objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">SqlQuery</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="genTableSchema,ObjRepr"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#genTableSchema%2CObjRepr"><span class="Identifier">genTableSchema</span></a><span class="Other">(</span><span class="Identifier">dbObjRepr</span><span class="Other">:</span> <a href="../objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">KeyError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Generate table schemas for a list of object representations.
+Generate table schema for an object representation.
 
 </dd>
-<a id="genDropTableQueries,seq[T][ObjRepr]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#genDropTableQueries%2Cseq%5BT%5D%5BObjRepr%5D"><span class="Identifier">genDropTableQueries</span></a><span class="Other">(</span><span class="Identifier">dbObjReprs</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="../objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">SqlQuery</span><span class="Other">]</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="genCreateTableQuery,string,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#genCreateTableQuery%2Cstring%2Cstring"><span class="Identifier">genCreateTableQuery</span></a><span class="Other">(</span><span class="Identifier">tableName</span><span class="Other">,</span> <span class="Identifier">tableSchema</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-Generate <tt class="docutils literal"><span class="pre">DROP TABLE</span></tt> queries for a list of object representations.
+Generate query to create a table.
+
+</dd>
+<a id="genDropTableQuery,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#genDropTableQuery%2Cstring"><span class="Identifier">genDropTableQuery</span></a><span class="Other">(</span><span class="Identifier">tableName</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Generate query to drop a table given its name.
+
+</dd>
+<a id="genRenameTableQuery,string,string"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#genRenameTableQuery%2Cstring%2Cstring"><span class="Identifier">genRenameTableQuery</span></a><span class="Other">(</span><span class="Identifier">oldName</span><span class="Other">,</span> <span class="Identifier">newName</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Generate query to rename a table.
 
 </dd>
 <a id="genInsertQuery,,bool"></a>
@@ -964,6 +1017,58 @@ Generate <tt class="docutils literal"><span class="pre">DELETE</span></tt> query
 </dd>
 
 </dl></div>
+<div class="section" id="17">
+<h1><a class="toc-backref" href="#17">Macros</a></h1>
+<dl class="item">
+<a id="getColumns.m,typedesc"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#getColumns.m%2Ctypedesc"><span class="Identifier">getColumns</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+
+
+</dd>
+<a id="genTableSchema.m,typedesc"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#genTableSchema.m%2Ctypedesc"><span class="Identifier">genTableSchema</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+Generate table schema for a type.
+
+</dd>
+<a id="genCreateTableQuery.m,typedesc"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#genCreateTableQuery.m%2Ctypedesc"><span class="Identifier">genCreateTableQuery</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+Generate query to create a table from a type.
+
+</dd>
+<a id="genAddColQuery.m,typedesc"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#genAddColQuery.m%2Ctypedesc"><span class="Identifier">genAddColQuery</span></a><span class="Other">(</span><span class="Identifier">field</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+Generate query to add column to table.
+
+</dd>
+<a id="genRenameColQuery.m,typedesc,string"></a>
+<dt><pre><span class="Keyword">macro</span> <a href="#genRenameColQuery.m%2Ctypedesc%2Cstring"><span class="Identifier">genRenameColQuery</span></a><span class="Other">(</span><span class="Identifier">field</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">oldName</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+Generate query to rename a column.
+
+</dd>
+
+</dl></div>
+<div class="section" id="18">
+<h1><a class="toc-backref" href="#18">Templates</a></h1>
+<dl class="item">
+<a id="genCopyQuery.t,typedesc,string"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#genCopyQuery.t%2Ctypedesc%2Cstring"><span class="Identifier">genCopyQuery</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">;</span> <span class="Identifier">targetTable</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">SqlQuery</span></pre></dt>
+<dd>
+
+Generate query to copy data from one table to another.
+
+</dd>
+
+</dl></div>
 
   </div>
 </div>
@@ -972,7 +1077,7 @@ Generate <tt class="docutils literal"><span class="pre">DELETE</span></tt> query
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-09-12 09:50:19 UTC</small>
+        <small>Made with Nim. Generated: 2019-10-11 06:36:23 UTC</small>
       </div>
     </div>
   </div>
