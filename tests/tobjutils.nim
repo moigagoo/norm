@@ -1,7 +1,5 @@
 import unittest
 
-import macros
-
 import norm/objutils
 
 

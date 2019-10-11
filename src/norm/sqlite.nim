@@ -38,8 +38,7 @@ export sqlite
 export rowutils, sqlgen, objutils
 
 
-template genWithDb(connection, user, password, database: string,
-                   tableSchemas, dropTableQueries: openArray[SqlQuery]): untyped {.dirty.} =
+template genWithDb(connection, user, password, database: string, dbTypeNames: openArray[string]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
 
   template withCustomDb*(customConnection, customUser, customPassword, customDatabase: string,
@@ -52,29 +51,116 @@ template genWithDb(connection, user, password, database: string,
     ]##
 
     block:
+      type RollbackError = object of CatchableError
+
+      proc rollback {.raises: RollbackError.} = raise newException(RollbackError, "Rollback transaction.")
+
       let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
-      template dropTables() {.used.} =
+      template dropTable(T: typedesc) {.used.} =
+        let dropTableQuery = genDropTableQuery(T.getTable())
+
+        debug dropTableQuery
+
+        dbConn.exec dropTableQuery
+
+      macro dropTables(): untyped {.used.} =
         ## Drop tables for all types in all type sections under ``db`` macro.
 
-        for dropTableQuery in dropTableQueries:
-          debug dropTableQuery
+        result = newStmtList()
 
-          dbConn.exec sql dropTableQuery
+        for dbTypeName in dbTypeNames:
+          result.add newCall(
+            newDotExpr(
+              ident dbTypeName,
+              bindSym "dropTable"
+            )
+          )
 
-      template createTables(force = false) {.used.} =
+      template createTable(T: typedesc, force = false) {.used.} =
+        ## Create table for a type. If ``force`` is ``true``, drop the table beforehand.
+
+        if force:
+          T.dropTable()
+
+        let createTableQuery = genCreateTableQuery(T.getTable(), genTableSchema(T))
+
+        debug createTableQuery
+
+        dbConn.exec createTableQuery
+
+      macro createTables(force = false): untyped {.used.} =
         ##[ Create tables for all types in all type sections under ``db`` macro.
 
         If ``force`` is ``true``, drop tables beforehand.
         ]##
 
-        if force:
-          dropTables()
+        result = newStmtList()
 
-        for tableSchema in tableSchemas:
-          debug tableSchema
+        for dbTypeName in dbTypeNames:
+          result.add newCall(
+            newDotExpr(
+              ident dbTypeName,
+              bindSym "createTable"
+            ),
+            newNimNode(nnkExprEqExpr).add(
+              ident "force",
+              force
+            )
+          )
 
-          dbConn.exec sql tableSchema
+      template addColumn(field: typedesc) {.used.} =
+        ## Add column to a table schema from a new object field.
+
+        let addColQuery = genAddColQuery(field)
+
+        debug addColQuery
+
+        dbConn.exec sql addColQuery
+
+      template dropUnusedColumns(T: typedesc) {.used.} =
+        ## Update table schema after removing object fields.
+
+        let
+          tmpTableName = "tmp" & T.getTable()
+          createTmpTableQuery = genCreateTableQuery(tmpTableName, genTableSchema(T))
+          copyQuery = genCopyQuery(T, tmpTableName)
+          renameTmpTableQuery = genRenameTableQuery(tmpTableName, T.getTable())
+
+        debug createTmpTableQuery
+        dbConn.exec createTmpTableQuery
+
+        debug copyQuery
+        dbConn.exec copyQuery
+
+        T.dropTable()
+
+        debug renameTmpTableQuery
+        dbConn.exec renameTmpTableQuery
+
+      template renameColumnFrom(field: typedesc, oldName: string) {.used.} =
+        ##[ Update column name in a table schema after an object field gets renamed or its ``dbCol`` pragma value is updated.
+
+        The old column name must be provided so that Norm would be able to find the existing column to rename.
+        ]##
+
+        let renameColQuery = genRenameColQuery(field, oldName)
+
+        debug renameColQuery
+
+        dbConn.exec sql renameColQuery
+
+      template renameTableFrom(T: typedesc, oldName: string) {.used.} =
+        ##[ Update table name in a table schema after an object gets renamed or its ``table`` pragma value is updated.
+
+        The old table name must be provided so that Norm would be able to find the existing table to rename.
+        ]##
+
+        let renameTableQuery = genRenameTableQuery(oldName, T.getTable())
+
+        debug renameTableQuery
+
+        dbConn.exec renameTableQuery
 
       template insert(obj: var object, force = false) {.used.} =
         ##[ Insert object instance as a record into DB.The object's id is updated after
@@ -191,12 +277,42 @@ template genWithDb(connection, user, password, database: string,
 
         obj.id = 0
 
+      template transaction(transactionBody: untyped): untyped =
+        let
+          beginQuery = sql "BEGIN"
+          commitQuery = sql "COMMIT"
+          rollbackQuery = sql "ROLLBACK"
+
+        try:
+          debug beginQuery
+          dbConn.exec beginQuery
+
+          transactionBody
+
+          debug commitQuery
+          dbConn.exec commitQuery
+
+        except RollbackError:
+          debug rollbackQuery
+          dbConn.exec rollbackQuery
+
+        except:
+          debug rollbackQuery
+          dbConn.exec rollbackQuery
+
+          raise
+
       try:
-        let foreignKeyQuery {.genSym.} = sql "PRAGMA foreign_keys = ON"
+        let foreignKeyQuery = sql "PRAGMA foreign_keys = ON"
+
         debug foreignKeyQuery
+
         dbConn.exec foreignKeyQuery
+
         body
-      finally: dbConn.close()
+
+      finally:
+        dbConn.close()
 
   template withDb*(body: untyped): untyped {.dirty.} =
     ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
@@ -228,18 +344,17 @@ macro dbFromTypes*(connection, user, password, database: string,
   The macro generates ``withDb`` template that wraps all DB interations.
   ]##
 
-  var dbObjReprs: seq[ObjRepr]
+  var dbTypeNames: seq[string]
 
   for typ in types:
-    let objRepr = getImpl(typ).toObjRepr()
+    let objRepr = typ.getImpl().toObjRepr()
 
     if "id" notin objRepr.fieldNames:
-      error "Type '$#' is missing 'id' field. Put it under 'ensureIdFields' macro." % $typ
+      error "Type '$#' is missing 'id' field. Wrap it with 'dbTypes' macro." % $typ
 
-    dbObjReprs.add getImpl(typ).toObjRepr()
+    dbTypeNames.add objRepr.signature.name
 
-  result = getAst genWithDb(connection, user, password, database,
-                            genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+  result = getAst genWithDb(connection, user, password, database, dbTypeNames)
 
 macro db*(connection, user, password, database: string, body: untyped): untyped =
   ##[ DB models definition. Models are defined as regular Nim objects in regular ``type`` sections.
@@ -252,7 +367,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   result = newStmtList()
 
-  var dbObjReprs: seq[ObjRepr]
+  var dbTypeNames: seq[string]
 
   for node in body:
     if node.kind == nnkTypeSection:
@@ -261,12 +376,11 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
       result.add typeSection
 
       for typeDef in typeSection:
-        dbObjReprs.add typeDef.toObjRepr()
+        dbTypeNames.add typeDef.toObjRepr().signature.name
 
     else:
       result.add node
 
-  let withDbNode = getAst genWithDb(connection, user, password, database,
-                                    genTableSchemas(dbObjReprs), genDropTableQueries(dbObjReprs))
+  let withDbNode = getAst genWithDb(connection, user, password, database, dbTypeNames)
 
   result.insert(0, withDbNode)

@@ -223,10 +223,15 @@ suite "Creating and dropping tables, CRUD":
 
   test "Drop tables":
     withDb:
-      dropTables()
+      User.dropTable()
 
       expect DbError:
         dbConn.exec sql "SELECT NULL FROM users"
+
+    withDb:
+      dropTables()
+
+      expect DbError:
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"

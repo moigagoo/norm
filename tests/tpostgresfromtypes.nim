@@ -1,19 +1,20 @@
 import unittest
 
-import os, strutils, sequtils, times
+import strutils, times
 
 import norm/postgres
 
-import user, pet
+import models/[user, pet]
 
 
 const
   dbHost = "postgres_1"
   customDbHost = "postgres_2"
+  dbUser = "postgres"
+  dbPassword = ""
+  dbDatabase = "postgres"
 
-
-dbFromTypes(dbHost, "postgres", "", "postgres", [User, Pet])
-
+dbFromTypes(dbHost, dbUser, dbPassword, dbDatabase, [User, Pet])
 
 suite "Creating and dropping tables, CRUD":
   setup:

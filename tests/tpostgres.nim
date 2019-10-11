@@ -1,6 +1,6 @@
 import unittest
 
-import os, strutils, sequtils, times
+import strutils, sequtils, times
 
 import norm/postgres
 
@@ -8,9 +8,11 @@ import norm/postgres
 const
   dbHost = "postgres_1"
   customDbHost = "postgres_2"
+  dbUser = "postgres"
+  dbPassword = ""
+  dbDatabase = "postgres"
 
-
-db(dbHost, "postgres", "", "postgres"):
+db(dbHost, dbUser, dbPassword, dbDatabase):
   type
     User {.table: "users".} = object
       email {.unique.}: string
