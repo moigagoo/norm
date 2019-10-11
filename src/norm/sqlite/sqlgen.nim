@@ -77,17 +77,17 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
       case $fieldRepr.typ
-        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL"
-        of "string": "TEXT NOT NULL"
-        of "float": "REAL NOT NULL"
-        else: "TEXT NOT NULL"
+      of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL DEFAULT 0"
+      of "string": "TEXT NOT NULL DEFAULT ''"
+      of "float": "REAL NOT NULL DEFAULT 0"
+      else: "TEXT NOT NULL DEFAULT ''"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER"
-        of "string": "TEXT"
-        of "float": "REAL"
-        else: "TEXT"
-    else: "TEXT NOT NULL"
+      of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER "
+      of "string": "TEXT"
+      of "float": "REAL"
+      else: "TEXT"
+    else: "TEXT NOT NULL DEFAULT ''"
 
 proc genColStmt(fieldRepr: FieldRepr): string =
   ## Generate SQL column statement for a field representation.
