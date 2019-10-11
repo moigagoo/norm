@@ -30,8 +30,9 @@ template dbCol*(val: string) {.pragma.}
 template dbType*(val: string) {.pragma.}
   ## DB native type to use in table schema.
 
-template default*(val: string) {.pragma.}
+template default*(val: string) {.pragma, deprecated.}
   ## Default value for the DB column.
+  ## Deprecated since 1.0.18
 
 template notNull* {.pragma.}
   ## Add ``NOT NULL`` constraint.

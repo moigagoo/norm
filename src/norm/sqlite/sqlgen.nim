@@ -105,8 +105,6 @@ proc genColStmt(fieldRepr: FieldRepr): string =
       result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
       result.add " CHECK $#" % $prag.value
-    elif prag.name == "default" and prag.kind == pkKval:
-      result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
       expectKind(prag.value, {nnkIdent, nnkSym, nnkDotExpr})
       result.add case prag.value.kind
