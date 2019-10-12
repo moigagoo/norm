@@ -904,10 +904,15 @@ DB native type to use in table schema.
 
 </dd>
 <a id="default.t,string"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#default.t%2Cstring"><span class="Identifier">default</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">template</span> <a href="#default.t%2Cstring"><span class="Identifier">default</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span><span class="Other">,</span> <span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;Default values are set automatically, this is ignored.&quot;</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+  <div class="deprecation-message">
+    <b>Deprecated:</b> Default values are set automatically, this is ignored.
+  </div>
 
-Default value for the DB column.
+<p>Default value for the DB column.</p>
+<p><strong>Deprecated.</strong> Default values are set automatically for all columns, this pragma is ignored. </p>
+
 
 </dd>
 <a id="notNull.t"></a>
@@ -962,7 +967,7 @@ Set table name. Lowercased type name is used when unset.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-10-11 10:18:49 UTC</small>
+        <small>Made with Nim. Generated: 2019-10-12 14:00:12 UTC</small>
       </div>
     </div>
   </div>
