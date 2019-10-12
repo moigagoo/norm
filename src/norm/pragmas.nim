@@ -32,10 +32,7 @@ template dbType*(val: string) {.pragma.}
 
 template default*(val: string) {.
   pragma, deprecated: "Default values are set automatically, this is ignored.".}
-  ##[ Default value for the DB column.
-
-  **Deprecated.** Default values are set automatically for all columns, this pragma is ignored.
-  ]##
+  ## Default value for the DB column.
 
 template notNull* {.pragma.}
   ## Add ``NOT NULL`` constraint.
