@@ -75,12 +75,12 @@ proc getDbType(fieldRepr: FieldRepr): string =
       return "SERIAL"
 
   result = case $fieldRepr.typ
-    of "int", "Positive", "Natural": "INTEGER"
-    of "string": "TEXT"
-    of "float": "REAL"
-    of "bool": "BOOLEAN"
-    of "DateTime": "TIMESTAMP WITH TIME ZONE"
-    else: "TEXT"
+    of "int", "Positive", "Natural": "INTEGER DEFAULT 0"
+    of "string": "TEXT DEFAULT ''"
+    of "float": "REAL DEFAULT 0.0"
+    of "bool": "BOOLEAN DEFAULT FALSE"
+    of "DateTime": "TIMESTAMP WITH TIME ZONE DEFAULT '1970-01-01 00:00:00+00'"
+    else: "TEXT DEFAULT ''"
 
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbType" and prag.kind == pkKval:
@@ -102,8 +102,6 @@ proc genColStmt(fieldRepr: FieldRepr): string =
       result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
       result.add " CHECK $#" % $prag.value
-    elif prag.name == "default" and prag.kind == pkKval:
-      result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
       expectKind(prag.value, {nnkIdent, nnkSym, nnkDotExpr})
       result.add case prag.value.kind

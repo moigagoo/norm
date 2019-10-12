@@ -30,8 +30,12 @@ template dbCol*(val: string) {.pragma.}
 template dbType*(val: string) {.pragma.}
   ## DB native type to use in table schema.
 
-template default*(val: string) {.pragma.}
-  ## Default value for the DB column.
+template default*(val: string) {.
+  pragma, deprecated: "Default values are set automatically, this is ignored.".}
+  ##[ Default value for the DB column.
+
+  **Deprecated.** Default values are set automatically for all columns, this pragma is ignored.
+  ]##
 
 template notNull* {.pragma.}
   ## Add ``NOT NULL`` constraint.

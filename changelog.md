@@ -8,6 +8,7 @@
 
 ## 1.0.18 (WIP)
 
+-   [!] Deprecate `default` pragma, always add default values to tables instead.
 -   [+] Add `createTable` and `dropTable`.
 -   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
 -   [+] PostgreSQL: Add means to writemigrations: `addColumn`, `dropColumns`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
