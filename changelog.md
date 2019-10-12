@@ -6,9 +6,10 @@
 -   [r]—refactoring
 -   [t]—test suite improvement
 
-## 1.0.18 (WIP)
+## 1.1.0 (WIP)
 
 -   [!] Deprecate `default` pragma, always add default values to tables instead.
+-   [+] Add `transaction` macro to exec multiple commands in a transaction and `rollback` proc to safely interrupt a transaction.
 -   [+] Add `createTable` and `dropTable`.
 -   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
 -   [+] PostgreSQL: Add means to writemigrations: `addColumn`, `dropColumns`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
