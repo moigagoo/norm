@@ -270,7 +270,7 @@ proc toRow*(obj: object, force = false): Row =
     type
       Example = object
         intField: int
-        strField{.formatIt: dbValue(it.toLowerAscii()).}: string
+        strField{.formatIt: ?it.toLowerAscii().}: string
         floatField: float
         boolField: bool
         tsField: DateTime
@@ -300,7 +300,7 @@ proc toRow*(obj: object, force = false): Row =
           let it {.inject.} = value
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
       elif typeof(value) is bool:
-        result.add dbValue(if value: 1 else: 0)
+        result.add ?(if value: 1 else: 0)
       elif typeof(value) is Option[bool]:
         result.add(
           if value.isSome: ?(if get(value): 1 else: 0)
@@ -325,7 +325,7 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
     type
       Example = object
         intField: int
-        strField{.formatIt: dbValue(it.toLowerAscii()).}: string
+        strField{.formatIt: ?it.toLowerAscii().}: string
         floatField: float
         boolField: bool
 
