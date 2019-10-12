@@ -49,27 +49,28 @@ db(dbName, "", "", ""):
 suite "Creating and dropping tables, CRUD":
   setup:
     withDb:
-      createTables(force=true)
+      transaction:
+        createTables(force=true)
 
-      for i in 1..9:
-        var
-          user = User(
-            email: "test-$#@example.com" % $i,
-            ssn: some i,
-            birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
-            lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
-          )
-          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
-          book = Book(title: "Book $#" % $i, authorEmail: user.email,
-                      publisherTitle: publisher.title)
-          edition = Edition(title: "Edition $#" % $i)
+        for i in 1..9:
+          var
+            user = User(
+              email: "test-$#@example.com" % $i,
+              ssn: some i,
+              birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
+              lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
+            )
+            publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
+            book = Book(title: "Book $#" % $i, authorEmail: user.email,
+                        publisherTitle: publisher.title)
+            edition = Edition(title: "Edition $#" % $i)
 
-        user.insert()
-        publisher.insert()
-        book.insert()
+          user.insert()
+          publisher.insert()
+          book.insert()
 
-        edition.book = book
-        edition.insert()
+          edition.book = book
+          edition.insert()
 
   teardown:
     withDb:
@@ -80,21 +81,21 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
         @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
-        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?"0", ?0]
       ]
       check dbConn.getAllRows(sql query % "books") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
-        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?"''", ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?"''", ?0],
       ]
       check dbConn.getAllRows(sql query % "editions") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
       ]
 
@@ -244,21 +245,21 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
         @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
-        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?"0", ?0]
       ]
       check dbConn.getAllRows(sql query % "books") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
-        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?"''", ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?"''", ?0],
       ]
       check dbConn.getAllRows(sql query % "editions") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
       ]
 
