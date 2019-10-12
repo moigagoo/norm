@@ -50,6 +50,10 @@ template formatIt*(op: untyped) {.pragma.}
   The expression is invoked in ``toRow`` proc to turn a typed object field into a ``DbValue`` within a row.
   ]##
 
+proc dbValue*(v: bool): DbValue = ?(if v: 1 else: 0)
+
+proc dbValue*(v: DateTime): DbValue = ?v.toTime().toUnix()
+
 template to*(row: Row, obj: var object) =
   ##[ Convert row to an existing object instance. String values from row are converted into types of the respective object fields.
 
@@ -299,17 +303,6 @@ proc toRow*(obj: object, force = false): Row =
         block:
           let it {.inject.} = value
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
-      elif typeof(value) is bool:
-        result.add ?(if value: 1 else: 0)
-      elif typeof(value) is Option[bool]:
-        result.add(
-          if value.isSome: ?(if get(value): 1 else: 0)
-          else: ?nil
-        )
-      elif typeof(value) is DateTime:
-        result.add ?value.toTime().toUnix()
-      elif typeof(value) is Option[DateTime]:
-        result.add if value.isSome: ?get(value).toTime().toUnix() else: ?nil
       else:
         result.add ?value
 
