@@ -8,4 +8,4 @@ dbTypes:
     Pet* = object
       name*: string
       age*: int
-      ownerId* {. fk: User, onDelete: "CASCADE" .}: int
+      ownerId* {.fk: User, onDelete: "CASCADE".}: int

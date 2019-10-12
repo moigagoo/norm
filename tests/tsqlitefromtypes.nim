@@ -35,16 +35,16 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"lastLogin", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
       check dbConn.getAllRows(sql query % "pet") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
-        @[?3, ?"ownerId", ?"INTEGER", ?1, ?nil, ?0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"name", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"age", ?"INTEGER", ?1, ?"0", ?0],
+        @[?3, ?"ownerId", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
   test "Read records":
@@ -103,16 +103,16 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"lastLogin", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
       check dbConn.getAllRows(sql query % "pet") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
-        @[?3, ?"ownerId", ?"INTEGER", ?1, ?nil, ?0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"name", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"age", ?"INTEGER", ?1, ?"0", ?0],
+        @[?3, ?"ownerId", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
     withCustomDb(customDbName, "", "", ""):
