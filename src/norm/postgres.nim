@@ -189,7 +189,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         let row = dbConn.getRow(getOneQuery, params)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
                              [cond, params.join(", ")])
 
@@ -212,7 +212,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         let row = dbConn.getRow(getOneQuery, id)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record with id=$# not found." % $id)
 
         row.to(obj)
