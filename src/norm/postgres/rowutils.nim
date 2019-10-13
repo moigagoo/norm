@@ -18,7 +18,7 @@ import ndb/postgres
 import ../objutils, ../pragmas
 
 
-template parser*(op: (string) -> any) {.pragma.}
+template parser*(op: (DbValue) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
   ``op`` should be a proc that accepts ``string`` and returns the object field type.
@@ -34,7 +34,7 @@ template parseIt*(op: untyped) {.pragma.}
   The expression is invoked in ``to`` template to turn a string from row into a typed object field.
   ]##
 
-template formatter*(op: (any) -> string) {.pragma.}
+template formatter*(op: (any) -> DbValue) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
   ``op`` should be a proc that accepts the object field type and returns ``string``.

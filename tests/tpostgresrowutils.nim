@@ -80,47 +80,43 @@ suite "Conversion with custom parser and formatter expressions":
     row.to(tmpUser)
     check tmpUser.toRow() == row
 
-# suite "Conversion with custom parser and formatter expressions":
-#   type
-#     UserDatetimeAsString = object
-#       name: string
-#       age: Natural
-#       height: float
-#       employed: bool
-#       createdAt {.
-#         formatIt: & $it.toTime().format("yyyy-MM-dd HH:mm:sszz", utc()),
-#         parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszz")
-#       .}: DateTime
+suite "Conversion with custom parser and formatter procs":
+  proc toTimestamp(dt: DateTime): DbValue = ?dt.toTime().toUnix()
 
-#   let
-#     datetimeString = "2019-01-30 12:34:56Z"
-#     datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
-#     user = UserDatetimeAsString(
-#       name: "Alice",
-#       age: 23,
-#       height: 168.2,
-#       employed: false,
-#       createdAt: datetime
-#     )
-#     row = @[?"Alice", ?23, ?168.2, ?false, ?datetimeString]
+  proc toDatetime(ts: DbValue): DateTime = ts.i.fromUnix().utc()
 
-#   setup:
-#     var tmpUser {.used.} = UserDatetimeAsString(createdAt: now())
+  type
+    UserDatetimeAsTimestamp = object
+      name: string
+      age: Natural
+      height: float
+      createdAt {.
+        formatter: toTimestamp,
+        parser: toDatetime
+      .}: DateTime
 
-#   test "Object -> row":
-#     check user.toRow() == row
+  let
+    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @[?"Alice", ?23, ?168.2, datetime.toTimestamp()]
 
-#   test "Row -> object":
-#     row.to(tmpUser)
-#     check tmpUser == user
+  setup:
+    var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
 
-#   test "Object -> row -> object":
-#     user.toRow().to(tmpUser)
-#     check tmpUser == user
+  test "Object -> row":
+    check user.toRow() == row
 
-#   test "Row -> object -> row":
-#     row.to(tmpUser)
-#     check tmpUser.toRow() == row
+  test "Row -> object":
+    row.to(tmpUser)
+    check tmpUser == user
+
+  test "Object -> row -> object":
+    user.toRow().to(tmpUser)
+    check tmpUser == user
+
+  test "Row -> object -> row":
+    row.to(tmpUser)
+    check tmpUser.toRow() == row
 
 # suite "Conversion with custom parser and formatter procs":
 #   proc toTimestamp(dt: DateTime): DbValue = ? $dt.toTime().toUnix()
