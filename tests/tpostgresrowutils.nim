@@ -118,231 +118,150 @@ suite "Conversion with custom parser and formatter procs":
     row.to(tmpUser)
     check tmpUser.toRow() == row
 
-# suite "Conversion with custom parser and formatter procs":
-#   proc toTimestamp(dt: DateTime): DbValue = ? $dt.toTime().toUnix()
+suite "Basic bulk object <-> row conversion":
+  type
+    SimpleUser = object
+      name: string
+      age: Natural
+      height: float
 
-#   proc toDatetime(dbv: DbValue): DateTime = dbv.i.fromUnix().utc()
+  let
+    users = @[
+      SimpleUser(name: "Alice", age: 23, height: 168.2),
+      SimpleUser(name: "Bob", age: 34, height: 172.5),
+      SimpleUser(name: "Michael", age: 45, height: 180.0)
+    ]
+    rows = @[
+      @[?"Alice", ?23, ?168.2],
+      @[?"Bob", ?34, ?172.5],
+      @[?"Michael", ?45, ?180.0]
+    ]
 
-#   type
-#     UserDatetimeAsTimestamp = object
-#       name: string
-#       age: Natural
-#       height: float
-#       employed: bool
-#       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
+  test "Objects -> rows":
+    check users.toRows() == rows
 
-#   let
-#     datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
-#     user = UserDatetimeAsTimestamp(
-#       name: "Alice",
-#       age: 23,
-#       height: 168.2,
-#       employed: true,
-#       createdAt: datetime
-#     )
-#     row = @[?"Alice", ?23, ?168.2, ?true, $datetime.toTimestamp()]
+  test "Rows -> objects":
+    check rows.to(SimpleUser) == users
 
-#   setup:
-#     var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
+  test "Objects -> rows -> objects":
+    check users.toRows().to(SimpleUser) == users
 
-#   test "Object -> row":
-#     check user.toRow() == row
+  test "Rows -> objects -> rows":
+    check rows.to(SimpleUser).toRows() == rows
 
-#   test "Row -> object":
-#     row.to(tmpUser)
-#     check tmpUser == user
+suite "Bulk conversion with custom parser and formatter expressions":
+  type
+    UserDatetimeAsString = object
+      name: string
+      age: Natural
+      height: float
+      createdAt {.
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
+        parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+      .}: DateTime
 
-#   test "Object -> row -> object":
-#     user.toRow().to(tmpUser)
-#     check tmpUser == user
+  let
+    datetimeString = "2019-01-30 12:34:56Z"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    users = @[
+      UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime),
+      UserDatetimeAsString(name: "Bob", age: 34, height: 172.5, createdAt: datetime),
+      UserDatetimeAsString(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
+    ]
+    rows = @[
+      @[?"Alice", ?23, ?168.2, ?datetimeString],
+      @[?"Bob", ?34, ?172.5, ?datetimeString],
+      @[?"Michael", ?45, ?180.0, ?datetimeString]
+    ]
 
-#   test "Row -> object -> row":
-#     row.to(tmpUser)
-#     check tmpUser.toRow() == row
+  setup:
+    var tmpUsers {.used.} = @[
+      UserDatetimeAsString(createdAt: now()),
+      UserDatetimeAsString(createdAt: now()),
+      UserDatetimeAsString(createdAt: now())
+    ]
 
-# suite "Basic bulk object <-> row conversion":
-#   type
-#     SimpleUser = object
-#       name: string
-#       age: Natural
-#       height: float
-#       employed: bool
+  test "Objects -> rows":
+    check users.toRows() == rows
 
-#   let
-#     users = @[
-#       SimpleUser(name: "Alice", age: 23, height: 168.2, employed: true),
-#       SimpleUser(name: "Bob", age: 34, height: 172.5, employed: false),
-#       SimpleUser(name: "Michael", age: 45, height: 180.0, employed: true)
-#     ]
-#     rows = @[
-#       @["Alice", "23", "168.2", "t"],
-#       @["Bob", "34", "172.5", "f"],
-#       @["Michael", "45", "180.0", "t"]
-#     ]
+  test "Rows -> objects":
+    rows.to(tmpUsers)
+    check tmpUsers == users
 
-#   test "Objects -> rows":
-#     check users.toRows() == rows
+  test "Objects -> rows -> objects":
+    users.toRows().to(tmpUsers)
+    check tmpUsers == users
 
-#   test "Rows -> objects":
-#     check rows.to(SimpleUser) == users
+  test "Rows -> objects -> rows":
+    rows.to(tmpUsers)
+    check tmpUsers.toRows() == rows
 
-#   test "Objects -> rows -> objects":
-#     check users.toRows().to(SimpleUser) == users
+suite "Bulk conversion with custom parser and formatter procs":
+  proc toTimestamp(dt: DateTime): DbValue = ?dt.toTime().toUnix()
 
-#   test "Rows -> objects -> rows":
-#     check rows.to(SimpleUser).toRows() == rows
+  proc toDatetime(ts: DbValue): DateTime = ts.i.fromUnix().utc()
 
-# suite "Bulk conversion with custom parser and formatter expressions":
-#   type
-#     UserDatetimeAsString = object
-#       name: string
-#       age: Natural
-#       height: float
-#       employed: bool
-#       createdAt {.
-#         formatIt: $it.toTime().format("yyyy-MM-dd HH:mm:sszz", utc()),
-#         parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
-#       .}: DateTime
+  type
+    UserDatetimeAsTimestamp = object
+      name: string
+      age: Natural
+      height: float
+      createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
-#   let
-#     datetimeString = "2019-01-30 12:34:56Z"
-#     datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
-#     users = @[
-#       UserDatetimeAsString(
-#         name: "Alice",
-#         age: 23,
-#         height: 168.2,
-#         employed: true,
-#         createdAt: datetime
-#       ),
-#       UserDatetimeAsString(
-#         name: "Bob",
-#         age: 34,
-#         height: 172.5,
-#         employed: false,
-#         createdAt: datetime
-#       ),
-#       UserDatetimeAsString(
-#         name: "Michael",
-#         age: 45,
-#         height: 180.0,
-#         employed: true,
-#         createdAt: datetime
-#       )
-#     ]
-#     rows = @[
-#       @["Alice", "23", "168.2", "t", datetimeString],
-#       @["Bob", "34", "172.5", "f", datetimeString],
-#       @["Michael", "45", "180.0", "t", datetimeString]
-#     ]
+  let
+    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    users = @[
+      UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime),
+      UserDatetimeAsTimestamp(name: "Bob", age: 34, height: 172.5, createdAt: datetime),
+      UserDatetimeAsTimestamp(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
+    ]
+    rows = @[
+      @[?"Alice", ?23, ?168.2, datetime.toTimestamp()],
+      @[?"Bob", ?34, ?172.5, datetime.toTimestamp()],
+      @[?"Michael", ?45, ?180.0, datetime.toTimestamp()]
+    ]
 
-#   setup:
-#     var tmpUsers {.used.} = @[
-#       UserDatetimeAsString(createdAt: now()),
-#       UserDatetimeAsString(createdAt: now()),
-#       UserDatetimeAsString(createdAt: now())
-#     ]
+  setup:
+    var tmpUsers {.used.} = @[
+      UserDatetimeAsTimestamp(createdAt: now()),
+      UserDatetimeAsTimestamp(createdAt: now()),
+      UserDatetimeAsTimestamp(createdAt: now())
+    ]
 
-#   test "Objects -> rows":
-#     check users.toRows() == rows
+  test "Objects -> rows":
+    check users.toRows() == rows
 
-#   test "Rows -> objects":
-#     rows.to(tmpUsers)
-#     check tmpUsers == users
+  test "Rows -> objects, equal lengths":
+    rows.to(tmpUsers)
+    check tmpUsers == users
 
-#   test "Objects -> rows -> objects":
-#     users.toRows().to(tmpUsers)
-#     check tmpUsers == users
+  test "Rows -> objects, more rows than objects":
+    discard tmpUsers.pop()
 
-#   test "Rows -> objects -> rows":
-#     rows.to(tmpUsers)
-#     check tmpUsers.toRows() == rows
+    rows.to(tmpUsers)
 
-# suite "Bulk conversion with custom parser and formatter procs":
-#   proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
+    for i in 0..1:
+      check tmpUsers[i] == users[i]
 
-#   proc toDatetime(ts: string): DateTime = parseInt(ts).fromUnix().utc()
+  test "Rows -> objects, more objects than rows":
+    var u = UserDatetimeAsTimestamp(createdAt: now())
 
-#   type
-#     UserDatetimeAsTimestamp = object
-#       name: string
-#       age: Natural
-#       height: float
-#       employed: bool
-#       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
+    tmpUsers.add u
 
-#   let
-#     datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
-#     users = @[
-#       UserDatetimeAsTimestamp(
-#         name: "Alice",
-#         age: 23,
-#         height: 168.2,
-#         employed: true,
-#         createdAt: datetime
-#       ),
-#       UserDatetimeAsTimestamp(
-#         name: "Bob",
-#         age: 34,
-#         height: 172.5,
-#         employed: false,
-#         createdAt: datetime
-#       ),
-#       UserDatetimeAsTimestamp(
-#         name: "Michael",
-#         age: 45,
-#         height: 180.0,
-#         employed: true,
-#         createdAt: datetime
-#       )
-#     ]
-#     rows = @[
-#       @["Alice",  "23", "168.2", "t", datetime.toTimestamp()],
-#       @["Bob",  "34", "172.5", "f", datetime.toTimestamp()],
-#       @["Michael",  "45", "180.0", "t", datetime.toTimestamp()]
-#     ]
+    rows.to(tmpUsers)
 
-#   setup:
-#     var tmpUsers {.used.} = @[
-#       UserDatetimeAsTimestamp(createdAt: now()),
-#       UserDatetimeAsTimestamp(createdAt: now()),
-#       UserDatetimeAsTimestamp(createdAt: now())
-#     ]
+    for i in 0..2:
+      check tmpUsers[i] == users[i]
 
-#   test "Objects -> rows":
-#     check users.toRows() == rows
+    check len(tmpUsers) == len(rows)
 
-#   test "Rows -> objects, equal lengths":
-#     rows.to(tmpUsers)
-#     check tmpUsers == users
+  test "Objects -> rows -> objects":
+    users.toRows().to(tmpUsers)
+    check tmpUsers == users
 
-#   test "Rows -> objects, more rows than objects":
-#     discard tmpUsers.pop()
-
-#     rows.to(tmpUsers)
-
-#     for i in 0..1:
-#       check tmpUsers[i] == users[i]
-
-#   test "Rows -> objects, more objects than rows":
-#     var u = UserDatetimeAsTimestamp(createdAt: now())
-
-#     tmpUsers.add u
-
-#     rows.to(tmpUsers)
-
-#     for i in 0..2:
-#       check tmpUsers[i] == users[i]
-
-#     check len(tmpUsers) == len(rows)
-
-#   test "Objects -> rows -> objects":
-#     users.toRows().to(tmpUsers)
-#     check tmpUsers == users
-
-#   test "Rows -> objects -> rows":
-#     rows.to(tmpUsers)
-#     check tmpUsers.toRows() == rows
+  test "Rows -> objects -> rows":
+    rows.to(tmpUsers)
+    check tmpUsers.toRows() == rows
 
 # suite "Boolean field conversion":
 #   type
@@ -350,14 +269,18 @@ suite "Conversion with custom parser and formatter procs":
 #       manufacturer: string
 #       model: string
 #       used: bool
+#       owned: Option[bool]
+#       yellow: Option[bool]
 
 #   let
 #     car = Car(
 #       manufacturer: "Toyota",
 #       model: "true",
-#       used: false
+#       used: false,
+#       owned: some true,
+#       yellow: none bool
 #     )
-#     row = @["Toyota", "true", "f"]
+#     row = @[?"Toyota", ?"true", ?0, ?1, ?nil]
 
 #   test "Object -> row":
 #     check car.toRow() == row
@@ -374,16 +297,26 @@ suite "Conversion with custom parser and formatter procs":
 # suite "DateTime field conversion":
 #   type
 #     Person = object
+#       birthDate: DateTime
+#       weddingDate: Option[DateTime]
 #       lastLogin: DateTime
+#       lastLogout: Option[DateTime]
 
 #   let
 #     person = Person(
-#       lastLogin: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz"),
+#       birthDate: "1995-07-18".parse("yyyy-MM-dd", utc()),
+#       weddingDate: some "2015-11-08".parse("yyyy-MM-dd", utc()),
+#       lastLogin: "2019-08-19 23:32:53+04:00".parse("yyyy-MM-dd HH:mm:sszzz"),
+#       lastLogout: none DateTime
 #     )
-#     row = @["2019-08-19 19:32:53Z"]
+#     row = @[?806025600, ?1446940800, ?1566243173, ?nil]
 
 #   setup:
-#     var tmpPerson {.used.} = Person(lastLogin: now())
+#     var tmpPerson {.used.} = Person(
+#       birthDate: now(),
+#       weddingDate: some now(),
+#       lastLogin: now(),
+#       lastLogout: none DateTime)
 
 #   test "Object -> row":
 #     check person.toRow() == row
