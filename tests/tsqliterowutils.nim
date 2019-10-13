@@ -50,7 +50,7 @@ suite "Conversion with custom parser and formatter expressions":
       age: Natural
       height: float
       createdAt {.
-        formatIt: dbValue(it.format("yyyy-MM-dd HH:mm:sszzz")),
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
         parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
