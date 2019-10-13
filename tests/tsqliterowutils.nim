@@ -95,7 +95,7 @@ suite "Conversion with custom parser and formatter procs":
   let
     datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
     user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
-    row = @[?"Alice", ?23, ?168.2, ?datetime.toTimestamp()]
+    row = @[?"Alice", ?23, ?168.2, datetime.toTimestamp()]
 
   setup:
     var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
