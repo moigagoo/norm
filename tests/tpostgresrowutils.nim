@@ -11,22 +11,24 @@ suite "Basic object <-> row conversion":
     SimpleUser = object
       name: string
       age: Natural
+      dob: DateTime
       height: float
       ssn: Option[int]
       employed: Option[bool]
 
   let
-    user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123, employed: some true)
-    row = @[?"Alice", ?23, ?168.2, ?123, ?true]
+    dob = "1976-12-23".parse("yyyy-MM-dd")
+    user = SimpleUser(name: "Alice", age: 23, dob: dob, height: 168.2, ssn: some 123, employed: some true)
+    row = @[?"Alice", ?23, ?dob, ?168.2, ?123, ?true]
     userWithoutOptionals = SimpleUser(
       name: "Alice",
       age: 23,
+      dob: dob,
       height: 168.2,
       ssn: none int,
       employed: none bool
     )
-    rowWithoutOptionals = @[?"Alice", ?23, ?168.2, ?nil, ?nil]
-
+    rowWithoutOptionals = @[?"Alice", ?23, ?dob, ?168.2, ?nil, ?nil]
 
   test "Object -> row":
     check user.toRow() == row
@@ -42,6 +44,41 @@ suite "Basic object <-> row conversion":
 
   test "Row -> object -> row":
     check rowWithoutOptionals.to(SimpleUser).toRow() == rowWithoutOptionals
+
+suite "Conversion with custom parser and formatter expressions":
+  type
+    UserDatetimeAsString = object
+      name: string
+      age: Natural
+      height: float
+      createdAt {.
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
+        parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+      .}: DateTime
+
+  let
+    datetimeString = "2019-01-30 12:34:56Z"
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    user = UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @[?"Alice", ?23, ?168.2, ?datetimeString]
+
+  setup:
+    var tmpUser {.used.} = UserDatetimeAsString(createdAt: now())
+
+  test "Object -> row":
+    check user.toRow() == row
+
+  test "Row -> object":
+    row.to(tmpUser)
+    check tmpUser == user
+
+  test "Object -> row -> object":
+    user.toRow().to(tmpUser)
+    check tmpUser == user
+
+  test "Row -> object -> row":
+    row.to(tmpUser)
+    check tmpUser.toRow() == row
 
 # suite "Conversion with custom parser and formatter expressions":
 #   type
