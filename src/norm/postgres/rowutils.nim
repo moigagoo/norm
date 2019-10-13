@@ -18,9 +18,6 @@ import ndb/postgres
 import ../objutils, ../pragmas
 
 
-const pgDatetimeFmt = "yyyy-MM-dd HH:mm:sszz"
-
-
 template parser*(op: (string) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
