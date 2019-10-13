@@ -36,18 +36,19 @@ suite "Migrations":
     withDb:
       Person.createTable(force=true)
 
-      for i in 1..9:
-        var person = Person(name: "Person $#" % $i, age: 20+i)
-        person.insert()
+      transaction:
+        for i in 1..9:
+          var person = Person(name: "Person $#" % $i, age: 20+i)
+          person.insert()
 
   test "Add column":
     withDb:
       addColumn(PersonAddColumn.ssn)
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"name", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"age", ?"INTEGER", ?1, ?"0", ?0],
         @[?3, ?"ssn", ?"INTEGER", ?0, ?nil, ?0]
       ]
 
@@ -58,8 +59,8 @@ suite "Migrations":
       PersonRemoveColumn.dropUnusedColumns()
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"name", ?"TEXT", ?1, ?"''", ?0]
       ]
 
       check dbConn.getAllRows(sql "SELECT name FROM sqlite_master where type='table'") == @[
@@ -74,9 +75,9 @@ suite "Migrations":
       PersonRenameColumn.years.renameColumnFrom "age"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"fullname", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"years", ?"INTEGER", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"fullname", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"years", ?"INTEGER", ?1, ?"0", ?0],
       ]
 
       check len(PersonRenameColumn.getMany(100)) == 9
@@ -98,9 +99,9 @@ suite "Migrations":
         PersonRenameColumn.years.renameColumnFrom "age"
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"fullname", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"years", ?"INTEGER", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"fullname", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"years", ?"INTEGER", ?1, ?"0", ?0],
       ]
 
   test "Rollback transaction":
@@ -110,9 +111,9 @@ suite "Migrations":
         rollback()
 
       check dbConn.getAllRows(sql "PRAGMA table_info(person)") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"name", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"age", ?"INTEGER", ?1, ?nil, ?0]
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"name", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"age", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
     expect IOError:
