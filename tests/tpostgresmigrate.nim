@@ -18,7 +18,7 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
     PersonAddColumn {.table: "person".} = object
       name: string
       age: int
-      ssn {.default: "0".}: int
+      ssn: int
 
     PersonRemoveColumn {.table: "person".} = object
       name: string
