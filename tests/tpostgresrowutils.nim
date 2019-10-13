@@ -263,72 +263,75 @@ suite "Bulk conversion with custom parser and formatter procs":
     rows.to(tmpUsers)
     check tmpUsers.toRows() == rows
 
-# suite "Boolean field conversion":
-#   type
-#     Car = object
-#       manufacturer: string
-#       model: string
-#       used: bool
-#       owned: Option[bool]
-#       yellow: Option[bool]
+suite "Boolean field conversion":
+  type
+    Car = object
+      manufacturer: string
+      model: string
+      used: bool
+      owned: Option[bool]
+      yellow: Option[bool]
 
-#   let
-#     car = Car(
-#       manufacturer: "Toyota",
-#       model: "true",
-#       used: false,
-#       owned: some true,
-#       yellow: none bool
-#     )
-#     row = @[?"Toyota", ?"true", ?0, ?1, ?nil]
+  let
+    car = Car(
+      manufacturer: "Toyota",
+      model: "true",
+      used: false,
+      owned: some true,
+      yellow: none bool
+    )
+    row = @[?"Toyota", ?"true", ?false, ?true, ?nil]
 
-#   test "Object -> row":
-#     check car.toRow() == row
+  test "Object -> row":
+    check car.toRow() == row
 
-#   test "Row -> object":
-#     check row.to(Car) == car
+  test "Row -> object":
+    check row.to(Car) == car
 
-#   test "Object -> row -> object":
-#     check car.toRow().to(Car) == car
+  test "Object -> row -> object":
+    check car.toRow().to(Car) == car
 
-#   test "Row -> object -> row":
-#     check row.to(Car).toRow() == row
+  test "Row -> object -> row":
+    check row.to(Car).toRow() == row
 
-# suite "DateTime field conversion":
-#   type
-#     Person = object
-#       birthDate: DateTime
-#       weddingDate: Option[DateTime]
-#       lastLogin: DateTime
-#       lastLogout: Option[DateTime]
+suite "DateTime field conversion":
+  type
+    Person = object
+      birthDate: DateTime
+      weddingDate: Option[DateTime]
+      lastLogin: DateTime
+      lastLogout: Option[DateTime]
 
-#   let
-#     person = Person(
-#       birthDate: "1995-07-18".parse("yyyy-MM-dd", utc()),
-#       weddingDate: some "2015-11-08".parse("yyyy-MM-dd", utc()),
-#       lastLogin: "2019-08-19 23:32:53+04:00".parse("yyyy-MM-dd HH:mm:sszzz"),
-#       lastLogout: none DateTime
-#     )
-#     row = @[?806025600, ?1446940800, ?1566243173, ?nil]
+  let
+    birthDate = "1995-07-18".parse("yyyy-MM-dd", utc())
+    weddingDate = "2015-11-08".parse("yyyy-MM-dd", utc())
+    lastLogin = "2019-08-19 23:32:53+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    person = Person(
+      birthDate: birthDate,
+      weddingDate: some weddingDate,
+      lastLogin: lastLogin,
+      lastLogout: none DateTime
+    )
+    row = @[?birthDate, ?weddingDate, ?lastLogin, ?nil]
 
-#   setup:
-#     var tmpPerson {.used.} = Person(
-#       birthDate: now(),
-#       weddingDate: some now(),
-#       lastLogin: now(),
-#       lastLogout: none DateTime)
+  setup:
+    var tmpPerson {.used.} = Person(
+      birthDate: now(),
+      weddingDate: some now(),
+      lastLogin: now(),
+      lastLogout: none DateTime)
 
-#   test "Object -> row":
-#     check person.toRow() == row
+  test "Object -> row":
+    check person.toRow() == row
 
-#   test "Row -> object":
-#     row.to(tmpPerson)
-#     check tmpPerson == person
+  test "Row -> object":
+    row.to(tmpPerson)
+    check tmpPerson == person
 
-#   test "Object -> row -> object":
-#     person.toRow().to(tmpPerson)
-#     check tmpPerson == person
+  test "Object -> row -> object":
+    person.toRow().to(tmpPerson)
+    check tmpPerson == person
 
-#   test "Row -> object -> row":
-#     row.to(tmpPerson)
-#     check tmpPerson.toRow() == row
+  test "Row -> object -> row":
+    row.to(tmpPerson)
+    check tmpPerson.toRow() == row
