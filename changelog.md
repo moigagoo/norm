@@ -14,6 +14,7 @@
 -   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
 -   [+] PostgreSQL: Add means to writemigrations: `addColumn`, `dropColumns`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
 -   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.
+-   [f] Fixed "unreachable statement" compile error for certain SQLite use cases.
 
 
 ## 1.0.17 (September 12, 2019)

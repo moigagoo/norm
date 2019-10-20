@@ -128,7 +128,9 @@ template to*(row: Row, obj: var object) =
         obj.dot(field) =
           if row[i].kind == dvkNull: none DateTime else: some row[i].i.fromUnix().utc()
     else:
-      raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
+      # Workaround "unreachable statement after 'return' statement" error.
+      if true:
+        raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
 
     inc i
 
