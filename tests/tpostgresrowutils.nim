@@ -1,7 +1,9 @@
 import unittest
-import times, strutils
+import times, options
 
 import norm/postgres/rowutils
+
+import ndb/postgres
 
 
 suite "Basic object <-> row conversion":
@@ -9,24 +11,39 @@ suite "Basic object <-> row conversion":
     SimpleUser = object
       name: string
       age: Natural
+      dob: DateTime
       height: float
-      employed: bool
+      ssn: Option[int]
+      employed: Option[bool]
 
   let
-    user = SimpleUser(name: "Alice", age: 23, height: 168.2, employed: true)
-    row = @["Alice", "23", "168.2", "t"]
+    dob = "1976-12-23".parse("yyyy-MM-dd")
+    user = SimpleUser(name: "Alice", age: 23, dob: dob, height: 168.2, ssn: some 123, employed: some true)
+    row = @[?"Alice", ?23, ?dob, ?168.2, ?123, ?true]
+    userWithoutOptionals = SimpleUser(
+      name: "Alice",
+      age: 23,
+      dob: dob,
+      height: 168.2,
+      ssn: none int,
+      employed: none bool
+    )
+    rowWithoutOptionals = @[?"Alice", ?23, ?dob, ?168.2, ?nil, ?nil]
 
   test "Object -> row":
     check user.toRow() == row
+    check userWithoutOptionals.toRow() == rowWithoutOptionals
 
   test "Row -> object":
     check row.to(SimpleUser) == user
+    check rowWithoutOptionals.to(SimpleUser) == userWithoutOptionals
 
   test "Object -> row -> object":
     check user.toRow().to(SimpleUser) == user
+    check userWithoutOptionals.toRow().to(SimpleUser) == userWithoutOptionals
 
   test "Row -> object -> row":
-    check row.to(SimpleUser).toRow() == row
+    check rowWithoutOptionals.to(SimpleUser).toRow() == rowWithoutOptionals
 
 suite "Conversion with custom parser and formatter expressions":
   type
@@ -34,23 +51,16 @@ suite "Conversion with custom parser and formatter expressions":
       name: string
       age: Natural
       height: float
-      employed: bool
       createdAt {.
-        formatIt: $it.toTime().format("yyyy-MM-dd HH:mm:sszz", utc()),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
+        parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
   let
     datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
-    user = UserDatetimeAsString(
-      name: "Alice",
-      age: 23,
-      height: 168.2,
-      employed: false,
-      createdAt: datetime
-    )
-    row = @["Alice", "23", "168.2", "f", datetimeString]
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
+    user = UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @[?"Alice", ?23, ?168.2, ?datetimeString]
 
   setup:
     var tmpUser {.used.} = UserDatetimeAsString(createdAt: now())
@@ -71,28 +81,24 @@ suite "Conversion with custom parser and formatter expressions":
     check tmpUser.toRow() == row
 
 suite "Conversion with custom parser and formatter procs":
-  proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
+  proc toTimestamp(dt: DateTime): DbValue = ?dt.toTime().toUnix()
 
-  proc toDatetime(ts: string): DateTime = parseInt(ts).fromUnix().utc()
+  proc toDatetime(ts: DbValue): DateTime = ts.i.fromUnix().utc()
 
   type
     UserDatetimeAsTimestamp = object
       name: string
       age: Natural
       height: float
-      employed: bool
-      createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
+      createdAt {.
+        formatter: toTimestamp,
+        parser: toDatetime
+      .}: DateTime
 
   let
-    datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
-    user = UserDatetimeAsTimestamp(
-      name: "Alice",
-      age: 23,
-      height: 168.2,
-      employed: true,
-      createdAt: datetime
-    )
-    row = @["Alice", "23", "168.2", "t", $datetime.toTimestamp()]
+    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
+    user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
+    row = @[?"Alice", ?23, ?168.2, datetime.toTimestamp()]
 
   setup:
     var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
@@ -118,18 +124,17 @@ suite "Basic bulk object <-> row conversion":
       name: string
       age: Natural
       height: float
-      employed: bool
 
   let
     users = @[
-      SimpleUser(name: "Alice", age: 23, height: 168.2, employed: true),
-      SimpleUser(name: "Bob", age: 34, height: 172.5, employed: false),
-      SimpleUser(name: "Michael", age: 45, height: 180.0, employed: true)
+      SimpleUser(name: "Alice", age: 23, height: 168.2),
+      SimpleUser(name: "Bob", age: 34, height: 172.5),
+      SimpleUser(name: "Michael", age: 45, height: 180.0)
     ]
     rows = @[
-      @["Alice", "23", "168.2", "t"],
-      @["Bob", "34", "172.5", "f"],
-      @["Michael", "45", "180.0", "t"]
+      @[?"Alice", ?23, ?168.2],
+      @[?"Bob", ?34, ?172.5],
+      @[?"Michael", ?45, ?180.0]
     ]
 
   test "Objects -> rows":
@@ -150,42 +155,23 @@ suite "Bulk conversion with custom parser and formatter expressions":
       name: string
       age: Natural
       height: float
-      employed: bool
       createdAt {.
-        formatIt: $it.toTime().format("yyyy-MM-dd HH:mm:sszz", utc()),
-        parseIt: it.parse("yyyy-MM-dd HH:mm:sszz")
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
+        parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
   let
     datetimeString = "2019-01-30 12:34:56Z"
-    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszz")
+    datetime = datetimeString.parse("yyyy-MM-dd HH:mm:sszzz", utc())
     users = @[
-      UserDatetimeAsString(
-        name: "Alice",
-        age: 23,
-        height: 168.2,
-        employed: true,
-        createdAt: datetime
-      ),
-      UserDatetimeAsString(
-        name: "Bob",
-        age: 34,
-        height: 172.5,
-        employed: false,
-        createdAt: datetime
-      ),
-      UserDatetimeAsString(
-        name: "Michael",
-        age: 45,
-        height: 180.0,
-        employed: true,
-        createdAt: datetime
-      )
+      UserDatetimeAsString(name: "Alice", age: 23, height: 168.2, createdAt: datetime),
+      UserDatetimeAsString(name: "Bob", age: 34, height: 172.5, createdAt: datetime),
+      UserDatetimeAsString(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
     ]
     rows = @[
-      @["Alice", "23", "168.2", "t", datetimeString],
-      @["Bob", "34", "172.5", "f", datetimeString],
-      @["Michael", "45", "180.0", "t", datetimeString]
+      @[?"Alice", ?23, ?168.2, ?datetimeString],
+      @[?"Bob", ?34, ?172.5, ?datetimeString],
+      @[?"Michael", ?45, ?180.0, ?datetimeString]
     ]
 
   setup:
@@ -211,47 +197,28 @@ suite "Bulk conversion with custom parser and formatter expressions":
     check tmpUsers.toRows() == rows
 
 suite "Bulk conversion with custom parser and formatter procs":
-  proc toTimestamp(dt: DateTime): string = $dt.toTime().toUnix()
+  proc toTimestamp(dt: DateTime): DbValue = ?dt.toTime().toUnix()
 
-  proc toDatetime(ts: string): DateTime = parseInt(ts).fromUnix().utc()
+  proc toDatetime(ts: DbValue): DateTime = ts.i.fromUnix().utc()
 
   type
     UserDatetimeAsTimestamp = object
       name: string
       age: Natural
       height: float
-      employed: bool
       createdAt {.formatter: toTimestamp, parser: toDatetime.}: DateTime
 
   let
-    datetime = "2019-01-30 12:34:56+04".parse("yyyy-MM-dd HH:mm:sszz")
+    datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
     users = @[
-      UserDatetimeAsTimestamp(
-        name: "Alice",
-        age: 23,
-        height: 168.2,
-        employed: true,
-        createdAt: datetime
-      ),
-      UserDatetimeAsTimestamp(
-        name: "Bob",
-        age: 34,
-        height: 172.5,
-        employed: false,
-        createdAt: datetime
-      ),
-      UserDatetimeAsTimestamp(
-        name: "Michael",
-        age: 45,
-        height: 180.0,
-        employed: true,
-        createdAt: datetime
-      )
+      UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime),
+      UserDatetimeAsTimestamp(name: "Bob", age: 34, height: 172.5, createdAt: datetime),
+      UserDatetimeAsTimestamp(name: "Michael", age: 45, height: 180.0, createdAt: datetime)
     ]
     rows = @[
-      @["Alice",  "23", "168.2", "t", datetime.toTimestamp()],
-      @["Bob",  "34", "172.5", "f", datetime.toTimestamp()],
-      @["Michael",  "45", "180.0", "t", datetime.toTimestamp()]
+      @[?"Alice", ?23, ?168.2, datetime.toTimestamp()],
+      @[?"Bob", ?34, ?172.5, datetime.toTimestamp()],
+      @[?"Michael", ?45, ?180.0, datetime.toTimestamp()]
     ]
 
   setup:
@@ -302,14 +269,18 @@ suite "Boolean field conversion":
       manufacturer: string
       model: string
       used: bool
+      owned: Option[bool]
+      yellow: Option[bool]
 
   let
     car = Car(
       manufacturer: "Toyota",
       model: "true",
-      used: false
+      used: false,
+      owned: some true,
+      yellow: none bool
     )
-    row = @["Toyota", "true", "f"]
+    row = @[?"Toyota", ?"true", ?false, ?true, ?nil]
 
   test "Object -> row":
     check car.toRow() == row
@@ -326,16 +297,29 @@ suite "Boolean field conversion":
 suite "DateTime field conversion":
   type
     Person = object
+      birthDate: DateTime
+      weddingDate: Option[DateTime]
       lastLogin: DateTime
+      lastLogout: Option[DateTime]
 
   let
+    birthDate = "1995-07-18".parse("yyyy-MM-dd", utc())
+    weddingDate = "2015-11-08".parse("yyyy-MM-dd", utc())
+    lastLogin = "2019-08-19 23:32:53+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
     person = Person(
-      lastLogin: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz"),
+      birthDate: birthDate,
+      weddingDate: some weddingDate,
+      lastLogin: lastLogin,
+      lastLogout: none DateTime
     )
-    row = @["2019-08-19 19:32:53Z"]
+    row = @[?birthDate, ?weddingDate, ?lastLogin, ?nil]
 
   setup:
-    var tmpPerson {.used.} = Person(lastLogin: now())
+    var tmpPerson {.used.} = Person(
+      birthDate: now(),
+      weddingDate: some now(),
+      lastLogin: now(),
+      lastLogout: none DateTime)
 
   test "Object -> row":
     check person.toRow() == row

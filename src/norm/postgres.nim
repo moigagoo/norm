@@ -18,14 +18,14 @@ Nim Type           SQLite Type
 ]##
 
 
-import strutils, macros, typetraits, logging
-import db_postgres
+import strutils, macros, typetraits, logging, options
+import ndb/postgres
 
 import postgres/[rowutils, sqlgen], objutils, typedefutils
 
 
-export strutils, logging
-export db_postgres
+export strutils, logging, options
+export postgres
 export rowutils, sqlgen, objutils
 
 
@@ -177,7 +177,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         obj.id = dbConn.insertID(insertQuery, params).int
 
-      template getOne(obj: var object, cond: string, params: varargs[string, `$`]) {.used.} =
+      template getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read a record from DB by condition and store it into an existing object instance.
 
         If multiple records are found, return the first one.
@@ -189,13 +189,13 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         let row = dbConn.getRow(getOneQuery, params)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record by condition '$#' with params '$#' not found." %
                              [cond, params.join(", ")])
 
-        row.to(obj)
+        get(row).to(obj)
 
-      proc getOne(T: typedesc, cond: string, params: varargs[string, `$`]): T {.used.} =
+      proc getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue]): T {.used.} =
         ##[ Read a record from DB by condition into a new object instance.
 
         If multiple records are found, return the first one.
@@ -206,16 +206,16 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
       template getOne(obj: var object, id: int) {.used.} =
         ## Read a record from DB and store it into an existing object instance.
 
-        let getOneQuery = genGetOneQuery(obj, "id=?")
+        let getOneQuery = genGetOneQuery(obj, "id = $1")
 
         debug getOneQuery, " <- ", $id
 
         let row = dbConn.getRow(getOneQuery, id)
 
-        if row.isEmpty():
+        if row.isNone():
           raise newException(KeyError, "Record with id=$# not found." % $id)
 
-        row.to(obj)
+        get(row).to(obj)
 
       proc getOne(T: typedesc, id: int): T {.used.} =
         ## Read a record from DB into a new object instance.
@@ -223,7 +223,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         result.getOne(id)
 
       proc getMany(objs: var seq[object], limit: int, offset = 0,
-                   cond = "TRUE", params: varargs[string, `$`]) {.used.} =
+                   cond = "TRUE", params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
         Filter using ``cond`` condition.
@@ -232,8 +232,8 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         if len(objs) == 0: return
 
         let
-          getManyQuery = genGetManyQuery(objs[0], cond)
-          params = @params & @[$min(limit, len(objs)), $offset]
+          getManyQuery = genGetManyQuery(objs[0], cond, len(params))
+          params = @params & @[?min(limit, len(objs)), ?offset]
 
         debug getManyQuery, " <- ", params.join(", ")
 
@@ -242,7 +242,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         rows.to(objs)
 
       proc getMany(T: typedesc, limit: int, offset = 0,
-                   cond = "TRUE", params: varargs[string, `$`]): seq[T] {.used.} =
+                   cond = "TRUE", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
@@ -260,7 +260,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         let
           updateQuery = genUpdateQuery(obj, force)
-          params = obj.toRow(force) & $obj.id
+          params = obj.toRow(force) & ?obj.id
 
         debug updateQuery, " <- ", params.join(", ")
 

@@ -9,6 +9,7 @@
 ## 1.1.0 (WIP)
 
 -   [!] Deprecate `default` pragma, always add default values to tables instead.
+-   [!][+] Rewrite PostgreSQL backend to use [ndb](https://github.com/xzfc/ndb.nim), which adds `NULL` support via `Option` type similarly to SQLite backend.
 -   [+] Add `transaction` macro to exec multiple commands in a transaction and `rollback` proc to safely interrupt a transaction.
 -   [+] Add `createTable` and `dropTable`.
 -   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.

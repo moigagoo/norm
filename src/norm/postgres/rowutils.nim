@@ -9,20 +9,16 @@ This module implements ``to`` and ``toRow`` proc families for row to object and 
 ``Row`` is a sequence of ``string`` as in Nim stdlib's ``db_*`` modules, therefore ``NULL`` values are not supported.
 ]##
 
-import strutils, sequtils, times
+import sequtils, times
 import sugar
 import macros; export macros
+
+import ndb/postgres
 
 import ../objutils, ../pragmas
 
 
-type Row = seq[string]
-
-
-const pgDatetimeFmt = "yyyy-MM-dd HH:mm:sszz"
-
-
-template parser*(op: (string) -> any) {.pragma.}
+template parser*(op: (DbValue) -> any) {.pragma.}
   ##[ Pragma to define a parser for an object field.
 
   ``op`` should be a proc that accepts ``string`` and returns the object field type.
@@ -38,7 +34,7 @@ template parseIt*(op: untyped) {.pragma.}
   The expression is invoked in ``to`` template to turn a string from row into a typed object field.
   ]##
 
-template formatter*(op: (any) -> string) {.pragma.}
+template formatter*(op: (any) -> DbValue) {.pragma.}
   ##[ Pragma to define a formatter for an object field.
 
   ``op`` should be a proc that accepts the object field type and returns ``string``.
@@ -108,17 +104,28 @@ template to*(row: Row, obj: var object) =
         let it {.inject.} = row[i]
         obj.dot(field) = obj.dot(field).getCustomPragmaVal(parseIt)
     elif typeof(value) is string:
-      obj.dot(field) = row[i]
+      obj.dot(field) = row[i].s
     elif typeof(value) is int:
-      obj.dot(field) = parseInt row[i]
+      obj.dot(field) = row[i].i.int
     elif typeof(value) is float:
-      obj.dot(field) = parseFloat row[i]
+      obj.dot(field) = row[i].f
     elif typeof(value) is bool:
-      obj.dot(field) = if row[i] == "f": false else: true
+      obj.dot(field) = row[i].b
     elif typeof(value) is DateTime:
-      obj.dot(field) = row[i].parse(pgDatetimeFmt, utc())
+      obj.dot(field) = row[i].t
+    elif typeof(value) is Option:
+      when typeof(get(value)) is string:
+        obj.dot(field) = if row[i].kind == dvkNull: none string else: some row[i].s
+      elif typeof(get(value)) is int:
+        obj.dot(field) = if row[i].kind == dvkNull: none int else: some row[i].i.int
+      elif typeof(get(value)) is float:
+        obj.dot(field) = if row[i].kind == dvkNull: none float else: some row[i].f
+      elif typeof(get(value)) is bool:
+        obj.dot(field) = if row[i].kind == dvkNull: none bool else: some row[i].b
+      elif typeof(get(value)) is DateTime:
+        obj.dot(field) = if row[i].kind == dvkNull: none DateTime else: some row[i].t
     else:
-      raise newException(ValueError, "Parser for $# is undefined." % typeof(value))
+      raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
 
     inc i
 
@@ -255,11 +262,11 @@ proc toRow*(obj: object, force = false): Row =
       )
       row = example.toRow()
 
-    doAssert row[0] == "123"
-    doAssert row[1] == "foo"
-    doAssert row[2] == "123.321"
-    doAssert row[3] == "t"
-    doAssert row[4] == "2019-08-20 10:27:55Z"
+    doAssert row[0].i == 123
+    doAssert row[1].s == "foo"
+    doAssert row[2].f == 123.321
+    doAssert row[3].b == true
+    doAssert row[4].t == "2019-08-20 14:27:55+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -269,12 +276,8 @@ proc toRow*(obj: object, force = false): Row =
         block:
           let it {.inject.} = value
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
-      elif typeof(value) is bool:
-        result.add if value: "t" else: "f"
-      elif typeof(value) is DateTime:
-        result.add value.toTime().format(pgDatetimeFmt, utc())
       else:
-        result.add $value
+        result.add ?value
 
 proc toRows*(objs: openArray[object], force = false): seq[Row] =
   ##[ Convert an open array of objects into a sequence of rows.
@@ -305,8 +308,3 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
     doAssert rows[2][2] == "789.987"
 
   objs.mapIt(it.toRow(force))
-
-proc isEmpty*(row: Row): bool =
-  ## Check if row is empty, i.e. all its items are ``""``.
-
-  row.allIt(it.len == 0)

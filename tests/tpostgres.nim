@@ -17,10 +17,9 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
     User {.table: "users".} = object
       email {.unique.}: string
       birthDate {.
-        dbType: "DATE",
-        default: "CURRENT_TIMESTAMP",
-        parseIt: it.parse("yyyy-MM-dd", utc()),
-        formatIt: it.format("yyyy-MM-dd")
+        dbType: "TEXT",
+        parseIt: it.s.parse("yyyy-MM-dd", utc()),
+        formatIt: ?it.format("yyyy-MM-dd")
       .}: DateTime
       lastLogin: DateTime
     Publisher {.table: "publishers".} = object
@@ -31,7 +30,7 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
 
-  proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
+  proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
   type
     Edition {.table: "editions".} = object
@@ -41,7 +40,7 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
         dbType: "INTEGER",
         fk: Book
         parser: getBookById,
-        formatIt: $it.id,
+        formatIt: ?it.id,
         onDelete: "CASCADE"
       .}: Book
 
@@ -50,43 +49,42 @@ suite "Creating and dropping tables, CRUD":
     withDb:
       createTables(force=true)
 
-      for i in 1..9:
-        var
-          user = User(
-            email: "test-$#@example.com" % $i,
-            birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
-            lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
-          )
-          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
-          book = Book(title: "Book $#" % $i, authorEmail: user.email,
-                      publisherTitle: publisher.title)
-          edition = Edition(title: "Edition $#" % $i)
+      transaction:
+        for i in 1..9:
+          var
+            user = User(
+              email: "test-$#@example.com" % $i,
+              birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
+              lastLogin: parse("2019-08-19 23:32:5$#+04" % $i, "yyyy-MM-dd HH:mm:sszz")
+            )
+            publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
+            book = Book(title: "Book $#" % $i, authorEmail: user.email,
+                        publisherTitle: publisher.title)
+            edition = Edition(title: "Edition $#" % $i)
 
-        user.insert()
-        publisher.insert()
-        book.insert()
+          user.insert()
+          publisher.insert()
+          book.insert()
 
-        edition.book = book
-        edition.insert()
+          edition.book = book
+          edition.insert()
 
   teardown:
     withDb:
       dropTables()
 
   test "Create tables":
-    withDb:
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+    proc getCols(table: string): seq[string] =
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
 
-      check dbConn.getAllRows(query, "users") == @[
-        @["id"],
-        @["email"],
-        @["birthdate"],
-        @["lastlogin"]
-      ]
-      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"], @["licensed"]]
-      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
-                                                   @["publishertitle"]]
-      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+      withDb:
+        for col in dbConn.getAllRows(query, table):
+          result.add $col[0]
+
+    check getCols("users") == @["id", "email", "birthdate", "lastlogin"]
+    check getCols("publishers") == @["id", "title", "licensed"]
+    check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
+    check getCols("editions") == @["id", "title", "bookid"]
 
   test "Create records":
     withDb:
@@ -162,18 +160,18 @@ suite "Creating and dropping tables, CRUD":
 
   test "Query records":
     withDb:
-      let someBooks = Book.getMany(10, cond="title IN (?, ?) ORDER BY title DESC",
-                                   params=["Book 1", "Book 5"])
+      let someBooks = Book.getMany(10, cond="title IN ($1, $2) ORDER BY title DESC",
+                                   params=[?"Book 1", ?"Book 5"])
 
       check len(someBooks) == 2
       check someBooks[0].title == "Book 5"
       check someBooks[1].authorEmail == "test-1@example.com"
 
-      let someBook = Book.getOne("authoremail=?", "test-2@example.com")
+      let someBook = Book.getOne("authoremail = $1", "test-2@example.com")
       check someBook.id == 2
 
       expect KeyError:
-        let notExistingBook {.used.} = Book.getOne("title=?", "Does not exist")
+        let notExistingBook {.used.} = Book.getOne("title = $1", "Does not exist")
 
   test "Update records":
     withDb:
@@ -220,19 +218,17 @@ suite "Creating and dropping tables, CRUD":
     withCustomDb(customDbHost, "postgres", "", "postgres"):
       createTables(force=true)
 
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+    proc getCols(table: string): seq[string] =
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
 
-      check dbConn.getAllRows(query, "users") == @[
-        @["id"],
-        @["email"],
-        @["birthdate"],
-        @["lastlogin"]
-      ]
-      check dbConn.getAllRows(query, "publishers") == @[@["id"], @["title"], @["licensed"]]
-      check dbConn.getAllRows(query, "books") == @[@["id"], @["title"], @["authoremail"],
-                                                    @["publishertitle"]]
-      check dbConn.getAllRows(query, "editions") == @[@["id"], @["title"], @["bookid"]]
+      withCustomDb(customDbHost, "postgres", "", "postgres"):
+        for col in dbConn.getAllRows(query, table):
+          result.add $col[0]
+
+    check getCols("users") == @["id", "email", "birthdate", "lastlogin"]
+    check getCols("publishers") == @["id", "title", "licensed"]
+    check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
+    check getCols("editions") == @["id", "title", "bookid"]
 
     withCustomDb(customDbHost, "postgres", "", "postgres"):
       dropTables()

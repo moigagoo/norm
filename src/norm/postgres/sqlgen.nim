@@ -8,7 +8,7 @@ Procs to generate SQL queries to modify tables and records.
 ]##
 
 import strutils, macros
-import db_postgres
+import ndb/postgres
 
 import ../objutils, ../pragmas
 
@@ -206,9 +206,11 @@ template genCopyQuery*(T: typedesc, targetTable: string): SqlQuery =
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
 
-  let
-    fields = obj.getColumns(force)
-    placeholders = '?'.repeat(fields.len)
+  let fields = obj.getColumns(force)
+
+  var placeholders: seq[string]
+  for i in 1..fields.len:
+    placeholders.add "$" & $i
 
   result = sql "INSERT INTO $# ($#) VALUES ($#)" % [type(obj).getTable(), fields.join(", "),
                                                     placeholders.join(", ")]
@@ -219,25 +221,33 @@ proc genGetOneQuery*(obj: object, condition: string): SqlQuery =
   sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
                                       type(obj).getTable(), condition]
 
-proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
+proc genGetManyQuery*(obj: object, condition: string, paramCount = 0): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
 
-  sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
-                                                       type(obj).getTable(), condition]
+  sql "SELECT $# FROM $# WHERE $# LIMIT $$$# OFFSET $$$#" % [
+    obj.getColumns(force=true).join(", "),
+    type(obj).getTable(),
+    condition,
+    $(paramCount+1),
+    $(paramCount+2)
+  ]
 
 proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
 
   var fieldsWithPlaceholders: seq[string]
 
-  for field in obj.getColumns(force):
-    fieldsWithPlaceholders.add field & " = ?"
+  for i, field in obj.getColumns(force):
+    fieldsWithPlaceholders.add field & " = $$$#" % $(i+1)
 
-  result = sql "UPDATE $# SET $# WHERE id = ?" % [type(obj).getTable(),
-                                                  fieldsWithPlaceholders.join(", ")]
+  result = sql "UPDATE $# SET $# WHERE id = $$$#" % [
+    type(obj).getTable(),
+    fieldsWithPlaceholders.join(", "),
+    $(len(fieldsWithPlaceholders)+1)
+  ]
 
 proc genDeleteQuery*(obj: object): SqlQuery =
   ## Generate ``DELETE`` query for an object.
 
-  sql "DELETE FROM $# WHERE id = ?" % type(obj).getTable()
+  sql "DELETE FROM $# WHERE id = $$1" % type(obj).getTable()
 

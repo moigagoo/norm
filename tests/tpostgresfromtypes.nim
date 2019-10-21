@@ -32,11 +32,15 @@ suite "Creating and dropping tables, CRUD":
       dropTables()
 
   test "Create tables":
-    withDb:
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+    proc getCols(table: string): seq[string] =
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
 
-      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["lastlogin"]]
-      check dbConn.getAllRows(query, "pet") == @[@["id"], @["name"], @["age"], @["ownerid"]]
+      withDb:
+        for col in dbConn.getAllRows(query, table):
+          result.add $col[0]
+
+    check getCols("users") == @["id", "email", "lastlogin"]
+    check getCols("pet") == @["id", "name", "age", "ownerid"]
 
   test "Read records":
     withDb:
@@ -66,7 +70,7 @@ suite "Creating and dropping tables, CRUD":
   test "Delete records":
     withDb:
       var user = User(lastLogin: now()); user.getOne 1
-      var pet =Pet.getOne 1
+      var pet = Pet.getOne 1
 
       user.delete()
       pet.delete()
@@ -83,22 +87,26 @@ suite "Creating and dropping tables, CRUD":
       dropTables()
 
       expect DbError:
-        dbConn.exec sql "SELECT NULL FROM user"
+        dbConn.exec sql "SELECT NULL FROM users"
         dbConn.exec sql "SELECT NULL FROM pet"
 
   test "Custom DB":
     withCustomDb(customDbHost, "postgres", "", "postgres"):
       createTables(force=true)
 
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
+    proc getCols(table: string): seq[string] =
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
 
-      check dbConn.getAllRows(query, "users") == @[@["id"], @["email"], @["lastlogin"]]
-      check dbConn.getAllRows(query, "pet") == @[@["id"], @["name"], @["age"], @["ownerid"]]
+      withCustomDb(customDbHost, "postgres", "", "postgres"):
+        for col in dbConn.getAllRows(query, table):
+          result.add $col[0]
+
+    check getCols("users") == @["id", "email", "lastlogin"]
+    check getCols("pet") == @["id", "name", "age", "ownerid"]
 
     withCustomDb(customDbHost, "postgres", "", "postgres"):
       dropTables()
 
       expect DbError:
-        dbConn.exec sql "SELECT NULL FROM user"
+        dbConn.exec sql "SELECT NULL FROM users"
         dbConn.exec sql "SELECT NULL FROM pet"

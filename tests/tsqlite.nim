@@ -19,7 +19,7 @@ db(dbName, "", "", ""):
         dbType: "INTEGER",
         notNull,
         parseIt: it.i.fromUnix().local(),
-        formatIt: dbValue(it.toTime().toUnix())
+        formatIt: ?it.toTime().toUnix()
       .}: DateTime
       lastLogin: DateTime
     Publisher {.table: "publishers".} = object
@@ -41,7 +41,7 @@ db(dbName, "", "", ""):
         notNull,
         fk: Book
         parser: getBookById,
-        formatIt: dbValue(it.id),
+        formatIt: ?it.id,
         onDelete: "CASCADE"
       .}: Book
 
