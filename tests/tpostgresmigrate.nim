@@ -31,6 +31,20 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
       name: string
       age: int
 
+proc getCols(table: string): seq[string] =
+  let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
+
+  withDb:
+    for col in dbConn.getAllRows(query, table):
+      result.add $col[0]
+
+proc getTables(): seq[string] =
+  let query = sql "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+
+  withDb:
+    for col in dbConn.getAllRows(query):
+      result.add $col[0]
+
 
 suite "Migrations":
   setup:
@@ -39,17 +53,16 @@ suite "Migrations":
 
       Person.createTable(force=true)
 
-      for i in 1..9:
-        var person = Person(name: "Person $#" % $i, age: 20+i)
-        person.insert()
+      transaction:
+        for i in 1..9:
+          var person = Person(name: "Person $#" % $i, age: 20+i)
+          person.insert()
 
   test "Add column":
     withDb:
       addColumn(PersonAddColumn.ssn)
 
-      let getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
-
-      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["name"], @["age"], @["ssn"]]
+      check getCols("person") == @["id", "name", "age", "ssn"]
 
       check len(PersonAddColumn.getMany(100)) == 9
 
@@ -57,13 +70,9 @@ suite "Migrations":
     withDb:
       PersonRemoveColumn.dropColumns ["age"]
 
-      let
-        getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
-        getTablesQuery = sql "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+      check getCols("person") == @["id", "name"]
 
-      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["name"]]
-
-      check dbConn.getAllRows(getTablesQuery) == @[@["person"]]
+      check getTables() == @["person"]
 
       check len(PersonRemoveColumn.getMany(100)) == 9
 
@@ -71,13 +80,9 @@ suite "Migrations":
     withDb:
       PersonRemoveColumn.dropUnusedColumns()
 
-      let
-        getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
-        getTablesQuery = sql "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
+      check getCols("person") == @["id", "name"]
 
-      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["name"]]
-
-      check dbConn.getAllRows(getTablesQuery) == @[@["person"]]
+      check getTables() == @["person"]
 
       check len(PersonRemoveColumn.getMany(100)) == 9
 
@@ -86,9 +91,7 @@ suite "Migrations":
       PersonRenameColumn.name.renameColumnFrom "name"
       PersonRenameColumn.years.renameColumnFrom "age"
 
-      let getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
-
-      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["fullname"], @["years"]]
+      check getCols("person") == @["id", "fullname", "years"]
 
       check len(PersonRenameColumn.getMany(100)) == 9
 
@@ -96,9 +99,7 @@ suite "Migrations":
     withDb:
       PersonRenameTable.renameTableFrom "person"
 
-      let getTablesQuery = sql "SELECT table_name FROM information_schema.tables WHERE table_schema='public'"
-
-      check dbConn.getAllRows(getTablesQuery) == @[@["personrenamed"]]
+      check getTables() == @["personrenamed"]
 
       check len(PersonRenameTable.getMany(100)) == 9
 
@@ -108,9 +109,7 @@ suite "Migrations":
         PersonRenameColumn.name.renameColumnFrom "name"
         PersonRenameColumn.years.renameColumnFrom "age"
 
-      let getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
-
-      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["fullname"], @["years"]]
+      check getCols("person") == @["id", "fullname", "years"]
 
   test "Rollback transaction":
     withDb:
@@ -120,7 +119,7 @@ suite "Migrations":
 
       let getColsQuery = sql "SELECT column_name FROM information_schema.columns WHERE table_name = ?"
 
-      check dbConn.getAllRows(getColsQuery, "person") == @[@["id"], @["name"], @["age"]]
+      check getCols("person") == @["id", "name", "age"]
 
     expect IOError:
       withDb:
