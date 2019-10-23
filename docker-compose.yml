@@ -36,4 +36,4 @@ services:
           --git.commit:develop \
           /usr/src/app/src/norm.nim &&
         nim buildIndex -o:/usr/src/app/src/htmldocs/theindex.html \
-          /usr/src/app/src/htmldocs"
+          /usr/src/app/src/htmldocs
