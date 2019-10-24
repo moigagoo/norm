@@ -4,6 +4,9 @@
 
 *.exe
 *.html
+*.idx
+
+site
 
 tests/tobjutils
 tests/tpostgres
