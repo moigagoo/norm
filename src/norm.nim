@@ -103,4 +103,4 @@ Alernatively to defining the entire schema under ``db`` macro, you can reuse typ
 
 ]##
 
-import norm/[objutils, pragmas, sqlite, postgres]
+import norm/[sqlite, postgres, objutils, pragmas]
