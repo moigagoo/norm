@@ -5,11 +5,11 @@ services:
 
 script:
   - docker-compose run tests
-  - docker-compose run docs
+  - docker-compose -p norm -f docs/docker-compose.yml run --rm docs make site
 
 deploy:
   provider: pages
-  local-dir: site
+  local-dir: docs/norm-docs.mkdocs
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
   keep-history: true
