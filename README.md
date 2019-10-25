@@ -113,5 +113,4 @@ $ nim c -r tests/testsqlite.nim                   # run a single test suite nati
 
 ### ❤ Contributors ❤
 
-- [@moigagoo](https://github.com/moigagoo)
-- [@alaviss](https://github.com/alaviss)
+https://github.com/moigagoo/norm/graphs/contributors
