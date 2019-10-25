@@ -113,29 +113,6 @@ proc toSignatureRepr(def: NimNode): SignatureRepr =
 proc toObjRepr*(typeDef: NimNode): ObjRepr =
   ## Convert an object type definition into an ``ObjRepr``.
 
-  runnableExamples:
-    import macros
-
-    macro inspect(body: untyped): untyped =
-      expectKind(body[0], nnkTypeSection)
-
-      let
-        typeSection = body[0]
-        typeDef = typeSection[0]
-        objRepr = typeDef.toObjRepr()
-
-      doAssert objRepr.signature.name == "Example"
-
-      doAssert len(objRepr.fields) == 1
-      doAssert objRepr.fields[0].signature.name == "field"
-      doAssert objRepr.fields[0].signature.exported
-      doAssert $objRepr.fields[0].typ == "int"
-
-    inspect:
-      type
-        Example = object
-          field*: int
-
   result.signature = toSignatureRepr(typeDef)
 
   expectKind(typeDef[2], nnkObjectTy)
@@ -168,23 +145,6 @@ proc toSignatureDef(signature: SignatureRepr): NimNode =
 proc toTypeDef*(obj: ObjRepr): NimNode =
   ## Convert an ``ObjRepr`` into an object type definition.
 
-  runnableExamples:
-    import macros
-
-    macro inspect(body: untyped): untyped =
-      expectKind(body[0], nnkTypeSection)
-
-      let
-        typeSection = body[0]
-        typeDef = typeSection[0]
-
-      doAssert typeDef.toObjRepr().toTypeDef() == typeDef
-
-    inspect:
-      type
-        Example = object
-          field*: int
-
   var fieldDefs = newNimNode(nnkRecList)
 
   for field in obj.fields:
@@ -212,78 +172,21 @@ proc getByName*[T: ObjRepr | FieldRepr](reprs: openArray[T], name: string): T =
 macro dot*(obj: object, fieldName: string): untyped =
   ## Access object field value by name: ``obj["field"]`` translates to ``obj.field``.
 
-  runnableExamples:
-    type
-      Example = object
-        field: int
-
-    let example = Example(field: 123)
-
-    doAssert example.dot("field") == example.field
-
   newDotExpr(obj, newIdentNode(fieldName.strVal))
 
 macro dot*(obj: var object, fieldName: string, value: untyped): untyped =
   ## Set object field value by name: ``obj["field"] = value`` translates to ``obj.field = value``.
-
-  runnableExamples:
-    type
-      Example = object
-        field: int
-
-    var example = Example()
-
-    example.dot("field") = 321
-
-    doAssert example.dot("field") == 321
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
 
 proc fieldNames*(objRepr: ObjRepr): seq[string] =
   ## Get object representation's field names as a sequence of strings.
 
-  runnableExamples:
-    import macros
-
-    macro inspect(body: untyped): untyped =
-      expectKind(body[0], nnkTypeSection)
-
-      let
-        typeSection = body[0]
-        typeDef = typeSection[0]
-
-      doAssert typeDef.toObjRepr().fieldNames == @["a", "b", "c"]
-
-    inspect:
-      type
-        Example = object
-          a: int
-          b: float
-          c: string
-
   for field in objRepr.fields:
     result.add field.signature.name
 
 proc pragmaNames*(signRepr: SignatureRepr): seq[string] =
   ## Get signature representation's pragma names as a sequence of strings.
-
-  runnableExamples:
-    import macros
-
-    macro inspect(body: untyped): untyped =
-      expectKind(body[0], nnkTypeSection)
-
-      let
-        typeSection = body[0]
-        typeDef = typeSection[0]
-
-      doAssert typeDef.toObjRepr().signature.pragmaNames == @["a", "b"]
-      doAssert typeDef.toObjRepr().fields[0].signature.pragmaNames == @["d", "f"]
-
-    inspect:
-      type
-        Example {.a, b: "c".} = object
-          a {.d: "e", f.}: int
 
   for prag in signRepr.pragmas:
     result.add prag.name
