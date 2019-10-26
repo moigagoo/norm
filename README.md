@@ -13,14 +13,13 @@ Norm supports SQLite and PostgreSQL.
 - [Sample app →](https://github.com/moigagoo/norm-sample-webapp)
 - [Contributing info →](#contributing)
 
+Install Norm with [Nimble](https://github.com/nim-lang/nimble/):
 
-## Installation
+    $ nimble install norm
 
-Install Norm with Nimble:
+Add Norm to your .nimble file:
 
-```shell
-$ nimble install norm
-```
+    requires "nim >= 1.0.0", "norm"
 
 
 ## Quickstart
