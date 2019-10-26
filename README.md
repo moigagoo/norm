@@ -4,8 +4,7 @@
 
 [![Nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)](https://nimble.directory/pkg/norm)
 
-
-**Norm** is a lightweight ORM written in [Nim programming language](https://nim-lang.org). It enables you to store Nim's objects as DB rows and fetch data from DB as objects. So that your business logic is driven with objects, and the storage aspect is decoupled from it.
+**Norm** is an object-oriented, framework-agnostic ORM for Nim apps that:
 
 Norm supports SQLite and PostgreSQL.
 
