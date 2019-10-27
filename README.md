@@ -1,8 +1,9 @@
-# Norm, a Nim ORM
-
 [![Build Status](https://travis-ci.com/moigagoo/norm.svg?branch=develop)](https://travis-ci.com/moigagoo/norm)
 
 [![Nimble](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)](https://nimble.directory/pkg/norm)
+
+
+# Norm: ORM for Nim Apps
 
 **Norm** is an object-oriented, framework-agnostic ORM for Nim apps that:
 
