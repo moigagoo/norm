@@ -130,7 +130,7 @@ template to*(row: Row, obj: var object) =
     else:
       # Workaround "unreachable statement after 'return' statement" error.
       if true:
-        raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
+        raise newException(ValueError, "Parser for " & $typeof(value) & " is undefined.")
 
     inc i
 

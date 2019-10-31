@@ -125,7 +125,7 @@ template to*(row: Row, obj: var object) =
       elif typeof(get(value)) is DateTime:
         obj.dot(field) = if row[i].kind == dvkNull: none DateTime else: some row[i].t
     else:
-      raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
+      raise newException(ValueError, "Parser for " & $typeof(value) & " is undefined.")
 
     inc i
 
