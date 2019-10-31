@@ -27,4 +27,13 @@ services:
     image: norm
     volumes:
       - .:/usr/src/app
-    command: nimble docs
+    command:
+      - sh
+      - -c
+      - |
+        nim doc --project --index:on \
+          --git.url:https://github.com/moigagoo/norm/ \
+          --git.commit:develop \
+          /usr/src/app/src/norm.nim &&
+        nim buildIndex -o:/usr/src/app/src/htmldocs/theindex.html \
+          /usr/src/app/src/htmldocs
