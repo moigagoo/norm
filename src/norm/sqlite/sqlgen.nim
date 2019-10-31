@@ -23,7 +23,8 @@ proc getTable*(objRepr: ObjRepr): string =
   result = objRepr.signature.name.toLowerAscii()
 
   for prag in objRepr.signature.pragmas:
-    if prag.name == "dbTable" and prag.kind == pkKval:
+    # TODO: Remove check for "table" along with deprecated ``table`` pragma
+    if (prag.name == "table" or prag.name == "dbTable") and prag.kind == pkKval:
       return $prag.value
 
 proc getTable*(T: typedesc): string =

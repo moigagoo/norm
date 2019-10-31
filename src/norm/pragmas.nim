@@ -49,5 +49,8 @@ template onDelete*(val: string) {.pragma.}
 template onUpdate*(val: string) {.pragma.}
   ## Add an ``ON UPDATE <POLICY>`` constraint.
 
+template table*(val: string) {.pragma, deprecated: "`table` has been renamed to `dbTable`".}
+  ## Set table name. Lowercased type name is used when unset.
+
 template dbTable*(val: string) {.pragma.}
   ## Set table name. Lowercased type name is used when unset.
