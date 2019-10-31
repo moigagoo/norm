@@ -6,7 +6,9 @@
 *.html
 *.idx
 
-site
+*.mkdocs
+.*cache
+__folianttmp__
 
 tests/tobjutils
 tests/tpostgres
