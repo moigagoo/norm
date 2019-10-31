@@ -49,5 +49,5 @@ template onDelete*(val: string) {.pragma.}
 template onUpdate*(val: string) {.pragma.}
   ## Add an ``ON UPDATE <POLICY>`` constraint.
 
-template table*(val: string) {.pragma.}
+template dbTable*(val: string) {.pragma.}
   ## Set table name. Lowercased type name is used when unset.
