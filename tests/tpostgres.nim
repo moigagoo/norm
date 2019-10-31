@@ -16,6 +16,7 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
   type
     User {.table: "users".} = object
       email {.unique.}: string
+      ssn: Option[int]
       birthDate {.
         dbType: "TEXT",
         parseIt: it.s.parse("yyyy-MM-dd", utc()),
@@ -54,6 +55,7 @@ suite "Creating and dropping tables, CRUD":
           var
             user = User(
               email: "test-$#@example.com" % $i,
+              ssn: some i,
               birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
               lastLogin: parse("2019-08-19 23:32:5$#+04" % $i, "yyyy-MM-dd HH:mm:sszz")
             )
@@ -81,7 +83,7 @@ suite "Creating and dropping tables, CRUD":
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
-    check getCols("users") == @["id", "email", "birthdate", "lastlogin"]
+    check getCols("users") == @["id", "email", "ssn", "birthdate", "lastlogin"]
     check getCols("publishers") == @["id", "title", "licensed"]
     check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
     check getCols("editions") == @["id", "title", "bookid"]
@@ -225,7 +227,7 @@ suite "Creating and dropping tables, CRUD":
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
-    check getCols("users") == @["id", "email", "birthdate", "lastlogin"]
+    check getCols("users") == @["id", "email", "ssn", "birthdate", "lastlogin"]
     check getCols("publishers") == @["id", "title", "licensed"]
     check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
     check getCols("editions") == @["id", "title", "bookid"]

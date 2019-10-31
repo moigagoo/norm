@@ -74,13 +74,24 @@ proc getDbType(fieldRepr: FieldRepr): string =
     "pk" in fieldRepr.signature.pragmaNames:
       return "SERIAL"
 
-  result = case $fieldRepr.typ
-    of "int", "Positive", "Natural": "INTEGER DEFAULT 0"
-    of "string": "TEXT DEFAULT ''"
-    of "float": "REAL DEFAULT 0.0"
-    of "bool": "BOOLEAN DEFAULT FALSE"
-    of "DateTime": "TIMESTAMP WITH TIME ZONE DEFAULT '1970-01-01 00:00:00+00'"
-    else: "TEXT DEFAULT ''"
+  result =
+    if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
+      case $fieldRepr.typ
+        of "int", "Positive", "Natural": "INTEGER NOT NULL DEFAULT 0"
+        of "string": "TEXT NOT NULL DEFAULT ''"
+        of "float": "REAL NOT NULL DEFAULT 0.0"
+        of "bool": "BOOLEAN NOT NULL DEFAULT FALSE"
+        of "DateTime": "TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT '1970-01-01 00:00:00+00'"
+        else: "TEXT NOT NULL DEFAULT ''"
+    elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
+      case $fieldRepr.typ[1]
+        of "int", "Positive", "Natural": "INTEGER"
+        of "string": "TEXT"
+        of "float": "REAL"
+        of "bool": "BOOLEAN"
+        of "DateTime": "TIMESTAMP WITH TIME ZONE"
+        else: "TEXT"
+    else: "TEXT NOT NULL DEFAULT ''"
 
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbType" and prag.kind == pkKval:
