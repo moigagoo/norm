@@ -43,7 +43,7 @@ Congrats! Your first Norm model is ready!
 
 From the model definition above, Norm can set up the actual database tables. It'll automatically guess the types of the columns that correspond to the Nim types of the object fields.
 
-To create the tables call `createTables`:
+To create the tables, call `createTables`:
 
     withDb:
       createTables(force=true)
@@ -55,3 +55,15 @@ Compile and run `models.nim` and you have yourself a blank database. You only ne
 
 ## Populate Tables
 
+To add values to the database, create Nim objects and call `insert` on them:
+
+    withDb:
+      var bob = Owner(
+        firstName: "Bob",
+        lastName: "Bobton",
+        birthDate: "1988-01-30".parse("yyyy-MM-dd", utc())
+      )
+
+    bob.insert()
+
+Note that `bob` must be mutable to be insertable. This is because Norm injects `id` field to models. Initially, it is `0`. When the object is inserted in the database, its `id` is updated to the actual row id.
