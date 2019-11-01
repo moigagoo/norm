@@ -78,7 +78,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
       case $fieldRepr.typ
-        of "int", "Positive", "Natural": "INTEGER NOT NULL DEFAULT 0"
+        of "int", "int64", "Positive", "Natural": "INTEGER NOT NULL DEFAULT 0"
         of "string": "TEXT NOT NULL DEFAULT ''"
         of "float": "REAL NOT NULL DEFAULT 0.0"
         of "bool": "BOOLEAN NOT NULL DEFAULT FALSE"
@@ -86,7 +86,7 @@ proc getDbType(fieldRepr: FieldRepr): string =
         else: "TEXT NOT NULL DEFAULT ''"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "Positive", "Natural": "INTEGER"
+        of "int", "int64", "Positive", "Natural": "INTEGER"
         of "string": "TEXT"
         of "float": "REAL"
         of "bool": "BOOLEAN"
