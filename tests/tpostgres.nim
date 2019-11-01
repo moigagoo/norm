@@ -14,7 +14,7 @@ const
 
 db(dbHost, dbUser, dbPassword, dbDatabase):
   type
-    User {.table: "users".} = object
+    User {.dbTable: "users".} = object
       email {.unique.}: string
       ssn: Option[int]
       birthDate {.
@@ -23,10 +23,10 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
         formatIt: ?it.format("yyyy-MM-dd")
       .}: DateTime
       lastLogin: DateTime
-    Publisher {.table: "publishers".} = object
+    Publisher {.dbTable: "publishers".} = object
       title {.unique.}: string
       licensed: bool
-    Book {.table: "books".} = object
+    Book {.dbTable: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
@@ -34,7 +34,7 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
   proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
   type
-    Edition {.table: "editions".} = object
+    Edition {.dbTable: "editions".} = object
       title: string
       book {.
         dbCol: "bookid",
