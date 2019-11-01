@@ -222,13 +222,12 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int, offset = 0,
+      proc getMany(objs: var seq[object], limit: int = -1, offset = 0,
                    cond = "1", params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
         Filter using ``cond`` condition.
         ]##
-
         if len(objs) == 0: return
 
         let
@@ -239,9 +238,11 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         let rows = dbConn.getAllRows(getManyQuery, params)
 
+        if limit < 0: objs.setLen len(rows)
+
         rows.to(objs)
 
-      proc getMany(T: typedesc, limit: int, offset = 0,
+      proc getMany(T: typedesc, limit: int = -1, offset = 0,
                    cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
@@ -249,7 +250,9 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         Filter using ``cond`` condition.
         ]##
 
-        result.setLen limit
+        # Setting result len to 1 if limit is lower than 0 because genGetManyQuery
+        # requieres at least one object to get the db table name
+        result.setLen if limit < 0: 1 else: limit
         result.getMany(limit, offset, cond, params)
 
       template update(obj: object, force = false) {.used.} =

@@ -222,7 +222,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int, offset = 0,
+      proc getMany(objs: var seq[object], limit: int = -1, offset = 0,
                    cond = "TRUE", params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
@@ -232,16 +232,21 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         if len(objs) == 0: return
 
         let
-          getManyQuery = genGetManyQuery(objs[0], cond, len(params))
-          params = @params & @[?min(limit, len(objs)), ?offset]
+          withLimit = if limit < 0: false else: true
+          getManyQuery = genGetManyQuery(objs[0], cond, len(params), withLimit = withLimit)
+        var params = @params
+        if withLimit:
+          params.add(?min(limit, len(objs)))
+        params.add(?offset)
 
         debug getManyQuery, " <- ", params.join(", ")
-
         let rows = dbConn.getAllRows(getManyQuery, params)
+
+        if limit < 0: objs.setLen len(rows)
 
         rows.to(objs)
 
-      proc getMany(T: typedesc, limit: int, offset = 0,
+      proc getMany(T: typedesc, limit: int = -1, offset = 0,
                    cond = "TRUE", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
@@ -249,7 +254,9 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         Filter using ``cond`` condition.
         ]##
 
-        result.setLen limit
+        # Setting result len to 1 if limit is lower than 0 because genGetManyQuery
+        # requieres at least one object to get the db table name
+        result.setLen if limit < 0: 1 else: limit
         result.getMany(limit, offset, cond, params)
 
       template update(obj: object, force = false) {.used.} =
