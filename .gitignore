@@ -9,6 +9,7 @@
 *.mkdocs
 .*cache
 __folianttmp__
+*.log
 
 tests/tobjutils
 tests/tpostgres
