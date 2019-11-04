@@ -162,27 +162,6 @@ suite "Creating and dropping tables, CRUD":
       check editions[0].id == 6
       check editions[^1].id == 9
 
-      users.getAll()
-      publishers.getAll()
-      books.getAll()
-      editions.getAll()
-
-      check len(users) == 9
-      check users[0].id == 1
-      check users[^1].id == 9
-
-      check len(publishers) == 9
-      check publishers[0].id == 1
-      check publishers[^1].id == 9
-
-      check len(books) == 9
-      check books[0].id == 1
-      check books[^1].id == 9
-
-      check len(editions) == 9
-      check editions[0].id == 1
-      check editions[^1].id == 9
-
       var
         user = User(birthDate: now(), lastLogin: now())
         publisher = Publisher()
