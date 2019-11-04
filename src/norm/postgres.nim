@@ -252,6 +252,27 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         result.setLen limit
         result.getMany(limit, offset, cond, params)
 
+      template getAll(T: typedesc, cond = "TRUE", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
+        ##[ Read all records from DB into a sequence of objects, create the sequence on the fly.
+
+        Filter using ``cond`` condition.
+
+        Warning! This is a dangerous operation since you don't control the amount of data received. Consider using ``getMany`` for more deterministic data retrieval.
+        ]##
+
+        let getAllQuery = genGetAllQuery(T, cond)
+
+        debug getAllQuery, " <- ", params.join(", ")
+
+        let rows = dbConn.getAllRows(getAllQuery, params)
+
+        var objs: seq[T]
+        objs.setLen len(rows)
+
+        rows.to(objs)
+
+        objs
+
       template update(obj: object, force = false) {.used.} =
         ##[ Update DB record with object field values.
 
