@@ -215,7 +215,7 @@ suite "Creating and dropping tables, CRUD":
         let notExistingBook {.used.} = Book.getOne("title = $1", "Does not exist")
 
     withDb:
-      let someBooks = Book.getAll(cond="title NOT IN (?, ?, ?) ORDER BY title DESC",
+      let someBooks = Book.getAll(cond="title NOT IN ($1, $2, $3) ORDER BY title DESC",
                                   params=[?"Book 1", ?"Book 5", ?"Book 9"])
 
       check len(someBooks) == 6
