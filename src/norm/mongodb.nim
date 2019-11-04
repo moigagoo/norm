@@ -73,11 +73,12 @@ import
   tables,
   oids,
   times,
+  asyncdispatch,
   algorithm # <- only used at compile-time, no need to export
 
 import
-  nimongo/bson,
-  nimongo/mongo
+  mongopool,
+  bson
 
 import
   rowutils,
@@ -93,11 +94,12 @@ export
   options,
   tables,
   oids,
-  times
+  times,
+  asyncdispatch
 
 export
   bson,
-  mongo
+  mongopool
 
 export
   rowutils,
@@ -160,10 +162,6 @@ proc getTableName*(T: typedesc): string =
 
 var
   allCollections*: seq[string] = @[]
-  normConnection*: string
-  normUser*: string
-  normPassword*: string
-  normDatabase*: string
 
 template addObjectsToCollection(newCollections: seq[string]): untyped {.dirty.} =
   ## simply add to global allCollections
@@ -175,46 +173,32 @@ proc nextVar(prefix: string): string =
   result = prefix & $varCounter
   varCounter += 1
 
-template genWithDb(connection, user, password, database: string, useParams: int, newCollections: seq[string]): untyped {.dirty.} =
+template genWithDb(newCollections: seq[string]): untyped {.dirty.} =
   ## Generate ``withDb`` templates.
+  ##
+  ## the connection, user, password, and database parameters have no meaning
+  ## for the MongoDB mongopool library as the connections are pulled
+  ## from a global thread pool that must already be established.
 
   allCollections.insert(newCollections)
-  if useParams == -1:
-    normConnection = connection
-    normUser = user
-    normPassword = password
-    normDatabase = database
 
-  template withCustomDb*(
-    customConnection, customUser, customPassword, customDatabase: string,
-    body: untyped
-  ): untyped {.dirty.} =
-    ##[ A wrapper for actions that require custom DB connection, i.e. not the one defined in ``db``.
+  template withDb*(body: untyped): untyped {.dirty.} =
+    ##[
     Defines CRUD procs to work with the DB.
 
-    'connection' should contain the URI pointing to the MongoDB server.
-
-    The 'user' and 'password' parameters are not used.
-
-    'database' should contain the database name.
-
     Aforementioned procs and procs defined in a ``db`` block can be used only
-    in  a ``withDb`` block.
+    in a ``withDb`` block.
     ]##
 
+    var normDb = getNextConnection()
+
     block:
-      var dbConn = newMongoWithURI(customConnection)
-      let
-        dbConnResult = dbConn.connect()
 
       template dropTables() {.used.} =
         ## Drops the collections for ALL objects.
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
 
-        for c in allCollections:
-          let dbCollection = dbConn[customDatabase][c]
-          let removeResult = dbCollection.drop()
+        for collectionName in allCollections:
+          discard ## TODO: make this work
 
       template createTables(force = false) {.used.} =
         ##[ For other database types, this function create new tables. However,
@@ -224,82 +208,73 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         ]##
 
         if force:
-          if dbConnResult == false:
-            raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
           dropTables()
 
       proc insert(obj: var object, force = false) {.used.} =
-        ##[ Insert object instance as a document into DB.The object's id is updated after
-        the insertion.
+        ##[ Insert object instance as a document into DB. The object's id is
+        updated after the insertion.
 
         The ``force`` parameter is ignored by the mongodb library.
         ]##
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
           doc = toBson(obj, force)
-          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
-          response = dbCollection.insert(doc)
-
-        if len(response.inserted_ids) == 1:  # TODO: handle or document not-1 failure scenarios
-          obj.id = response.inserted_ids[0].toOid
+          collectionName = getCollectionName(type(obj))
+          returnedDoc = normDb.insertOne(collectionName, doc)
+        obj.id = returnedDoc["_id"]
 
       proc getOne(obj: var object, id: Oid) {.used.} =
         ## Read a record from DB by id and apply it to an existing object instance.
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
+          collectionName = getCollectionName(type(obj))
 
-        let fetched = dbCollection.find(%*{"_id": id}).one()
+        # let fetched = waitFor(dbCollection.find(@@{"_id": id}).one())
+        let fetched = normDb.find(collectionName, @@{"_id": id}).returnOne()
         applyBson(obj, fetched)
 
       proc getOne(obj: var object, cond: Bson) {.used.} =
         ## Read a record from DB by search condition and apply it into an existing object instance.
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
+          collectionName = getCollectionName(type(obj))
 
-        let fetched = dbCollection.find(cond).one()
+        # let fetched = waitFor(dbCollection.find(cond).one())
+        let fetched = normDb.find(collectionName, cond).returnOne()
+
         applyBson(obj, fetched)
 
       proc getOne(T: typedesc, id: Oid): T {.used.} =
         ## Read a record from DB by id and return a new object
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+          collectionName = getCollectionName(T)
 
-        let fetched = dbCollection.find(%*{"_id": id}).one()
+        # let fetched = waitFor(dbCollection.find(@@{"_id": id}).one())
+        let fetched = normDb.find(collectionName, @@{"_id": id}).returnOne()
+
         applyBson(result, fetched)
 
       proc getOne(T: typedesc, cond: Bson): T {.used.} =
         ## Read a record from DB by search condition and return a new object
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+          collectionName = getCollectionName(T)
 
-        let fetched = dbCollection.find(cond).one()
+        # let fetched = waitFor(dbCollection.find(cond).one())
+        let fetched = normDb.find(collectionName, cond).returnOne()
+
         applyBson(result, fetched)
 
       proc getOneOption(T: typedesc, id: Oid): Option[T] {.used.} =
         ## Read a record from DB by id and return a new object
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+          collectionName = getCollectionName(T)
 
         var fetched: Bson
         try:
-          fetched = dbCollection.find(%*{"_id": id}).one()
+          fetched = normDb.find(collectionName, @@{"_id": id}).returnOne()
         except NotFound:
           result = none(T)
           return
@@ -310,14 +285,12 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getOneOption(T: typedesc, cond: Bson): Option[T] {.used.} =
         ## Read a record from DB by search condition and return a new object
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(T)]
+          collectionName = getCollectionName(T)
 
         var fetched: Bson
         try:
-          fetched = dbCollection.find(cond).one()
+          fetched = normDb.find(collectionName, cond).returnOne()
         except NotFound:
           result = none(T)
           return
@@ -328,18 +301,13 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getMany(
         T: typedesc,
         nLimit: int,
-        offset = 0,
-        cond = %*{},
-        sort = %*{}
+        cond = @@{},
+        sort = @@{},
+        offset = 0
       ): seq[T] {.used.} =
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(T)]
-        var cursor = dbCollection.find(cond).skip(offset.int32).limit(nLimit.int32)
-        if $sort != $ %*{} :
-          cursor = cursor.orderBy(sort)
-        let fetched = cursor.all()
+          collectionName = getCollectionName(T)
+          fetched = normDb.find(collectionName, cond).skip(offset.int32).sort(sort).limit(nLimit.int32).returnMany()
         for doc in fetched:
           var temp = T()
           applyBson(temp, doc)
@@ -348,13 +316,11 @@ template genWithDb(connection, user, password, database: string, useParams: int,
       proc getMany(
         objs: var seq[object],
         nLimit: int,
-        offset = 0,
-        cond = %*{},
-        sort = %*{}
+        cond = @@{},
+        sort = @@{},
+        offset = 0
       ) {.used.} =
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
-        objs = type(objs[^1]).getMany(nLimit, offset, cond, sort)  # this works even on an empty list; which is surprising!
+        objs = type(objs[^1]).getMany(nLimit, cond, sort, offset)  # this works even on an empty list; which is surprising!
 
 
       proc update(obj: object, force = false): bool {.used, discardable.} =
@@ -365,43 +331,30 @@ template genWithDb(connection, user, password, database: string, useParams: int,
         returns true if update was successful.
         ]##
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
+          collectionName = getCollectionName(type(obj))
         var doc = obj.toBson()
-        let response = dbCollection.update(%*{"_id": obj.id}, doc, false, false)
-        if response.n == 1:
+        # let response = waitFor(dbCollection.update(@@{"_id": obj.id}, doc, false, false))
+        let ctr = normDb.replaceOne(collectionName, @@{"_id": obj.id}, doc, false)
+        if ctr == 1:
           return true
         return false
 
       proc delete(obj: var object): bool {.used, discardable.} =
         ## Delete a record in DB by object's id. The id is set to all zeroes after the deletion.
 
-        if dbConnResult == false:
-          raise newException(CommunicationError, "Unable to connect to MongoDB database at $1".format(customConnection))
         let
-          dbCollection = dbConn[customDatabase][getCollectionName(type(obj))]
-        let response = dbCollection.remove(%*{"_id": obj.id}, 1)
-        obj.id = Oid()
-        if response.n == 1:
-          return true
-        return false
+          collectionName = getCollectionName(type(obj))
+        try:
+          discard normDb.deleteOne(collectionName, @@{"_id": obj.id})
+        except NotFound:
+          return false
+        return true
 
       try:
         body
-      finally: discard
-
-  template withDb*(body: untyped): untyped {.dirty.} =
-    ##[ A wrapper for actions that require DB connection. Defines CRUD procs to work with the DB,
-    as well as ``createTables`` and ``dropTables`` procs.
-
-      Aforementioned procs and procs defined in a ``db`` block can be used only
-      in  a ``withDb`` block.
-    ]##
-
-    withCustomDb(normConnection, normUser, normPassword, normDatabase):
-      body
+      finally:
+        releaseConnection(normDb)
 
 
 proc ensureIdFields(typeSection: NimNode): NimNode =
@@ -1156,16 +1109,16 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
   # let objectAccess =  parseStmt(genObjectAccess(dbObjReprs))
   # result.add(objectAccess)
 
-  let withDbNode = getAst genWithDb(connection, user, password, database, -1, newCollections)  # -1 = true
+  let withDbNode = getAst genWithDb(newCollections)
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  echo bsonToObjectSource
+  # echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  echo objectToBsonSource
+  # echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
@@ -1204,16 +1157,16 @@ macro dbAddTable*(obj: typed): untyped =
     if not idFound: 
       raise newException(KeyError, "Object ($1) is missing an exported 'id' field that has a dbCol pragma for '_id'.".format(objName))
 
-  let withDbNode = getAst genWithDb("", "", "", "", 0, newCollections)
+  let withDbNode = getAst genWithDb(newCollections)
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  echo bsonToObjectSource
+  # echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  echo objectToBsonSource
+  # echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
 
@@ -1275,11 +1228,11 @@ macro dbAddObject*(obj: typed): untyped =
   result.insert(0, withDbNode)
 
   let bsonToObjectSource = genBsonToObject(dbObjReprs)
-  echo bsonToObjectSource
+  # echo bsonToObjectSource
   let bsonToObject = parseStmt(bsonToObjectSource)
   result.add(bsonToObject)
 
   let objectToBsonSource = genObjectToBson(dbObjReprs)
-  echo objectToBsonSource
+  # echo objectToBsonSource
   let objectToBson = parseStmt(objectToBsonSource)
   result.add(objectToBson)
