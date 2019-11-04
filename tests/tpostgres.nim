@@ -102,6 +102,26 @@ suite "Creating and dropping tables, CRUD":
       check editions[7].title == "Edition 8"
       check editions[7].book == books[7]
 
+    withDb:
+      let
+        publishers = Publisher.getAll()
+        books = Book.getAll()
+        editions = Edition.getAll()
+
+      check len(publishers) == 9
+      check len(books) == 9
+      check len(editions) == 9
+
+      check publishers[1].id == 2
+      check publishers[1].title == "Publisher 2"
+
+      check books[3].id == 4
+      check books[3].title == "Book 4"
+
+      check editions[8].id == 9
+      check editions[8].title == "Edition 9"
+      check editions[8].book == books[8]
+
   test "Read records":
     withDb:
       var
@@ -142,6 +162,27 @@ suite "Creating and dropping tables, CRUD":
       check editions[0].id == 6
       check editions[^1].id == 9
 
+      users.getAll()
+      publishers.getAll()
+      books.getAll()
+      editions.getAll()
+
+      check len(users) == 9
+      check users[0].id == 1
+      check users[^1].id == 9
+
+      check len(publishers) == 9
+      check publishers[0].id == 1
+      check publishers[^1].id == 9
+
+      check len(books) == 9
+      check books[0].id == 1
+      check books[^1].id == 9
+
+      check len(editions) == 9
+      check editions[0].id == 1
+      check editions[^1].id == 9
+
       var
         user = User(birthDate: now(), lastLogin: now())
         publisher = Publisher()
@@ -172,6 +213,18 @@ suite "Creating and dropping tables, CRUD":
 
       expect KeyError:
         let notExistingBook {.used.} = Book.getOne("title = $1", "Does not exist")
+
+    withDb:
+      let someBooks = Book.getAll(cond="title NOT IN (?, ?, ?) ORDER BY title DESC",
+                                  params=[?"Book 1", ?"Book 5", ?"Book 9"])
+
+      check len(someBooks) == 6
+
+      check someBooks[0].title == "Book 8"
+      check someBooks[1].authorEmail == "test-7@example.com"
+
+      check someBooks[5].title == "Book 2"
+      check someBooks[4].authorEmail == "test-3@example.com"
 
   test "Update records":
     withDb:
