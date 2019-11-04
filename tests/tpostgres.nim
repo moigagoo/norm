@@ -215,16 +215,16 @@ suite "Creating and dropping tables, CRUD":
         let notExistingBook {.used.} = Book.getOne("title = $1", "Does not exist")
 
     withDb:
-      let someBooks = Book.getAll(cond="title NOT IN ($1, $2, $3) ORDER BY title DESC",
-                                  params=[?"Book 1", ?"Book 5", ?"Book 9"])
+      let
+        allBooks = Book.getAll()
+        someBooks = Book.getAll(cond="title IN ($1, $2) ORDER BY title DESC",
+                                params=[?"Book 1", ?"Book 5"])
 
-      check len(someBooks) == 6
+      check len(allBooks) == 9
 
-      check someBooks[0].title == "Book 8"
-      check someBooks[1].authorEmail == "test-7@example.com"
-
-      check someBooks[5].title == "Book 2"
-      check someBooks[4].authorEmail == "test-3@example.com"
+      check len(someBooks) == 2
+      check someBooks[0].title == "Book 5"
+      check someBooks[1].authorEmail == "test-1@example.com"
 
   test "Update records":
     withDb:
