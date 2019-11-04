@@ -232,12 +232,10 @@ proc genGetManyQuery*(obj: object, condition: string, paramCount = 0): SqlQuery 
     $(paramCount+2)
   ]
 
-proc genGetAllQuery*(obj: object, condition: string): SqlQuery =
+template genGetAllQuery*(T: typedesc, condition: string): SqlQuery =
   ## Generate ``SELECT`` query to fetch all records for an object.
 
-  sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
-                                     type(obj).getTable(), condition]
-
+  sql "SELECT $# FROM $# WHERE $#" % [T.getColumns(force=true).join(", "), T.getTable(), condition]
 
 proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
