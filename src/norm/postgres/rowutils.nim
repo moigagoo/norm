@@ -107,6 +107,8 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = row[i].s
     elif typeof(value) is int:
       obj.dot(field) = row[i].i.int
+    elif typeof(value) is int64:
+      obj.dot(field) = row[i].i
     elif typeof(value) is float:
       obj.dot(field) = row[i].f
     elif typeof(value) is bool:
@@ -125,7 +127,7 @@ template to*(row: Row, obj: var object) =
       elif typeof(get(value)) is DateTime:
         obj.dot(field) = if row[i].kind == dvkNull: none DateTime else: some row[i].t
     else:
-      raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
+      raise newException(ValueError, "Parser for " & $typeof(value) & " is undefined.")
 
     inc i
 

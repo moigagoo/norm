@@ -23,7 +23,8 @@ proc getTable*(objRepr: ObjRepr): string =
   result = objRepr.signature.name.toLowerAscii()
 
   for prag in objRepr.signature.pragmas:
-    if prag.name == "table" and prag.kind == pkKval:
+    # TODO: Remove check for "table" along with deprecated ``table`` pragma
+    if (prag.name == "table" or prag.name == "dbTable") and prag.kind == pkKval:
       return $prag.value
 
 proc getTable*(T: typedesc): string =
@@ -31,7 +32,7 @@ proc getTable*(T: typedesc): string =
   or lowercased type name otherwise.
   ]##
 
-  when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
+  when T.hasCustomPragma(dbTable): T.getCustomPragmaVal(dbTable)
   else: ($T).toLowerAscii()
 
 proc getColumn*(fieldRepr: FieldRepr): string =
@@ -77,13 +78,13 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
       case $fieldRepr.typ
-        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL DEFAULT 0"
+        of "int", "int64", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL DEFAULT 0"
         of "string": "TEXT NOT NULL DEFAULT ''"
         of "float": "REAL NOT NULL DEFAULT 0"
         else: "TEXT NOT NULL DEFAULT ''"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER"
+        of "int", "int64", "Positive", "Natural", "bool", "DateTime": "INTEGER"
         of "string": "TEXT"
         of "float": "REAL"
         else: "TEXT"

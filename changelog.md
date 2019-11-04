@@ -8,15 +8,17 @@
 
 ## 1.1.0 (WIP)
 
+-   [!] Rename pragma `table` to `dbTable`.
 -   [!] Deprecate `default` pragma, always add default values to tables instead.
 -   [!][+] Rewrite PostgreSQL backend to use [ndb](https://github.com/xzfc/ndb.nim), which adds `NULL` support via `Option` type similarly to SQLite backend.
 -   [+] Add `transaction` macro to exec multiple commands in a transaction and `rollback` proc to safely interrupt a transaction.
 -   [+] Add `createTable` and `dropTable`.
 -   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
 -   [+] PostgreSQL: Add means to writemigrations: `addColumn`, `dropColumns`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
+-   [+] Add support for `int64` field type.
 -   [+] Add `getAll` template to get all records without limit or offset.
 -   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.
--   [f] Fixed "unreachable statement" compile error for certain SQLite use cases.
+-   [f] Fix "unreachable statement" compile error for certain SQLite use cases.
 
 
 ## 1.0.17 (September 12, 2019)

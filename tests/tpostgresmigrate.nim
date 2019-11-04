@@ -11,23 +11,23 @@ const
 
 db(dbHost, dbUser, dbPassword, dbDatabase):
   type
-    Person {.table: "person"} = object
+    Person {.dbTable: "person"} = object
       name: string
       age: int
 
-    PersonAddColumn {.table: "person".} = object
+    PersonAddColumn {.dbTable: "person".} = object
       name: string
       age: int
       ssn: int
 
-    PersonRemoveColumn {.table: "person".} = object
+    PersonRemoveColumn {.dbTable: "person".} = object
       name: string
 
-    PersonRenameColumn {.table: "person".} = object
+    PersonRenameColumn {.dbTable: "person".} = object
       name {.dbCol: "fullname".}: string
       years: int
 
-    PersonRenameTable {.table: "personrenamed".} = object
+    PersonRenameTable {.dbTable: "personrenamed".} = object
       name: string
       age: int
 
