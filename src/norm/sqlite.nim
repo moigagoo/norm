@@ -222,12 +222,13 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         result.getOne(id)
 
-      proc getMany(objs: var seq[object], limit: int = -1, offset = 0,
+      proc getMany(objs: var seq[object], limit: int, offset = 0,
                    cond = "1", params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
         Filter using ``cond`` condition.
         ]##
+
         if len(objs) == 0: return
 
         let
@@ -238,11 +239,9 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         let rows = dbConn.getAllRows(getManyQuery, params)
 
-        if limit < 0: objs.setLen len(rows)
-
         rows.to(objs)
 
-      proc getMany(T: typedesc, limit: int = -1, offset = 0,
+      proc getMany(T: typedesc, limit: int, offset = 0,
                    cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
@@ -250,10 +249,35 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         Filter using ``cond`` condition.
         ]##
 
-        # Setting result len to 1 if limit is lower than 0 because genGetManyQuery
-        # requieres at least one object to get the db table name
-        result.setLen if limit < 0: 1 else: limit
+        result.setLen limit
         result.getMany(limit, offset, cond, params)
+
+      proc getAll(objs: var seq[object], cond = "1", params: varargs[DbValue, dbValue]) {.used.} =
+        ##[ Read all records from DB into an existing open array of objects.
+        This is a dangerous operation as you don't control the amount of data received.
+
+        Filter using ``cond`` condition.
+        ]##
+
+        let getAllQuery = genGetAllQuery(objs[0], cond)
+
+        debug getAllQuery, " <- ", params.join(", ")
+
+        let rows = dbConn.getAllRows(getAllQuery, params)
+
+        objs.setLen rows.len
+
+        rows.to(objs)
+
+      proc getAll(T: typedesc, cond = "1", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
+        ##[ Read all records from DB into a sequence of objects, create the sequence on the fly.
+        This is a dangerous operation as you don't control the amount of data received.
+
+        Filter using ``cond`` condition.
+        ]##
+
+        result.setLen 1
+        result.getAll(cond, params)
 
       template update(obj: object, force = false) {.used.} =
         ##[ Update DB record with object field values.

@@ -221,20 +221,23 @@ proc genGetOneQuery*(obj: object, condition: string): SqlQuery =
   sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
                                       type(obj).getTable(), condition]
 
-proc genGetManyQuery*(obj: object, condition: string, paramCount = 0, withLimit: bool = true): SqlQuery =
+proc genGetManyQuery*(obj: object, condition: string, paramCount = 0): SqlQuery =
   ## Generate ``SELECT`` query to fetch multiple records for an object.
-  var rawQuery: string = "SELECT $# FROM $# WHERE $# "
-  var rawQueryParams: seq[string] = @[
+
+  sql "SELECT $# FROM $# WHERE $# LIMIT $$$# OFFSET $$$#" % [
     obj.getColumns(force=true).join(", "),
     type(obj).getTable(),
     condition,
-    $(paramCount+1)
+    $(paramCount+1),
+    $(paramCount+2)
   ]
-  if withLimit:
-    rawQuery.add("LIMIT $$$# ")
-    rawQueryParams.add($(paramCount+2))
-  rawQuery.add("OFFSET $$$#")
-  sql rawQuery  % rawQueryParams
+
+proc genGetAllQuery*(obj: object, condition: string): SqlQuery =
+  ## Generate ``SELECT`` query to fetch all records for an object.
+
+  sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
+                                     type(obj).getTable(), condition]
+
 
 proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.

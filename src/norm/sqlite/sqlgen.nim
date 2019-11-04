@@ -217,6 +217,12 @@ proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
   sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
                                                        type(obj).getTable(), condition]
 
+proc genGetAllQuery*(obj: object, condition: string): SqlQuery =
+  ## Generate ``SELECT`` query to fetch all records for an object.
+
+  sql "SELECT $# FROM $# WHERE $#" % [obj.getColumns(force=true).join(", "),
+                                     type(obj).getTable(), condition]
+
 proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.
 
