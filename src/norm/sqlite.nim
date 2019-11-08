@@ -53,7 +53,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
     block:
       type RollbackError = object of CatchableError
 
-      proc rollback {.raises: RollbackError.} = raise newException(RollbackError, "Rollback transaction.")
+      proc rollback {.raises: RollbackError, used.} = raise newException(RollbackError, "Rollback transaction.")
 
       let dbConn = open(customConnection, customUser, customPassword, customDatabase)
 
@@ -298,7 +298,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         obj.id = 0
 
-      template transaction(transactionBody: untyped): untyped =
+      template transaction(transactionBody: untyped): untyped {.used.} =
         let
           beginQuery = sql "BEGIN"
           commitQuery = sql "COMMIT"
