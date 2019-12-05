@@ -10,11 +10,11 @@ The entire apps is available at https://github.com/moigagoo/norm-sample-webapp
     Also, we're using SQLite just for the sake of simplicity.
 
 
-## Your First Model
+## Define Models
 
 In Norm, models are generated from regular Nim object definitions.
 
-Create a file called `models.nim` and define a regular Nim object in it:
+Create a file called `models.nim` and define regular Nim objects in it:
 
     import times
 
@@ -23,6 +23,9 @@ Create a file called `models.nim` and define a regular Nim object in it:
         firstName*: string
         lastName*: string
         birthDate*: DateTime
+      Pet* = object
+        name*: string
+        age: Natural
 
 To turn it into a model, import `norm/sqlite` and wrap the type section with `db` macro:
 
@@ -35,35 +38,51 @@ To turn it into a model, import `norm/sqlite` and wrap the type section with `db
           firstName*: string
           lastName*: string
           birthDate*: DateTime
+        Pet* = object
+          name*: string
+          age: Natural
 
-Congrats! Your first Norm model is ready!
+Models provide an interface to the DB: you manage tables and the data in them by calling procs on models and their instances.
 
 
 ## Create Tables
 
-From the model definition above, Norm can set up the actual database tables. It'll automatically guess the types of the columns that correspond to the Nim types of the object fields.
-
-To create the tables, call `createTables`:
+To create tables from the models, call `createTables` inside a `withDb` block:
 
     withDb:
-      createTables(force=true)
+      createTables()
 
-`withDb` sets up a context for procs that require database access. `force=true` means "drop tables if they already exist," just in case.
+`withDb` sets up a context for database access: opens a connection to the DB using credentials from `db` invocation and defines procs to manipulate the tables and data. `createTables` is one of such procs.
 
-Compile and run `models.nim` and you have yourself a blank database. You only need to do that once.
+Compile and run `models.nim` to create the tables:
+
+  $ nim c -r models.nim
 
 
 ## Populate Tables
 
-To add values to the database, create Nim objects and call `insert` on them:
+To add data to the tables, call `insert` on a model instance:
 
     withDb:
-      var bob = Owner(
-        firstName: "Bob",
-        lastName: "Bobton",
-        birthDate: "1988-01-30".parse("yyyy-MM-dd", utc())
-      )
+      var
+        bob = Owner(
+          firstName: "Bob",
+          lastName: "Bobton",
+          birthDate: "1988-01-30".parse("yyyy-MM-dd", utc())
+        )
+        spot = Pet(
+          name: "Spot",
+          age: 3
+        )
 
-    bob.insert()
+    insert bob
+    insert spot
 
-Note that `bob` must be mutable to be insertable. This is because Norm injects `id` field to models. Initially, it is `0`. When the object is inserted in the database, its `id` is updated to the actual row id.
+Note that the instances are mutable. When a row is inserted into the DB, its ID is propagated to the corresponding model instance.
+
+So, after the `insert` call, you can get the unique identifier of the inserted row:
+
+  echo bob.id
+  # prints: 1
+
+You don't have to define `id` field in your models manually. Norm injects it automatically. The initial value is `0`, which means that this model instance hasn't been inserted in the DB yet.
