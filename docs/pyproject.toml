@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "norm-docs"
+version = "0.1.0"
+description = "Norm ORM documentation."
+authors = ["Constantine Molchanov <moigagoo@live.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+foliant = "^1.0.11"
+"foliantcontrib.mkdocs" = "^1.0.10"
+"foliantcontrib.includes" = "^1.1.8"
+mkdocs-material = "^4.6.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

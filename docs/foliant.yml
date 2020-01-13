@@ -3,7 +3,7 @@ slug: norm-docs
 
 chapters:
   - index.md
-  - tutorial.md
+  - reference.md
   - contributing.md
   - changelog.md
 

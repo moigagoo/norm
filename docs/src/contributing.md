@@ -1,4 +1,4 @@
-# Contributing to Norm
+# Contributing
 
 Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
 
@@ -32,9 +32,9 @@ Any contributions are welcome, be it pull requests, code reviews, documentation 
 
 Norm docs are shipped with Norm in `docs` directory.
 
-The docs are writtem in Markdown and built with [Folaint](https://foliant.rocks) using [MkDocs](https://mkdocs.org) as backend.
+The docs are written in Markdown and built with [Folaint](https://foliant.rocks) using [MkDocs](https://mkdocs.org) backend.
 
-To build the docs site locally, use Docker Compose:
+To build the docs locally, use Docker Compose:
 
     $ docker-compose -p norm -f docs/docker-compose.yml run --rm docs make site
 

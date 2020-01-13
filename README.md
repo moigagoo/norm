@@ -29,7 +29,7 @@ Add Norm to your .nimble file:
 import norm/sqlite                        # Import SQLite backend.
 # import norm/postgres                    # Import PostgreSQL backend.
 import logging                            # Import logging to inspect the generated SQL statements.
-import unicode, sugar, options
+import unicode, options
 
 db("petshop.db", "", "", ""):             # Set DB connection credentials.
   type                                    # Describe object model in an ordinary type section.
@@ -55,7 +55,7 @@ withDb:                                   # Start a DB session.
     ssn: some 456
   )
   bob.insert()                            # Insert ``bob`` into DB.
-  dump bob.id                             # ``id`` attr is added by Norm and updated on insertion.
+  echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
   var alice = User(age: 12, name: "alice", ssn: none int)
   alice.insert()
@@ -69,7 +69,7 @@ withDb:
     cond="name LIKE 'Bob%' ORDER BY age"  # - find by condition
   )
 
-  dump bobs
+  echo "Bobs = ", bobs
 
 withDb:
   var bob = User.getOne(1)                # Fetch record from DB and store it as ``User`` instance.
@@ -77,7 +77,7 @@ withDb:
   bob.update()                            # Update the record in DB.
 
   bob.delete()                            # Delete the record.
-  dump bob.id                             # ``id`` is 0 for objects not stored in DB.
+  echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
 
 withDb:
   dropTables()                            # Drop all tables.
@@ -112,4 +112,4 @@ $ nim c -r tests/testsqlite.nim                   # run a single test suite nati
 
 ### ❤ Contributors ❤
 
-https://github.com/moigagoo/norm/graphs/contributors
+Norm would not be where it is today without the efforts of these fine folks: [https://github.com/moigagoo/norm/graphs/contributors](https://github.com/moigagoo/norm/graphs/contributors)
