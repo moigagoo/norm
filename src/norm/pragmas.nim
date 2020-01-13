@@ -34,8 +34,12 @@ template default*(val: string) {.
   pragma, deprecated: "Default values are set automatically, this is ignored.".}
   ## Default value for the DB column.
 
-template notNull* {.pragma.}
-  ## Add ``NOT NULL`` constraint.
+template notNull* {.
+  pragma, deprecated: "NOT NULL is the default with all fields exception Options, this is ignored.".}
+  ##[ Add ``NOT NULL`` constraint.
+  
+  **Deprecated.** NOT NULL is the default with all fields exception Options, this is ignored.
+  ]##
 
 template check*(val: string) {.pragma.}
   ## Add a ``CHECK <CONDITION>`` constraint.
