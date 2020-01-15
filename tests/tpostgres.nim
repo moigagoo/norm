@@ -240,6 +240,12 @@ suite "Creating and dropping tables, CRUD":
 
   test "Drop tables":
     withDb:
+      User.dropTable()
+
+      expect DbError:
+        dbConn.exec sql "SELECT NULL FROM users"
+
+    withDb:
       dropTables()
 
       expect DbError:
