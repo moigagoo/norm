@@ -5,13 +5,11 @@ Listed below are the procs that build up a CRUD for manipulating tables and rows
 These procs are available in `withDb` and `withCustomDb` macros regardless of the backend used.
 
 
-##  Setting Up Database
+##  Setting Up and Tearing Down Database
 
 -   `createTables(force = false)`
 
-    Generate and execute an SQL database schema from a type section.
-
-    Run once to initialize the DB.
+    Generate and execute DB schema for all models.
 
     `force=true` prepends `DROP TABLE IF EXISTS` for all genereated tables.
 
@@ -19,6 +17,10 @@ These procs are available in `withDb` and `withCustomDb` macros regardless of th
 
     -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#49
     -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#49
+
+-   `dropTables(T: typedesc)`
+
+    Drop tables for all models.
 
 
 ##  Writing Migrations
@@ -103,8 +105,6 @@ These procs are available in `withDb` and `withCustomDb` macros regardless of th
     -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257
     -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
 
-- `dropTables(T: typedesc)`
-
 
 ## Manipulating Rows
 
@@ -131,4 +131,4 @@ These procs are available in `withDb` and `withCustomDb` macros regardless of th
 
 ## Transactions
 
-`transation`
+-   `transation`
