@@ -102,8 +102,6 @@ proc genColStmt(fieldRepr: FieldRepr): string =
       result.add " PRIMARY KEY"
     elif prag.name == "unique" and prag.kind == pkFlag:
       result.add " UNIQUE"
-    elif prag.name == "notNull" and prag.kind == pkFlag:
-      result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
       result.add " CHECK $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
