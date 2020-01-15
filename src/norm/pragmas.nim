@@ -36,10 +36,7 @@ template default*(val: string) {.
 
 template notNull* {.
   pragma, deprecated: "NOT NULL is the default with all fields exception Options, this is ignored.".}
-  ##[ Add ``NOT NULL`` constraint.
-  
-  **Deprecated.** NOT NULL is the default with all fields exception Options, this is ignored.
-  ]##
+  ## Add ``NOT NULL`` constraint.
 
 template check*(val: string) {.pragma.}
   ## Add a ``CHECK <CONDITION>`` constraint.
