@@ -916,8 +916,11 @@ Default value for the DB column.
 
 </dd>
 <a id="notNull.t"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#notNull.t"><span class="Identifier">notNull</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">template</span> <a href="#notNull.t"><span class="Identifier">notNull</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span><span class="Other">,</span> <span class="Identifier">deprecated</span><span class="Other">:</span> <span class="StringLit">&quot;NOT NULL is the default with all fields exception Options, this is ignored.&quot;</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
+  <div class="deprecation-message">
+    <b>Deprecated:</b> NOT NULL is the default with all fields exception Options, this is ignored.
+  </div>
 
 Add <tt class="docutils literal"><span class="pre">NOT NULL</span></tt> constraint.
 
@@ -978,7 +981,7 @@ Set table name. Lowercased type name is used when unset.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2019-11-08 18:58:03 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-15 20:26:35 UTC</small>
       </div>
     </div>
   </div>
