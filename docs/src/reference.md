@@ -90,10 +90,19 @@ These procs are available in `withDb` and `withCustomDb` macros regardless of th
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L98
 
 
-
 ### Delete
 
-- `dropTable(T: typedesc)`
+-   `dropTable(T: typedesc)`
+
+    Drop table associated with a model.
+
+    Use after removing a model.
+
+    Relevant tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
+
 - `dropTables(T: typedesc)`
 
 
