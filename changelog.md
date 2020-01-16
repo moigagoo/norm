@@ -8,7 +8,7 @@
 
 ## 1.1.0 (WIP)
 
--   [!] Deprecate `notNull` pragma, `NOT NULL` is the default for all types except `Option` types.
+-   [!] Deprecate `notNull` pragma, `NOT NULL` is the default for all types except `Option` types. To set `NOT NULL` constraint for custom DB types, add it directly to `dbType`, e.g. `{.dbType: "INTEGER NOT NULL".}`.
 -   [!] Rename pragma `table` to `dbTable`.
 -   [!] Deprecate `default` pragma, always add default values to tables instead.
 -   [!][+] Rewrite PostgreSQL backend to use [ndb](https://github.com/xzfc/ndb.nim), which adds `NULL` support via `Option` type similarly to SQLite backend.
