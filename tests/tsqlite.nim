@@ -16,8 +16,7 @@ db(dbName, "", "", ""):
       email {.unique.}: string
       ssn: Option[int]
       birthDate {.
-        dbType: "INTEGER",
-        notNull,
+        dbType: "INTEGER NOT NULL",
         parseIt: it.i.fromUnix().local(),
         formatIt: ?it.toTime().toUnix()
       .}: DateTime
@@ -37,8 +36,7 @@ db(dbName, "", "", ""):
       title: string
       book {.
         dbCol: "bookId",
-        dbType: "INTEGER",
-        notNull,
+        dbType: "INTEGER NOT NULL",
         fk: Book
         parser: getBookById,
         formatIt: ?it.id,
