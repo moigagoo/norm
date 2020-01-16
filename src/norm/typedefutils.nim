@@ -72,9 +72,7 @@ proc ensureForeignKey*(typeDef: NimNode, types: seq[NimNode]): NimNode =
       objRepr.fields[index].signature.pragmas.add(PragmaRepr(name: "formatIt", kind: pkKval, value:
         prefix(
           newDotExpr(newIdentNode("it"), newIdentNode("id")),
-          "?"
-        )
-      ))
+          "?")))
 
   result = objRepr.toTypeDef()
 
