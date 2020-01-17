@@ -41,7 +41,7 @@ db("petshop.db", "", "", ""):             # Set DB connection credentials.
                                           # ``parser``, ``formatter``, ``parseIt``,
                                           # and ``formatIt`` pragmas.
       name {.
-        formatIt: capitalize(it)          # Enforce that ``name`` is stored in DB capitalized.
+        formatIt: ?capitalize(it)         # Enforce that ``name`` is stored in DB capitalized.
       .}: string
       ssn: Option[int]                    # ``Option`` fields are allowed to be NULL in DB.
 
@@ -113,5 +113,4 @@ $ nim c -r tests/testsqlite.nim                   # run a single test suite nati
 
 ### ❤ Contributors ❤
 
-- [@moigagoo](https://github.com/moigagoo)
-- [@alaviss](https://github.com/alaviss)
+https://github.com/moigagoo/norm/graphs/contributors

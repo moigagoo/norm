@@ -19,7 +19,7 @@ template ro* {.pragma.}
   The special field ``id`` is mark with ``pk`` by default.
   ]##
 
-template fk*(val: untyped) {.pragma.}
+template fk*(val: typed) {.pragma.}
   ##[ Mark field as foreign key another type. ``val`` is either a type or a "type.field"
   expression. If a type is provided, its ``id`` field is referenced.
   ]##
@@ -30,10 +30,12 @@ template dbCol*(val: string) {.pragma.}
 template dbType*(val: string) {.pragma.}
   ## DB native type to use in table schema.
 
-template default*(val: string) {.pragma.}
+template default*(val: string) {.
+  pragma, deprecated: "Default values are set automatically, this is ignored.".}
   ## Default value for the DB column.
 
-template notNull* {.pragma.}
+template notNull* {.
+  pragma, deprecated: "NOT NULL is the default with all fields except `Options`, this is ignored.".}
   ## Add ``NOT NULL`` constraint.
 
 template check*(val: string) {.pragma.}
@@ -48,5 +50,8 @@ template onDelete*(val: string) {.pragma.}
 template onUpdate*(val: string) {.pragma.}
   ## Add an ``ON UPDATE <POLICY>`` constraint.
 
-template table*(val: string) {.pragma.}
+template table*(val: string) {.pragma, deprecated: "`table` has been renamed to `dbTable`".}
+  ## Set table name. Lowercased type name is used when unset.
+
+template dbTable*(val: string) {.pragma.}
   ## Set table name. Lowercased type name is used when unset.

@@ -28,7 +28,7 @@ Quickstart
                                               # ``parser``, ``formatter``, ``parseIt``,
                                               # and ``formatIt`` pragmas.
           name {.
-            formatIt: capitalize(it)          # Enforce that ``name`` is stored in DB capitalized.
+            formatIt: ?capitalize(it)         # Enforce that ``name`` is stored in DB capitalized.
           .}: string
           ssn: Option[int]                    # ``Option`` fields are allowed to be NULL in DB.
 

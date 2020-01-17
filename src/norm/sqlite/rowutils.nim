@@ -50,6 +50,10 @@ template formatIt*(op: untyped) {.pragma.}
   The expression is invoked in ``toRow`` proc to turn a typed object field into a ``DbValue`` within a row.
   ]##
 
+proc dbValue*(v: bool): DbValue = ?(if v: 1 else: 0)
+
+proc dbValue*(v: DateTime): DbValue = ?v.toTime().toUnix()
+
 template to*(row: Row, obj: var object) =
   ##[ Convert row to an existing object instance. String values from row are converted into types of the respective object fields.
 
@@ -103,6 +107,8 @@ template to*(row: Row, obj: var object) =
       obj.dot(field) = row[i].s
     elif typeof(value) is int:
       obj.dot(field) = row[i].i.int
+    elif typeof(value) is int64:
+      obj.dot(field) = row[i].i
     elif typeof(value) is float:
       obj.dot(field) = row[i].f
     elif typeof(value) is bool:
@@ -124,7 +130,9 @@ template to*(row: Row, obj: var object) =
         obj.dot(field) =
           if row[i].kind == dvkNull: none DateTime else: some row[i].i.fromUnix().utc()
     else:
-      raise newException(ValueError, "Parser for " & $typeof(value) & "is undefined.")
+      # Workaround "unreachable statement after 'return' statement" error.
+      if true:
+        raise newException(ValueError, "Parser for " & $typeof(value) & " is undefined.")
 
     inc i
 
@@ -270,7 +278,7 @@ proc toRow*(obj: object, force = false): Row =
     type
       Example = object
         intField: int
-        strField{.formatIt: dbValue(it.toLowerAscii()).}: string
+        strField{.formatIt: ?it.toLowerAscii().}: string
         floatField: float
         boolField: bool
         tsField: DateTime
@@ -299,17 +307,6 @@ proc toRow*(obj: object, force = false): Row =
         block:
           let it {.inject.} = value
           result.add obj.dot(field).getCustomPragmaVal(formatIt)
-      elif typeof(value) is bool:
-        result.add dbValue(if value: 1 else: 0)
-      elif typeof(value) is Option[bool]:
-        result.add(
-          if value.isSome: ?(if get(value): 1 else: 0)
-          else: ?nil
-        )
-      elif typeof(value) is DateTime:
-        result.add ?value.toTime().toUnix()
-      elif typeof(value) is Option[DateTime]:
-        result.add if value.isSome: ?get(value).toTime().toUnix() else: ?nil
       else:
         result.add ?value
 
@@ -325,7 +322,7 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
     type
       Example = object
         intField: int
-        strField{.formatIt: dbValue(it.toLowerAscii()).}: string
+        strField{.formatIt: ?it.toLowerAscii().}: string
         floatField: float
         boolField: bool
 

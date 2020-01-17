@@ -7,7 +7,7 @@ SQL Query Generation for SQLite Backend
 Procs to generate SQL queries to modify tables and records.
 ]##
 
-import strutils, macros
+import strutils, sequtils, macros
 import ndb/sqlite
 
 import ../objutils, ../pragmas
@@ -23,7 +23,8 @@ proc getTable*(objRepr: ObjRepr): string =
   result = objRepr.signature.name.toLowerAscii()
 
   for prag in objRepr.signature.pragmas:
-    if prag.name == "table" and prag.kind == pkKval:
+    # TODO: Remove check for "table" along with deprecated ``table`` pragma
+    if (prag.name == "table" or prag.name == "dbTable") and prag.kind == pkKval:
       return $prag.value
 
 proc getTable*(T: typedesc): string =
@@ -31,7 +32,7 @@ proc getTable*(T: typedesc): string =
   or lowercased type name otherwise.
   ]##
 
-  when T.hasCustomPragma(table): T.getCustomPragmaVal(table)
+  when T.hasCustomPragma(dbTable): T.getCustomPragmaVal(dbTable)
   else: ($T).toLowerAscii()
 
 proc getColumn*(fieldRepr: FieldRepr): string =
@@ -44,6 +45,18 @@ proc getColumn*(fieldRepr: FieldRepr): string =
   for prag in fieldRepr.signature.pragmas:
     if prag.name == "dbCol" and prag.kind == pkKval:
       return $prag.value
+
+proc getColumns*(dbObjRepr: ObjRepr, force = false): seq[string] =
+  ## Get DB column names for an object representation as a sequence of strings.
+
+  for fieldRepr in dbObjRepr.fields:
+    if force or "ro" notin fieldRepr.signature.pragmaNames:
+      result.add fieldRepr.getColumn()
+
+macro getColumns*(T: typedesc, force = false): untyped =
+  let cols = T.getImpl().toObjRepr().getColumns(force=force.boolVal)
+
+  result = newLit cols
 
 proc getColumns*(obj: object, force = false): seq[string] =
   ## Get DB column names for an object as a sequence of strings.
@@ -65,19 +78,19 @@ proc getDbType(fieldRepr: FieldRepr): string =
   result =
     if fieldRepr.typ.kind in {nnkIdent, nnkSym}:
       case $fieldRepr.typ
-        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL"
-        of "string": "TEXT NOT NULL"
-        of "float": "REAL NOT NULL"
-        else: "TEXT NOT NULL"
+        of "int", "int64", "Positive", "Natural", "bool", "DateTime": "INTEGER NOT NULL DEFAULT 0"
+        of "string": "TEXT NOT NULL DEFAULT ''"
+        of "float": "REAL NOT NULL DEFAULT 0"
+        else: "TEXT NOT NULL DEFAULT ''"
     elif fieldRepr.typ.kind == nnkBracketExpr and $fieldRepr.typ[0] == "Option":
       case $fieldRepr.typ[1]
-        of "int", "Positive", "Natural", "bool", "DateTime": "INTEGER"
+        of "int", "int64", "Positive", "Natural", "bool", "DateTime": "INTEGER"
         of "string": "TEXT"
         of "float": "REAL"
         else: "TEXT"
-    else: "TEXT NOT NULL"
+    else: "TEXT NOT NULL DEFAULT ''"
 
-proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
+proc genColStmt(fieldRepr: FieldRepr): string =
   ## Generate SQL column statement for a field representation.
 
   result.add fieldRepr.getColumn()
@@ -89,53 +102,97 @@ proc genColStmt(fieldRepr: FieldRepr, dbObjReprs: openArray[ObjRepr]): string =
       result.add " PRIMARY KEY"
     elif prag.name == "unique" and prag.kind == pkFlag:
       result.add " UNIQUE"
-    elif prag.name == "notNull" and prag.kind == pkFlag:
-      result.add " NOT NULL"
     elif prag.name == "check" and prag.kind == pkKval:
       result.add " CHECK $#" % $prag.value
-    elif prag.name == "default" and prag.kind == pkKval:
-      result.add " DEFAULT $#" % $prag.value
     elif prag.name == "fk" and prag.kind == pkKval:
       expectKind(prag.value, {nnkIdent, nnkSym, nnkDotExpr})
       result.add case prag.value.kind
         of nnkIdent, nnkSym:
-          " REFERENCES $# (id)" % [dbObjReprs.getByName($prag.value).getTable()]
+          " REFERENCES $# (id)" % prag.value.getImpl().toObjRepr().getTable()
         of nnkDotExpr:
-          " REFERENCES $# ($#)" % [dbObjReprs.getByName($prag.value[0]).getTable(), $prag.value[1]]
+          let
+            refObjRepr = prag.value[0].getImpl().toObjRepr()
+            refTable = refObjRepr.getTable()
+            refCol = refObjRepr.fields.getByName($prag.value[1]).getColumn()
+
+          " REFERENCES $# ($#)" % [refTable, refCol]
         else: ""
     elif prag.name == "onUpdate" and prag.kind == pkKval:
       result.add " ON UPDATE $#" % $prag.value
     elif prag.name == "onDelete" and prag.kind == pkKval:
       result.add " ON DELETE $#" % $prag.value
 
-proc genTableSchema(dbObjRepr: ObjRepr, dbObjReprs: openArray[ObjRepr]): SqlQuery =
+proc genTableSchema*(dbObjRepr: ObjRepr): string =
   ## Generate table schema for an object representation.
 
-  var schema: string
+  var colStmts: seq[string]
 
-  schema.add "CREATE TABLE $# (\n" % dbObjRepr.getTable()
+  for fieldRepr in dbObjRepr.fields:
+    colStmts.add "\t" & genColStmt(fieldRepr)
 
-  var columns: seq[string]
+  result = colStmts.join(",\n")
 
-  for field in dbObjRepr.fields:
-    columns.add "\t$#" % genColStmt(field, dbObjReprs)
+macro genTableSchema*(T: typedesc): string =
+  ## Generate table schema for a type.
 
-  schema.add columns.join(",\n")
-  schema.add "\n)"
+  let tableSchema = genTableSchema(T.getImpl().toObjRepr())
 
-  result = sql schema
+  result = newLit tableSchema
 
-proc genTableSchemas*(dbObjReprs: openArray[ObjRepr]): seq[SqlQuery] =
-  ## Generate table schemas for a list of object representations.
+proc genCreateTableQuery*(tableName, tableSchema: string): SqlQuery =
+  ## Generate query to create a table.
 
-  for dbObjRepr in dbObjReprs:
-    result.add genTableSchema(dbObjRepr, dbObjReprs)
+  sql "CREATE TABLE $# (\n$#\n)" % [tableName, tableSchema]
 
-proc genDropTableQueries*(dbObjReprs: seq[ObjRepr]): seq[SqlQuery] =
-  ## Generate ``DROP TABLE`` queries for a list of object representations.
+macro genCreateTableQuery*(T: typedesc): string =
+  ## Generate query to create a table from a type.
 
-  for dbObjRepr in dbObjReprs:
-    result.add sql "DROP TABLE IF EXISTS $#" % dbObjRepr.getTable()
+  let
+    objRepr = T.getImpl().toObjRepr()
+    query = "CREATE TABLE $# (\n$#\n)" % [objRepr.getTable(), genTableSchema(objRepr)]
+
+  result = newLit query
+
+proc genDropTableQuery*(tableName: string): SqlQuery =
+  ## Generate query to drop a table given its name.
+
+  sql "DROP TABLE IF EXISTS $#" % tableName
+
+macro genAddColQuery*(field: typedesc): untyped =
+  ## Generate query to add column to table.
+
+  expectKind(field, nnkDotExpr)
+
+  let
+    objRepr = field[0].getImpl().toObjRepr()
+    fieldRepr = objRepr.fields.getByName($field[1])
+
+    query = "ALTER TABLE $# ADD COLUMN $#" % [objRepr.getTable(), fieldRepr.genColStmt()]
+
+  result = newLit query
+
+macro genRenameColQuery*(field: typedesc, oldName: string): untyped =
+  ## Generate query to rename a column.
+
+  expectKind(field, nnkDotExpr)
+
+  let
+    objRepr = field[0].getImpl().toObjRepr()
+    fieldRepr = objRepr.fields.getByName($field[1])
+
+    query = "ALTER TABLE $# RENAME COLUMN $# TO $#" % [objRepr.getTable(), oldName.strVal, fieldRepr.getColumn()]
+
+  result = newLit query
+
+proc genRenameTableQuery*(oldName, newName: string): SqlQuery =
+  ## Generate query to rename a table.
+
+  sql "ALTER TABLE $# RENAME TO $#" % [oldName, newName]
+
+template genCopyQuery*(T: typedesc, targetTable: string): SqlQuery =
+  ## Generate query to copy data from one table to another.
+
+  sql "INSERT INTO $1 ($2) SELECT $2 FROM $3" % [targetTable, T.getColumns(force=true).join(", "), T.getTable()]
 
 proc genInsertQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``INSERT`` query for an object.
@@ -158,6 +215,11 @@ proc genGetManyQuery*(obj: object, condition: string): SqlQuery =
 
   sql "SELECT $# FROM $# WHERE $# LIMIT ? OFFSET ?" % [obj.getColumns(force=true).join(", "),
                                                        type(obj).getTable(), condition]
+
+template genGetAllQuery*(T: typedesc, condition: string): SqlQuery =
+  ## Generate ``SELECT`` query to fetch all records for an object.
+
+  sql "SELECT $# FROM $# WHERE $#" % [T.getColumns(force=true).join(", "), T.getTable(), condition]
 
 proc genUpdateQuery*(obj: object, force: bool): SqlQuery =
   ## Generate ``UPDATE`` query for an object.

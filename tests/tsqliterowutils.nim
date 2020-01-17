@@ -11,22 +11,24 @@ suite "Basic object <-> row conversion":
     SimpleUser = object
       name: string
       age: Natural
+      dob: DateTime
       height: float
       ssn: Option[int]
       employed: Option[bool]
 
   let
-    user = SimpleUser(name: "Alice", age: 23, height: 168.2, ssn: some 123, employed: some true)
-    row = @[?"Alice", ?23, ?168.2, ?123, ?1]
+    dob = "1976-12-23".parse("yyyy-MM-dd")
+    user = SimpleUser(name: "Alice", age: 23, dob: dob, height: 168.2, ssn: some 123, employed: some true)
+    row = @[?"Alice", ?23, ?dob, ?168.2, ?123, ?true]
     userWithoutOptionals = SimpleUser(
       name: "Alice",
       age: 23,
+      dob: dob,
       height: 168.2,
       ssn: none int,
       employed: none bool
     )
-    rowWithoutOptionals = @[?"Alice", ?23, ?168.2, ?nil, ?nil]
-
+    rowWithoutOptionals = @[?"Alice", ?23, ?dob, ?168.2, ?nil, ?nil]
 
   test "Object -> row":
     check user.toRow() == row
@@ -50,7 +52,7 @@ suite "Conversion with custom parser and formatter expressions":
       age: Natural
       height: float
       createdAt {.
-        formatIt: dbValue(it.format("yyyy-MM-dd HH:mm:sszzz")),
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
         parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
@@ -93,7 +95,7 @@ suite "Conversion with custom parser and formatter procs":
   let
     datetime = "2019-01-30 12:34:56+04:00".parse("yyyy-MM-dd HH:mm:sszzz")
     user = UserDatetimeAsTimestamp(name: "Alice", age: 23, height: 168.2, createdAt: datetime)
-    row = @[?"Alice", ?23, ?168.2, ?datetime.toTimestamp()]
+    row = @[?"Alice", ?23, ?168.2, datetime.toTimestamp()]
 
   setup:
     var tmpUser {.used.} = UserDatetimeAsTimestamp(createdAt: now())
@@ -151,7 +153,7 @@ suite "Bulk conversion with custom parser and formatter expressions":
       age: Natural
       height: float
       createdAt {.
-        formatIt: dbValue(it.format("yyyy-MM-dd HH:mm:sszzz")),
+        formatIt: ?it.format("yyyy-MM-dd HH:mm:sszzz"),
         parseIt: it.s.parse("yyyy-MM-dd HH:mm:sszzz", utc())
       .}: DateTime
 
