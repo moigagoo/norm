@@ -28,6 +28,10 @@ db(dbHost, "postgres", "", "postgres"):
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
+    FkOwner = object
+      foo: int
+    FkChild = object
+      owner: FkOwner
 
   proc getBookById(id: string): Book = withDb(Book.getOne parseInt(id))
 
@@ -240,3 +244,12 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
+
+  test "Automatic foreign key":
+    withDb:
+      var owner = FkOwner(foo: 42)
+      owner.insert()
+      var child = FkChild(owner: owner)
+      child.insert()
+
+      check child.owner == owner
