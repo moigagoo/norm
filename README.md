@@ -20,39 +20,42 @@ Install Norm with [Nimble](https://github.com/nim-lang/nimble/):
 
 Add Norm to your .nimble file:
 
-    requires "nim >= 1.0.0", "norm"
+    requires "norm"
 
 
 ## Quickstart
 
 ```nim
-import norm/sqlite                        # Import SQLite backend.
-# import norm/postgres                    # Import PostgreSQL backend.
+import norm/sqlite                        # Import SQLite backend; ``norm/postgres`` for PostgreSQL.
+
+import unicode, options                   # Norm supports `Option` type out of the box.
+
 import logging                            # Import logging to inspect the generated SQL statements.
-import unicode, options
+addHandler newConsoleLogger()
+
 
 db("petshop.db", "", "", ""):             # Set DB connection credentials.
-  type                                    # Describe object model in an ordinary type section.
-    User = object
+  type                                    # Describe models in a type section.
+    User = object                         # Model is a Nim object.
       age: Positive                       # Nim types are automatically converted into SQL types
                                           # and back.
                                           # You can specify how types are converted using
-                                          # ``parser``, ``formatter``, ``parseIt``,
-                                          # and ``formatIt`` pragmas.
+                                          # ``parser``, ``formatter``,
+                                          # ``parseIt``, and ``formatIt`` pragmas.
       name {.
-        formatIt: ?capitalize(it)         # Enforce that ``name`` is stored in DB capitalized.
+        formatIt: ?capitalize(it)         # E.g., enforce ``name`` stored in DB capitalized.
       .}: string
-      ssn: Option[int]                    # ``Option`` fields are allowed to be NULL in DB.
+      ssn: Option[int]                    # ``Option`` fields are allowed to be NULL.
 
-addHandler newConsoleLogger()
 
-withDb:                                   # Start a DB session.
-  createTables(force=true)                # Create tables for objects. Drop tables if they exist.
+withDb:                                   # Start DB session.
+  createTables(force=true)                # Create tables for objects.
+                                          # ``force=true`` means “drop tables if they exist.”
 
   var bob = User(                         # Create a ``User`` instance as you normally would.
-    age: 23,                              # Note that the instance is mutable. This is mandatory.
-    name: "bob",
-    ssn: some 456
+    age: 23,                              # You can use ``initUser`` if you want.
+    name: "bob",                          # Note that the instance is mutable. This is necessary,
+    ssn: some 456                         # because implicit ``id``attr is updated on insertion.
   )
   bob.insert()                            # Insert ``bob`` into DB.
   echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
@@ -60,13 +63,13 @@ withDb:                                   # Start a DB session.
   var alice = User(age: 12, name: "alice", ssn: none int)
   alice.insert()
 
-withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials defined in ``db``.
-  createTables(force=true)
+withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
+  createTables(force=true)                # to connect to a different DB with the same models.
 
 withDb:
   let bobs = User.getMany(                # Read records from DB:
     100,                                  # - only the first 100 records
-    cond="name LIKE 'Bob%' ORDER BY age"  # - find by condition
+    cond="name LIKE 'Bob%' ORDER BY age"  # - matching condition
   )
 
   echo "Bobs = ", bobs
@@ -84,30 +87,33 @@ withDb:
 ```
 
 
-## Disclaimer
-
-My goal with Norm was to lubricate the routine of working with DB: creating DB schema from the object model and converting data between DB and object representations. It's a tool for *common* cases not for *all* cases. Norm's builtin CRUD procs will help you write a typical RESTful API, but as your app grows more complex, you will have to write SQL queries manually (btw Norm can help with that too).
-
-**Using any ORM, Norm included, doesn't free a programmer from having to learn SQL!**
-
-
 ## Contributing
 
-1.  Any contributions are welcome, be it pull requests, code reviews, documentation improvements, bug reports, or feature requests.
+Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.
 
-2.  If you decide to contribute through code, please run the tests after you change the code:
+-   See the [issues on GitHub](http://github.com/moigagoo/norm/issues).
 
-```shell
-$ docker-compose run tests                        # run all tests in Docker
-$ docker-compose run test tests/testpostgres.nim  # run a single test suite in Docker
-$ nimble test                                     # run all tests natively;
-                                                  # requires a running PostgreSQL server!
-$ nim c -r tests/testsqlite.nim                   # run a single test suite natively
-```
+-   Run the tests before and after you change the code.
 
-3.  Use camelCase instead of snake_case.
+    The recommended way to run the tests is via [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/):
 
-4.  New procs must have a documentation comment. If you modify an existing proc, update the comment.
+        $ docker-compose run --rm tests                     # run all test suites
+        $ docker-compose run --rm test tests/tpostgres.nim  # run a single test suite
+
+    If you don't mind running two PostgreSQL servers on `postgres_1` and `postgres_2`, feel free to run the test suites natively:
+
+        $ nimble test
+
+    Note that you only need the PostgreSQL servers to run the PostgreSQL backend tests, so:
+
+        $ nim c -r tests/tsqlite.nim    # doesn't require PostgreSQL servers, but requires SQLite
+        $ nim c -r tests/tobjutils.nim  # doesn't require anything at all
+
+-   Use camelCase instead of snake_case.
+
+-   New procs must have a documentation comment. If you modify an existing proc, update the comment.
+
+-   Apart from the code that implements a feature or fixes a bug, PRs are required to ship necessary tests and a changelog updates.
 
 
 ### ❤ Contributors ❤
