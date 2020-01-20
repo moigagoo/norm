@@ -23,6 +23,9 @@ Nim Type             PostgreSQL Type
 ]##
 
 
+{.used.}
+
+
 import strutils, macros, typetraits, logging, options
 import ndb/postgres
 
