@@ -5,7 +5,7 @@ services:
 
 script:
   - docker-compose run tests
-  - docker-compose run doc
+  - docker-compose run docs
 
 deploy:
   provider: pages
