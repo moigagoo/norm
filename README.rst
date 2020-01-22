@@ -292,4 +292,4 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 ❤ Contributors ❤
 ------------------
 
-Norm would not be where it is today without the efforts of these fine folks: [https://github.com/moigagoo/norm/graphs/contributors](https://github.com/moigagoo/norm/graphs/contributors)
+Norm would not be where it is today without the efforts of these fine folks: `https://github.com/moigagoo/norm/graphs/contributors <https://github.com/moigagoo/norm/graphs/contributors>`_
