@@ -17,25 +17,28 @@ Norm: ORM for Nim Apps
 Norm supports SQLite and PostgreSQL.
 
 - `Quickstart → <#quickstart>`_
-- `API docs → <https://moigagoo.github.io/norm/norm.html>`_
+- `Reference → <#reference>`_
+- `API index → <https://moigagoo.github.io/norm/api/theindex.html>`_
 - `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
 - `Contributing → <#contributing>`_
+
+
+Quickstart
+==========
 
 Install Norm with `Nimble <https://github.com/nim-lang/nimble>`_:
 
 .. code-block:: nim
 
-	$ nimble install norm
+    $ nimble install norm
 
 Add Norm to your .nimble file:
 
 .. code-block:: nim
 
-	requires "norm"
+    requires "norm"
 
-
-Quickstart
-==========
+Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r hellonorm.nim``:
 
 .. code-block:: nim
 
@@ -116,10 +119,10 @@ Database Setup
 
     ``force=true`` prepends ``DROP TABLE IF EXISTS`` for all genereated tables.
 
-    Relevant tests:
+    Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#49
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#49
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L47
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L48
 
 
 Database Teardown
@@ -129,16 +132,22 @@ Database Teardown
 
     Drop tables for all models.
 
-    Relevant tests:
+    Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#255
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#241
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L255
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L90
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L85
 
 
-Writing Migrations
-------------------
+Migrations
+----------
 
 **Note:** Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.
+
+
+Schema Migrations
+*****************
 
 -   ``createTable(T: typedesc, force = false)``
 
@@ -148,7 +157,7 @@ Writing Migrations
 
     ``force=true`` prepends `DROP TABLE IF EXISTS` to the generated query.
 
-    Relevant tests:
+    Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L35
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L50
@@ -161,7 +170,7 @@ Writing Migrations
 
     ``field`` should point to the model field for which the column is to be created, e.g. ``Pet.age``.
 
-    Relevant tests:
+    Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L44
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L61
@@ -172,7 +181,7 @@ Writing Migrations
 
     Use to clean up DB after removing a field from a model.
 
-    Relevant tests:
+    Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L57
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L79
@@ -183,7 +192,7 @@ Writing Migrations
 
     Use this proc to rename a column. To replace a column, use `addColumn` with conjunction with ``dropUnusedColumns``.
 
-    Relevant tests:
+    Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L72
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L95
@@ -196,14 +205,11 @@ Writing Migrations
 
     Use after renaming a model or changing its ``dbTable`` pragma value.
 
-    Relevant tests:
+    Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L85
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L98
 
-
-Delete
-------
 
 -   ``dropTable(T: typedesc)``
 
@@ -211,46 +217,22 @@ Delete
 
     Use after removing a model.
 
-    Relevant tests:
+    Tests:
 
     -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257
     -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
 
 
-Manipulating Rows
------------------
+Data Migrations
+***************
 
-Create
-''''''
-
-- ``insert``
-
-
-Read
-''''
-
-- ``getOne``
-- ``getMany``
-- ``getAll``
-
-
-Updates
-'''''''
-
+-   ``insert``
+-   ``getOne``
+-   ``getMany``
+-   ``getAll``
 -   ``update``
-
-
-Delete
-''''''
-
 -   ``delete``
-
-
-Transactions
-''''''''''''
-
 -   ``transation``
-
 
 
 Contributing

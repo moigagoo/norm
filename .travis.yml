@@ -9,7 +9,7 @@ script:
 
 deploy:
   provider: pages
-  local-dir: docs/norm-docs.mkdocs
+  local-dir: htmldocs
   skip-cleanup: true
   github-token: $GITHUB_TOKEN
   keep-history: true
