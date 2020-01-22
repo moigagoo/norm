@@ -22,9 +22,9 @@ services:
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
-  doc:
+  docs:
     build: .
     image: norm
     volumes:
       - .:/usr/src/app
-    command: nimble doc
+    command: nimble docs

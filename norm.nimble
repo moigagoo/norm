@@ -21,10 +21,10 @@ task apidoc, "Generate API docs":
 
   setCommand "doc", "src/norm"
 
-task index, "Generate index":
+task idx, "Generate index":
   selfExec "buildIndex --out:htmldocs/theindex.html htmldocs"
 
-task doc, "Generate docs":
+task docs, "Generate docs":
   rmDir "htmldocs"
-  exec "nimble apidocs"
-  exec "nimble index"
+  exec "nimble apidoc"
+  exec "nimble idx"
