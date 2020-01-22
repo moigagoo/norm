@@ -16,87 +16,87 @@ Norm: ORM for Nim Apps
 
 Norm supports SQLite and PostgreSQL.
 
-- [Quickstart →](#Quickstart)
-- [API docs →](https://moigagoo.github.io/norm/norm.html)
-- [Sample app →](https://github.com/moigagoo/norm-sample-webapp)
-- [Contributing info →](#contributing)
+- `Quickstart → <#quickstart>`_
+- `API docs → <https://moigagoo.github.io/norm/norm.html>`_
+- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
+- `Contributing → <#contributing>`_
 
-Install Norm with [Nimble](https://github.com/nim-lang/nimble/):
+Install Norm with `Nimble <https://github.com/nim-lang/nimble>`_:
 
-```nim
-$ nimble install norm
-```
+.. code-block:: nim
+
+	$ nimble install norm
 
 Add Norm to your .nimble file:
 
-```nim
-requires "norm"
-```
+.. code-block:: nim
+
+	requires "norm"
 
 
 Quickstart
 ==========
 
-```nim
-import norm/sqlite                        # Import SQLite backend; ``norm/postgres`` for PostgreSQL.
+.. code-block:: nim
 
-import unicode, options                   # Norm supports `Option` type out of the box.
+	import norm/sqlite                        # Import SQLite backend; ``norm/postgres`` for PostgreSQL.
 
-import logging                            # Import logging to inspect the generated SQL statements.
-addHandler newConsoleLogger()
+	import unicode, options                   # Norm supports `Option` type out of the box.
 
-
-db("petshop.db", "", "", ""):             # Set DB connection credentials.
-  type                                    # Describe models in a type section.
-    User = object                         # Model is a Nim object.
-      age: Positive                       # Nim types are automatically converted into SQL types
-                                          # and back.
-                                          # You can specify how types are converted using
-                                          # ``parser``, ``formatter``,
-                                          # ``parseIt``, and ``formatIt`` pragmas.
-      name {.
-        formatIt: ?capitalize(it)         # E.g., enforce ``name`` stored in DB capitalized.
-      .}: string
-      ssn: Option[int]                    # ``Option`` fields are allowed to be NULL.
+	import logging                            # Import logging to inspect the generated SQL statements.
+	addHandler newConsoleLogger()
 
 
-withDb:                                   # Start DB session.
-  createTables(force=true)                # Create tables for objects.
-                                          # ``force=true`` means “drop tables if they exist.”
+	db("petshop.db", "", "", ""):             # Set DB connection credentials.
+	  type                                    # Describe models in a type section.
+	    User = object                         # Model is a Nim object.
+	      age: Positive                       # Nim types are automatically converted into SQL types
+	                                          # and back.
+	                                          # You can specify how types are converted using
+	                                          # ``parser``, ``formatter``,
+	                                          # ``parseIt``, and ``formatIt`` pragmas.
+	      name {.
+	        formatIt: ?capitalize(it)         # E.g., enforce ``name`` stored in DB capitalized.
+	      .}: string
+	      ssn: Option[int]                    # ``Option`` fields are allowed to be NULL.
 
-  var bob = User(                         # Create a ``User`` instance as you normally would.
-    age: 23,                              # You can use ``initUser`` if you want.
-    name: "bob",                          # Note that the instance is mutable. This is necessary,
-    ssn: some 456                         # because implicit ``id``attr is updated on insertion.
-  )
-  bob.insert()                            # Insert ``bob`` into DB.
-  echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
-  var alice = User(age: 12, name: "alice", ssn: none int)
-  alice.insert()
+	withDb:                                   # Start DB session.
+	  createTables(force=true)                # Create tables for objects.
+	                                          # ``force=true`` means “drop tables if they exist.”
 
-withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
-  createTables(force=true)                # to connect to a different DB with the same models.
+	  var bob = User(                         # Create a ``User`` instance as you normally would.
+	    age: 23,                              # You can use ``initUser`` if you want.
+	    name: "bob",                          # Note that the instance is mutable. This is necessary,
+	    ssn: some 456                         # because implicit ``id``attr is updated on insertion.
+	  )
+	  bob.insert()                            # Insert ``bob`` into DB.
+	  echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
-withDb:
-  let bobs = User.getMany(                # Read records from DB:
-    100,                                  # - only the first 100 records
-    cond="name LIKE 'Bob%' ORDER BY age"  # - matching condition
-  )
+	  var alice = User(age: 12, name: "alice", ssn: none int)
+	  alice.insert()
 
-  echo "Bobs = ", bobs
+	withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
+	  createTables(force=true)                # to connect to a different DB with the same models.
 
-withDb:
-  var bob = User.getOne(1)                # Fetch record from DB and store it as ``User`` instance.
-  bob.age += 10                           # Change attr value.
-  bob.update()                            # Update the record in DB.
+	withDb:
+	  let bobs = User.getMany(                # Read records from DB:
+	    100,                                  # - only the first 100 records
+	    cond="name LIKE 'Bob%' ORDER BY age"  # - matching condition
+	  )
 
-  bob.delete()                            # Delete the record.
-  echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
+	  echo "Bobs = ", bobs
 
-withDb:
-  dropTables()                            # Drop all tables.
-```
+	withDb:
+	  var bob = User.getOne(1)                # Fetch record from DB and store it as ``User`` instance.
+	  bob.age += 10                           # Change attr value.
+	  bob.update()                            # Update the record in DB.
+
+	  bob.delete()                            # Delete the record.
+	  echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
+
+	withDb:
+	  dropTables()                            # Drop all tables.
 
 
 Reference
@@ -264,23 +264,23 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
     The recommended way to run the tests is via [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/):
 
-    ```nim
-    $ docker-compose run --rm tests                     # run all test suites
-    $ docker-compose run --rm test tests/tpostgres.nim  # run a single test suite
-    ```
+    .. code-block::
+
+	    $ docker-compose run --rm tests                     # run all test suites
+	    $ docker-compose run --rm test tests/tpostgres.nim  # run a single test suite
 
     If you don't mind running two PostgreSQL servers on `postgres_1` and `postgres_2`, feel free to run the test suites natively:
 
-    ```nim
-    $ nimble test
-    ```
+    .. code-block::
+
+	    $ nimble test
 
     Note that you only need the PostgreSQL servers to run the PostgreSQL backend tests, so:
 
-    ```nim
-    $ nim c -r tests/tsqlite.nim    # doesn't require PostgreSQL servers, but requires SQLite
-    $ nim c -r tests/tobjutils.nim  # doesn't require anything at all
-    ```
+    .. code-block::
+
+	    $ nim c -r tests/tsqlite.nim    # doesn't require PostgreSQL servers, but requires SQLite
+	    $ nim c -r tests/tobjutils.nim  # doesn't require anything at all
 
 -   Use camelCase instead of snake_case.
 
