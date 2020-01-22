@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
-  docs:
+  doc:
     build: .
     image: norm
     volumes:
