@@ -7,7 +7,7 @@ Norm: ORM for Nim Apps
     :alt: Build Status
     :target: https://travis-ci.com/moigagoo/norm
 
-.. image:: https://travis-ci.com/moigagoo/norm.svg?branch=develop
+.. image:: https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png
     :alt: Nimble
     :target: https://nimble.directory/pkg/norm
 
