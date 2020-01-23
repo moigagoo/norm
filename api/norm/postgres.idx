@@ -1,0 +1,4 @@
+PostgreSQL Backend	norm/postgres.html
+dbTypes	norm/postgres.html#dbTypes.m,untyped	postgres: dbTypes(body: untyped): untyped	
+dbFromTypes	norm/postgres.html#dbFromTypes.m,string,string,string,string,openArray[typedesc]	postgres: dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped	
+db	norm/postgres.html#db.m,string,string,string,string,untyped	postgres: db(connection, user, password, database: string; body: untyped): untyped	

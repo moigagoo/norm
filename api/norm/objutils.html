@@ -918,6 +918,10 @@ function main() {
 <dd>
 
 There are two kinds of pragmas: flags and key-value pairs:
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L27"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L27" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="PragmaRepr"></a>
@@ -934,6 +938,10 @@ There are two kinds of pragmas: flags and key-value pairs:
 <p>A container for pragma definition components.</p>
 <p>For flag pragmas, only the pragma name is stored. For key-value pragmas, name and value are stored. </p>
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L32"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L32" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="SignatureRepr"></a>
@@ -956,6 +964,10 @@ Representation of the part of an object or field definition that contains:<ul cl
   <span class="Comment"># Field signature is parsed from this part:</span>
   <span class="Comment"># |                       |</span>
     <span class="Identifier">field1</span> <span class="Punctuation">{</span><span class="Operator">.</span><span class="Identifier">pr3</span><span class="Punctuation">,</span> <span class="Identifier">pr4</span><span class="Punctuation">:</span> <span class="Identifier">val4</span><span class="Operator">.</span><span class="Punctuation">}</span><span class="Punctuation">:</span> <span class="Identifier">int</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L44"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L44" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="FieldRepr"></a>
@@ -966,6 +978,10 @@ Representation of the part of an object or field definition that contains:<ul cl
 <dd>
 
 Object field representation: signature + type.
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L65"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L65" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="ObjRepr"></a>
@@ -976,6 +992,10 @@ Object field representation: signature + type.
 <dd>
 
 Object representation: signature + fields.
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L71"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L71" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -988,27 +1008,10 @@ Object representation: signature + fields.
 <dd>
 
 Convert an object type definition into an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt>.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">macros</span>
-
-<span class="Keyword">macro</span> <span class="Identifier">inspect</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span> <span class="Other">=</span>
-  <span class="Identifier">expectKind</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">nnkTypeSection</span><span class="Other">)</span>
-  <span class="Keyword">let</span>
-    <span class="Identifier">typeSection</span> <span class="Other">=</span> <span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-    <span class="Identifier">typeDef</span> <span class="Other">=</span> <span class="Identifier">typeSection</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-    <span class="Identifier">objRepr</span> <span class="Other">=</span> <span class="Identifier">typeDef</span><span class="Other">.</span><span class="Identifier">toObjRepr</span><span class="Other">(</span><span class="Other">)</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">objRepr</span><span class="Other">.</span><span class="Identifier">signature</span><span class="Other">.</span><span class="Identifier">name</span> <span class="Operator">==</span> <span class="StringLit">&quot;Example&quot;</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">len</span><span class="Other">(</span><span class="Identifier">objRepr</span><span class="Other">.</span><span class="Identifier">fields</span><span class="Other">)</span> <span class="Operator">==</span> <span class="DecNumber">1</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">objRepr</span><span class="Other">.</span><span class="Identifier">fields</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">signature</span><span class="Other">.</span><span class="Identifier">name</span> <span class="Operator">==</span> <span class="StringLit">&quot;field&quot;</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">objRepr</span><span class="Other">.</span><span class="Identifier">fields</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">signature</span><span class="Other">.</span><span class="Identifier">exported</span>
-  <span class="Identifier">doAssert</span> <span class="Operator">$</span><span class="Identifier">objRepr</span><span class="Other">.</span><span class="Identifier">fields</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">typ</span> <span class="Operator">==</span> <span class="StringLit">&quot;int&quot;</span>
-
-<span class="Identifier">inspect</span><span class="Other">:</span>
-  <span class="Keyword">type</span>
-    <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-      <span class="Identifier">field</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
-</pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L113"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L113" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="toTypeDef,ObjRepr"></a>
@@ -1016,22 +1019,10 @@ Convert an object type definition into an <tt class="docutils literal"><span cla
 <dd>
 
 Convert an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> into an object type definition.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">macros</span>
-
-<span class="Keyword">macro</span> <span class="Identifier">inspect</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span> <span class="Other">=</span>
-  <span class="Identifier">expectKind</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">nnkTypeSection</span><span class="Other">)</span>
-  <span class="Keyword">let</span>
-    <span class="Identifier">typeSection</span> <span class="Other">=</span> <span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-    <span class="Identifier">typeDef</span> <span class="Other">=</span> <span class="Identifier">typeSection</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">typeDef</span><span class="Other">.</span><span class="Identifier">toObjRepr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">toTypeDef</span><span class="Other">(</span><span class="Other">)</span> <span class="Operator">==</span> <span class="Identifier">typeDef</span>
-
-<span class="Identifier">inspect</span><span class="Other">:</span>
-  <span class="Keyword">type</span>
-    <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-      <span class="Identifier">field</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">int</span>
-</pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L145"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L145" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="getByName,openArray[T],string"></a>
@@ -1039,6 +1030,10 @@ Convert an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> in
 <dd>
 
 Get an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> or <tt class="docutils literal"><span class="pre">FieldRepr</span></tt> from an openArray by its name.
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L163"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L163" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="fieldNames,ObjRepr"></a>
@@ -1046,24 +1041,10 @@ Get an <tt class="docutils literal"><span class="pre">ObjRepr</span></tt> or <tt
 <dd>
 
 Get object representation's field names as a sequence of strings.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">macros</span>
-
-<span class="Keyword">macro</span> <span class="Identifier">inspect</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span> <span class="Other">=</span>
-  <span class="Identifier">expectKind</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">nnkTypeSection</span><span class="Other">)</span>
-  <span class="Keyword">let</span>
-    <span class="Identifier">typeSection</span> <span class="Other">=</span> <span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-    <span class="Identifier">typeDef</span> <span class="Other">=</span> <span class="Identifier">typeSection</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">typeDef</span><span class="Other">.</span><span class="Identifier">toObjRepr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">fieldNames</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="StringLit">&quot;a&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;b&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;c&quot;</span><span class="Other">]</span>
-
-<span class="Identifier">inspect</span><span class="Other">:</span>
-  <span class="Keyword">type</span>
-    <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-      <span class="Identifier">a</span><span class="Other">:</span> <span class="Identifier">int</span>
-      <span class="Identifier">b</span><span class="Other">:</span> <span class="Identifier">float</span>
-      <span class="Identifier">c</span><span class="Other">:</span> <span class="Identifier">string</span>
-</pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L182"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L182" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="pragmaNames,SignatureRepr"></a>
@@ -1071,23 +1052,10 @@ Get object representation's field names as a sequence of strings.
 <dd>
 
 Get signature representation's pragma names as a sequence of strings.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">macros</span>
-
-<span class="Keyword">macro</span> <span class="Identifier">inspect</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span> <span class="Other">=</span>
-  <span class="Identifier">expectKind</span><span class="Other">(</span><span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">nnkTypeSection</span><span class="Other">)</span>
-  <span class="Keyword">let</span>
-    <span class="Identifier">typeSection</span> <span class="Other">=</span> <span class="Identifier">body</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-    <span class="Identifier">typeDef</span> <span class="Other">=</span> <span class="Identifier">typeSection</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">typeDef</span><span class="Other">.</span><span class="Identifier">toObjRepr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">signature</span><span class="Other">.</span><span class="Identifier">pragmaNames</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="StringLit">&quot;a&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;b&quot;</span><span class="Other">]</span>
-  <span class="Identifier">doAssert</span> <span class="Identifier">typeDef</span><span class="Other">.</span><span class="Identifier">toObjRepr</span><span class="Other">(</span><span class="Other">)</span><span class="Other">.</span><span class="Identifier">fields</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">signature</span><span class="Other">.</span><span class="Identifier">pragmaNames</span> <span class="Operator">==</span> <span class="Operator">@</span><span class="Other">[</span><span class="StringLit">&quot;d&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;f&quot;</span><span class="Other">]</span>
-
-<span class="Identifier">inspect</span><span class="Other">:</span>
-  <span class="Keyword">type</span>
-    <span class="Identifier">Example</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">a</span><span class="Other">,</span> <span class="Identifier">b</span><span class="Other">:</span> <span class="StringLit">&quot;c&quot;</span></span><span class="Other">.}</span></span> <span class="Other">=</span> <span class="Keyword">object</span>
-      <span class="Identifier">a</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">d</span><span class="Other">:</span> <span class="StringLit">&quot;e&quot;</span><span class="Other">,</span> <span class="Identifier">f</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">int</span>
-</pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L188"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L188" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1100,13 +1068,10 @@ Get signature representation's pragma names as a sequence of strings.
 <dd>
 
 Access object field value by name: <tt class="docutils literal"><span class="pre">obj[&quot;field&quot;]</span></tt> translates to <tt class="docutils literal"><span class="pre">obj.field</span></tt>.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">field</span><span class="Other">:</span> <span class="Identifier">int</span>
-
-<span class="Keyword">let</span> <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">field</span><span class="Other">:</span> <span class="DecNumber">123</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">dot</span><span class="Other">(</span><span class="StringLit">&quot;field&quot;</span><span class="Other">)</span> <span class="Operator">==</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">field</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L172"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L172" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="dot.m,,string,untyped"></a>
@@ -1114,14 +1079,10 @@ Access object field value by name: <tt class="docutils literal"><span class="pre
 <dd>
 
 Set object field value by name: <tt class="docutils literal"><span class="pre">obj[&quot;field&quot;] = value</span></tt> translates to <tt class="docutils literal"><span class="pre">obj.field = value</span></tt>.
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">field</span><span class="Other">:</span> <span class="Identifier">int</span>
-
-<span class="Keyword">var</span> <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Other">)</span>
-<span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">dot</span><span class="Other">(</span><span class="StringLit">&quot;field&quot;</span><span class="Other">)</span> <span class="Other">=</span> <span class="DecNumber">321</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">dot</span><span class="Other">(</span><span class="StringLit">&quot;field&quot;</span><span class="Other">)</span> <span class="Operator">==</span> <span class="DecNumber">321</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/objutils.nim#L177"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/objutils.nim#L177" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1139,7 +1100,7 @@ Set object field value by name: <tt class="docutils literal"><span class="pre">o
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-16 07:20:07 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-22 18:56:12 UTC</small>
       </div>
     </div>
   </div>

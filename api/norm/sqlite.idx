@@ -1,0 +1,4 @@
+SQLite Backend	norm/sqlite.html
+dbTypes	norm/sqlite.html#dbTypes.m,untyped	sqlite: dbTypes(body: untyped): untyped	
+dbFromTypes	norm/sqlite.html#dbFromTypes.m,string,string,string,string,openArray[typedesc]	sqlite: dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped	
+db	norm/sqlite.html#db.m,string,string,string,string,untyped	sqlite: db(connection, user, password, database: string; body: untyped): untyped	

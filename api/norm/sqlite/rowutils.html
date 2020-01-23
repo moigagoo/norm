@@ -873,7 +873,7 @@ function main() {
   <div id="tocRoot"></div>
   
   <p class="module-desc"><p>This module implements <tt class="docutils literal"><span class="pre">to</span></tt> and <tt class="docutils literal"><span class="pre">toRow</span></tt> proc families for row to object and object to row conversion respectively.</p>
-<p><tt class="docutils literal"><span class="pre">Row</span></tt> is a sequence of ``ndb.DbValue``, which allows to store <tt class="docutils literal"><span class="pre">options.none`` values as ``NULL</span></tt> and vice versa. </p>
+<p><tt class="docutils literal"><span class="pre">Row</span></tt> is a sequence of <tt class="docutils literal"><span class="pre">ndb.DbValue</span></tt>, which allows to store <tt class="docutils literal"><span class="pre">options.none</span></tt> values as <tt class="docutils literal"><span class="pre">NULL</span></tt> and vice versa. </p>
 </p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
@@ -888,6 +888,10 @@ function main() {
 <dd>
 
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L53"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L53" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="dbValue,DateTime"></a>
@@ -895,6 +899,10 @@ function main() {
 <dd>
 
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L55"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L55" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="to,seq[DbValue],typedesc"></a>
@@ -905,24 +913,10 @@ function main() {
 <p>Use this proc if the object fields have default values and do not require initialization, e.g. <tt class="docutils literal"><span class="pre">int</span></tt>, <tt class="docutils literal"><span class="pre">string</span></tt>, <tt class="docutils literal"><span class="pre">float</span></tt>.</p>
 <p>If fields require initialization, for example, <tt class="docutils literal"><span class="pre">times.DateTime</span></tt>, use template <tt class="docutils literal"><span class="pre">to</span></tt>. It converts a row to a existing object instance. </p>
 
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
-
-<span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span><span class="Other">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
-
-<span class="Keyword">let</span>
-  <span class="Identifier">row</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">123</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;foo&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">123.321</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">0</span><span class="Other">]</span>
-  <span class="Identifier">obj</span> <span class="Other">=</span> <span class="Identifier">row</span><span class="Other">.</span><span class="Identifier">to</span><span class="Other">(</span><span class="Identifier">Example</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">obj</span><span class="Other">.</span><span class="Identifier">intField</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">obj</span><span class="Other">.</span><span class="Identifier">strField</span> <span class="Operator">==</span> <span class="StringLit">&quot;foo&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">obj</span><span class="Other">.</span><span class="Identifier">floatField</span> <span class="Operator">==</span> <span class="FloatNumber">123.321</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">obj</span><span class="Other">.</span><span class="Identifier">boolField</span> <span class="Operator">==</span> <span class="Identifier">false</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L118"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L118" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="to,openArray[seq[DbValue]],typedesc"></a>
@@ -933,25 +927,10 @@ function main() {
 <p>Use this proc if the object fields have default values and do not require initialization, e.g. <tt class="docutils literal"><span class="pre">int</span></tt>, <tt class="docutils literal"><span class="pre">string</span></tt>, <tt class="docutils literal"><span class="pre">float</span></tt>.</p>
 <p>If fields require initialization, for example, <tt class="docutils literal"><span class="pre">times.DateTime</span></tt>, use template <tt class="docutils literal"><span class="pre">to</span></tt>. It converts an open array of rows to an existing object instance openArray. </p>
 
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
-
-<span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span><span class="Other">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
-
-<span class="Keyword">let</span>
-  <span class="Identifier">rows</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">123</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;foo&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">123.321</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">,</span> <span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">456</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;bar&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">456.654</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">,</span>
-         <span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">789</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;baz&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">789.987</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">]</span>
-  <span class="Identifier">examples</span> <span class="Other">=</span> <span class="Identifier">rows</span><span class="Other">.</span><span class="Identifier">to</span><span class="Other">(</span><span class="Identifier">Example</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">intField</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">strField</span> <span class="Operator">==</span> <span class="StringLit">&quot;bar&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">floatField</span> <span class="Operator">==</span> <span class="FloatNumber">789.987</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">boolField</span> <span class="Operator">==</span> <span class="Identifier">true</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L128"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L128" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="toRow"></a>
@@ -961,28 +940,10 @@ function main() {
 <p>Convert an object into row, i.e. sequence of strings.</p>
 <p>If a custom formatter is provided for a field, it is used for conversion, otherwise <tt class="docutils literal"><span class="pre">$</span></tt> is invoked. </p>
 
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">strutils</span><span class="Other">,</span> <span class="Identifier">times</span><span class="Other">,</span> <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
-
-<span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Operator">?</span><span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
-    <span class="Identifier">tsField</span><span class="Other">:</span> <span class="Identifier">DateTime</span>
-
-<span class="Keyword">let</span>
-  <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">intField</span><span class="Other">:</span> <span class="DecNumber">123</span><span class="Other">,</span> <span class="Identifier">strField</span><span class="Other">:</span> <span class="StringLit">&quot;Foo&quot;</span><span class="Other">,</span> <span class="Identifier">floatField</span><span class="Other">:</span> <span class="FloatNumber">123.321</span><span class="Other">,</span>
-                  <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">,</span> <span class="Identifier">tsField</span><span class="Other">:</span> <span class="StringLit">&quot;2019-08-19 23:32:53+04&quot;</span><span class="Other">.</span><span class="Identifier">parse</span><span class="Other">(</span>
-      <span class="StringLit">&quot;yyyy-MM-dd HH:mm:sszz&quot;</span><span class="Other">,</span> <span class="Identifier">utc</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">)</span>
-  <span class="Identifier">row</span> <span class="Other">=</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">toRow</span><span class="Other">(</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">i</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">s</span> <span class="Operator">==</span> <span class="StringLit">&quot;foo&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">f</span> <span class="Operator">==</span> <span class="FloatNumber">123.321</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">3</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">i</span> <span class="Operator">==</span> <span class="DecNumber">1</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">row</span><span class="Other">[</span><span class="DecNumber">4</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">i</span> <span class="Operator">==</span> <span class="DecNumber">1566243173</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L140"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L140" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="toRows,openArray[]"></a>
@@ -992,27 +953,10 @@ function main() {
 <p>Convert an open array of objects into a sequence of rows.</p>
 <p>If a custom formatter is provided for a field, it is used for conversion, otherwise <tt class="docutils literal"><span class="pre">$</span></tt> is invoked. </p>
 
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">strutils</span><span class="Other">,</span> <span class="Identifier">sequtils</span><span class="Other">,</span> <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
-
-<span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">formatIt</span><span class="Other">:</span> <span class="Operator">?</span><span class="Identifier">it</span><span class="Other">.</span><span class="Identifier">toLowerAscii</span><span class="Other">(</span><span class="Other">)</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
-
-<span class="Keyword">let</span>
-  <span class="Identifier">examples</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">intField</span><span class="Other">:</span> <span class="DecNumber">123</span><span class="Other">,</span> <span class="Identifier">strField</span><span class="Other">:</span> <span class="StringLit">&quot;Foo&quot;</span><span class="Other">,</span> <span class="Identifier">floatField</span><span class="Other">:</span> <span class="FloatNumber">123.321</span><span class="Other">,</span>
-                     <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">intField</span><span class="Other">:</span> <span class="DecNumber">456</span><span class="Other">,</span> <span class="Identifier">strField</span><span class="Other">:</span> <span class="StringLit">&quot;Bar&quot;</span><span class="Other">,</span>
-      <span class="Identifier">floatField</span><span class="Other">:</span> <span class="FloatNumber">456.654</span><span class="Other">,</span> <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">intField</span><span class="Other">:</span> <span class="DecNumber">789</span><span class="Other">,</span> <span class="Identifier">strField</span><span class="Other">:</span> <span class="StringLit">&quot;Baz&quot;</span><span class="Other">,</span>
-      <span class="Identifier">floatField</span><span class="Other">:</span> <span class="FloatNumber">789.987</span><span class="Other">,</span> <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">]</span>
-  <span class="Identifier">rows</span> <span class="Other">=</span> <span class="Identifier">examples</span><span class="Other">.</span><span class="Identifier">toRows</span><span class="Other">(</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">rows</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">i</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">rows</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">s</span> <span class="Operator">==</span> <span class="StringLit">&quot;bar&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">rows</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">f</span> <span class="Operator">==</span> <span class="FloatNumber">789.987</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">rows</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">[</span><span class="DecNumber">3</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">i</span> <span class="Operator">==</span> <span class="DecNumber">0</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L157"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L157" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1028,6 +972,10 @@ function main() {
 <p><tt class="docutils literal"><span class="pre">op</span></tt> should be a proc that accepts <tt class="docutils literal"><span class="pre">DbValue</span></tt> and returns the object field type.</p>
 <p>The proc is called in <tt class="docutils literal"><span class="pre">to</span></tt> template to turn a string from row into a typed object field. </p>
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L21"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L21" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="parseIt.t,untyped"></a>
@@ -1038,6 +986,10 @@ function main() {
 <p><tt class="docutils literal"><span class="pre">op</span></tt> should be an expression with <tt class="docutils literal"><span class="pre">it</span></tt> variable that evaluates to the object field type.</p>
 <p>The expression is invoked in <tt class="docutils literal"><span class="pre">to</span></tt> template to turn a string from row into a typed object field. </p>
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L29"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L29" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="formatter.t"></a>
@@ -1048,6 +1000,10 @@ function main() {
 <p><tt class="docutils literal"><span class="pre">op</span></tt> should be a proc that accepts the object field type and returns <tt class="docutils literal"><span class="pre">DbValue</span></tt>.</p>
 <p>The proc is called in <tt class="docutils literal"><span class="pre">toRow</span></tt> proc to turn a typed object field into a string within a row. </p>
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L37"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L37" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="formatIt.t,untyped"></a>
@@ -1058,6 +1014,10 @@ function main() {
 <p><tt class="docutils literal"><span class="pre">op</span></tt> should be an expression with <tt class="docutils literal"><span class="pre">it</span></tt> variable with the object field type and evaluates to <tt class="docutils literal"><span class="pre">DbValue</span></tt>.</p>
 <p>The expression is invoked in <tt class="docutils literal"><span class="pre">toRow</span></tt> proc to turn a typed object field into a <tt class="docutils literal"><span class="pre">DbValue</span></tt> within a row. </p>
 
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L45"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L45" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="to.t,seq[DbValue],"></a>
@@ -1067,36 +1027,10 @@ function main() {
 <p>Convert row to an existing object instance. String values from row are converted into types of the respective object fields.</p>
 <p>If object fields don't require initialization, you may use the proc that instantiates the object on the fly. This template though can be safely used for all object kinds. </p>
 
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">times</span><span class="Other">,</span> <span class="Identifier">sugar</span>
-
-<span class="Keyword">import</span>
-  <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
-
-<span class="Keyword">proc</span> <span class="Identifier">parseDateTime</span><span class="Other">(</span><span class="Identifier">dbv</span><span class="Other">:</span> <span class="Identifier">DbValue</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DateTime</span> <span class="Other">=</span>
-  <span class="Identifier">dbv</span><span class="Other">.</span><span class="Identifier">s</span><span class="Other">.</span><span class="Identifier">parse</span><span class="Other">(</span><span class="StringLit">&quot;yyyy-MM-dd HH:mm:sszz&quot;</span><span class="Other">,</span> <span class="Identifier">utc</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span>
-
-<span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span><span class="Other">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
-    <span class="Identifier">dtField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">parser</span><span class="Other">:</span> <span class="Identifier">parseDateTime</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">DateTime</span>
-    <span class="Identifier">tsField</span><span class="Other">:</span> <span class="Identifier">DateTime</span>
-
-<span class="Keyword">let</span> <span class="Identifier">row</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">123</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;foo&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">123.321</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;2019-01-21 15:03:21+04&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">1566243173</span><span class="Other">]</span>
-<span class="Keyword">var</span> <span class="Identifier">example</span> <span class="Other">=</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">dtField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">tsField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span>
-<span class="Identifier">row</span><span class="Other">.</span><span class="Identifier">to</span><span class="Other">(</span><span class="Identifier">example</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">intField</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">strField</span> <span class="Operator">==</span> <span class="StringLit">&quot;foo&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">floatField</span> <span class="Operator">==</span> <span class="FloatNumber">123.321</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">boolField</span> <span class="Operator">==</span> <span class="Identifier">true</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">dtField</span> <span class="Operator">==</span>
-    <span class="StringLit">&quot;2019-01-21 15:03:21+04&quot;</span><span class="Other">.</span><span class="Identifier">parse</span><span class="Other">(</span><span class="StringLit">&quot;yyyy-MM-dd HH:mm:sszz&quot;</span><span class="Other">,</span> <span class="Identifier">utc</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">example</span><span class="Other">.</span><span class="Identifier">tsField</span> <span class="Operator">==</span>
-    <span class="StringLit">&quot;2019-08-19 23:32:53+04&quot;</span><span class="Other">.</span><span class="Identifier">parse</span><span class="Other">(</span><span class="StringLit">&quot;yyyy-MM-dd HH:mm:sszz&quot;</span><span class="Other">,</span> <span class="Identifier">utc</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L57"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L57" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="to.t,openArray[seq[DbValue]],seq[T][]"></a>
@@ -1107,36 +1041,10 @@ function main() {
 <p>If the number of rows is higher than the number of objects, extra rows are ignored.</p>
 <p>If the number of objects is higher, unused objects are trimmed away. </p>
 
-<p><strong class="examples_text">Examples:</strong></p>
-<pre class="listing"><span class="Keyword">import</span>
-  <span class="Identifier">times</span><span class="Other">,</span> <span class="Identifier">sugar</span>
-
-<span class="Keyword">import</span>
-  <span class="Identifier">ndb</span> <span class="Operator">/</span> <span class="Identifier">sqlite</span>
-
-<span class="Keyword">proc</span> <span class="Identifier">parseDateTime</span><span class="Other">(</span><span class="Identifier">dbv</span><span class="Other">:</span> <span class="Identifier">DbValue</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DateTime</span> <span class="Other">=</span>
-  <span class="Identifier">dbv</span><span class="Other">.</span><span class="Identifier">s</span><span class="Other">.</span><span class="Identifier">parse</span><span class="Other">(</span><span class="StringLit">&quot;yyyy-MM-dd HH:mm:sszz&quot;</span><span class="Other">,</span> <span class="Identifier">utc</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span>
-
-<span class="Keyword">type</span>
-  <span class="Identifier">Example</span> <span class="Other">=</span> <span class="Keyword">object</span>
-    <span class="Identifier">intField</span><span class="Other">:</span> <span class="Identifier">int</span>
-    <span class="Identifier">strField</span><span class="Other">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">floatField</span><span class="Other">:</span> <span class="Identifier">float</span>
-    <span class="Identifier">boolField</span><span class="Other">:</span> <span class="Identifier">bool</span>
-    <span class="Identifier">dtField</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">parser</span><span class="Other">:</span> <span class="Identifier">parseDateTime</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">DateTime</span>
-
-<span class="Keyword">let</span> <span class="Identifier">rows</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">123</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;foo&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">123.321</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;2019-01-21 15:03:21+04&quot;</span><span class="Other">]</span><span class="Other">,</span>
-          <span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">456</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;bar&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">456.654</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">0</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;2019-02-22 16:14:32+04&quot;</span><span class="Other">]</span><span class="Other">,</span>
-          <span class="Operator">@</span><span class="Other">[</span><span class="Operator">?</span><span class="DecNumber">789</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;baz&quot;</span><span class="Other">,</span> <span class="Operator">?</span><span class="FloatNumber">789.987</span><span class="Other">,</span> <span class="Operator">?</span><span class="DecNumber">1</span><span class="Other">,</span> <span class="Operator">?</span><span class="StringLit">&quot;2019-03-23 17:25:43+04&quot;</span><span class="Other">]</span><span class="Other">]</span>
-<span class="Keyword">var</span> <span class="Identifier">examples</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">dtField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">dtField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">,</span>
-              <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">dtField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">,</span> <span class="Identifier">Example</span><span class="Other">(</span><span class="Identifier">dtField</span><span class="Other">:</span> <span class="Identifier">now</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span><span class="Other">]</span>
-<span class="Identifier">rows</span><span class="Other">.</span><span class="Identifier">to</span><span class="Other">(</span><span class="Identifier">examples</span><span class="Other">)</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">intField</span> <span class="Operator">==</span> <span class="DecNumber">123</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">1</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">strField</span> <span class="Operator">==</span> <span class="StringLit">&quot;bar&quot;</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">2</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">floatField</span> <span class="Operator">==</span> <span class="FloatNumber">789.987</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">boolField</span> <span class="Operator">==</span> <span class="Identifier">true</span>
-<span class="Identifier">doAssert</span> <span class="Identifier">examples</span><span class="Other">[</span><span class="DecNumber">0</span><span class="Other">]</span><span class="Other">.</span><span class="Identifier">dtField</span> <span class="Operator">==</span>
-    <span class="StringLit">&quot;2019-01-21 15:03:21+04&quot;</span><span class="Other">.</span><span class="Identifier">parse</span><span class="Other">(</span><span class="StringLit">&quot;yyyy-MM-dd HH:mm:sszz&quot;</span><span class="Other">,</span> <span class="Identifier">utc</span><span class="Other">(</span><span class="Other">)</span><span class="Other">)</span></pre>
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite/rowutils.nim#L105"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite/rowutils.nim#L105" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -1149,7 +1057,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-16 07:20:08 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-22 18:56:12 UTC</small>
       </div>
     </div>
   </div>

@@ -1,0 +1,23 @@
+SQL Query Generation for SQLite Backend	norm/sqlite/sqlgen.html
+`$`	norm/sqlite/sqlgen.html#$,SqlQuery	sqlgen: `$`(query: SqlQuery): string	
+getTable	norm/sqlite/sqlgen.html#getTable,ObjRepr	sqlgen: getTable(objRepr: ObjRepr): string	
+getTable	norm/sqlite/sqlgen.html#getTable,typedesc	sqlgen: getTable(T: typedesc): string	
+getColumn	norm/sqlite/sqlgen.html#getColumn,FieldRepr	sqlgen: getColumn(fieldRepr: FieldRepr): string	
+getColumns	norm/sqlite/sqlgen.html#getColumns,ObjRepr	sqlgen: getColumns(dbObjRepr: ObjRepr; force = false): seq[string]	
+getColumns	norm/sqlite/sqlgen.html#getColumns.m,typedesc	sqlgen: getColumns(T: typedesc; force = false): untyped	
+getColumns	norm/sqlite/sqlgen.html#getColumns	sqlgen: getColumns(obj: object; force = false): seq[string]	
+genTableSchema	norm/sqlite/sqlgen.html#genTableSchema,ObjRepr	sqlgen: genTableSchema(dbObjRepr: ObjRepr): string	
+genTableSchema	norm/sqlite/sqlgen.html#genTableSchema.m,typedesc	sqlgen: genTableSchema(T: typedesc): string	
+genCreateTableQuery	norm/sqlite/sqlgen.html#genCreateTableQuery,string,string	sqlgen: genCreateTableQuery(tableName, tableSchema: string): SqlQuery	
+genCreateTableQuery	norm/sqlite/sqlgen.html#genCreateTableQuery.m,typedesc	sqlgen: genCreateTableQuery(T: typedesc): string	
+genDropTableQuery	norm/sqlite/sqlgen.html#genDropTableQuery,string	sqlgen: genDropTableQuery(tableName: string): SqlQuery	
+genAddColQuery	norm/sqlite/sqlgen.html#genAddColQuery.m,typedesc	sqlgen: genAddColQuery(field: typedesc): untyped	
+genRenameColQuery	norm/sqlite/sqlgen.html#genRenameColQuery.m,typedesc,string	sqlgen: genRenameColQuery(field: typedesc; oldName: string): untyped	
+genRenameTableQuery	norm/sqlite/sqlgen.html#genRenameTableQuery,string,string	sqlgen: genRenameTableQuery(oldName, newName: string): SqlQuery	
+genCopyQuery	norm/sqlite/sqlgen.html#genCopyQuery.t,typedesc,string	sqlgen: genCopyQuery(T: typedesc; targetTable: string): SqlQuery	
+genInsertQuery	norm/sqlite/sqlgen.html#genInsertQuery,,bool	sqlgen: genInsertQuery(obj: object; force: bool): SqlQuery	
+genGetOneQuery	norm/sqlite/sqlgen.html#genGetOneQuery,,string	sqlgen: genGetOneQuery(obj: object; condition: string): SqlQuery	
+genGetManyQuery	norm/sqlite/sqlgen.html#genGetManyQuery,,string	sqlgen: genGetManyQuery(obj: object; condition: string): SqlQuery	
+genGetAllQuery	norm/sqlite/sqlgen.html#genGetAllQuery.t,typedesc,string	sqlgen: genGetAllQuery(T: typedesc; condition: string): SqlQuery	
+genUpdateQuery	norm/sqlite/sqlgen.html#genUpdateQuery,,bool	sqlgen: genUpdateQuery(obj: object; force: bool): SqlQuery	
+genDeleteQuery	norm/sqlite/sqlgen.html#genDeleteQuery	sqlgen: genDeleteQuery(obj: object): SqlQuery	
