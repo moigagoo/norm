@@ -1,7 +1,6 @@
-######################
+**********************
 Norm: ORM for Nim Apps
-######################
-
+**********************
 
 .. image:: https://travis-ci.com/moigagoo/norm.svg?branch=develop
     :alt: Build Status
@@ -147,7 +146,7 @@ Migrations
 
 
 Schema Migrations
-*****************
+^^^^^^^^^^^^^^^^^
 
 -   ``createTable(T: typedesc, force = false)``
 
@@ -224,7 +223,7 @@ Schema Migrations
 
 
 Data Migrations
-***************
+^^^^^^^^^^^^^^^
 
 -   ``insert``
 -   ``getOne``
