@@ -264,7 +264,6 @@ Data Migrations
 
     Fetch up to a given number of rows from the DB and store them into a sequence of model instances.
 
-
     Available in two flavours:
 
     -   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
