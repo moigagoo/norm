@@ -225,13 +225,60 @@ Schema Migrations
 Data Migrations
 ^^^^^^^^^^^^^^^
 
--   ``insert``
+-   ``insert(obj: var object, force=false)``
+
+    Store a model instance into the DB as a row.
+
+    The input object must be mutable because its ``id`` field, initially equal ``0``, is updated after the insertion to reflect the row ID returned by the DB.
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L48
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L49
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L19
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L20
+
 -   ``getOne``
+
+    Fetch exactly one row from the DB and store it into a model instance.
+
+    There are four flavours of this proc:
+
+    -   ``getOne(T: typedesc, id: int)``
+
+        Fetch row by ID and store it into a new model instance.
+
+    -   ``getOne(obj: var object, id: int)``
+
+        Fetch row by ID and store it into as existing instance.
+
+    -   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
+
+        Fetch the first row that matches the given condition with the given params. Store into a new instance.
+
+    -   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
+
+        Fetch the first row that matches the given condition with the given params. Store into an existing instance.
+
 -   ``getMany``
+
+    Fetch up to a given number of rows from the DB and store them into a sequence of model instances.
+
+
+    Available in two flavours:
+
+    -   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
+
+    -   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
+
 -   ``getAll``
 -   ``update``
 -   ``delete``
--   ``transation``
+
+Transactions
+------------
+
+TODO
 
 
 Contributing
