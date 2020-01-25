@@ -268,9 +268,18 @@ Data Migrations
 
     -   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
+        Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
+
     -   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
--   ``getAll``
+        Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
+
+-   ``getAll(T: typedesc, cond = "1", params: varargs[DbValue, dbValue])``
+
+    Get all rows from a table that match the given condition.
+
+    **Warning:** This is a dangerous operation because you're fetching unknown number of rows, which could be millions and billions. It's much safer to call ``getMany`` with a clearly defined limit and offset.
+
 -   ``update``
 -   ``delete``
 
