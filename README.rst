@@ -1,6 +1,6 @@
-**********************
-Norm: ORM for Nim Apps
-**********************
+***************
+Norm: A Nim ORM
+***************
 
 .. image:: https://travis-ci.com/moigagoo/norm.svg?branch=develop
     :alt: Build Status
