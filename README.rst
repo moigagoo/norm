@@ -471,6 +471,18 @@ Migrations
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L44
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L61
 
+-   ``dropColumns(T: typedesc, cols: openArray[string])``
+
+    PostgreSQL only. Drop all columns of a table.
+
+    Implementation:
+
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L120
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L69
+
 -   ``dropUnusedColumns(T: typedesc)``
 
     Recreate the table from a model, losing unmatching columns in the process. This involves creating a temporary table and copying the data there, then dropping the original table and renaming the temporary one to the original one's name.
