@@ -6,16 +6,24 @@ PostgreSQL Backend
 
 The following Nim types are converted automatically:
 
-================== ====================
-Nim Type           SQLite Type
-================== ====================
-``int``            ``INTEGER``
-``string``         ``TEXT``
-``float``          ``REAL``
-``bool``           ``BOOLEAN``
-``DateTime``       ``TIMESTAMP WITH TIME ZONE``
-================== ====================
+==================== =====================================
+Nim Type             PostgreSQL Type
+==================== =====================================
+``int``              ``INTEGER NOT NULL``
+``string``           ``TEXT NOT NULL``
+``float``            ``REAL NOT NULL``
+``bool``             ``BOOLEAN NOT NULL``
+``DateTime``         ``TIMESTAMP WITH TIME ZONE NOT NULL``
+``Option[int]``      ``INTEGER``
+``Option[string]``   ``TEXT``
+``Option[float]``    ``REAL``
+``Option[bool]``     ``BOOLEAN``
+``Option[DateTime]`` ``TIMESTAMP WITH TIME ZONE NOT NULL``
+==================== =====================================
 ]##
+
+
+{.used.}
 
 
 import strutils, macros, typetraits, logging, options
@@ -257,7 +265,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         Filter using ``cond`` condition.
 
-        Warning! This is a dangerous operation since you don't control the amount of data received. Consider using ``getMany`` for more deterministic data retrieval.
+        **Warning:** This is a dangerous operation since you don't control the amount of data received. Consider using ``getMany`` for more deterministic data retrieval.
         ]##
 
         let getAllQuery = genGetAllQuery(T, cond)

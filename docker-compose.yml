@@ -12,7 +12,7 @@ services:
       - postgres_2
     volumes:
       - .:/usr/src/app
-    command: nimble test -c
+    command: nimble test
   test:
     build: .
     image: norm
@@ -27,4 +27,4 @@ services:
     image: norm
     volumes:
       - .:/usr/src/app
-    command: "nim doc --project /usr/src/app/src/norm.nim"
+    command: nimble docs
