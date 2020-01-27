@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>SQLite Backend</title>
+<title>Procs to Inject <tt class="docutils literal"><span class="pre">id</span></tt> Field into Type Definitions</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -804,7 +804,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">SQLite Backend</h1>
+    <h1 class="title">Procs to Inject <tt class="docutils literal"><span class="pre">id</span></tt> Field into Type Definitions</h1>
     <div class="row">
   <div class="three columns">
   <div id="global-links">
@@ -830,21 +830,11 @@ function main() {
   </ul>
 </li>
 <li>
-  <a class="reference reference-toplevel" href="#17" id="67">Macros</a>
+  <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#dbTypes.m%2Cuntyped"
-    title="dbTypes(body: untyped): untyped"><wbr />db<wbr />Types<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbFromTypes.m%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Btypedesc%5D"
-    title="dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped"><wbr />db<wbr />From<wbr />Types<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped"
-    title="db(connection, user, password, database: string; body: untyped): untyped"><wbr />db<span class="attachedType"></span></a></li>
+      <li><a class="reference" href="#ensureIdFields%2CNimNode"
+    title="ensureIdFields(typeSection: NimNode): NimNode"><wbr />ensure<wbr />Id<wbr />Fields<span class="attachedType"></span></a></li>
 
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#19" id="69">Exports</a>
-  <ul class="simple simple-toc-section">
-    
   </ul>
 </li>
 
@@ -854,76 +844,30 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc"><p>The following Nim types are converted automatically:</p>
-<table border="1" class="docutils"><tr><th>Nim Type</th><th>SQLite Type</th></tr>
-<tr><td><tt class="docutils literal"><span class="pre">int</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">string</span></tt></td><td><tt class="docutils literal"><span class="pre">TEXT NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">float</span></tt></td><td><tt class="docutils literal"><span class="pre">REAL NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">bool</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">DateTime</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[int]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[string]</span></tt></td><td><tt class="docutils literal"><span class="pre">TEXT</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[float]</span></tt></td><td><tt class="docutils literal"><span class="pre">REAL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[bool]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[DateTime]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
-</table><p>Nim <tt class="docutils literal"><span class="pre">true</span></tt> and <tt class="docutils literal"><span class="pre">false</span></tt> values are stored as <tt class="docutils literal"><span class="pre">1</span></tt> and <tt class="docutils literal"><span class="pre">0</span></tt>.</p>
-<p>Nim <tt class="docutils literal"><span class="pre">times.DateTime</span></tt> values are stored as <tt class="docutils literal"><span class="pre">INTEGER</span></tt> Unix epoch timestamps. </p>
+  <p class="module-desc"><p>In order for a type to be usable in DB schema generation, it must have <tt class="docutils literal"><span class="pre">id</span></tt> field marked with <tt class="docutils literal"><span class="pre">pk</span></tt> and <tt class="docutils literal"><span class="pre">ro</span></tt> pragmas.</p>
+<p>This module contains procs to do that for a single type definition and entire type section. </p>
 </p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="sqlite/rowutils.html">sqlite/rowutils</a>, <a class="reference external" href="sqlite/sqlgen.html">sqlite/sqlgen</a>, <a class="reference external" href="objutils.html">objutils</a>, <a class="reference external" href="typedefutils.html">typedefutils</a>
+<a class="reference external" href="objutils.html">objutils</a>
 </dl></div>
-<div class="section" id="17">
-<h1><a class="toc-backref" href="#17">Macros</a></h1>
+<div class="section" id="12">
+<h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="dbTypes.m,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <a href="#dbTypes.m%2Cuntyped"><span class="Identifier">dbTypes</span></a><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<a id="ensureIdFields,NimNode"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#ensureIdFields%2CNimNode"><span class="Identifier">ensureIdFields</span></a><span class="Other">(</span><span class="Identifier">typeSection</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
+    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-
+Check if <tt class="docutils literal"><span class="pre">id</span></tt> field is in all object definitions in the given type section, insert it if it's not.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite.nim#L352"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-0/src/norm/typedefutils.nim#L44"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite.nim#L352" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="dbFromTypes.m,string,string,string,string,openArray[typedesc]"></a>
-<dt><pre><span class="Keyword">macro</span> <a href="#dbFromTypes.m%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Btypedesc%5D"><span class="Identifier">dbFromTypes</span></a><span class="Other">(</span><span class="Identifier">connection</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">database</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                 <span class="Identifier">types</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">typedesc</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-<p>DB models definition. Models are defined as regular Nim objects in regular <tt class="docutils literal"><span class="pre">type</span></tt> sections.</p>
-<p><tt class="docutils literal"><span class="pre">connection</span></tt>, <tt class="docutils literal"><span class="pre">user</span></tt>, <tt class="docutils literal"><span class="pre">password</span></tt>, <tt class="docutils literal"><span class="pre">database</span></tt> are the same args accepted by a standard <tt class="docutils literal"><span class="pre">dbConn</span></tt> instance.</p>
-<p><tt class="docutils literal"><span class="pre">types</span></tt> is a list of predefined types to create table schemas from.</p>
-<p>The macro generates <tt class="docutils literal"><span class="pre">withDb</span></tt> template that wraps all DB interations. </p>
-
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite.nim#L359"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite.nim#L359" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="db.m,string,string,string,string,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <a href="#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped"><span class="Identifier">db</span></a><span class="Other">(</span><span class="Identifier">connection</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">database</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-<p>DB models definition. Models are defined as regular Nim objects in regular <tt class="docutils literal"><span class="pre">type</span></tt> sections.</p>
-<p><tt class="docutils literal"><span class="pre">connection</span></tt>, <tt class="docutils literal"><span class="pre">user</span></tt>, <tt class="docutils literal"><span class="pre">password</span></tt>, <tt class="docutils literal"><span class="pre">database</span></tt> are the same args accepted by a standard <tt class="docutils literal"><span class="pre">dbConn</span></tt> instance.</p>
-<p>The macro generates <tt class="docutils literal"><span class="pre">withDb</span></tt> template that wraps all DB interations. </p>
-
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / orm / --git.commit/tree/version-1-0/src/norm/sqlite.nim#L383"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / orm / --git.commit/edit/devel/src/norm/sqlite.nim#L383" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L44" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
-</dl></div>
-<div class="section" id="19">
-<h1><a class="toc-backref" href="#19">Exports</a></h1>
-<dl class="item">
-<a href="sqlite/rowutils.html#to"><span class="Identifier">to</span></a>, <a href="sqlite/rowutils.html#parseIt"><span class="Identifier">parseIt</span></a>, <a href="sqlite/rowutils.html#parser"><span class="Identifier">parser</span></a>, <a href="sqlite/rowutils.html#dbValue"><span class="Identifier">dbValue</span></a>, <a href="sqlite/rowutils.html#toRows"><span class="Identifier">toRows</span></a>, <a href="sqlite/rowutils.html#to"><span class="Identifier">to</span></a>, <a href="sqlite/rowutils.html#toRow"><span class="Identifier">toRow</span></a>, <a href="sqlite/rowutils.html#to"><span class="Identifier">to</span></a>, <a href="sqlite/rowutils.html#dbValue"><span class="Identifier">dbValue</span></a>, <a class="reference external" href="sqlite/rowutils.html">sqlite/rowutils</a>, <a href="sqlite/rowutils.html#formatIt"><span class="Identifier">formatIt</span></a>, <a href="sqlite/rowutils.html#formatter"><span class="Identifier">formatter</span></a>, <a href="sqlite/rowutils.html#to"><span class="Identifier">to</span></a>, <a href="sqlite/sqlgen.html#genTableSchema"><span class="Identifier">genTableSchema</span></a>, <a href="sqlite/sqlgen.html#genCreateTableQuery"><span class="Identifier">genCreateTableQuery</span></a>, <a href="sqlite/sqlgen.html#genAddColQuery"><span class="Identifier">genAddColQuery</span></a>, <a href="sqlite/sqlgen.html#genRenameColQuery"><span class="Identifier">genRenameColQuery</span></a>, <a href="sqlite/sqlgen.html#genTableSchema"><span class="Identifier">genTableSchema</span></a>, <a href="sqlite/sqlgen.html#genRenameTableQuery"><span class="Identifier">genRenameTableQuery</span></a>, <a href="sqlite/sqlgen.html#genGetAllQuery"><span class="Identifier">genGetAllQuery</span></a>, <a href="sqlite/sqlgen.html#getColumn"><span class="Identifier">getColumn</span></a>, <a href="sqlite/sqlgen.html#getColumns"><span class="Identifier">getColumns</span></a>, <a href="sqlite/sqlgen.html#getTable"><span class="Identifier">getTable</span></a>, <a href="sqlite/sqlgen.html#getTable"><span class="Identifier">getTable</span></a>, <a href="sqlite/sqlgen.html#$"><span class="Identifier">$</span></a>, <a href="sqlite/sqlgen.html#genInsertQuery"><span class="Identifier">genInsertQuery</span></a>, <a href="sqlite/sqlgen.html#genCreateTableQuery"><span class="Identifier">genCreateTableQuery</span></a>, <a href="sqlite/sqlgen.html#genCopyQuery"><span class="Identifier">genCopyQuery</span></a>, <a href="sqlite/sqlgen.html#getColumns"><span class="Identifier">getColumns</span></a>, <a href="sqlite/sqlgen.html#genDropTableQuery"><span class="Identifier">genDropTableQuery</span></a>, <a href="sqlite/sqlgen.html#getColumns"><span class="Identifier">getColumns</span></a>, <a href="sqlite/sqlgen.html#genUpdateQuery"><span class="Identifier">genUpdateQuery</span></a>, <a href="sqlite/sqlgen.html#genDeleteQuery"><span class="Identifier">genDeleteQuery</span></a>, <a href="sqlite/sqlgen.html#genGetOneQuery"><span class="Identifier">genGetOneQuery</span></a>, <a class="reference external" href="sqlite/sqlgen.html">sqlite/sqlgen</a>, <a href="sqlite/sqlgen.html#genGetManyQuery"><span class="Identifier">genGetManyQuery</span></a>, <a href="objutils.html#toObjRepr"><span class="Identifier">toObjRepr</span></a>, <a href="pragmas.html#dbCol"><span class="Identifier">dbCol</span></a>, <a href="objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a>, <a href="pragmas.html#notNull"><span class="Identifier">notNull</span></a>, <a href="pragmas.html#ro"><span class="Identifier">ro</span></a>, <a href="objutils.html#PragmaRepr"><span class="Identifier">PragmaRepr</span></a>, <a href="pragmas.html#table"><span class="Identifier">table</span></a>, <a href="objutils.html#pkFlag"><span class="Identifier">pkFlag</span></a>, <a href="objutils.html#getByName"><span class="Identifier">getByName</span></a>, <a href="objutils.html#pragmaNames"><span class="Identifier">pragmaNames</span></a>, <a href="objutils.html#fieldNames"><span class="Identifier">fieldNames</span></a>, <a href="pragmas.html#default"><span class="Identifier">default</span></a>, <a href="pragmas.html#onUpdate"><span class="Identifier">onUpdate</span></a>, <a href="objutils.html#FieldRepr"><span class="Identifier">FieldRepr</span></a>, <a href="objutils.html#toTypeDef"><span class="Identifier">toTypeDef</span></a>, <a href="pragmas.html#fk"><span class="Identifier">fk</span></a>, <a href="pragmas.html#unique"><span class="Identifier">unique</span></a>, <a href="pragmas.html#dbType"><span class="Identifier">dbType</span></a>, <a href="objutils.html#dot"><span class="Identifier">dot</span></a>, <a href="pragmas.html#check"><span class="Identifier">check</span></a>, <a href="objutils.html#PragmaKind"><span class="Identifier">PragmaKind</span></a>, <a class="reference external" href="pragmas.html">pragmas</a>, <a href="pragmas.html#onDelete"><span class="Identifier">onDelete</span></a>, <a href="pragmas.html#dbTable"><span class="Identifier">dbTable</span></a>, <a href="objutils.html#dot"><span class="Identifier">dot</span></a>, <a href="objutils.html#pkKval"><span class="Identifier">pkKval</span></a>, <a href="pragmas.html#pk"><span class="Identifier">pk</span></a>, <a class="reference external" href="objutils.html">objutils</a>, <a href="objutils.html#SignatureRepr"><span class="Identifier">SignatureRepr</span></a>
 </dl></div>
 
   </div>
@@ -933,7 +877,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-23 08:21:52 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-27 06:28:25 UTC</small>
       </div>
     </div>
   </div>
