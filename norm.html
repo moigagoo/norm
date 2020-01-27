@@ -825,7 +825,9 @@ function main() {
   <ul class="simple simple-toc" id="toc-list">
 <li><a class="reference" id="quickstart_toc" href="#quickstart">Quickstart</a></li>
 <li><a class="reference" id="reference-guide_toc" href="#reference-guide">Reference Guide</a></li>
-<ul class="simple"><li><a class="reference" id="reference-guide-setup_toc" href="#reference-guide-setup">Setup</a></li>
+<ul class="simple"><li><a class="reference" id="reference-guide-model-declaration_toc" href="#reference-guide-model-declaration">Model Declaration</a></li>
+<li><a class="reference" id="reference-guide-connection_toc" href="#reference-guide-connection">Connection</a></li>
+<li><a class="reference" id="reference-guide-setup_toc" href="#reference-guide-setup">Setup</a></li>
 <li><a class="reference" id="reference-guide-teardown_toc" href="#reference-guide-teardown">Teardown</a></li>
 <li><a class="reference" id="reference-guide-create-records_toc" href="#reference-guide-create-records">Create Records</a></li>
 <li><a class="reference" id="reference-guide-read-records_toc" href="#reference-guide-read-records">Read Records</a></li>
@@ -907,31 +909,87 @@ function main() {
   <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">update</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                            <span class="Comment"># Update the record in DB.</span>
   
   <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">delete</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                            <span class="Comment"># Delete the record.</span>
-  <span class="Identifier">echo</span> <span class="StringLit">&quot;Bob ID = &quot;</span><span class="Punctuation">,</span> <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">id</span>                <span class="Comment"># ``id`` is 0 for objects not stored in DB.</span></pre><blockquote><p><dl class="docutils"><dt>withDb:</dt>
-<dd><dl class="docutils"><dt>transaction:                            # Put multiple statements under <tt class="docutils literal"><span class="pre">transaction</span></tt> to run</dt>
-<dd><dl class="docutils"><dt>for i in 1..10:                       # them as a single DB transaction. If any operation fails,</dt>
-<dd><dl class="docutils"><dt>var user = User(                    # the entire transaction is cancelled.</dt>
-<dd>age: 20+i, name: &quot;User &quot; &amp; $i, ssn: some i</dd>
-</dl>
-<p>) insert user</p>
-</dd>
-<dt>withDb:</dt>
-<dd>dropTables()                            # Drop all tables.</dd>
-</dl>
-</dd>
-</dl>
-</dd>
-</dl>
-</p></blockquote>
-<p>See also:</p>
+  <span class="Identifier">echo</span> <span class="StringLit">&quot;Bob ID = &quot;</span><span class="Punctuation">,</span> <span class="Identifier">bob</span><span class="Operator">.</span><span class="Identifier">id</span>                <span class="Comment"># ``id`` is 0 for objects not stored in DB.</span>
+
+<span class="Identifier">withDb</span><span class="Punctuation">:</span>
+  <span class="Identifier">transaction</span><span class="Punctuation">:</span>                            <span class="Comment"># Put multiple statements under ``transaction`` to run</span>
+    <span class="Keyword">for</span> <span class="Identifier">i</span> <span class="Keyword">in</span> <span class="FloatNumber">1.</span><span class="Operator">.</span><span class="DecNumber">10</span><span class="Punctuation">:</span>                       <span class="Comment"># them as a single DB transaction. If any operation fails,</span>
+      <span class="Keyword">var</span> <span class="Identifier">user</span> <span class="Operator">=</span> <span class="Identifier">User</span><span class="Punctuation">(</span>                    <span class="Comment"># the entire transaction is cancelled.</span>
+        <span class="Identifier">age</span><span class="Punctuation">:</span> <span class="DecNumber">20</span><span class="Operator">+</span><span class="Identifier">i</span><span class="Punctuation">,</span>
+        <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;User &quot;</span> <span class="Operator">&amp;</span> <span class="Operator">$</span><span class="Identifier">i</span><span class="Punctuation">,</span>
+        <span class="Identifier">ssn</span><span class="Punctuation">:</span> <span class="Identifier">some</span> <span class="Identifier">i</span>
+      <span class="Punctuation">)</span>
+      <span class="Identifier">insert</span> <span class="Identifier">user</span>
+
+<span class="Identifier">withDb</span><span class="Punctuation">:</span>
+  <span class="Identifier">dropTables</span><span class="Punctuation">(</span><span class="Punctuation">)</span>                            <span class="Comment"># Drop all tables.</span></pre><p>See also:</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm-sample-webapp">Sample app →</a></li>
 <li><a class="reference external" href="theindex.html">API index →</a></li>
 </ul>
 
-<h1><a class="toc-backref" id="reference-guide" href="#reference-guide">Reference Guide</a></h1><p>Listed below are the procs for manipulating tables and rows in Norm.</p>
-<p>These procs can be called in <tt class="docutils literal"><span class="pre">withDb</span></tt> and <tt class="docutils literal"><span class="pre">withCustomDb</span></tt> macros regardless of the backend.</p>
+<h1><a class="toc-backref" id="reference-guide" href="#reference-guide">Reference Guide</a></h1>
+<h2><a class="toc-backref" id="reference-guide-model-declaration" href="#reference-guide-model-declaration">Model Declaration</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">db(connection, user, password, database: string, body: untyped)</span></tt></p>
+<p>Declare models from a type section with object declarations.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L383">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L383</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L382">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L382</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L11">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L11</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L15">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L15</a></li>
+</ul>
+</li>
+<li><p><tt class="docutils literal"><span class="pre">dbFromTypes(connection, user, password, database: string, types: openArray[typedesc])</span></tt></p>
+<p>Declare models from type sections in other modules. The type sections must be wrapped in <tt class="docutils literal"><span class="pre">dbTypes</span></tt>.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L359">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L359</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L358">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L358</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L15">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L15</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L17">https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L17</a></li>
+</ul>
+</li>
+<li><p><tt class="docutils literal"><span class="pre">dbTypes</span></tt></p>
+<p>Make a type section usable as a model declaration in <tt class="docutils literal"><span class="pre">dbFromTypes</span></tt>.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L352">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L352</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L351">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L351</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/models/user.nim">https://github.com/moigagoo/norm/blob/develop/tests/models/user.nim</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/models/pet.nim">https://github.com/moigagoo/norm/blob/develop/tests/models/pet.nim</a></li>
+</ul>
+</li>
+</ul>
 
-<h2><a class="toc-backref" id="reference-guide-setup" href="#reference-guide-setup">Setup</a></h2><blockquote><p><p><tt class="docutils literal"><span class="pre">createTables(force = false)</span></tt></p>
+<h2><a class="toc-backref" id="reference-guide-connection" href="#reference-guide-connection">Connection</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">withDb(body: untyped)</span></tt></p>
+<p>Connect to the DB using credentials defined in <tt class="docutils literal"><span class="pre">db</span></tt> section. The connection is closed on block exit.</p>
+<p>The connection can be accessed via <tt class="docutils literal"><span class="pre">dbConn</span></tt> variable if needed.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L341">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L341</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L340">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L340</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48</a></li>
+</ul>
+</li>
+<li><p><tt class="docutils literal"><span class="pre">withCustomDb(customConnection, customUser, customPassword, customDatabase: string, body: untyped)</span></tt></p>
+<p>Connect to a custom DB. The connection is closed on block exit.</p>
+<p>The connection can be accessed via <tt class="docutils literal"><span class="pre">dbConn</span></tt> variable if needed.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L47">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L47</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L43">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L43</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L270">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L270</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L257">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L257</a></li>
+</ul>
+</li>
+</ul>
+
+<h2><a class="toc-backref" id="reference-guide-setup" href="#reference-guide-setup">Setup</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">createTables(force = false)</span></tt></p>
 <p>Generate and execute DB schema for all models.</p>
 <p><tt class="docutils literal"><span class="pre">force=true</span></tt> prepends <tt class="docutils literal"><span class="pre">DROP TABLE IF EXISTS</span></tt> for all genereated tables.</p>
 <p>Implementation:</p>
@@ -942,7 +1000,8 @@ function main() {
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47</a></li>
 <li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48</a></li>
 </ul>
-</p></blockquote>
+</li>
+</ul>
 
 <h2><a class="toc-backref" id="reference-guide-teardown" href="#reference-guide-teardown">Teardown</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">dropTables(T: typedesc)</span></tt></p>
 <p>Drop tables for all models.</p>
@@ -1216,7 +1275,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-27 11:31:24 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-27 19:59:36 UTC</small>
       </div>
     </div>
   </div>

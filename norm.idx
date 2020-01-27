@@ -1,6 +1,8 @@
 Norm: A Nim ORM	norm.html
 Quickstart	norm.html#quickstart	 Quickstart	
 Reference Guide	norm.html#reference-guide	 Reference Guide	
+Model Declaration	norm.html#reference-guide-model-declaration	  Model Declaration	
+Connection	norm.html#reference-guide-connection	  Connection	
 Setup	norm.html#reference-guide-setup	  Setup	
 Teardown	norm.html#reference-guide-teardown	  Teardown	
 Create Records	norm.html#reference-guide-create-records	  Create Records	
