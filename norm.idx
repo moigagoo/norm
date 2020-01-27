@@ -3,10 +3,10 @@ Quickstart	norm.html#quickstart	 Quickstart
 Reference Guide	norm.html#reference-guide	 Reference Guide	
 Setup	norm.html#reference-guide-setup	  Setup	
 Teardown	norm.html#reference-guide-teardown	  Teardown	
-Insert Rows	norm.html#reference-guide-insert-rows	  Insert Rows	
-Fetch Rows	norm.html#reference-guide-fetch-rows	  Fetch Rows	
-Update Rows	norm.html#reference-guide-update-rows	  Update Rows	
-Delete Rows	norm.html#reference-guide-delete-rows	  Delete Rows	
+Create Records	norm.html#reference-guide-create-records	  Create Records	
+Read Records	norm.html#reference-guide-read-records	  Read Records	
+Update Records	norm.html#reference-guide-update-records	  Update Records	
+Delete Records	norm.html#reference-guide-delete-records	  Delete Records	
 Transactions	norm.html#reference-guide-transactions	  Transactions	
 Migrations	norm.html#reference-guide-migrations	  Migrations	
 Contributing	norm.html#contributing	 Contributing	

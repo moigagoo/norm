@@ -827,10 +827,10 @@ function main() {
 <li><a class="reference" id="reference-guide_toc" href="#reference-guide">Reference Guide</a></li>
 <ul class="simple"><li><a class="reference" id="reference-guide-setup_toc" href="#reference-guide-setup">Setup</a></li>
 <li><a class="reference" id="reference-guide-teardown_toc" href="#reference-guide-teardown">Teardown</a></li>
-<li><a class="reference" id="reference-guide-insert-rows_toc" href="#reference-guide-insert-rows">Insert Rows</a></li>
-<li><a class="reference" id="reference-guide-fetch-rows_toc" href="#reference-guide-fetch-rows">Fetch Rows</a></li>
-<li><a class="reference" id="reference-guide-update-rows_toc" href="#reference-guide-update-rows">Update Rows</a></li>
-<li><a class="reference" id="reference-guide-delete-rows_toc" href="#reference-guide-delete-rows">Delete Rows</a></li>
+<li><a class="reference" id="reference-guide-create-records_toc" href="#reference-guide-create-records">Create Records</a></li>
+<li><a class="reference" id="reference-guide-read-records_toc" href="#reference-guide-read-records">Read Records</a></li>
+<li><a class="reference" id="reference-guide-update-records_toc" href="#reference-guide-update-records">Update Records</a></li>
+<li><a class="reference" id="reference-guide-delete-records_toc" href="#reference-guide-delete-records">Delete Records</a></li>
 <li><a class="reference" id="reference-guide-transactions_toc" href="#reference-guide-transactions">Transactions</a></li>
 <li><a class="reference" id="reference-guide-migrations_toc" href="#reference-guide-migrations">Migrations</a></li>
 </ul><li><a class="reference" id="contributing_toc" href="#contributing">Contributing</a></li>
@@ -959,7 +959,7 @@ function main() {
 </li>
 </ul>
 
-<h2><a class="toc-backref" id="reference-guide-insert-rows" href="#reference-guide-insert-rows">Insert Rows</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">insert(obj: var object, force=false)</span></tt></p>
+<h2><a class="toc-backref" id="reference-guide-create-records" href="#reference-guide-create-records">Create Records</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">insert(obj: var object, force=false)</span></tt></p>
 <p>Store a model instance into the DB as a row.</p>
 <p>The input object must be mutable because its <tt class="docutils literal"><span class="pre">id</span></tt> field, initially equal <tt class="docutils literal"><span class="pre">0</span></tt>, is updated after the insertion to reflect the row ID returned by the DB.</p>
 <p>Implementation:</p>
@@ -975,7 +975,7 @@ function main() {
 </li>
 </ul>
 
-<h2><a class="toc-backref" id="reference-guide-fetch-rows" href="#reference-guide-fetch-rows">Fetch Rows</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">getOne(T: typedesc, id: int)</span></tt></p>
+<h2><a class="toc-backref" id="reference-guide-read-records" href="#reference-guide-read-records">Read Records</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">getOne(T: typedesc, id: int)</span></tt></p>
 <p>Fetch one row by ID and store it into a new model instance.</p>
 <p>Implementation:</p>
 <ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L223">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L223</a></li>
@@ -1056,13 +1056,54 @@ function main() {
 </li>
 </ul>
 
-<h2><a class="toc-backref" id="reference-guide-update-rows" href="#reference-guide-update-rows">Update Rows</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">update</span></tt></li>
+<h2><a class="toc-backref" id="reference-guide-update-records" href="#reference-guide-update-records">Update Records</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">update(obj: object, force = false)</span></tt></p>
+<p>Update a record in the DB with the current field values of a model instance.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L279">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L279</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L284">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L284</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L224">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L224</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L210">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L210</a></li>
+</ul>
+</li>
 </ul>
 
-<h2><a class="toc-backref" id="reference-guide-delete-rows" href="#reference-guide-delete-rows">Delete Rows</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">delete</span></tt></li>
+<h2><a class="toc-backref" id="reference-guide-delete-records" href="#reference-guide-delete-records">Delete Records</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">delete(obj: var object)</span></tt></p>
+<p>Delete a record from the DB by ID from a model instance. The instance's <tt class="docutils literal"><span class="pre">id</span></tt> fields is set to <tt class="docutils literal"><span class="pre">0</span></tt>.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L293">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L293</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L298">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L298</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L240">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L240</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L226">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L226</a></li>
+</ul>
+</li>
 </ul>
 
-<h2><a class="toc-backref" id="reference-guide-transactions" href="#reference-guide-transactions">Transactions</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">transaction</span></tt></li>
+<h2><a class="toc-backref" id="reference-guide-transactions" href="#reference-guide-transactions">Transactions</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">transaction(transactionBody: untyped)</span></tt></p>
+<p>Wrap statements in a <tt class="docutils literal"><span class="pre">transaction</span></tt> block to run them as a single DB transaction: if any statements fails, the entire transaction is cancelled.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L304">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L304</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L309">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L309</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L95">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L95</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L106">https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L106</a></li>
+</ul>
+</li>
+<li><p><tt class="docutils literal"><span class="pre">rollback</span></tt></p>
+<p>Raise <tt class="docutils literal"><span class="pre">RollbackError</span></tt> that is catched inside a <tt class="docutils literal"><span class="pre">transaction</span></tt> block and cancels the transaction.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L59">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L59</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L55">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L55</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L107">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L107</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L114">https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L114</a></li>
+</ul>
+</li>
 </ul>
 
 <h2><a class="toc-backref" id="reference-guide-migrations" href="#reference-guide-migrations">Migrations</a></h2><p><strong>Note:</strong> Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.</p>
@@ -1175,7 +1216,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-27 09:10:21 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-27 11:07:20 UTC</small>
       </div>
     </div>
   </div>
