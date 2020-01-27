@@ -1,7 +1,3 @@
-##[
-######################
-Norm: ORM for Nim Apps
-######################
-]##
+## .. include:: ../README.rst
 
 import norm/[sqlite, postgres, objutils, pragmas, typedefutils]
