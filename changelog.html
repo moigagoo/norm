@@ -16,7 +16,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>PostgreSQL Backend</title>
+<title>Changelog</title>
 <style type="text/css" >
 /*
 Stylesheet for use with Docutils/rst2html.
@@ -804,128 +804,106 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">PostgreSQL Backend</h1>
-    <div class="row">
-  <div class="three columns">
-  <div id="global-links">
-    <ul class="simple">
-    </ul>
-  </div>
-  <div id="searchInputDiv">
-    Search: <input type="text" id="searchInput"
-      onkeyup="search()" />
-  </div>
-  <div>
-    Group by:
-    <select onchange="groupBy(this.value)">
-      <option value="section">Section</option>
-      <option value="type">Type</option>
-    </select>
-  </div>
-  <ul class="simple simple-toc" id="toc-list">
-<li>
-  <a class="reference reference-toplevel" href="#6" id="56">Imports</a>
-  <ul class="simple simple-toc-section">
-    
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#17" id="67">Macros</a>
-  <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#dbTypes.m%2Cuntyped"
-    title="dbTypes(body: untyped): untyped"><wbr />db<wbr />Types<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbFromTypes.m%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Btypedesc%5D"
-    title="dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped"><wbr />db<wbr />From<wbr />Types<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped"
-    title="db(connection, user, password, database: string; body: untyped): untyped"><wbr />db<span class="attachedType"></span></a></li>
-
-  </ul>
-</li>
-<li>
-  <a class="reference reference-toplevel" href="#19" id="69">Exports</a>
-  <ul class="simple simple-toc-section">
-    
-  </ul>
-</li>
-
+    <h1 class="title">Changelog</h1>
+    <ul class="simple"><li>[!]—backward incompatible change</li>
+<li>[+]—new feature</li>
+<li>[f]—bugfix</li>
+<li>[r]—refactoring</li>
+<li>[t]—test suite improvement</li>
 </ul>
 
-  </div>
-  <div class="nine columns" id="content">
-  <div id="tocRoot"></div>
-  
-  <p class="module-desc"><p>The following Nim types are converted automatically:</p>
-<table border="1" class="docutils"><tr><th>Nim Type</th><th>PostgreSQL Type</th></tr>
-<tr><td><tt class="docutils literal"><span class="pre">int</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">string</span></tt></td><td><tt class="docutils literal"><span class="pre">TEXT NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">float</span></tt></td><td><tt class="docutils literal"><span class="pre">REAL NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">bool</span></tt></td><td><tt class="docutils literal"><span class="pre">BOOLEAN NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">DateTime</span></tt></td><td><tt class="docutils literal"><span class="pre">TIMESTAMP WITH TIME ZONE NOT NULL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[int]</span></tt></td><td><tt class="docutils literal"><span class="pre">INTEGER</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[string]</span></tt></td><td><tt class="docutils literal"><span class="pre">TEXT</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[float]</span></tt></td><td><tt class="docutils literal"><span class="pre">REAL</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[bool]</span></tt></td><td><tt class="docutils literal"><span class="pre">BOOLEAN</span></tt></td></tr>
-<tr><td><tt class="docutils literal"><span class="pre">Option[DateTime]</span></tt></td><td><tt class="docutils literal"><span class="pre">TIMESTAMP WITH TIME ZONE NOT NULL</span></tt></td></tr>
-</table></p>
-  <div class="section" id="6">
-<h1><a class="toc-backref" href="#6">Imports</a></h1>
-<dl class="item">
-<a class="reference external" href="objutils.html">objutils</a>, <a class="reference external" href="typedefutils.html">typedefutils</a>
-</dl></div>
-<div class="section" id="17">
-<h1><a class="toc-backref" href="#17">Macros</a></h1>
-<dl class="item">
-<a id="dbTypes.m,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <a href="#dbTypes.m%2Cuntyped"><span class="Identifier">dbTypes</span></a><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
+<h1 id="Z1dot1dot0-january-27-2020">1.1.0 (January 27, 2020)</h1><ul class="simple"><li><p>[!] Deprecate <tt class="docutils literal"><span class="pre">notNull</span></tt> pragma. <tt class="docutils literal"><span class="pre">NOT NULL</span></tt> is the default for all types except <tt class="docutils literal"><span class="pre">Option</span></tt>.</p>
+<p>To set <tt class="docutils literal"><span class="pre">NOT NULL</span></tt> constraint for custom DB types, add it directly to <tt class="docutils literal"><span class="pre">dbType</span></tt>, e.g. <tt class="docutils literal"><span class="pre">{.dbType: &quot;INTEGER NOT NULL&quot;.}</span></tt>.</p>
+</li>
+<li>[!] Rename pragma <tt class="docutils literal"><span class="pre">table</span></tt> to <tt class="docutils literal"><span class="pre">dbTable</span></tt>.</li>
+<li>[!] Deprecate <tt class="docutils literal"><span class="pre">default</span></tt> pragma. Default values are added to tables by default.</li>
+<li>[!][+] Rewrite PostgreSQL backend to use <a class="reference external" href="https://github.com/xzfc/ndb.nim">ndb</a>, which adds <tt class="docutils literal"><span class="pre">NULL</span></tt> support via <tt class="docutils literal"><span class="pre">Option</span></tt> type similarly to SQLite backend.</li>
+<li>[+] Add <tt class="docutils literal"><span class="pre">transaction</span></tt> macro to run multiple commands in a transaction and <tt class="docutils literal"><span class="pre">rollback</span></tt> proc to safely interrupt a transaction.</li>
+<li>[+] Add <tt class="docutils literal"><span class="pre">createTable</span></tt> and <tt class="docutils literal"><span class="pre">dropTable</span></tt>.</li>
+<li>[+] SQLite: Add means to write migrations: <tt class="docutils literal"><span class="pre">addColumn</span></tt>, <tt class="docutils literal"><span class="pre">dropUnusedColumns</span></tt>, <tt class="docutils literal"><span class="pre">renameColumnFrom</span></tt>, and <tt class="docutils literal"><span class="pre">renameTableFrom</span></tt>.</li>
+<li>[+] PostgreSQL: Add means to writemigrations: <tt class="docutils literal"><span class="pre">addColumn</span></tt>, <tt class="docutils literal"><span class="pre">dropColumns</span></tt>, <tt class="docutils literal"><span class="pre">dropUnusedColumns</span></tt>, <tt class="docutils literal"><span class="pre">renameColumnFrom</span></tt>, and <tt class="docutils literal"><span class="pre">renameTableFrom</span></tt>.</li>
+<li>[+] Add support for <tt class="docutils literal"><span class="pre">int64</span></tt> field type.</li>
+<li>[+] Add <tt class="docutils literal"><span class="pre">getAll</span></tt> template to get all records without limit or offset.</li>
+<li>[r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.</li>
+<li>[f] Fix &quot;unreachable statement&quot; compile error for certain SQLite use cases.</li>
+</ul>
+
+<h1 id="Z1dot0dot17-september-12-2019">1.0.17 (September 12, 2019)</h1><ul class="simple"><li>[f] Fixed table schema generation for <tt class="docutils literal"><span class="pre">Positive</span></tt> and <tt class="docutils literal"><span class="pre">Natural</span></tt> types: they used to be stored as <tt class="docutils literal"><span class="pre">TEXT</span></tt>, now they are stored as <tt class="docutils literal"><span class="pre">INTEGER</span></tt>. Also, fixed <a class="reference external" href="https://github.com/moigagoo/norm/issues/28">#28</a>.</li>
+</ul>
+
+<h1 id="Z1dot0dot16-september-11-2019">1.0.16 (September 11, 2019)</h1><ul class="simple"><li>[f] Added missing <tt class="docutils literal"><span class="pre">strutils</span></tt> export to eliminate <tt class="docutils literal"><span class="pre">Error: undeclared identifier: '%'</span></tt> and fix <a class="reference external" href="https://github.com/moigagoo/norm/issues/27">#27</a>.</li>
+<li>[r] <tt class="docutils literal"><span class="pre">genTableSchema`` now returns ``SqlQuery</span></tt> instead of <tt class="docutils literal"><span class="pre">string</span></tt> to be in line with the other <tt class="docutils literal"><span class="pre">gen*</span></tt> procs.</li>
+</ul>
+
+<h1 id="Z1dot0dot15-september-06-2019">1.0.15 (September 06, 2019)</h1><ul class="simple"><li>[+] Add <tt class="docutils literal"><span class="pre">dbTypes</span></tt> macro to mark existing type sections to be usable in DB schema generation.</li>
+<li>[+] Add <tt class="docutils literal"><span class="pre">dbFromTypes</span></tt> macro to define DB schema from existing types. This is an alternative to defining the entire schema under <tt class="docutils literal"><span class="pre">db</span></tt> macro.</li>
+<li>[f] PostgreSQL: <tt class="docutils literal"><span class="pre">times.Datetime</span></tt> are now explicitly stored in UTC timezone.</li>
+<li>[r] Move row-object conversion and SQL query generation into backend-specific submodules: <tt class="docutils literal"><span class="pre">sqlite/rowutils.nim</span></tt>, <tt class="docutils literal"><span class="pre">sqlite/sqlgen.nim</span></tt>, <tt class="docutils literal"><span class="pre">postgres/rowutils.nim</span></tt>, <tt class="docutils literal"><span class="pre">postgres/sqlgen.nim</span></tt>.</li>
+<li>[r] Move procs to inject <tt class="docutils literal"><span class="pre">id</span></tt> field in type definitions into a separate module <tt class="docutils literal"><span class="pre">typedefutils.nim</span></tt>.</li>
+</ul>
+
+<h1 id="Z1dot0dot14-august-21-2019">1.0.14 (August 21, 2019)</h1><ul class="simple"><li>[+] PostgreSQL: Support <tt class="docutils literal"><span class="pre">bool</span></tt> type.</li>
+<li>[+] SQLite, PostgreSQL: Support <tt class="docutils literal"><span class="pre">times.DateTime</span></tt> type.</li>
+</ul>
+
+<h1 id="Z1dot0dot13-august-16-2019">1.0.13 (August 16, 2019)</h1><ul class="simple"><li>[f] SQLite: <tt class="docutils literal"><span class="pre">TEXT</span></tt> type fields would be created for <tt class="docutils literal"><span class="pre">bool</span></tt> type object fields, whereas <tt class="docutils literal"><span class="pre">INTEGER</span></tt> should have been used.</li>
+</ul>
+
+<h1 id="Z1dot0dot12-august-15-2019">1.0.12 (August 15, 2019)</h1><ul class="simple"><li>[!] <tt class="docutils literal"><span class="pre">formatIt</span></tt> expression must evaluate to <tt class="docutils literal"><span class="pre">DbValue</span></tt>, implicit conversion has been removed.</li>
+<li>[+] SQLite: Added boolean type conversion. Nim bools are stored as 1 and 0 in SQLite. SQLite's 0's are converted to <tt class="docutils literal"><span class="pre">false</span></tt>, any other number—to <tt class="docutils literal"><span class="pre">true</span></tt>.</li>
+</ul>
+
+<h1 id="Z1dot0dot11-june-15-2019">1.0.11 (june 15, 2019)</h1><ul class="simple"><li>[!] SQLite: Switch to <a class="reference external" href="https://github.com/xzfc/ndb.nim">ndb</a>.</li>
+<li>[!] SQLite: Non-<tt class="docutils literal"><span class="pre">Option</span></tt> non-custom types are <tt class="docutils literal"><span class="pre">NOT NULL`` by default. - [+] SQLite: Support inserting and retreiving ``NULL</span></tt> values with <tt class="docutils literal"><span class="pre">Option</span></tt> types.</li>
+<li>[+] SQLite, PostgreSQL: Add <tt class="docutils literal"><span class="pre">withCustomDb</span></tt> to run DB procs on a non-default DB (i.e. not the one defined in <tt class="docutils literal"><span class="pre">db</span></tt> declaration).</li>
+<li>[r] Replace <tt class="docutils literal"><span class="pre">type</span></tt> with <tt class="docutils literal"><span class="pre">typedesc</span></tt> and <tt class="docutils literal"><span class="pre">typeof</span></tt> where it is not a type definition.</li>
+</ul>
+
+<h1 id="Z1dot0dot10-june-6-2019">1.0.10 (june 6, 2019)</h1><ul class="simple"><li>[r] Rename <tt class="docutils literal"><span class="pre">getUpdateQuery</span></tt> to <tt class="docutils literal"><span class="pre">genUpdateQuery</span></tt>.</li>
+<li>[f] Fix compatibility with nim 0.20.0.</li>
+</ul>
+
+<h1 id="Z1dot0dot9-may-8-2019">1.0.9 (may 8, 2019)</h1><ul class="simple"><li>[!] Change signatures for <tt class="docutils literal"><span class="pre">getMany</span></tt> and <tt class="docutils literal"><span class="pre">getOne</span></tt>: instead of <tt class="docutils literal"><span class="pre">where</span></tt> and <tt class="docutils literal"><span class="pre">orderBy</span></tt> args there's a single <tt class="docutils literal"><span class="pre">cond</span></tt> arg.</li>
+<li>[+] Add <tt class="docutils literal"><span class="pre">params</span></tt> arg to <tt class="docutils literal"><span class="pre">getMany</span></tt> and <tt class="docutils literal"><span class="pre">getone</span></tt> to allow safe value insertion in SQL queries.</li>
+<li>[+] Add <tt class="docutils literal"><span class="pre">getOne(cond: string, params: varargs[string, `$`])</span></tt> procs to query a single record by condition.</li>
+</ul>
+
+<h1 id="Z1dot0dot8-april-30-2019">1.0.8 (april 30, 2019)</h1><ul class="simple"><li>[+] SQLite: Add <tt class="docutils literal"><span class="pre">onUpdate</span></tt> and <tt class="docutils literal"><span class="pre">onDelete</span></tt> pragmas.</li>
+<li>[+] SQLite: Add <tt class="docutils literal"><span class="pre">unique</span></tt> pragma.</li>
+<li>[f] SQLite: Add support for multiple foreign keys.</li>
+<li>[f] SQLite: Enable foreign keys for all connections.</li>
+<li>[t] Add tests for multiple foreign keys.</li>
+</ul>
+
+<h1 id="Z1dot0dot7-march-21-2019">1.0.7 (march 21, 2019)</h1><ul class="simple"><li>[+] Add <tt class="docutils literal"><span class="pre">orderBy</span></tt> argument to <tt class="docutils literal"><span class="pre">getMany</span></tt> procs.</li>
+</ul>
+
+<h1 id="Z1dot0dot6-march-21-2019">1.0.6 (march 21, 2019)</h1><ul class="simple"><li>[+] Log all generated SQL statements as debug level logs.</li>
+</ul>
+
+<h1 id="Z1dot0dot5-march-18-2019">1.0.5 (march 18, 2019)</h1><ul class="simple"><li>[+] Do not require <tt class="docutils literal"><span class="pre">chronicles</span></tt> package.</li>
+</ul>
+
+<h1 id="Z1dot0dot4-march-3-2019">1.0.4 (march 3, 2019)</h1><ul class="simple"><li>[+] Add <tt class="docutils literal"><span class="pre">where</span></tt> lookup to <tt class="docutils literal"><span class="pre">getMany</span></tt> procs.</li>
+</ul>
+
+<h1 id="Z1dot0dot3-march-2-2019">1.0.3 (march 2, 2019)</h1><ul class="simple"><li>[r] objutils: Rename <tt class="docutils literal"><span class="pre">[]</span></tt> field accessor to <tt class="docutils literal"><span class="pre">dot</span></tt> to avoid collisions with <tt class="docutils literal"><span class="pre">tables</span></tt> module.</li>
+</ul>
+
+<h1 id="Z1dot0dot2-march-1-2019">1.0.2 (march 1, 2019)</h1><ul class="simple"><li>[!] Procs defined in <tt class="docutils literal"><span class="pre">db</span></tt> macro are now passed as is to the resulting code and are not forced inside <tt class="docutils literal"><span class="pre">withdb</span></tt> template.</li>
+<li>[+] Allow to override column names for fields with <tt class="docutils literal"><span class="pre">dbCol</span></tt> pragma.</li>
+</ul>
+
+<h1 id="Z1dot0dot1-february-28-2019">1.0.1 (february 28, 2019)</h1><ul class="simple"><li>[+] Respect custom field parsers and formatters.</li>
+<li>[+] rowutils: respect <tt class="docutils literal"><span class="pre">ro</span></tt> pragma in <tt class="docutils literal"><span class="pre">toRow</span></tt> proc.</li>
+<li>[+] objutils: respect <tt class="docutils literal"><span class="pre">ro</span></tt> pragma in <tt class="docutils literal"><span class="pre">fieldnames</span></tt> proc.</li>
+<li>[t] Type conversion: fix issue with incorrect conversion of field named <tt class="docutils literal"><span class="pre">name</span></tt>.</li>
+</ul>
+
+<h1 id="Z1dot0dot0-february-27-2019">1.0.0 (february 27, 2019)</h1><ul class="simple"><li>🎉 initial release.</li>
+</ul>
 
 
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-0/src/norm/postgres.nim#L351"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L351" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="dbFromTypes.m,string,string,string,string,openArray[typedesc]"></a>
-<dt><pre><span class="Keyword">macro</span> <a href="#dbFromTypes.m%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Btypedesc%5D"><span class="Identifier">dbFromTypes</span></a><span class="Other">(</span><span class="Identifier">connection</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">database</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                 <span class="Identifier">types</span><span class="Other">:</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">typedesc</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-<p>DB models definition. Models are defined as regular Nim objects in regular <tt class="docutils literal"><span class="pre">type</span></tt> sections.</p>
-<p><tt class="docutils literal"><span class="pre">connection</span></tt>, <tt class="docutils literal"><span class="pre">user</span></tt>, <tt class="docutils literal"><span class="pre">password</span></tt>, <tt class="docutils literal"><span class="pre">database</span></tt> are the same args accepted by a standard <tt class="docutils literal"><span class="pre">dbConn</span></tt> instance.</p>
-<p><tt class="docutils literal"><span class="pre">types</span></tt> is a list of predefined types to create table schemas from.</p>
-<p>The macro generates <tt class="docutils literal"><span class="pre">withDb</span></tt> template that wraps all DB interations. </p>
-
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-0/src/norm/postgres.nim#L358"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L358" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-<a id="db.m,string,string,string,string,untyped"></a>
-<dt><pre><span class="Keyword">macro</span> <a href="#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped"><span class="Identifier">db</span></a><span class="Other">(</span><span class="Identifier">connection</span><span class="Other">,</span> <span class="Identifier">user</span><span class="Other">,</span> <span class="Identifier">password</span><span class="Other">,</span> <span class="Identifier">database</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-<p>DB models definition. Models are defined as regular Nim objects in regular <tt class="docutils literal"><span class="pre">type</span></tt> sections.</p>
-<p><tt class="docutils literal"><span class="pre">connection</span></tt>, <tt class="docutils literal"><span class="pre">user</span></tt>, <tt class="docutils literal"><span class="pre">password</span></tt>, <tt class="docutils literal"><span class="pre">database</span></tt> are the same args accepted by a standard <tt class="docutils literal"><span class="pre">dbConn</span></tt> instance.</p>
-<p>The macro generates <tt class="docutils literal"><span class="pre">withDb</span></tt> template that wraps all DB interations. </p>
-
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-0/src/norm/postgres.nim#L382"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L382" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-
-</dl></div>
-<div class="section" id="19">
-<h1><a class="toc-backref" href="#19">Exports</a></h1>
-<dl class="item">
-<a href="objutils.html#toObjRepr"><span class="Identifier">toObjRepr</span></a>, <a href="pragmas.html#dbCol"><span class="Identifier">dbCol</span></a>, <a href="objutils.html#ObjRepr"><span class="Identifier">ObjRepr</span></a>, <a href="pragmas.html#notNull"><span class="Identifier">notNull</span></a>, <a href="pragmas.html#ro"><span class="Identifier">ro</span></a>, <a href="objutils.html#PragmaRepr"><span class="Identifier">PragmaRepr</span></a>, <a href="pragmas.html#table"><span class="Identifier">table</span></a>, <a href="objutils.html#pkFlag"><span class="Identifier">pkFlag</span></a>, <a href="objutils.html#getByName"><span class="Identifier">getByName</span></a>, <a href="objutils.html#pragmaNames"><span class="Identifier">pragmaNames</span></a>, <a href="objutils.html#fieldNames"><span class="Identifier">fieldNames</span></a>, <a href="pragmas.html#default"><span class="Identifier">default</span></a>, <a href="pragmas.html#onUpdate"><span class="Identifier">onUpdate</span></a>, <a href="objutils.html#FieldRepr"><span class="Identifier">FieldRepr</span></a>, <a href="objutils.html#toTypeDef"><span class="Identifier">toTypeDef</span></a>, <a href="pragmas.html#fk"><span class="Identifier">fk</span></a>, <a href="pragmas.html#unique"><span class="Identifier">unique</span></a>, <a href="pragmas.html#dbType"><span class="Identifier">dbType</span></a>, <a href="objutils.html#dot"><span class="Identifier">dot</span></a>, <a href="pragmas.html#check"><span class="Identifier">check</span></a>, <a href="objutils.html#PragmaKind"><span class="Identifier">PragmaKind</span></a>, <a class="reference external" href="pragmas.html">pragmas</a>, <a href="pragmas.html#onDelete"><span class="Identifier">onDelete</span></a>, <a href="pragmas.html#dbTable"><span class="Identifier">dbTable</span></a>, <a href="objutils.html#dot"><span class="Identifier">dot</span></a>, <a href="objutils.html#pkKval"><span class="Identifier">pkKval</span></a>, <a href="pragmas.html#pk"><span class="Identifier">pk</span></a>, <a class="reference external" href="objutils.html">objutils</a>, <a href="objutils.html#SignatureRepr"><span class="Identifier">SignatureRepr</span></a>
-</dl></div>
-
-  </div>
-</div>
 
     <div class="row">
       <div class="twelve-columns footer">
