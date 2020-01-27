@@ -158,8 +158,8 @@ Teardown
 
 
 
-Insert Rows
------------
+Create Records
+--------------
 
 -   ``insert(obj: var object, force=false)``
 
@@ -180,8 +180,8 @@ Insert Rows
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L20
 
 
-Fetch Rows
-----------
+Read Records
+------------
 
 -   ``getOne(T: typedesc, id: int)``
 
@@ -285,22 +285,57 @@ Fetch Rows
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
 
 
-Update Rows
------------
+Update Records
+--------------
 
--   ``update``
+-   ``update(obj: object, force = false)``
+
+    Update a record in the DB with the current field values of a model instance.
 
 
-Delete Rows
------------
+    Implementation:
 
--   ``delete``
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L279
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L284
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L224
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L210
+
+
+Delete Records
+--------------
+
+-   ``delete(obj: var object)``
+
+    Delete a record from the DB by ID from a model instance. The instance's ``id`` fields is set to ``0``.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L293
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L298
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L240
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L226
 
 
 Transactions
 ------------
 
 -   ``transaction``
+
+    Implementation:
+
+    -   SQLite:
+    -   PostgreSQL:
+
+    Tests:
+
+    -   asd
+    -   asd
 
 
 Migrations
