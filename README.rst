@@ -296,7 +296,7 @@ Update Records
     Implementation:
 
     -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L279
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L284
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L284
 
     Tests:
 
@@ -314,7 +314,7 @@ Delete Records
     Implementation:
 
     -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L293
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L298
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L298
 
     Tests:
 
@@ -325,17 +325,33 @@ Delete Records
 Transactions
 ------------
 
--   ``transaction``
+-   ``transaction(transactionBody: untyped)``
+
+    Wrap statements in a ``transaction`` block to run them as a single DB transaction: if any statements fails, the entire transaction is cancelled.
 
     Implementation:
 
-    -   SQLite:
-    -   PostgreSQL:
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L304
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L309
 
     Tests:
 
-    -   asd
-    -   asd
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L95
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L106
+
+-   ``rollback``
+
+    Raise ``RollbackError`` that is catched inside a ``transaction`` block and cancels the transaction.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L59
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L55
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L107
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L114
 
 
 Migrations
