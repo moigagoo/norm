@@ -935,26 +935,26 @@ function main() {
 <p>Generate and execute DB schema for all models.</p>
 <p><tt class="docutils literal"><span class="pre">force=true</span></tt> prepends <tt class="docutils literal"><span class="pre">DROP TABLE IF EXISTS</span></tt> for all genereated tables.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L95">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L95</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L91">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L91</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L95">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L95</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L91">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L91</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L47">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L47</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L48">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L48</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48</a></li>
 </ul>
 </p></blockquote>
 
 <h2><a class="toc-backref" id="reference-guide-teardown" href="#reference-guide-teardown">Teardown</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">dropTables(T: typedesc)</span></tt></p>
 <p>Drop tables for all models.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L70">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L70</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L66">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L66</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L70">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L70</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L66">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L66</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L255">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L255</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L90">https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L90</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L85">https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L85</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L255">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L255</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L90">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L90</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L85">https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L85</a></li>
 </ul>
 </li>
 </ul>
@@ -963,14 +963,14 @@ function main() {
 <p>Store a model instance into the DB as a row.</p>
 <p>The input object must be mutable because its <tt class="docutils literal"><span class="pre">id</span></tt> field, initially equal <tt class="docutils literal"><span class="pre">0</span></tt>, is updated after the insertion to reflect the row ID returned by the DB.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L168">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L168</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L168">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L168</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L48">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L48</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L49">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L49</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L19">https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L19</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L20">https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L20</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L48">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L48</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L49">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L49</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L19">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L19</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L20">https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L20</a></li>
 </ul>
 </li>
 </ul>
@@ -978,80 +978,80 @@ function main() {
 <h2><a class="toc-backref" id="reference-guide-fetch-rows" href="#reference-guide-fetch-rows">Fetch Rows</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">getOne(T: typedesc, id: int)</span></tt></p>
 <p>Fetch one row by ID and store it into a new model instance.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L223">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L223</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L228">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L228</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L223">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L223</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L228">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L228</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127</a></li>
 </ul>
 </li>
 </ul>
 <ul class="simple"><li><p><tt class="docutils literal"><span class="pre">getOne(obj: var object, id: int)</span></tt></p>
 <p>Fetch one row by ID and store it into as existing instance.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L209">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L209</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L214">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L214</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L209">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L209</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L214">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L214</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127</a></li>
 </ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch the first row that matches the given condition. Store into a new instance.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L201">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L201</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L206">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L206</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L201">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L201</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L206">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L206</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127</a></li>
 </ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch the first row that matches the given condition. Store into an existing instance.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L183">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L183</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L188">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L188</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L183">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L183</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L188">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L188</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127</a></li>
 </ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getMany(T: typedesc, limit: int, offset = 0, cond = &quot;TRUE&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch at most <tt class="docutils literal"><span class="pre">limit</span></tt> rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L247">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L247</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L252">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L252</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L247">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L247</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L252">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L252</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183</a></li>
 </ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getMany(objs: var seq[object], limit: int, offset = 0, cond = &quot;TRUE&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch at most <tt class="docutils literal"><span class="pre">limit</span></tt> rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L228">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L228</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L233">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L233</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L228">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L228</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L233">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L233</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183</a></li>
 </ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getAll(T: typedesc, cond = &quot;TRUE&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Get all rows from a table that match the given condition.</p>
 <p><strong>Warning:</strong> This is a dangerous operation because you're fetching an unknown number of rows, which could be millions. Consider using <tt class="docutils literal"><span class="pre">getMany</span></tt> instead.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L258">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L258</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L263">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L263</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L258">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L258</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L263">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L263</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183</a></li>
 </ul>
 </li>
 </ul>
@@ -1071,8 +1071,8 @@ function main() {
 <p>Use to update the DB schema after adding new models.</p>
 <p><tt class="docutils literal"><span class="pre">force=true</span></tt> prepends <tt class="docutils literal"><span class="pre">DROP TABLE IF EXISTS</span></tt> to the generated query.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L83">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L83</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L79">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L79</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L83">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L83</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L79">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L79</a></li>
 </ul>
 <p>Tests:</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L35">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L35</a></li>
@@ -1084,8 +1084,8 @@ function main() {
 <p>Use to create columns after adding new fields to existing models.</p>
 <p><tt class="docutils literal"><span class="pre">field</span></tt> should point to the model field for which the column is to be created, e.g. <tt class="docutils literal"><span class="pre">Pet.age</span></tt>.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L115">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L115</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L111">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L111</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L115">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L115</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L111">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L111</a></li>
 </ul>
 <p>Tests:</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L44">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L44</a></li>
@@ -1096,8 +1096,8 @@ function main() {
 <p>Recreate the table from a model, losing unmatching columns in the process. This involves creating a temporary table and copying the data there, then dropping the original table and renaming the temporary one to the original one's name.</p>
 <p>Use to clean up DB after removing a field from a model.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L124">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L124</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L129">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L129</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L124">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L124</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L129">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L129</a></li>
 </ul>
 <p>Tests:</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L57">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L57</a></li>
@@ -1108,8 +1108,8 @@ function main() {
 <p>Rename a DB column to match the model field. Provide <tt class="docutils literal"><span class="pre">oldName</span></tt> to tell Norm which column you are renaming. This has to be done manually since there's no way to guess the programmer's intetion when they rename a model field: is it to rename the underlying DB column or to remove the old column and create a new one instead?</p>
 <p>Use this proc to rename a column. To replace a column, use <tt class="docutils literal"><span class="pre">addColumn</span></tt> with conjunction with <tt class="docutils literal"><span class="pre">dropUnusedColumns</span></tt>.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L144">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L144</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L149">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L149</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L144">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L144</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L149">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L149</a></li>
 </ul>
 <p>Tests:</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L72">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L72</a></li>
@@ -1122,8 +1122,8 @@ function main() {
 <p>Rename a DB table to match the model name. The old table name must be provided explicitly because when the DB table name for a model changes, there's no way to guess which existing table used to match this model.</p>
 <p>Use after renaming a model or changing its <tt class="docutils literal"><span class="pre">dbTable</span></tt> pragma value.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L156">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L156</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L161">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L161</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L156">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L156</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L161">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L161</a></li>
 </ul>
 <p>Tests:</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L85">https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L85</a></li>
@@ -1135,12 +1135,12 @@ function main() {
 <p>Drop table associated with a model.</p>
 <p>Use after removing a model.</p>
 <p>Implementation:</p>
-<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L63">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L63</a></li>
-<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59</a></li>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L63">https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L63</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59">https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59</a></li>
 </ul>
 <p>Tests:</p>
-<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257</a></li>
-<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241</a></li>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L257">https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L257</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241">https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241</a></li>
 </ul>
 </li>
 </ul>
@@ -1175,7 +1175,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-27 09:05:56 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-27 09:10:21 UTC</small>
       </div>
     </div>
   </div>
