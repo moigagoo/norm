@@ -6,6 +6,22 @@
 -   [r]—refactoring
 -   [t]—test suite improvement
 
+## 1.1.0 (WIP)
+
+-   [!] Deprecate `notNull` pragma, `NOT NULL` is the default for all types except `Option` types. To set `NOT NULL` constraint for custom DB types, add it directly to `dbType`, e.g. `{.dbType: "INTEGER NOT NULL".}`.
+-   [!] Rename pragma `table` to `dbTable`.
+-   [!] Deprecate `default` pragma, always add default values to tables instead.
+-   [!][+] Rewrite PostgreSQL backend to use [ndb](https://github.com/xzfc/ndb.nim), which adds `NULL` support via `Option` type similarly to SQLite backend.
+-   [+] Add `transaction` macro to exec multiple commands in a transaction and `rollback` proc to safely interrupt a transaction.
+-   [+] Add `createTable` and `dropTable`.
+-   [+] SQLite: Add means to write migrations: `addColumn`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
+-   [+] PostgreSQL: Add means to writemigrations: `addColumn`, `dropColumns`, `dropUnusedColumns`, `renameColumnFrom`, and `renameTableFrom`.
+-   [+] Add support for `int64` field type.
+-   [+] Add `getAll` template to get all records without limit or offset.
+-   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.
+-   [f] Fix "unreachable statement" compile error for certain SQLite use cases.
+
+
 ## 1.0.17 (September 12, 2019)
 
 -   [f] Fixed table schema generation for `Positive` and `Natural` types: they used to be stored as `TEXT`, now they are stored as `INTEGER`. Also, fixed [#28](https://github.com/moigagoo/norm/issues/28).
@@ -76,7 +92,7 @@
 
 ## 1.0.7 (March 21, 2019)
 
--   [+] Add ``orderBy`` argument to ``getMany`` procs.
+-   [+] Add `orderBy` argument to `getMany` procs.
 
 
 ## 1.0.6 (March 21, 2019)
@@ -86,31 +102,31 @@
 
 ## 1.0.5 (March 18, 2019)
 
--   [+] Do not require ``chronicles`` package.
+-   [+] Do not require `chronicles` package.
 
 
 ## 1.0.4 (March 3, 2019)
 
--   [+] Add ``WHERE`` lookup to ``getMany`` procs.
+-   [+] Add `WHERE` lookup to `getMany` procs.
 
 
 ## 1.0.3 (March 2, 2019)
 
--   [r] Objutils: Rename ``[]`` field accessor to ``dot`` to avoid collisions with ``tables`` module.
+-   [r] Objutils: Rename `[]` field accessor to `dot` to avoid collisions with `tables` module.
 
 
 ## 1.0.2 (March 1, 2019)
 
--   [!] Procs defined in ``db`` macro are now passed as is to the resulting code and are not forced inside ``withDb`` template.
--   [+] Allow to override column names for fields with ``dbCol`` pragma.
+-   [!] Procs defined in `db` macro are now passed as is to the resulting code and are not forced inside `withDb` template.
+-   [+] Allow to override column names for fields with `dbCol` pragma.
 
 
 ## 1.0.1 (February 28, 2019)
 
 -   [+] Respect custom field parsers and formatters.
--   [+] Rowutils: Respect ``ro`` pragma in ``toRow`` proc.
--   [+] Objutils: Respect ``ro`` pragma in ``fieldNames`` proc.
--   [t] Type conversion: Fix issue with incorrect conversion of field named ``name``.
+-   [+] Rowutils: Respect `ro` pragma in `toRow` proc.
+-   [+] Objutils: Respect `ro` pragma in `fieldNames` proc.
+-   [t] Type conversion: Fix issue with incorrect conversion of field named `name`.
 
 
 ## 1.0.0 (February 27, 2019)

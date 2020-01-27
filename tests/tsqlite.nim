@@ -12,20 +12,19 @@ const
 
 db(dbName, "", "", ""):
   type
-    User {.table: "users".} = object
+    User {.dbTable: "users".} = object
       email {.unique.}: string
       ssn: Option[int]
       birthDate {.
-        dbType: "INTEGER",
-        notNull,
+        dbType: "INTEGER NOT NULL",
         parseIt: it.i.fromUnix().local(),
-        formatIt: dbValue(it.toTime().toUnix())
+        formatIt: ?it.toTime().toUnix()
       .}: DateTime
       lastLogin: DateTime
-    Publisher {.table: "publishers".} = object
+    Publisher {.dbTable: "publishers".} = object
       title {.unique.}: string
       licensed: bool
-    Book {.table: "books".} = object
+    Book {.dbTable: "books".} = object
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
@@ -33,15 +32,14 @@ db(dbName, "", "", ""):
   proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
   type
-    Edition {.table: "editions".} = object
+    Edition {.dbTable: "editions".} = object
       title: string
       book {.
         dbCol: "bookId",
-        dbType: "INTEGER",
-        notNull,
+        dbType: "INTEGER NOT NULL",
         fk: Book
         parser: getBookById,
-        formatIt: dbValue(it.id),
+        formatIt: ?it.id,
         onDelete: "CASCADE"
       .}: Book
 
@@ -49,27 +47,28 @@ db(dbName, "", "", ""):
 suite "Creating and dropping tables, CRUD":
   setup:
     withDb:
-      createTables(force=true)
+      transaction:
+        createTables(force=true)
 
-      for i in 1..9:
-        var
-          user = User(
-            email: "test-$#@example.com" % $i,
-            ssn: some i,
-            birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
-            lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
-          )
-          publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
-          book = Book(title: "Book $#" % $i, authorEmail: user.email,
-                      publisherTitle: publisher.title)
-          edition = Edition(title: "Edition $#" % $i)
+        for i in 1..9:
+          var
+            user = User(
+              email: "test-$#@example.com" % $i,
+              ssn: some i,
+              birthDate: parse("200$1-0$1-0$1" % $i, "yyyy-MM-dd"),
+              lastLogin: parse("2019-08-19 23:32:5$1+04" % $i, "yyyy-MM-dd HH:mm:sszz")
+            )
+            publisher = Publisher(title: "Publisher $#" % $i, licensed: if i < 6: true else: false)
+            book = Book(title: "Book $#" % $i, authorEmail: user.email,
+                        publisherTitle: publisher.title)
+            edition = Edition(title: "Edition $#" % $i)
 
-        user.insert()
-        publisher.insert()
-        book.insert()
+          user.insert()
+          publisher.insert()
+          book.insert()
 
-        edition.book = book
-        edition.insert()
+          edition.book = book
+          edition.insert()
 
   teardown:
     withDb:
@@ -80,21 +79,21 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
         @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
-        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?"0", ?0]
       ]
       check dbConn.getAllRows(sql query % "books") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
-        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?"''", ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?"''", ?0],
       ]
       check dbConn.getAllRows(sql query % "editions") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
       ]
 
@@ -118,6 +117,26 @@ suite "Creating and dropping tables, CRUD":
       check editions[7].id == 8
       check editions[7].title == "Edition 8"
       check editions[7].book == books[7]
+
+    withDb:
+      let
+        publishers = Publisher.getAll()
+        books = Book.getAll()
+        editions = Edition.getAll()
+
+      check len(publishers) == 9
+      check len(books) == 9
+      check len(editions) == 9
+
+      check publishers[1].id == 2
+      check publishers[1].title == "Publisher 2"
+
+      check books[3].id == 4
+      check books[3].title == "Book 4"
+
+      check editions[8].id == 9
+      check editions[8].title == "Edition 9"
+      check editions[8].book == books[8]
 
   test "Read records":
     withDb:
@@ -190,6 +209,18 @@ suite "Creating and dropping tables, CRUD":
       expect KeyError:
         let notExistingBook {.used.} = Book.getOne("title=?", "Does not exist")
 
+    withDb:
+      let
+        allBooks = Book.getAll()
+        someBooks = Book.getAll(cond="title IN (?, ?) ORDER BY title DESC",
+                                params=[?"Book 1", ?"Book 5"])
+
+      check len(allBooks) == 9
+
+      check len(someBooks) == 2
+      check someBooks[0].title == "Book 5"
+      check someBooks[1].authorEmail == "test-1@example.com"
+
   test "Update records":
     withDb:
       var
@@ -223,10 +254,15 @@ suite "Creating and dropping tables, CRUD":
 
   test "Drop tables":
     withDb:
-      dropTables()
+      User.dropTable()
 
       expect DbError:
         dbConn.exec sql "SELECT NULL FROM users"
+
+    withDb:
+      dropTables()
+
+      expect DbError:
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
@@ -239,21 +275,21 @@ suite "Creating and dropping tables, CRUD":
       let query = "PRAGMA table_info($#);"
 
       check dbConn.getAllRows(sql query % "users") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"email", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"email", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"ssn", ?"INTEGER", ?0, ?nil, ?0],
         @[?3, ?"birthDate", ?"INTEGER", ?1, ?nil, ?0],
-        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?nil, ?0]
+        @[?4, ?"lastLogin", ?"INTEGER", ?1, ?"0", ?0]
       ]
       check dbConn.getAllRows(sql query % "books") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
-        @[?2, ?"authorEmail", ?"TEXT", ?1, ?nil, ?0],
-        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
+        @[?2, ?"authorEmail", ?"TEXT", ?1, ?"''", ?0],
+        @[?3, ?"publisherTitle", ?"TEXT", ?1, ?"''", ?0],
       ]
       check dbConn.getAllRows(sql query % "editions") == @[
-        @[?0, ?"id", ?"INTEGER", ?1, ?nil, ?1],
-        @[?1, ?"title", ?"TEXT", ?1, ?nil, ?0],
+        @[?0, ?"id", ?"INTEGER", ?1, ?"0", ?1],
+        @[?1, ?"title", ?"TEXT", ?1, ?"''", ?0],
         @[?2, ?"bookId", ?"INTEGER", ?1, ?nil, ?0]
       ]
 

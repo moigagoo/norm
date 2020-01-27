@@ -9,6 +9,10 @@ In order for a type to be usable in DB schema generation, it must have ``id`` fi
 This module contains procs to do that for a single type definition and entire type section.
 ]##
 
+
+{.used.}
+
+
 import macros
 
 import objutils

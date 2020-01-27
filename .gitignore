@@ -4,11 +4,19 @@
 
 *.exe
 *.html
+*.idx
+
+*.mkdocs
+.*cache
+__folianttmp__
+*.log
 
 tests/tobjutils
 tests/tpostgres
 tests/tpostgresfromtypes
+tests/tpostgresmigrate
 tests/tpostgresrowutils
 tests/tsqlite
-tests/tsqlitefromtype
-stests/tsqliterowutils
+tests/tsqlitefromtypes
+tests/tsqlitemigrate
+tests/tsqliterowutils
