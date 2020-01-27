@@ -106,6 +106,7 @@ See also:
 
 - `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
 - `API index → <theindex.html>`_
+- `Changelog → <changelog.html>`_
 
 
 Reference Guide

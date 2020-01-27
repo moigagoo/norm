@@ -28,3 +28,5 @@ task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble apidoc"
   exec "nimble idx"
+
+  selfExec "rst2html --out:htmldocs/changelog.html changelog.rst"
