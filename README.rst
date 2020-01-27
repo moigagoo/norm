@@ -128,13 +128,13 @@ Setup
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L95
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L91
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L95
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L91
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L47
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L48
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48
 
 
 Teardown
@@ -146,15 +146,15 @@ Teardown
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L70
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L66
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L70
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L66
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L255
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L90
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L85
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L255
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L90
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L85
 
 
 
@@ -169,15 +169,15 @@ Insert Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L168
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L168
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L48
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L49
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L19
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L20
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L48
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L49
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L19
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L20
 
 
 Fetch Rows
@@ -189,13 +189,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L223
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L228
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L223
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L228
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
 
 
 -   ``getOne(obj: var object, id: int)``
@@ -204,13 +204,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L209
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L214
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L209
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L214
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
 
 -   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
 
@@ -218,13 +218,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L201
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L206
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L201
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L206
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
 
 -   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
 
@@ -232,13 +232,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L183
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L188
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L183
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L188
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
 
 -   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
@@ -246,13 +246,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L247
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L252
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L247
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L252
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
 
 -   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
@@ -260,13 +260,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L228
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L233
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L228
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L233
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
 
 -   ``getAll(T: typedesc, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
@@ -276,13 +276,13 @@ Fetch Rows
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L258
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L263
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L258
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L263
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
 
 
 Update Rows
@@ -318,8 +318,8 @@ Migrations
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L83
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L79
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L83
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L79
 
     Tests:
 
@@ -336,8 +336,8 @@ Migrations
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L115
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L111
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L115
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L111
 
     Tests:
 
@@ -352,8 +352,8 @@ Migrations
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L124
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L129
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L124
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L129
 
     Tests:
 
@@ -368,8 +368,8 @@ Migrations
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L144
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L149
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L144
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L149
 
     Tests:
 
@@ -386,8 +386,8 @@ Migrations
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L156
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L161
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L156
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L161
 
     Tests:
 
@@ -403,13 +403,13 @@ Migrations
 
     Implementation:
 
-    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L63
-    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L63
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L257
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241
 
 
 Contributing
