@@ -11,15 +11,7 @@ Norm: A Nim ORM
     :target: https://nimble.directory/pkg/norm
 
 
-**Norm** is an object-oriented, framework-agnostic ORM for Nim apps that:
-
-Norm supports SQLite and PostgreSQL.
-
-- `Quickstart → <#quickstart>`_
-- `Reference → <#reference>`_
-- `API index → <https://moigagoo.github.io/norm/api/theindex.html>`_
-- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
-- `Contributing → <#contributing>`_
+**Norm** is an object-oriented, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
 
 Quickstart
@@ -97,26 +89,47 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
 	  bob.delete()                            # Delete the record.
 	  echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
 
+    withDb:
+      transaction:                            # Put multiple statements under ``transaction`` to run
+        for i in 1..10:                       # them as a single DB transaction. If any operation fails,
+          var user = User(                    # the entire transaction is cancelled.
+            age: 20+i,
+            name: "User " & $i,
+            ssn: some i
+          )
+          insert user
+
 	withDb:
 	  dropTables()                            # Drop all tables.
 
 
-Reference
-=========
+See also:
 
-Listed below are the procs that build up CRUD for manipulating tables and rows in Norm.
+- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
+- `API index → <theindex.html>`_
+
+
+Reference Guide
+===============
+
+Listed below are the procs for manipulating tables and rows in Norm.
 
 These procs can be called in ``withDb`` and ``withCustomDb`` macros regardless of the backend.
 
 
-Database Setup
---------------
+Setup
+-----
 
--   ``createTables(force = false)``
+    ``createTables(force = false)``
 
     Generate and execute DB schema for all models.
 
     ``force=true`` prepends ``DROP TABLE IF EXISTS`` for all genereated tables.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L95
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L91
 
     Tests:
 
@@ -124,12 +137,17 @@ Database Setup
     -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L48
 
 
-Database Teardown
------------------
+Teardown
+--------
 
 -   ``dropTables(T: typedesc)``
 
     Drop tables for all models.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L70
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L66
 
     Tests:
 
@@ -139,14 +157,85 @@ Database Teardown
     -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L85
 
 
+
+Insert Rows
+-----------
+
+-   ``insert(obj: var object, force=false)``
+
+    Store a model instance into the DB as a row.
+
+    The input object must be mutable because its ``id`` field, initially equal ``0``, is updated after the insertion to reflect the row ID returned by the DB.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L168
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L48
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L49
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L19
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L20
+
+
+Fetch Rows
+----------
+
+-   ``getOne(T: typedesc, id: int)``
+
+    Fetch one row by ID and store it into a new model instance.
+
+-   ``getOne(obj: var object, id: int)``
+
+    Fetch one row by ID and store it into as existing instance.
+
+-   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
+
+    Fetch the first row that matches the given condition. Store into a new instance.
+
+-   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
+
+    Fetch the first row that matches the given condition. Store into an existing instance.
+
+-   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
+
+    Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
+
+-   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
+
+    Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
+
+-   ``getAll(T: typedesc, cond = "1", params: varargs[DbValue, dbValue])``
+
+    Get all rows from a table that match the given condition.
+
+    **Warning:** This is a dangerous operation because you're fetching an unknown number of rows, which could be millions. Consider using ``getMany`` instead.
+
+
+Update Rows
+===========
+
+-   ``update``
+
+
+Delete Rows
+===========
+
+-   ``delete``
+
+
+Transactions
+------------
+
+-   ``transaction``
+
+
 Migrations
 ----------
 
 **Note:** Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.
-
-
-Schema Migrations
-^^^^^^^^^^^^^^^^^
 
 -   ``createTable(T: typedesc, force = false)``
 
@@ -155,6 +244,11 @@ Schema Migrations
     Use to update the DB schema after adding new models.
 
     ``force=true`` prepends `DROP TABLE IF EXISTS` to the generated query.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L83
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L79
 
     Tests:
 
@@ -169,6 +263,11 @@ Schema Migrations
 
     ``field`` should point to the model field for which the column is to be created, e.g. ``Pet.age``.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L115
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L111
+
     Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L44
@@ -180,6 +279,11 @@ Schema Migrations
 
     Use to clean up DB after removing a field from a model.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L124
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L129
+
     Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L57
@@ -190,6 +294,11 @@ Schema Migrations
     Rename a DB column to match the model field. Provide ``oldName`` to tell Norm which column you are renaming. This has to be done manually since there's no way to guess the programmer's intetion when they rename a model field: is it to rename the underlying DB column or to remove the old column and create a new one instead?
 
     Use this proc to rename a column. To replace a column, use `addColumn` with conjunction with ``dropUnusedColumns``.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L144
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L149
 
     Tests:
 
@@ -204,6 +313,11 @@ Schema Migrations
 
     Use after renaming a model or changing its ``dbTable`` pragma value.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L156
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L161
+
     Tests:
 
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L85
@@ -216,77 +330,15 @@ Schema Migrations
 
     Use after removing a model.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L63
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L59
+
     Tests:
 
     -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L257
     -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L241
-
-
-Data Migrations
-^^^^^^^^^^^^^^^
-
--   ``insert(obj: var object, force=false)``
-
-    Store a model instance into the DB as a row.
-
-    The input object must be mutable because its ``id`` field, initially equal ``0``, is updated after the insertion to reflect the row ID returned by the DB.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L48
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L49
-    -   https://github.com/moigagoo/norm/develop/tests/tsqlitefromtypes.nim#L19
-    -   https://github.com/moigagoo/norm/develop/tests/tpostgresfromtypes.nim#L20
-
--   ``getOne``
-
-    Fetch exactly one row from the DB and store it into a model instance.
-
-    There are four flavours of this proc:
-
-    -   ``getOne(T: typedesc, id: int)``
-
-        Fetch row by ID and store it into a new model instance.
-
-    -   ``getOne(obj: var object, id: int)``
-
-        Fetch row by ID and store it into as existing instance.
-
-    -   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
-
-        Fetch the first row that matches the given condition with the given params. Store into a new instance.
-
-    -   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
-
-        Fetch the first row that matches the given condition with the given params. Store into an existing instance.
-
--   ``getMany``
-
-    Fetch up to a given number of rows from the DB and store them into a sequence of model instances.
-
-    Available in two flavours:
-
-    -   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
-
-        Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
-
-    -   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
-
-        Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
-
--   ``getAll(T: typedesc, cond = "1", params: varargs[DbValue, dbValue])``
-
-    Get all rows from a table that match the given condition.
-
-    **Warning:** This is a dangerous operation because you're fetching unknown number of rows, which could be millions and billions. It's much safer to call ``getMany`` with a clearly defined limit and offset.
-
--   ``update``
--   ``delete``
-
-Transactions
-------------
-
-TODO
 
 
 Contributing
