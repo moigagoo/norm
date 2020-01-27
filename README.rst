@@ -187,41 +187,112 @@ Fetch Rows
 
     Fetch one row by ID and store it into a new model instance.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L223
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L228
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
+
+
 -   ``getOne(obj: var object, id: int)``
 
     Fetch one row by ID and store it into as existing instance.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L209
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L214
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
 
 -   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
 
     Fetch the first row that matches the given condition. Store into a new instance.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L201
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L206
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
+
 -   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
 
     Fetch the first row that matches the given condition. Store into an existing instance.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L183
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L188
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127
 
 -   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
     Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L247
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L252
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183
+
 -   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
     Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
 
--   ``getAll(T: typedesc, cond = "1", params: varargs[DbValue, dbValue])``
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L228
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L233
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183
+
+-   ``getAll(T: typedesc, cond = "TRUE", params: varargs[DbValue, dbValue])``
 
     Get all rows from a table that match the given condition.
 
     **Warning:** This is a dangerous operation because you're fetching an unknown number of rows, which could be millions. Consider using ``getMany`` instead.
 
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L258
+    -   PostgreSQL: https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L263
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197
+    -   https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183
+
 
 Update Rows
-===========
+-----------
 
 -   ``update``
 
 
 Delete Rows
-===========
+-----------
 
 -   ``delete``
 
