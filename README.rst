@@ -33,61 +33,61 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
 
 .. code-block:: nim
 
-	import norm/sqlite                        # Import SQLite backend; ``norm/postgres`` for PostgreSQL.
+    import norm/sqlite                        # Import SQLite backend; ``norm/postgres`` for PostgreSQL.
 
-	import unicode, options                   # Norm supports `Option` type out of the box.
+    import unicode, options                   # Norm supports `Option` type out of the box.
 
-	import logging                            # Import logging to inspect the generated SQL statements.
-	addHandler newConsoleLogger()
-
-
-	db("petshop.db", "", "", ""):             # Set DB connection credentials.
-	  type                                    # Describe models in a type section.
-	    User = object                         # Model is a Nim object.
-	      age: Positive                       # Nim types are automatically converted into SQL types
-	                                          # and back.
-	                                          # You can specify how types are converted using
-	                                          # ``parser``, ``formatter``,
-	                                          # ``parseIt``, and ``formatIt`` pragmas.
-	      name {.
-	        formatIt: ?capitalize(it)         # E.g., enforce ``name`` stored in DB capitalized.
-	      .}: string
-	      ssn: Option[int]                    # ``Option`` fields are allowed to be NULL.
+    import logging                            # Import logging to inspect the generated SQL statements.
+    addHandler newConsoleLogger()
 
 
-	withDb:                                   # Start DB session.
-	  createTables(force=true)                # Create tables for objects.
-	                                          # ``force=true`` means “drop tables if they exist.”
+    db("petshop.db", "", "", ""):             # Set DB connection credentials.
+      type                                    # Describe models in a type section.
+        User = object                         # Model is a Nim object.
+          age: Positive                       # Nim types are automatically converted into SQL types
+                                              # and back.
+                                              # You can specify how types are converted using
+                                              # ``parser``, ``formatter``,
+                                              # ``parseIt``, and ``formatIt`` pragmas.
+          name {.
+            formatIt: ?capitalize(it)         # E.g., enforce ``name`` stored in DB capitalized.
+          .}: string
+          ssn: Option[int]                    # ``Option`` fields are allowed to be NULL.
 
-	  var bob = User(                         # Create a ``User`` instance as you normally would.
-	    age: 23,                              # You can use ``initUser`` if you want.
-	    name: "bob",                          # Note that the instance is mutable. This is necessary,
-	    ssn: some 456                         # because implicit ``id``attr is updated on insertion.
-	  )
-	  bob.insert()                            # Insert ``bob`` into DB.
-	  echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
-	  var alice = User(age: 12, name: "alice", ssn: none int)
-	  alice.insert()
+    withDb:                                   # Start DB session.
+      createTables(force=true)                # Create tables for objects.
+                                              # ``force=true`` means “drop tables if they exist.”
 
-	withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
-	  createTables(force=true)                # to connect to a different DB with the same models.
+      var bob = User(                         # Create a ``User`` instance as you normally would.
+        age: 23,                              # You can use ``initUser`` if you want.
+        name: "bob",                          # Note that the instance is mutable. This is necessary,
+        ssn: some 456                         # because implicit ``id``attr is updated on insertion.
+      )
+      bob.insert()                            # Insert ``bob`` into DB.
+      echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
-	withDb:
-	  let bobs = User.getMany(                # Read records from DB:
-	    100,                                  # - only the first 100 records
-	    cond="name LIKE 'Bob%' ORDER BY age"  # - matching condition
-	  )
+      var alice = User(age: 12, name: "alice", ssn: none int)
+      alice.insert()
 
-	  echo "Bobs = ", bobs
+    withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
+      createTables(force=true)                # to connect to a different DB with the same models.
 
-	withDb:
-	  var bob = User.getOne(1)                # Fetch record from DB and store it as ``User`` instance.
-	  bob.age += 10                           # Change attr value.
-	  bob.update()                            # Update the record in DB.
+    withDb:
+      let bobs = User.getMany(                # Read records from DB:
+        100,                                  # - only the first 100 records
+        cond="name LIKE 'Bob%' ORDER BY age"  # - matching condition
+      )
 
-	  bob.delete()                            # Delete the record.
-	  echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
+      echo "Bobs = ", bobs
+
+    withDb:
+      var bob = User.getOne(1)                # Fetch record from DB and store it as ``User`` instance.
+      bob.age += 10                           # Change attr value.
+      bob.update()                            # Update the record in DB.
+
+      bob.delete()                            # Delete the record.
+      echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
 
     withDb:
       transaction:                            # Put multiple statements under ``transaction`` to run
@@ -99,9 +99,8 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
           )
           insert user
 
-	withDb:
-	  dropTables()                            # Drop all tables.
-
+    withDb:
+      dropTables()                            # Drop all tables.
 
 See also:
 
@@ -112,15 +111,92 @@ See also:
 Reference Guide
 ===============
 
-Listed below are the procs for manipulating tables and rows in Norm.
+Model Declaration
+-----------------
 
-These procs can be called in ``withDb`` and ``withCustomDb`` macros regardless of the backend.
+-   ``db(connection, user, password, database: string, body: untyped)``
+
+    Declare models from a type section with object declarations.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L383
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L382
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L11
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L15
+
+-   ``dbFromTypes(connection, user, password, database: string, types: openArray[typedesc])``
+
+    Declare models from type sections in other modules. The type sections must be wrapped in ``dbTypes``.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L359
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L358
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L15
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L17
+
+-   ``dbTypes``
+
+    Make a type section usable as a model declaration in ``dbFromTypes``.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L352
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L351
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/models/user.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/models/pet.nim
+
+
+Connection
+----------
+
+-   ``withDb(body: untyped)``
+
+    Connect to the DB using credentials defined in ``db`` section. The connection is closed on block exit.
+
+    The connection can be accessed via ``dbConn`` variable if needed.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L341
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L340
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48
+
+-   ``withCustomDb(customConnection, customUser, customPassword, customDatabase: string, body: untyped)``
+
+    Connect to a custom DB. The connection is closed on block exit.
+
+    The connection can be accessed via ``dbConn`` variable if needed.
+
+    Implementation:
+
+    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L47
+    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L43
+
+    Tests:
+
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L270
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L257
 
 
 Setup
 -----
 
-    ``createTables(force = false)``
+-   ``createTables(force = false)``
 
     Generate and execute DB schema for all models.
 
@@ -476,21 +552,21 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
     .. code-block::
 
-	    $ docker-compose run --rm tests                     # run all test suites
-	    $ docker-compose run --rm test tests/tpostgres.nim  # run a single test suite
+        $ docker-compose run --rm tests                     # run all test suites
+        $ docker-compose run --rm test tests/tpostgres.nim  # run a single test suite
 
     If you don't mind running two PostgreSQL servers on `postgres_1` and `postgres_2`, feel free to run the test suites natively:
 
     .. code-block::
 
-	    $ nimble test
+        $ nimble test
 
     Note that you only need the PostgreSQL servers to run the PostgreSQL backend tests, so:
 
     .. code-block::
 
-	    $ nim c -r tests/tsqlite.nim    # doesn't require PostgreSQL servers, but requires SQLite
-	    $ nim c -r tests/tobjutils.nim  # doesn't require anything at all
+        $ nim c -r tests/tsqlite.nim    # doesn't require PostgreSQL servers, but requires SQLite
+        $ nim c -r tests/tobjutils.nim  # doesn't require anything at all
 
 -   Use camelCase instead of snake_case.
 
