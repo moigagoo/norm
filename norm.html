@@ -829,10 +829,10 @@ function main() {
 <li><a class="reference" id="reference-guide-teardown_toc" href="#reference-guide-teardown">Teardown</a></li>
 <li><a class="reference" id="reference-guide-insert-rows_toc" href="#reference-guide-insert-rows">Insert Rows</a></li>
 <li><a class="reference" id="reference-guide-fetch-rows_toc" href="#reference-guide-fetch-rows">Fetch Rows</a></li>
-</ul><li><a class="reference" id="update-rows_toc" href="#update-rows">Update Rows</a></li>
-<li><a class="reference" id="delete-rows_toc" href="#delete-rows">Delete Rows</a></li>
-<ul class="simple"><li><a class="reference" id="delete-rows-transactions_toc" href="#delete-rows-transactions">Transactions</a></li>
-<li><a class="reference" id="delete-rows-migrations_toc" href="#delete-rows-migrations">Migrations</a></li>
+<li><a class="reference" id="reference-guide-update-rows_toc" href="#reference-guide-update-rows">Update Rows</a></li>
+<li><a class="reference" id="reference-guide-delete-rows_toc" href="#reference-guide-delete-rows">Delete Rows</a></li>
+<li><a class="reference" id="reference-guide-transactions_toc" href="#reference-guide-transactions">Transactions</a></li>
+<li><a class="reference" id="reference-guide-migrations_toc" href="#reference-guide-migrations">Migrations</a></li>
 </ul><li><a class="reference" id="contributing_toc" href="#contributing">Contributing</a></li>
 <ul class="simple"><li><a class="reference" id="contributing-❤-contributors-❤_toc" href="#contributing-❤-contributors-❤">❤ Contributors ❤</a></li>
 </ul><li>
@@ -977,38 +977,95 @@ function main() {
 
 <h2><a class="toc-backref" id="reference-guide-fetch-rows" href="#reference-guide-fetch-rows">Fetch Rows</a></h2><ul class="simple"><li><p><tt class="docutils literal"><span class="pre">getOne(T: typedesc, id: int)</span></tt></p>
 <p>Fetch one row by ID and store it into a new model instance.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L223">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L223</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L228">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L228</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+</ul>
 </li>
-<li><p><tt class="docutils literal"><span class="pre">getOne(obj: var object, id: int)</span></tt></p>
+</ul>
+<ul class="simple"><li><p><tt class="docutils literal"><span class="pre">getOne(obj: var object, id: int)</span></tt></p>
 <p>Fetch one row by ID and store it into as existing instance.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L209">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L209</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L214">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L214</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+</ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch the first row that matches the given condition. Store into a new instance.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L201">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L201</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L206">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L206</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+</ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch the first row that matches the given condition. Store into an existing instance.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L183">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L183</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L188">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L188</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L141</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L127</a></li>
+</ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getMany(T: typedesc, limit: int, offset = 0, cond = &quot;TRUE&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch at most <tt class="docutils literal"><span class="pre">limit</span></tt> rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L247">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L247</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L252">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L252</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183</a></li>
+</ul>
 </li>
 <li><p><tt class="docutils literal"><span class="pre">getMany(objs: var seq[object], limit: int, offset = 0, cond = &quot;TRUE&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Fetch at most <tt class="docutils literal"><span class="pre">limit</span></tt> rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L228">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L228</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L233">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L233</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183</a></li>
+</ul>
 </li>
-<li><p><tt class="docutils literal"><span class="pre">getAll(T: typedesc, cond = &quot;1&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
+<li><p><tt class="docutils literal"><span class="pre">getAll(T: typedesc, cond = &quot;TRUE&quot;, params: varargs[DbValue, dbValue])</span></tt></p>
 <p>Get all rows from a table that match the given condition.</p>
 <p><strong>Warning:</strong> This is a dangerous operation because you're fetching an unknown number of rows, which could be millions. Consider using <tt class="docutils literal"><span class="pre">getMany</span></tt> instead.</p>
+<p>Implementation:</p>
+<ul class="simple"><li>SQLite: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L258">https://github.com/moigagoo/norm/develop/src/norm/sqlite.nim#L258</a></li>
+<li>PostgreSQL: <a class="reference external" href="https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L263">https://github.com/moigagoo/norm/develop/src/norm/postgres.nim#L263</a></li>
+</ul>
+<p>Tests:</p>
+<ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197">https://github.com/moigagoo/norm/develop/tests/tsqlite.nim#L197</a></li>
+<li><a class="reference external" href="https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183">https://github.com/moigagoo/norm/develop/tests/tpostgres.nim#L183</a></li>
+</ul>
 </li>
 </ul>
 
-<h1><a class="toc-backref" id="update-rows" href="#update-rows">Update Rows</a></h1><ul class="simple"><li><tt class="docutils literal"><span class="pre">update</span></tt></li>
+<h2><a class="toc-backref" id="reference-guide-update-rows" href="#reference-guide-update-rows">Update Rows</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">update</span></tt></li>
 </ul>
 
-<h1><a class="toc-backref" id="delete-rows" href="#delete-rows">Delete Rows</a></h1><ul class="simple"><li><tt class="docutils literal"><span class="pre">delete</span></tt></li>
+<h2><a class="toc-backref" id="reference-guide-delete-rows" href="#reference-guide-delete-rows">Delete Rows</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">delete</span></tt></li>
 </ul>
 
-<h2><a class="toc-backref" id="delete-rows-transactions" href="#delete-rows-transactions">Transactions</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">transaction</span></tt></li>
+<h2><a class="toc-backref" id="reference-guide-transactions" href="#reference-guide-transactions">Transactions</a></h2><ul class="simple"><li><tt class="docutils literal"><span class="pre">transaction</span></tt></li>
 </ul>
 
-<h2><a class="toc-backref" id="delete-rows-migrations" href="#delete-rows-migrations">Migrations</a></h2><p><strong>Note:</strong> Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.</p>
+<h2><a class="toc-backref" id="reference-guide-migrations" href="#reference-guide-migrations">Migrations</a></h2><p><strong>Note:</strong> Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.</p>
 <ul class="simple"><li><p><tt class="docutils literal"><span class="pre">createTable(T: typedesc, force = false)</span></tt></p>
 <p>Generate and execute an SQL table schema from a type definition. Column schemas are generated from Nim object field definitions. Basic types are mapped automatically. For custom types, <em>parser</em> and <em>formatter</em> must be provided.</p>
 <p>Use to update the DB schema after adding new models.</p>
@@ -1118,7 +1175,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small>Made with Nim. Generated: 2020-01-27 06:28:26 UTC</small>
+        <small>Made with Nim. Generated: 2020-01-27 09:05:56 UTC</small>
       </div>
     </div>
   </div>

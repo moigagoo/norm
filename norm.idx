@@ -5,9 +5,9 @@ Setup	norm.html#reference-guide-setup	  Setup
 Teardown	norm.html#reference-guide-teardown	  Teardown	
 Insert Rows	norm.html#reference-guide-insert-rows	  Insert Rows	
 Fetch Rows	norm.html#reference-guide-fetch-rows	  Fetch Rows	
-Update Rows	norm.html#update-rows	 Update Rows	
-Delete Rows	norm.html#delete-rows	 Delete Rows	
-Transactions	norm.html#delete-rows-transactions	  Transactions	
-Migrations	norm.html#delete-rows-migrations	  Migrations	
+Update Rows	norm.html#reference-guide-update-rows	  Update Rows	
+Delete Rows	norm.html#reference-guide-delete-rows	  Delete Rows	
+Transactions	norm.html#reference-guide-transactions	  Transactions	
+Migrations	norm.html#reference-guide-migrations	  Migrations	
 Contributing	norm.html#contributing	 Contributing	
 ❤ Contributors ❤	norm.html#contributing-❤-contributors-❤	  ❤ Contributors ❤	
