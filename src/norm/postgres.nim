@@ -265,7 +265,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         Filter using ``cond`` condition.
 
-        Warning! This is a dangerous operation since you don't control the amount of data received. Consider using ``getMany`` for more deterministic data retrieval.
+        **Warning:** This is a dangerous operation since you don't control the amount of data received. Consider using ``getMany`` for more deterministic data retrieval.
         ]##
 
         let getAllQuery = genGetAllQuery(T, cond)
