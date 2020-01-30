@@ -316,7 +316,7 @@ Read Records
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
 
--   ``getMany(T: typedesc, limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
+-   ``getMany(T: typedesc, limit: int, offset = 0, cond = trueCond, params: varargs[DbValue, dbValue])``
 
     Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
 
@@ -330,7 +330,7 @@ Read Records
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
 
--   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = "TRUE", params: varargs[DbValue, dbValue])``
+-   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = trueCond, params: varargs[DbValue, dbValue])``
 
     Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
 
@@ -344,7 +344,7 @@ Read Records
     -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
     -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
 
--   ``getAll(T: typedesc, cond = "TRUE", params: varargs[DbValue, dbValue])``
+-   ``getAll(T: typedesc, cond = trueCond, params: varargs[DbValue, dbValue])``
 
     Get all rows from a table that match the given condition.
 

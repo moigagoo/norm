@@ -30,6 +30,8 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
+    Card = object
+      number: int
 
   proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
@@ -70,6 +72,8 @@ suite "Creating and dropping tables, CRUD":
 
           edition.book = book
           edition.insert()
+
+          discard insertId Card(number: i)
 
   teardown:
     withDb:
