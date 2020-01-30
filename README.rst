@@ -13,6 +13,10 @@ Norm: A Nim ORM
 
 **Norm** is an object-oriented, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
+- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
+- `API index → <theindex.html>`_
+- `Changelog → <changelog.html>`_
+
 
 Quickstart
 ==========
@@ -101,12 +105,6 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
 
     withDb:
       dropTables()                            # Drop all tables.
-
-See also:
-
-- `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`_
-- `API index → <theindex.html>`_
-- `Changelog → <changelog.html>`_
 
 
 Reference Guide
