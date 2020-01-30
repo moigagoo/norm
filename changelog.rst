@@ -12,7 +12,7 @@ Changelog
 1.1.1 (WIP)
 ===========
 
--   [+] Add ``insertId`` proc that takes an immutable object and inserts it as a record to the DB. The inserted record ID is returned. The object ``id`` field is **not** updated.
+-   [+] Add ``insertId`` proc that takes an immutable object and inserts it as a record to the DB. The inserted record ID is returned. The object ``id`` field is **not** updated.
 
 
 1.1.0 (January 27, 2020)
