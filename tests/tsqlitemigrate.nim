@@ -32,6 +32,8 @@ db(dbName, "", "", ""):
 
 
 suite "Migrations":
+  removeFile dbName
+
   setup:
     withDb:
       Person.createTable(force=true)

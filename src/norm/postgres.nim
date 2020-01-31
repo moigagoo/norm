@@ -340,6 +340,9 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
       try:
         body
 
+      except:
+        raise
+
       finally:
         dbConn.close()
 
