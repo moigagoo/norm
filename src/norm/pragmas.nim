@@ -1,11 +1,4 @@
-##[
-  #######
-  Pragmas
-  #######
-
-  Pragmas to customize the database representation of the object model.
-
-]##
+## Pragmas to customize the database representation of the object model.
 
 template pk* {.pragma.}
   ## Mark field as primary key. The special field ``id`` is mark with ``pk`` by default.

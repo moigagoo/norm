@@ -1,10 +1,4 @@
-##[
-
-###############################################
-Compile-Time Representation of Type Definitions
-###############################################
-
-This module implements convenience types and procs to convert type definition NimNodes into structured representations.
+##[ This module implements convenience types and procs to convert type definition NimNodes into structured representations.
 
 ``ObjRepr`` is a representation of an object definition. It consists of a ``SignatureRepr`` and multiple ``FieldRepr``.
 

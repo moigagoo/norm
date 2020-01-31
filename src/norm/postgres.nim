@@ -1,10 +1,4 @@
-##[
-
-##################
-PostgreSQL Backend
-##################
-
-The following Nim types are converted automatically:
+##[ The following Nim types are converted automatically:
 
 ==================== =====================================
 Nim Type             PostgreSQL Type
@@ -50,6 +44,8 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
     ]##
 
     block:
+      const trueCond = "TRUE"
+
       type RollbackError = object of CatchableError
 
       proc rollback {.raises: RollbackError, used.} = raise newException(RollbackError, "Rollback transaction.")
@@ -170,9 +166,10 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         dbConn.exec renameTableQuery
 
-      template insert(obj: var object, force = false) {.used.} =
-        ##[ Insert object instance as a record into DB.The object's id is updated after
-        the insertion.
+      proc insertId(obj: object, force = false): int {.used.} =
+        ##[ Insert object instance as a record into DB, return the new record ID.
+
+        **The object ``id``field is not updated.**
 
         By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
         ]##
@@ -183,7 +180,16 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
 
         debug insertQuery, " <- ", params.join(", ")
 
-        obj.id = dbConn.insertID(insertQuery, params).int
+        dbConn.insertID(insertQuery, params).int
+
+      proc insert(obj: var object, force = false) {.used.} =
+        ##[ Insert object instance as a record into DB. The object's id is updated after
+        the insertion.
+
+        By default, readonly fields are not inserted. Use ``force=true`` to insert all fields.
+        ]##
+
+        obj.id = obj.insertId(force)
 
       template getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read a record from DB by condition and store it into an existing object instance.
@@ -231,7 +237,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         result.getOne(id)
 
       proc getMany(objs: var seq[object], limit: int, offset = 0,
-                   cond = "TRUE", params: varargs[DbValue, dbValue]) {.used.} =
+                   cond = trueCond, params: varargs[DbValue, dbValue]) {.used.} =
         ##[ Read ``limit`` records with ``offset`` from DB into an existing open array of objects.
 
         Filter using ``cond`` condition.
@@ -250,7 +256,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         rows.to(objs)
 
       proc getMany(T: typedesc, limit: int, offset = 0,
-                   cond = "TRUE", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
+                   cond = trueCond, params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read ``limit`` records  with ``offset`` from DB into a sequence of objects,
         create the sequence on the fly.
 
@@ -260,7 +266,7 @@ template genWithDb(connection, user, password, database: string, dbTypeNames: op
         result.setLen limit
         result.getMany(limit, offset, cond, params)
 
-      template getAll(T: typedesc, cond = "TRUE", params: varargs[DbValue, dbValue]): seq[T] {.used.} =
+      template getAll(T: typedesc, cond = trueCond, params: varargs[DbValue, dbValue]): seq[T] {.used.} =
         ##[ Read all records from DB into a sequence of objects, create the sequence on the fly.
 
         Filter using ``cond`` condition.
