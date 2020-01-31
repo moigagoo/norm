@@ -1,4 +1,3 @@
-Pragmas	norm/pragmas.html
 pk	norm/pragmas.html#pk.t	pragmas: pk()	
 ro	norm/pragmas.html#ro.t	pragmas: ro()	
 fk	norm/pragmas.html#fk.t,typed	pragmas: fk(val: typed)	

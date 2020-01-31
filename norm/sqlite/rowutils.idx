@@ -1,4 +1,3 @@
-SQL Row to Nim Object Conversion Procs	norm/sqlite/rowutils.html
 parser	norm/sqlite/rowutils.html#parser.t	rowutils: parser(op: (DbValue) -&gt; any)	
 parseIt	norm/sqlite/rowutils.html#parseIt.t,untyped	rowutils: parseIt(op: untyped)	
 formatter	norm/sqlite/rowutils.html#formatter.t	rowutils: formatter(op: (any) -&gt; DbValue)	

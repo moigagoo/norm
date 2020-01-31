@@ -1,4 +1,3 @@
-SQL Query Generation for SQLite Backend	norm/sqlite/sqlgen.html
 `$`	norm/sqlite/sqlgen.html#$,SqlQuery	sqlgen: `$`(query: SqlQuery): string	
 getTable	norm/sqlite/sqlgen.html#getTable,ObjRepr	sqlgen: getTable(objRepr: ObjRepr): string	
 getTable	norm/sqlite/sqlgen.html#getTable,typedesc	sqlgen: getTable(T: typedesc): string	

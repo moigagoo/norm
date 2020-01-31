@@ -1,2 +1,1 @@
-Procs to Inject <tt class="docutils literal"><span class="pre">id</span></tt> Field into Type Definitions	norm/typedefutils.html
 ensureIdFields	norm/typedefutils.html#ensureIdFields,NimNode	typedefutils: ensureIdFields(typeSection: NimNode): NimNode	

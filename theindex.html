@@ -72,12 +72,259 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Documents: <a href="norm/objutils.html">Compile-Time Representation of Type Definitions</a>, <a href="norm.html">Norm: A Nim ORM</a>, <a href="norm/postgres.html">PostgreSQL Backend</a>, <a href="norm/pragmas.html">Pragmas</a>, <a href="norm/typedefutils.html">Procs to Inject <tt class="docutils literal"><span class="pre">id</span></tt> Field into Type Definitions</a>, <a href="norm/sqlite/sqlgen.html">SQL Query Generation for SQLite Backend</a>, <a href="norm/sqlite/rowutils.html">SQL Row to Nim Object Conversion Procs</a>, <a href="norm/sqlite.html">SQLite Backend</a>.<br/><p />
+    Documents: <a href="norm.html">Norm: A Nim ORM</a>.<br/><p />Modules: <a href="norm/objutils.html">norm/objutils</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/sqlite/rowutils.html">norm/sqlite/rowutils</a>, <a href="norm/sqlite/sqlgen.html">norm/sqlite/sqlgen</a>, <a href="norm/typedefutils.html">norm/typedefutils</a>.<br/><p /><h2>API symbols</h2>
+<dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: `$`(query: SqlQuery): string" href="norm/sqlite/sqlgen.html#%24%2CSqlQuery">sqlgen: `$`(query: SqlQuery): string</a></li>
+          </ul></dd>
+<dt><a name="check" href="#check"><span>check:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: check(val: string)" href="norm/pragmas.html#check.t%2Cstring">pragmas: check(val: string)</a></li>
+          </ul></dd>
+<dt><a name="db" href="#db"><span>db:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: db(connection, user, password, database: string; body: untyped): untyped" href="norm/postgres.html#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped">postgres: db(connection, user, password, database: string; body: untyped): untyped</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: db(connection, user, password, database: string; body: untyped): untyped" href="norm/sqlite.html#db.m%2Cstring%2Cstring%2Cstring%2Cstring%2Cuntyped">sqlite: db(connection, user, password, database: string; body: untyped): untyped</a></li>
+          </ul></dd>
+<dt><a name="dbCol" href="#dbCol"><span>dbCol:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: dbCol(val: string)" href="norm/pragmas.html#dbCol.t%2Cstring">pragmas: dbCol(val: string)</a></li>
+          </ul></dd>
+<dt><a name="dbFromTypes" href="#dbFromTypes"><span>dbFromTypes:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped" href="norm/postgres.html#dbFromTypes.m%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Btypedesc%5D">postgres: dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped" href="norm/sqlite.html#dbFromTypes.m%2Cstring%2Cstring%2Cstring%2Cstring%2CopenArray%5Btypedesc%5D">sqlite: dbFromTypes(connection, user, password, database: string; types: openArray[typedesc]): untyped</a></li>
+          </ul></dd>
+<dt><a name="dbTable" href="#dbTable"><span>dbTable:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: dbTable(val: string)" href="norm/pragmas.html#dbTable.t%2Cstring">pragmas: dbTable(val: string)</a></li>
+          </ul></dd>
+<dt><a name="dbType" href="#dbType"><span>dbType:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: dbType(val: string)" href="norm/pragmas.html#dbType.t%2Cstring">pragmas: dbType(val: string)</a></li>
+          </ul></dd>
+<dt><a name="dbTypes" href="#dbTypes"><span>dbTypes:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: dbTypes(body: untyped): untyped" href="norm/postgres.html#dbTypes.m%2Cuntyped">postgres: dbTypes(body: untyped): untyped</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: dbTypes(body: untyped): untyped" href="norm/sqlite.html#dbTypes.m%2Cuntyped">sqlite: dbTypes(body: untyped): untyped</a></li>
+          </ul></dd>
+<dt><a name="dbValue" href="#dbValue"><span>dbValue:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: dbValue(v: bool): DbValue" href="norm/sqlite/rowutils.html#dbValue%2Cbool">rowutils: dbValue(v: bool): DbValue</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="rowutils: dbValue(v: DateTime): DbValue" href="norm/sqlite/rowutils.html#dbValue%2CDateTime">rowutils: dbValue(v: DateTime): DbValue</a></li>
+          </ul></dd>
+<dt><a name="default" href="#default"><span>default:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: default(val: string)" href="norm/pragmas.html#default.t%2Cstring">pragmas: default(val: string)</a></li>
+          </ul></dd>
+<dt><a name="dot" href="#dot"><span>dot:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: dot(obj: object; fieldName: string): untyped" href="norm/objutils.html#dot.m%2C%2Cstring">objutils: dot(obj: object; fieldName: string): untyped</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="objutils: dot(obj: var object; fieldName: string; value: untyped): untyped" href="norm/objutils.html#dot.m%2C%2Cstring%2Cuntyped">objutils: dot(obj: var object; fieldName: string; value: untyped): untyped</a></li>
+          </ul></dd>
+<dt><a name="ensureIdFields" href="#ensureIdFields"><span>ensureIdFields:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="typedefutils: ensureIdFields(typeSection: NimNode): NimNode" href="norm/typedefutils.html#ensureIdFields%2CNimNode">typedefutils: ensureIdFields(typeSection: NimNode): NimNode</a></li>
+          </ul></dd>
+<dt><a name="fieldNames" href="#fieldNames"><span>fieldNames:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: fieldNames(objRepr: ObjRepr): seq[string]" href="norm/objutils.html#fieldNames%2CObjRepr">objutils: fieldNames(objRepr: ObjRepr): seq[string]</a></li>
+          </ul></dd>
+<dt><a name="FieldRepr" href="#FieldRepr"><span>FieldRepr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: FieldRepr" href="norm/objutils.html#FieldRepr">objutils: FieldRepr</a></li>
+          </ul></dd>
+<dt><a name="fk" href="#fk"><span>fk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: fk(val: typed)" href="norm/pragmas.html#fk.t%2Ctyped">pragmas: fk(val: typed)</a></li>
+          </ul></dd>
+<dt><a name="formatIt" href="#formatIt"><span>formatIt:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: formatIt(op: untyped)" href="norm/sqlite/rowutils.html#formatIt.t%2Cuntyped">rowutils: formatIt(op: untyped)</a></li>
+          </ul></dd>
+<dt><a name="formatter" href="#formatter"><span>formatter:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: formatter(op: (any) -&gt; DbValue)" href="norm/sqlite/rowutils.html#formatter.t">rowutils: formatter(op: (any) -&gt; DbValue)</a></li>
+          </ul></dd>
+<dt><a name="genAddColQuery" href="#genAddColQuery"><span>genAddColQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genAddColQuery(field: typedesc): untyped" href="norm/sqlite/sqlgen.html#genAddColQuery.m%2Ctypedesc">sqlgen: genAddColQuery(field: typedesc): untyped</a></li>
+          </ul></dd>
+<dt><a name="genCopyQuery" href="#genCopyQuery"><span>genCopyQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genCopyQuery(T: typedesc; targetTable: string): SqlQuery" href="norm/sqlite/sqlgen.html#genCopyQuery.t%2Ctypedesc%2Cstring">sqlgen: genCopyQuery(T: typedesc; targetTable: string): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genCreateTableQuery" href="#genCreateTableQuery"><span>genCreateTableQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genCreateTableQuery(tableName, tableSchema: string): SqlQuery" href="norm/sqlite/sqlgen.html#genCreateTableQuery%2Cstring%2Cstring">sqlgen: genCreateTableQuery(tableName, tableSchema: string): SqlQuery</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlgen: genCreateTableQuery(T: typedesc): string" href="norm/sqlite/sqlgen.html#genCreateTableQuery.m%2Ctypedesc">sqlgen: genCreateTableQuery(T: typedesc): string</a></li>
+          </ul></dd>
+<dt><a name="genDeleteQuery" href="#genDeleteQuery"><span>genDeleteQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genDeleteQuery(obj: object): SqlQuery" href="norm/sqlite/sqlgen.html#genDeleteQuery">sqlgen: genDeleteQuery(obj: object): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genDropTableQuery" href="#genDropTableQuery"><span>genDropTableQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genDropTableQuery(tableName: string): SqlQuery" href="norm/sqlite/sqlgen.html#genDropTableQuery%2Cstring">sqlgen: genDropTableQuery(tableName: string): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genGetAllQuery" href="#genGetAllQuery"><span>genGetAllQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genGetAllQuery(T: typedesc; condition: string): SqlQuery" href="norm/sqlite/sqlgen.html#genGetAllQuery.t%2Ctypedesc%2Cstring">sqlgen: genGetAllQuery(T: typedesc; condition: string): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genGetManyQuery" href="#genGetManyQuery"><span>genGetManyQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genGetManyQuery(obj: object; condition: string): SqlQuery" href="norm/sqlite/sqlgen.html#genGetManyQuery%2C%2Cstring">sqlgen: genGetManyQuery(obj: object; condition: string): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genGetOneQuery" href="#genGetOneQuery"><span>genGetOneQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genGetOneQuery(obj: object; condition: string): SqlQuery" href="norm/sqlite/sqlgen.html#genGetOneQuery%2C%2Cstring">sqlgen: genGetOneQuery(obj: object; condition: string): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genInsertQuery" href="#genInsertQuery"><span>genInsertQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genInsertQuery(obj: object; force: bool): SqlQuery" href="norm/sqlite/sqlgen.html#genInsertQuery%2C%2Cbool">sqlgen: genInsertQuery(obj: object; force: bool): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genRenameColQuery" href="#genRenameColQuery"><span>genRenameColQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genRenameColQuery(field: typedesc; oldName: string): untyped" href="norm/sqlite/sqlgen.html#genRenameColQuery.m%2Ctypedesc%2Cstring">sqlgen: genRenameColQuery(field: typedesc; oldName: string): untyped</a></li>
+          </ul></dd>
+<dt><a name="genRenameTableQuery" href="#genRenameTableQuery"><span>genRenameTableQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genRenameTableQuery(oldName, newName: string): SqlQuery" href="norm/sqlite/sqlgen.html#genRenameTableQuery%2Cstring%2Cstring">sqlgen: genRenameTableQuery(oldName, newName: string): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="genTableSchema" href="#genTableSchema"><span>genTableSchema:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genTableSchema(dbObjRepr: ObjRepr): string" href="norm/sqlite/sqlgen.html#genTableSchema%2CObjRepr">sqlgen: genTableSchema(dbObjRepr: ObjRepr): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlgen: genTableSchema(T: typedesc): string" href="norm/sqlite/sqlgen.html#genTableSchema.m%2Ctypedesc">sqlgen: genTableSchema(T: typedesc): string</a></li>
+          </ul></dd>
+<dt><a name="genUpdateQuery" href="#genUpdateQuery"><span>genUpdateQuery:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: genUpdateQuery(obj: object; force: bool): SqlQuery" href="norm/sqlite/sqlgen.html#genUpdateQuery%2C%2Cbool">sqlgen: genUpdateQuery(obj: object; force: bool): SqlQuery</a></li>
+          </ul></dd>
+<dt><a name="getByName" href="#getByName"><span>getByName:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: getByName[T: ObjRepr | FieldRepr](reprs: openArray[T]; name: string): T" href="norm/objutils.html#getByName%2CopenArray%5BT%5D%2Cstring">objutils: getByName[T: ObjRepr | FieldRepr](reprs: openArray[T]; name: string): T</a></li>
+          </ul></dd>
+<dt><a name="getColumn" href="#getColumn"><span>getColumn:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: getColumn(fieldRepr: FieldRepr): string" href="norm/sqlite/sqlgen.html#getColumn%2CFieldRepr">sqlgen: getColumn(fieldRepr: FieldRepr): string</a></li>
+          </ul></dd>
+<dt><a name="getColumns" href="#getColumns"><span>getColumns:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: getColumns(obj: object; force = false): seq[string]" href="norm/sqlite/sqlgen.html#getColumns">sqlgen: getColumns(obj: object; force = false): seq[string]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlgen: getColumns(dbObjRepr: ObjRepr; force = false): seq[string]" href="norm/sqlite/sqlgen.html#getColumns%2CObjRepr">sqlgen: getColumns(dbObjRepr: ObjRepr; force = false): seq[string]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlgen: getColumns(T: typedesc; force = false): untyped" href="norm/sqlite/sqlgen.html#getColumns.m%2Ctypedesc">sqlgen: getColumns(T: typedesc; force = false): untyped</a></li>
+          </ul></dd>
+<dt><a name="getTable" href="#getTable"><span>getTable:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlgen: getTable(objRepr: ObjRepr): string" href="norm/sqlite/sqlgen.html#getTable%2CObjRepr">sqlgen: getTable(objRepr: ObjRepr): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlgen: getTable(T: typedesc): string" href="norm/sqlite/sqlgen.html#getTable%2Ctypedesc">sqlgen: getTable(T: typedesc): string</a></li>
+          </ul></dd>
+<dt><a name="notNull" href="#notNull"><span>notNull:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: notNull()" href="norm/pragmas.html#notNull.t">pragmas: notNull()</a></li>
+          </ul></dd>
+<dt><a name="ObjRepr" href="#ObjRepr"><span>ObjRepr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: ObjRepr" href="norm/objutils.html#ObjRepr">objutils: ObjRepr</a></li>
+          </ul></dd>
+<dt><a name="onDelete" href="#onDelete"><span>onDelete:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: onDelete(val: string)" href="norm/pragmas.html#onDelete.t%2Cstring">pragmas: onDelete(val: string)</a></li>
+          </ul></dd>
+<dt><a name="onUpdate" href="#onUpdate"><span>onUpdate:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: onUpdate(val: string)" href="norm/pragmas.html#onUpdate.t%2Cstring">pragmas: onUpdate(val: string)</a></li>
+          </ul></dd>
+<dt><a name="parseIt" href="#parseIt"><span>parseIt:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: parseIt(op: untyped)" href="norm/sqlite/rowutils.html#parseIt.t%2Cuntyped">rowutils: parseIt(op: untyped)</a></li>
+          </ul></dd>
+<dt><a name="parser" href="#parser"><span>parser:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: parser(op: (DbValue) -&gt; any)" href="norm/sqlite/rowutils.html#parser.t">rowutils: parser(op: (DbValue) -&gt; any)</a></li>
+          </ul></dd>
+<dt><a name="pk" href="#pk"><span>pk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: pk()" href="norm/pragmas.html#pk.t">pragmas: pk()</a></li>
+          </ul></dd>
+<dt><a name="pkFlag" href="#pkFlag"><span>pkFlag:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="PragmaKind.pkFlag" href="norm/objutils.html#pkFlag">PragmaKind.pkFlag</a></li>
+          </ul></dd>
+<dt><a name="pkKval" href="#pkKval"><span>pkKval:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="PragmaKind.pkKval" href="norm/objutils.html#pkKval">PragmaKind.pkKval</a></li>
+          </ul></dd>
+<dt><a name="PragmaKind" href="#PragmaKind"><span>PragmaKind:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: PragmaKind" href="norm/objutils.html#PragmaKind">objutils: PragmaKind</a></li>
+          </ul></dd>
+<dt><a name="pragmaNames" href="#pragmaNames"><span>pragmaNames:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: pragmaNames(signRepr: SignatureRepr): seq[string]" href="norm/objutils.html#pragmaNames%2CSignatureRepr">objutils: pragmaNames(signRepr: SignatureRepr): seq[string]</a></li>
+          </ul></dd>
+<dt><a name="PragmaRepr" href="#PragmaRepr"><span>PragmaRepr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: PragmaRepr" href="norm/objutils.html#PragmaRepr">objutils: PragmaRepr</a></li>
+          </ul></dd>
+<dt><a name="ro" href="#ro"><span>ro:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: ro()" href="norm/pragmas.html#ro.t">pragmas: ro()</a></li>
+          </ul></dd>
+<dt><a name="SignatureRepr" href="#SignatureRepr"><span>SignatureRepr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: SignatureRepr" href="norm/objutils.html#SignatureRepr">objutils: SignatureRepr</a></li>
+          </ul></dd>
+<dt><a name="table" href="#table"><span>table:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: table(val: string)" href="norm/pragmas.html#table.t%2Cstring">pragmas: table(val: string)</a></li>
+          </ul></dd>
+<dt><a name="to" href="#to"><span>to:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: to(rows: openArray[Row]; T: typedesc): seq[T:type]" href="norm/sqlite/rowutils.html#to%2CopenArray%5Bseq%5BDbValue%5D%5D%2Ctypedesc">rowutils: to(rows: openArray[Row]; T: typedesc): seq[T:type]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="rowutils: to(row: Row; T: typedesc): T:type" href="norm/sqlite/rowutils.html#to%2Cseq%5BDbValue%5D%2Ctypedesc">rowutils: to(row: Row; T: typedesc): T:type</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="rowutils: to(rows: openArray[Row]; objs: var seq[object])" href="norm/sqlite/rowutils.html#to.t%2CopenArray%5Bseq%5BDbValue%5D%5D%2Cseq%5BT%5D%5B%5D">rowutils: to(rows: openArray[Row]; objs: var seq[object])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="rowutils: to(row: Row; obj: var object)" href="norm/sqlite/rowutils.html#to.t%2Cseq%5BDbValue%5D%2C">rowutils: to(row: Row; obj: var object)</a></li>
+          </ul></dd>
+<dt><a name="toObjRepr" href="#toObjRepr"><span>toObjRepr:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: toObjRepr(typeDef: NimNode): ObjRepr" href="norm/objutils.html#toObjRepr%2CNimNode">objutils: toObjRepr(typeDef: NimNode): ObjRepr</a></li>
+          </ul></dd>
+<dt><a name="toRow" href="#toRow"><span>toRow:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: toRow(obj: object; force = false): Row" href="norm/sqlite/rowutils.html#toRow">rowutils: toRow(obj: object; force = false): Row</a></li>
+          </ul></dd>
+<dt><a name="toRows" href="#toRows"><span>toRows:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: toRows(objs: openArray[object]; force = false): seq[Row]" href="norm/sqlite/rowutils.html#toRows%2CopenArray%5B%5D">rowutils: toRows(objs: openArray[object]; force = false): seq[Row]</a></li>
+          </ul></dd>
+<dt><a name="toTypeDef" href="#toTypeDef"><span>toTypeDef:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="objutils: toTypeDef(obj: ObjRepr): NimNode" href="norm/objutils.html#toTypeDef%2CObjRepr">objutils: toTypeDef(obj: ObjRepr): NimNode</a></li>
+          </ul></dd>
+<dt><a name="unique" href="#unique"><span>unique:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmas: unique()" href="norm/pragmas.html#unique.t">pragmas: unique()</a></li>
+          </ul></dd>
+</dl>
     <div class="row">
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-01-30 19:12:18 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-01-31 20:09:50 UTC</small>
       </div>
     </div>
   </div>
