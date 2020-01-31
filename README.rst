@@ -16,7 +16,7 @@ Norm: A Nim ORM
 -   `Repo → <https://github.com/moigagoo/norm>`__
 -   `Sample app → <https://github.com/moigagoo/norm-sample-webapp>`__
 -   `API index → <theindex.html>`__
--   `Changelog → <changelog.html>`__
+-   `Changelog → <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
 
 Quickstart
@@ -72,7 +72,11 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
       bob.insert()                            # Insert ``bob`` into DB.
       echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
-      var alice = User(age: 12, name: "alice", ssn: none int)
+      var alice = User(
+        age: 12,
+        name: "alice",
+        ssn: none int
+      )
       alice.insert()
 
     withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
@@ -118,38 +122,23 @@ Model Declaration
 
     Declare models from a type section with object declarations.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L383
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L382
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L11
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L15
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``dbFromTypes(connection, user, password, database: string, types: openArray[typedesc])``
 
     Declare models from type sections in other modules. The type sections must be wrapped in ``dbTypes``.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L359
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L358
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L15
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L17
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
 
 -   ``dbTypes``
 
     Make a type section usable as a model declaration in ``dbFromTypes``.
-
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L352
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L351
 
     Tests:
 
@@ -166,15 +155,10 @@ Connection
 
     The connection can be accessed via ``dbConn`` variable if needed.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L341
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L340
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``withCustomDb(customConnection, customUser, customPassword, customDatabase: string, body: untyped)``
 
@@ -182,15 +166,10 @@ Connection
 
     The connection can be accessed via ``dbConn`` variable if needed.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L47
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L43
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L270
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L257
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 Setup
@@ -202,15 +181,10 @@ Setup
 
     ``force=true`` prepends ``DROP TABLE IF EXISTS`` for all genereated tables.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L95
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L91
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L47
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L48
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 Teardown
@@ -220,40 +194,44 @@ Teardown
 
     Drop tables for all models.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L70
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L66
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L255
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L90
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L85
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
 
 
 
 Create Records
 --------------
 
--   ``insert(obj: var object, force=false)``
+-   ``insert(obj: var object, force = false)``
 
     Store a model instance into the DB as a row.
 
     The input object must be mutable because its ``id`` field, initially equal ``0``, is updated after the insertion to reflect the row ID returned by the DB.
 
-    Implementation:
+    Tests:
 
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L168
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
+
+-   ``insertId(obj: object, force = false)``
+
+    Store an immutable model instance into the DB as a row, returning the new record ID.
+
+    The object's ``id`` field is **not** updated.
 
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L48
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L49
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim#L19
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim#L20
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
+
 
 
 Read Records
@@ -263,86 +241,56 @@ Read Records
 
     Fetch one row by ID and store it into a new model instance.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L223
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L228
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 -   ``getOne(obj: var object, id: int)``
 
     Fetch one row by ID and store it into as existing instance.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L209
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L214
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
 
     Fetch the first row that matches the given condition. Store into a new instance.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L201
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L206
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
 
     Fetch the first row that matches the given condition. Store into an existing instance.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L183
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L188
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L141
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L127
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``getMany(T: typedesc, limit: int, offset = 0, cond = trueCond, params: varargs[DbValue, dbValue])``
 
     Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L247
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L252
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = trueCond, params: varargs[DbValue, dbValue])``
 
     Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L228
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L233
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 -   ``getAll(T: typedesc, cond = trueCond, params: varargs[DbValue, dbValue])``
 
@@ -350,15 +298,10 @@ Read Records
 
     **Warning:** This is a dangerous operation because you're fetching an unknown number of rows, which could be millions. Consider using ``getMany`` instead.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L258
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L263
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L197
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L183
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 Update Records
@@ -368,16 +311,10 @@ Update Records
 
     Update a record in the DB with the current field values of a model instance.
 
-
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L279
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L284
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L224
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L210
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 Delete Records
@@ -387,15 +324,10 @@ Delete Records
 
     Delete a record from the DB by ID from a model instance. The instance's ``id`` fields is set to ``0``.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L293
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L298
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L240
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L226
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 Transactions
@@ -405,29 +337,19 @@ Transactions
 
     Wrap statements in a ``transaction`` block to run them as a single DB transaction: if any statements fails, the entire transaction is cancelled.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L304
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L309
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L95
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L106
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 -   ``rollback``
 
     Raise ``RollbackError`` that is catched inside a ``transaction`` block and cancels the transaction.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L59
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L55
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L107
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L114
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 
 Migrations
@@ -443,15 +365,10 @@ Migrations
 
     ``force=true`` prepends `DROP TABLE IF EXISTS` to the generated query.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L83
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L79
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L35
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L50
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 -   ``addColumn(field: typedesc)``
 
@@ -461,27 +378,18 @@ Migrations
 
     ``field`` should point to the model field for which the column is to be created, e.g. ``Pet.age``.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L115
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L111
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L44
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L61
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 -   ``dropColumns(T: typedesc, cols: openArray[string])``
 
     PostgreSQL only. Drop all columns of a table.
 
-    Implementation:
-
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L120
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L69
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 -   ``dropUnusedColumns(T: typedesc)``
 
@@ -489,15 +397,10 @@ Migrations
 
     Use to clean up DB after removing a field from a model.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L124
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L129
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L57
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L79
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 -   ``renameColumnFrom(field: typedesc, oldName: string)``.
 
@@ -505,17 +408,12 @@ Migrations
 
     Use this proc to rename a column. To replace a column, use `addColumn` with conjunction with ``dropUnusedColumns``.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L144
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L149
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L72
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L95
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L89
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L106
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 -   ``renameTableFrom(T: typedesc, oldName: string)``
 
@@ -523,15 +421,10 @@ Migrations
 
     Use after renaming a model or changing its ``dbTable`` pragma value.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L156
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L161
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim#L85
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim#L98
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
 
 
 -   ``dropTable(T: typedesc)``
@@ -540,15 +433,10 @@ Migrations
 
     Use after removing a model.
 
-    Implementation:
-
-    -   SQLite: https://github.com/moigagoo/norm/blob/develop/src/norm/sqlite.nim#L63
-    -   PostgreSQL: https://github.com/moigagoo/norm/blob/develop/src/norm/postgres.nim#L59
-
     Tests:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim#L257
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim#L241
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
+    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
 
 Contributing

@@ -28,7 +28,7 @@ Changelog
 -   [+] Add ``transaction`` macro to run multiple commands in a transaction and ``rollback`` proc to safely interrupt a transaction.
 -   [+] Add ``createTable`` and ``dropTable``.
 -   [+] SQLite: Add means to write migrations: ``addColumn``, ``dropUnusedColumns``, ``renameColumnFrom``, and ``renameTableFrom``.
--   [+] PostgreSQL: Add means to writemigrations: ``addColumn``, ``dropColumns``, ``dropUnusedColumns``, ``renameColumnFrom``, and ``renameTableFrom``.
+-   [+] PostgreSQL: Add means to write migrations: ``addColumn``, ``dropColumns``, ``dropUnusedColumns``, ``renameColumnFrom``, and ``renameTableFrom``.
 -   [+] Add support for ``int64`` field type.
 -   [+] Add ``getAll`` template to get all records without limit or offset.
 -   [r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.

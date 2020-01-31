@@ -1,10 +1,4 @@
-##[
-
-##############
-SQLite Backend
-##############
-
-The following Nim types are converted automatically:
+##[ The following Nim types are converted automatically:
 
 ==================== ====================
 Nim Type             SQLite Type
