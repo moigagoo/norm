@@ -72,12 +72,11 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
       bob.insert()                            # Insert ``bob`` into DB.
       echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
 
-      var alice = User(
+      discard insertId User(                  # Insert an immutable model instance and return its ID.
         age: 12,
         name: "alice",
         ssn: none int
       )
-      alice.insert()
 
     withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
       createTables(force=true)                # to connect to a different DB with the same models.
