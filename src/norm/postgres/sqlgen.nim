@@ -1,11 +1,4 @@
-##[
-
-###########################################
-SQL Query Generation for PostgreSQL Backend
-###########################################
-
-Procs to generate SQL queries to modify tables and records.
-]##
+## Procs to generate SQL queries to modify tables and records.
 
 import strutils, macros
 import ndb/postgres

@@ -34,6 +34,8 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
       foo: int
     FkChild = object
       owner: FkOwner
+    Card = object
+      number: int
 
   proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
@@ -74,6 +76,8 @@ suite "Creating and dropping tables, CRUD":
 
           edition.book = book
           edition.insert()
+
+          discard insertId Card(number: i)
 
   teardown:
     withDb:
@@ -243,6 +247,12 @@ suite "Creating and dropping tables, CRUD":
         discard Edition.getOne 2
 
   test "Drop tables":
+    withDb:
+      User.dropTable()
+
+      expect DbError:
+        dbConn.exec sql "SELECT NULL FROM users"
+
     withDb:
       dropTables()
 

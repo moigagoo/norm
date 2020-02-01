@@ -120,16 +120,16 @@ suite "Conversion with custom parser and formatter procs":
 
 suite "Basic bulk object <-> row conversion":
   type
-    SimpleUser = object
+    BasicUser = object
       name: string
       age: Natural
       height: float
 
   let
     users = @[
-      SimpleUser(name: "Alice", age: 23, height: 168.2),
-      SimpleUser(name: "Bob", age: 34, height: 172.5),
-      SimpleUser(name: "Michael", age: 45, height: 180.0)
+      BasicUser(name: "Alice", age: 23, height: 168.2),
+      BasicUser(name: "Bob", age: 34, height: 172.5),
+      BasicUser(name: "Michael", age: 45, height: 180.0)
     ]
     rows = @[
       @[?"Alice", ?23, ?168.2],
@@ -141,13 +141,13 @@ suite "Basic bulk object <-> row conversion":
     check users.toRows() == rows
 
   test "Rows -> objects":
-    check rows.to(SimpleUser) == users
+    check rows.to(BasicUser) == users
 
   test "Objects -> rows -> objects":
-    check users.toRows().to(SimpleUser) == users
+    check users.toRows().to(BasicUser) == users
 
   test "Rows -> objects -> rows":
-    check rows.to(SimpleUser).toRows() == rows
+    check rows.to(BasicUser).toRows() == rows
 
 suite "Bulk conversion with custom parser and formatter expressions":
   type

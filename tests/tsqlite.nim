@@ -32,6 +32,8 @@ db(dbName, "", "", ""):
       foo: int
     FkChild = object
       owner: FkOwner
+    Card = object
+      number: int
 
   proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
@@ -73,6 +75,8 @@ suite "Creating and dropping tables, CRUD":
 
           edition.book = book
           edition.insert()
+
+          discard insertId Card(number: i)
 
   teardown:
     withDb:

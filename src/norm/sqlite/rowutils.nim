@@ -1,12 +1,6 @@
-##[
+##[ This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
 
-######################################
-SQL Row to Nim Object Conversion Procs
-######################################
-
-This module implements ``to`` and ``toRow`` proc families for row to object and object to row conversion respectively.
-
-``Row`` is a sequence of ``ndb.DbValue``, which allows to store ``options.none`` values as ``NULL`` and vice versa.
+``Row`` is a sequence of ``ndb.DbValue``, which allows to store ``options.none`` values as ``NULL`` and vice versa.
 ]##
 
 import sequtils, options, times
@@ -60,40 +54,6 @@ template to*(row: Row, obj: var object) =
   If object fields don't require initialization, you may use the proc that instantiates the object on the fly. This template though can be safely used for all object kinds.
   ]##
 
-  runnableExamples:
-    import times, sugar
-    import ndb/sqlite
-
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz", utc())
-
-    type
-      Example = object
-        intField: int
-        strField: string
-        floatField: float
-        boolField: bool
-        dtField {.parser: parseDateTime.}: DateTime
-        tsField: DateTime
-
-    let row = @[
-      ?123,
-      ?"foo",
-      ?123.321,
-      ?1,
-      ?"2019-01-21 15:03:21+04",
-      ?1566243173
-    ]
-
-    var example = Example(dtField: now(), tsField: now())
-    row.to(example)
-
-    doAssert example.intField == 123
-    doAssert example.strField == "foo"
-    doAssert example.floatField == 123.321
-    doAssert example.boolField == true
-    doAssert example.dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
-    doAssert example.tsField == "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
-
   var i: int
 
   for field, value in obj.fieldPairs:
@@ -144,59 +104,6 @@ template to*(rows: openArray[Row], objs: var seq[object]) =
   If the number of objects is higher, unused objects are trimmed away.
   ]##
 
-  runnableExamples:
-    import times, sugar
-    import ndb/sqlite
-
-    proc parseDateTime(dbv: DbValue): DateTime = dbv.s.parse("yyyy-MM-dd HH:mm:sszz", utc())
-
-    type
-      Example = object
-        intField: int
-        strField: string
-        floatField: float
-        boolField: bool
-        dtField {.parser: parseDateTime.}: DateTime
-
-    let rows = @[
-      @[
-        ?123,
-        ?"foo",
-        ?123.321,
-        ?1,
-        ?"2019-01-21 15:03:21+04"
-      ],
-      @[
-        ?456,
-        ?"bar",
-        ?456.654,
-        ?0,
-        ?"2019-02-22 16:14:32+04"
-      ],
-      @[
-        ?789,
-        ?"baz",
-        ?789.987,
-        ?1,
-        ?"2019-03-23 17:25:43+04"
-      ]
-    ]
-
-    var examples = @[
-      Example(dtField: now()),
-      Example(dtField: now()),
-      Example(dtField: now()),
-      Example(dtField: now())
-    ]
-
-    rows.to(examples)
-
-    doAssert examples[0].intField == 123
-    doAssert examples[1].strField == "bar"
-    doAssert examples[2].floatField == 789.987
-    doAssert examples[0].boolField == true
-    doAssert examples[0].dtField == "2019-01-21 15:03:21+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
-
   objs.setLen min(len(rows), len(objs))
 
   for i in 0..high(objs):
@@ -210,25 +117,6 @@ proc to*(row: Row, T: typedesc): T =
   If fields require initialization, for example, ``times.DateTime``, use template ``to``. It converts a row to a existing object instance.
   ]##
 
-  runnableExamples:
-    import ndb/sqlite
-
-    type
-      Example = object
-        intField: int
-        strField: string
-        floatField: float
-        boolField: bool
-
-    let
-      row = @[?123, ?"foo", ?123.321, ?0]
-      obj = row.to(Example)
-
-    doAssert obj.intField == 123
-    doAssert obj.strField == "foo"
-    doAssert obj.floatField == 123.321
-    doAssert obj.boolField == false
-
   row.to(result)
 
 proc to*(rows: openArray[Row], T: typedesc): seq[T] =
@@ -239,29 +127,6 @@ proc to*(rows: openArray[Row], T: typedesc): seq[T] =
   If fields require initialization, for example, ``times.DateTime``, use template ``to``. It converts an open array of rows to an existing object instance openArray.
   ]##
 
-  runnableExamples:
-    import ndb/sqlite
-
-    type
-      Example = object
-        intField: int
-        strField: string
-        floatField: float
-        boolField: bool
-
-    let
-      rows = @[
-        @[?123, ?"foo", ?123.321, ?1],
-        @[?456, ?"bar", ?456.654, ?0],
-        @[?789, ?"baz", ?789.987, ?1]
-      ]
-      examples = rows.to(Example)
-
-    doAssert examples[0].intField == 123
-    doAssert examples[1].strField == "bar"
-    doAssert examples[2].floatField == 789.987
-    doAssert examples[0].boolField == true
-
   result.setLen len(rows)
 
   rows.to(result)
@@ -271,33 +136,6 @@ proc toRow*(obj: object, force = false): Row =
 
   If a custom formatter is provided for a field, it is used for conversion, otherwise `$` is invoked.
   ]##
-
-  runnableExamples:
-    import strutils, times, ndb/sqlite
-
-    type
-      Example = object
-        intField: int
-        strField{.formatIt: ?it.toLowerAscii().}: string
-        floatField: float
-        boolField: bool
-        tsField: DateTime
-
-    let
-      example = Example(
-        intField: 123,
-        strField: "Foo",
-        floatField: 123.321,
-        boolField: true,
-        tsField: "2019-08-19 23:32:53+04".parse("yyyy-MM-dd HH:mm:sszz", utc())
-      )
-      row = example.toRow()
-
-    doAssert row[0].i == 123
-    doAssert row[1].s == "foo"
-    doAssert row[2].f == 123.321
-    doAssert row[3].i == 1
-    doAssert row[4].i == 1566243173
 
   for field, value in obj.fieldPairs:
     if force or not obj.dot(field).hasCustomPragma(ro):
@@ -315,28 +153,5 @@ proc toRows*(objs: openArray[object], force = false): seq[Row] =
 
   If a custom formatter is provided for a field, it is used for conversion, otherwise `$` is invoked.
   ]##
-
-  runnableExamples:
-    import strutils, sequtils, ndb/sqlite
-
-    type
-      Example = object
-        intField: int
-        strField{.formatIt: ?it.toLowerAscii().}: string
-        floatField: float
-        boolField: bool
-
-    let
-      examples = @[
-        Example(intField: 123, strField: "Foo", floatField: 123.321, boolField: true),
-        Example(intField: 456, strField: "Bar", floatField: 456.654, boolField: false),
-        Example(intField: 789, strField: "Baz", floatField: 789.987, boolField: true)
-      ]
-      rows = examples.toRows()
-
-    doAssert rows[0][0].i == 123
-    doAssert rows[1][1].s == "bar"
-    doAssert rows[2][2].f == 789.987
-    doAssert rows[1][3].i == 0
 
   objs.mapIt(it.toRow(force))

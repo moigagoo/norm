@@ -1,11 +1,4 @@
-##[
-
-#######################################
-SQL Query Generation for SQLite Backend
-#######################################
-
-Procs to generate SQL queries to modify tables and records.
-]##
+## Procs to generate SQL queries to modify tables and records.
 
 import strutils, sequtils, macros
 import ndb/sqlite

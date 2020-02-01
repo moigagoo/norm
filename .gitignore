@@ -4,6 +4,13 @@
 
 *.exe
 *.html
+*.idx
+htmldocs
+
+*.mkdocs
+.*cache
+__folianttmp__
+*.log
 
 tests/tobjutils
 tests/tpostgres
