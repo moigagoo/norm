@@ -6,7 +6,7 @@ import norm/postgres
 const
   dbHost = "postgres_1"
   dbUser = "postgres"
-  dbPassword = ""
+  dbPassword = "postgres"
   dbDatabase = "postgres"
 
 db(dbHost, dbUser, dbPassword, dbDatabase):

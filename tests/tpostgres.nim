@@ -9,7 +9,7 @@ const
   dbHost = "postgres_1"
   customDbHost = "postgres_2"
   dbUser = "postgres"
-  dbPassword = ""
+  dbPassword = "postgres"
   dbDatabase = "postgres"
 
 db(dbHost, dbUser, dbPassword, dbDatabase):
@@ -259,13 +259,13 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM editions"
 
   test "Custom DB":
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
+    withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
       createTables(force=true)
 
     proc getCols(table: string): seq[string] =
       let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
 
-      withCustomDb(customDbHost, "postgres", "", "postgres"):
+      withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
@@ -274,7 +274,7 @@ suite "Creating and dropping tables, CRUD":
     check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
     check getCols("editions") == @["id", "title", "bookid"]
 
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
+    withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
       dropTables()
 
       expect DbError:

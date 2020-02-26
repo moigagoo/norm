@@ -1,9 +1,17 @@
 version: '3'
+
 services:
+
   postgres_1:
-    image: postgres:11
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+
   postgres_2:
-    image: postgres:11
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+
   tests:
     build: .
     image: norm
@@ -13,6 +21,7 @@ services:
     volumes:
       - .:/usr/src/app
     command: nimble test
+
   test:
     build: .
     image: norm
@@ -22,6 +31,7 @@ services:
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
+
   docs:
     build: .
     image: norm
