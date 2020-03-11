@@ -26,7 +26,7 @@ Quickstart
 
 Install Norm with `Nimble <https://github.com/nim-lang/nimble>`_:
 
-.. code-block:: nim
+.. code-block::
 
     $ nimble install norm
 
