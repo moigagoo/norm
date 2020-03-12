@@ -1,6 +1,6 @@
 import unittest
 
-import strutils, times
+import strutils, times, algorithm
 
 import norm/postgres
 
@@ -33,14 +33,14 @@ suite "Creating and dropping tables, CRUD":
 
   test "Create tables":
     proc getCols(table: string): seq[string] =
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY column_name"
 
       withDb:
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
-    check getCols("users") == @["id", "email", "lastlogin"]
-    check getCols("pet") == @["id", "name", "age", "ownerid"]
+    check getCols("users") == sorted @["id", "email", "lastlogin"]
+    check getCols("pet") == sorted @["id", "name", "age", "ownerid"]
 
   test "Read records":
     withDb:
@@ -95,14 +95,14 @@ suite "Creating and dropping tables, CRUD":
       createTables(force=true)
 
     proc getCols(table: string): seq[string] =
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY column_name"
 
       withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
-    check getCols("users") == @["id", "email", "lastlogin"]
-    check getCols("pet") == @["id", "name", "age", "ownerid"]
+    check getCols("users") == sorted @["id", "email", "lastlogin"]
+    check getCols("pet") == sorted @["id", "name", "age", "ownerid"]
 
     withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
       dropTables()

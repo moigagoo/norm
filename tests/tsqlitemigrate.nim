@@ -118,11 +118,16 @@ suite "Migrations":
         @[?2, ?"age", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
-    expect IOError:
+    # Workaround for ``expect`` not working.
+    try:
       withDb:
         transaction:
           addColumn PersonAddColumn.ssn
           raise newException(IOError, "This should be raised.")
+    except IOError:
+      check true
+    except:
+      check false
 
   teardown:
     withDb:
