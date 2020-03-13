@@ -1,4 +1,5 @@
 switch("path", "$projectDir/../src")
 switch("verbosity", "0")
 switch("hints", "off")
-switch("gc", "arc")
+when (NimMajor, NimMinor) >= (1, 1):
+  switch("gc", "arc")
