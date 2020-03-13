@@ -360,7 +360,7 @@ macro dbTypes*(body: untyped): untyped =
 
   for node in body:
     expectKind(node, nnkTypeSection)
-    result.add ensureForeignKeys(ensureIdFields(node))
+    result.add node.ensureIdFields().ensureForeignKeys()
 
 macro dbFromTypes*(connection, user, password, database: string,
                    types: openArray[typedesc]): untyped =
@@ -401,7 +401,7 @@ macro db*(connection, user, password, database: string, body: untyped): untyped 
 
   for node in body:
     if node.kind == nnkTypeSection:
-      let typeSection = ensureForeignKeys(ensureIdFields(node))
+      let typeSection = node.ensureIdFields().ensureForeignKeys()
 
       result.add typeSection
 
