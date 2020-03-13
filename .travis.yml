@@ -1,4 +1,5 @@
-language: minimal
+os: linux
+language: shell
 
 services:
   - docker
@@ -9,9 +10,9 @@ script:
 
 deploy:
   provider: pages
-  local-dir: htmldocs
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: true
+  local_dir: htmldocs
+  cleanup: false
+  token: $GITHUB_TOKEN
+  keep_history: true
   on:
     branch: develop

@@ -1,6 +1,6 @@
 import unittest
 
-import strutils, sequtils, times
+import strutils, sequtils, times, algorithm
 
 import norm/postgres
 
@@ -9,7 +9,7 @@ const
   dbHost = "postgres_1"
   customDbHost = "postgres_2"
   dbUser = "postgres"
-  dbPassword = ""
+  dbPassword = "postgres"
   dbDatabase = "postgres"
 
 db(dbHost, dbUser, dbPassword, dbDatabase):
@@ -30,6 +30,12 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
+    FkOwner = object
+      foo: int
+    FkChild = object
+      owner: FkOwner
+    Card = object
+      number: int
 
   proc getBookById(id: DbValue): Book = withDb(Book.getOne int(id.i))
 
@@ -71,22 +77,24 @@ suite "Creating and dropping tables, CRUD":
           edition.book = book
           edition.insert()
 
+          discard insertId Card(number: i)
+
   teardown:
     withDb:
       dropTables()
 
   test "Create tables":
     proc getCols(table: string): seq[string] =
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY column_name"
 
       withDb:
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
-    check getCols("users") == @["id", "email", "ssn", "birthdate", "lastlogin"]
-    check getCols("publishers") == @["id", "title", "licensed"]
-    check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
-    check getCols("editions") == @["id", "title", "bookid"]
+    check getCols("users") == sorted @["id", "email", "ssn", "birthdate", "lastlogin"]
+    check getCols("publishers") == sorted @["id", "title", "licensed"]
+    check getCols("books") == sorted @["id", "title", "authoremail", "publishertitle"]
+    check getCols("editions") == sorted @["id", "title", "bookid"]
 
   test "Create records":
     withDb:
@@ -255,22 +263,22 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM editions"
 
   test "Custom DB":
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
+    withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
       createTables(force=true)
 
     proc getCols(table: string): seq[string] =
-      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1"
+      let query = sql "SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY column_name"
 
-      withCustomDb(customDbHost, "postgres", "", "postgres"):
+      withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
         for col in dbConn.getAllRows(query, table):
           result.add $col[0]
 
-    check getCols("users") == @["id", "email", "ssn", "birthdate", "lastlogin"]
-    check getCols("publishers") == @["id", "title", "licensed"]
-    check getCols("books") == @["id", "title", "authoremail", "publishertitle"]
-    check getCols("editions") == @["id", "title", "bookid"]
+    check getCols("users") == sorted @["id", "email", "ssn", "birthdate", "lastlogin"]
+    check getCols("publishers") == sorted ["id", "title", "licensed"]
+    check getCols("books") == sorted @["id", "title", "authoremail", "publishertitle"]
+    check getCols("editions") == sorted @["id", "title", "bookid"]
 
-    withCustomDb(customDbHost, "postgres", "", "postgres"):
+    withCustomDb(customDbHost, dbUser, dbPassword, dbDatabase):
       dropTables()
 
       expect DbError:
@@ -278,3 +286,12 @@ suite "Creating and dropping tables, CRUD":
         dbConn.exec sql "SELECT NULL FROM publishers"
         dbConn.exec sql "SELECT NULL FROM books"
         dbConn.exec sql "SELECT NULL FROM editions"
+
+  test "Automatic foreign key":
+    withDb:
+      var owner = FkOwner(foo: 42)
+      owner.insert()
+      var child = FkChild(owner: owner)
+      child.insert()
+
+      check child.owner == owner

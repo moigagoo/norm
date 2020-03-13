@@ -32,14 +32,15 @@ db(dbName, "", "", ""):
 
 
 suite "Migrations":
+  removeFile dbName
+
   setup:
     withDb:
       Person.createTable(force=true)
 
       transaction:
         for i in 1..9:
-          var person = Person(name: "Person $#" % $i, age: 20+i)
-          person.insert()
+          discard insertId Person(name: "Person $#" % $i, age: 20+i)
 
   test "Add column":
     withDb:
@@ -116,11 +117,16 @@ suite "Migrations":
         @[?2, ?"age", ?"INTEGER", ?1, ?"0", ?0]
       ]
 
-    expect IOError:
+    # Workaround for ``expect`` not working.
+    try:
       withDb:
         transaction:
           addColumn PersonAddColumn.ssn
           raise newException(IOError, "This should be raised.")
+    except IOError:
+      check true
+    except:
+      check false
 
   teardown:
     withDb:

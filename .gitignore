@@ -5,6 +5,7 @@
 *.exe
 *.html
 *.idx
+htmldocs
 
 *.mkdocs
 .*cache
