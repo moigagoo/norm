@@ -14,6 +14,8 @@ Changelog
 
 -   [+] Add ``insertId`` proc that takes an immutable object and inserts it as a record to the DB. The inserted record ID is returned. The object ``id`` field is **not** updated.
 
+-   [+] Automatically generate foreign key boilerplate for models defined under the same ``type`` section. See examples in `tests/tpostgres.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim>`__ and `tests/tsqlite.nim <https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim>`__.
+
 
 1.1.0 (January 27, 2020)
 ========================
