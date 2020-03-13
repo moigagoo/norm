@@ -133,6 +133,7 @@ function main() {
 <li><a class="reference external" href="theindex.html">API index</a></li>
 <li><a class="reference external" href="https://github.com/moigagoo/norm/blob/develop/changelog.rst">Changelog</a></li>
 </ul>
+<p>Norm works best with <a class="reference external" href="https://moigagoo.github.io/norman/norman.html">Norman</a>.</p>
 
 <h1><a class="toc-backref" id="quickstart" href="#quickstart">Quickstart</a></h1><p>Install Norm with <a class="reference external" href="https://github.com/nim-lang/nimble">Nimble</a>:</p>
 <pre class="listing"><span class="Operator">$</span> <span class="Identifier">nimble</span> <span class="Identifier">install</span> <span class="Identifier">norm</span></pre><p>Add Norm to your .nimble file:</p>
@@ -380,7 +381,7 @@ function main() {
 </li>
 </ul>
 
-<h2><a class="toc-backref" id="reference-guide-migrations" href="#reference-guide-migrations">Migrations</a></h2><p><strong>Note:</strong> Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.</p>
+<h2><a class="toc-backref" id="reference-guide-migrations" href="#reference-guide-migrations">Migrations</a></h2><p>To apply and undo migrations in your projects, use <a class="reference external" href="https://moigagoo.github.io/norman/norman.html">Norman</a>.</p>
 <ul class="simple"><li><p><tt class="docutils literal"><span class="pre">createTable(T: typedesc, force = false)</span></tt></p>
 <p>Generate and execute an SQL table schema from a type definition. Column schemas are generated from Nim object field definitions. Basic types are mapped automatically. For custom types, <em>parser</em> and <em>formatter</em> must be provided.</p>
 <p>Use to update the DB schema after adding new models.</p>
@@ -472,7 +473,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-13 12:06:24 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-13 12:19:37 UTC</small>
       </div>
     </div>
   </div>
