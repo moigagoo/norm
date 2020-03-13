@@ -49,16 +49,16 @@ proc getTables(): seq[string] =
 
 
 suite "Migrations":
+  withDb:
+    dropTables()
+
   setup:
     withDb:
-      dropTables()
-
       Person.createTable(force=true)
 
       transaction:
         for i in 1..9:
-          var person = Person(name: "Person $#" % $i, age: 20+i)
-          person.insert()
+          discard insertId Person(name: "Person $#" % $i, age: 20+i)
 
   test "Add column":
     withDb:
@@ -131,7 +131,3 @@ suite "Migrations":
       check true
     except:
       check false
-
-  teardown:
-    withDb:
-      dropTables()

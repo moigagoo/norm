@@ -40,8 +40,7 @@ suite "Migrations":
 
       transaction:
         for i in 1..9:
-          var person = Person(name: "Person $#" % $i, age: 20+i)
-          person.insert()
+          discard insertId Person(name: "Person $#" % $i, age: 20+i)
 
   test "Add column":
     withDb:
