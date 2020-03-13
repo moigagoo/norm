@@ -108,8 +108,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#ensureIdFields%2CNimNode"
     title="ensureIdFields(typeSection: NimNode): NimNode"><wbr />ensure<wbr />Id<wbr />Fields<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#ensureForeignKey%2CNimNode%2Cseq%5BT%5D%5BNimNode%5D"
-    title="ensureForeignKey(typeDef: NimNode; types: seq[NimNode]): NimNode"><wbr />ensure<wbr />Foreign<wbr />Key<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#ensureForeignKey%2CNimNode%2Cseq%5BT%5D%5Bstring%5D"
+    title="ensureForeignKey(typeDef: NimNode; typeNames: seq[string]): NimNode"><wbr />ensure<wbr />Foreign<wbr />Key<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#ensureForeignKeys%2CNimNode"
     title="ensureForeignKeys(typeSection: NimNode): NimNode"><wbr />ensure<wbr />Foreign<wbr />Keys<span class="attachedType"></span></a></li>
 
@@ -140,21 +140,21 @@ function main() {
 
 Check if <tt class="docutils literal"><span class="pre">id</span></tt> field is in all object definitions in the given type section, insert it if it's not.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L38"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L36"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L38" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L36" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="ensureForeignKey,NimNode,seq[T][NimNode]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#ensureForeignKey%2CNimNode%2Cseq%5BT%5D%5BNimNode%5D"><span class="Identifier">ensureForeignKey</span></a><span class="Other">(</span><span class="Identifier">typeDef</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">;</span> <span class="Identifier">types</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">NimNode</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
+<a id="ensureForeignKey,NimNode,seq[T][string]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#ensureForeignKey%2CNimNode%2Cseq%5BT%5D%5Bstring%5D"><span class="Identifier">ensureForeignKey</span></a><span class="Other">(</span><span class="Identifier">typeDef</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">;</span> <span class="Identifier">typeNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
     <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Check if a foreign key is in the object definition, insert it if it's not.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L46"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L44"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L46" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L44" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="ensureForeignKeys,NimNode"></a>
@@ -164,9 +164,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Check if a foreign key is in all object definitions that require it, insert it if it's not.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L78"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L87"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L78" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L87" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -179,7 +179,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-13 12:24:54 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-03-13 19:59:17 UTC</small>
       </div>
     </div>
   </div>

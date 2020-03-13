@@ -1,3 +1,3 @@
 ensureIdFields	norm/typedefutils.html#ensureIdFields,NimNode	typedefutils: ensureIdFields(typeSection: NimNode): NimNode	
-ensureForeignKey	norm/typedefutils.html#ensureForeignKey,NimNode,seq[T][NimNode]	typedefutils: ensureForeignKey(typeDef: NimNode; types: seq[NimNode]): NimNode	
+ensureForeignKey	norm/typedefutils.html#ensureForeignKey,NimNode,seq[T][string]	typedefutils: ensureForeignKey(typeDef: NimNode; typeNames: seq[string]): NimNode	
 ensureForeignKeys	norm/typedefutils.html#ensureForeignKeys,NimNode	typedefutils: ensureForeignKeys(typeSection: NimNode): NimNode	
