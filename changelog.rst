@@ -9,8 +9,8 @@ Changelog
 -   [t]—test suite improvement
 
 
-1.1.1 (WIP)
-===========
+1.1.1 (March 13, 2020)
+======================
 
 -   [+] Add ``insertId`` proc that takes an immutable object and inserts it as a record to the DB. The inserted record ID is returned. The object ``id`` field is **not** updated.
 
