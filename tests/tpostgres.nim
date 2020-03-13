@@ -12,6 +12,7 @@ const
   dbPassword = "postgres"
   dbDatabase = "postgres"
 
+
 db(dbHost, dbUser, dbPassword, dbDatabase):
   type
     User {.dbTable: "users".} = object
@@ -32,8 +33,11 @@ db(dbHost, dbUser, dbPassword, dbDatabase):
       publisherTitle {.fk: Publisher.title.}: string
     FkOwner = object
       foo: int
+    FkExpOwner* = object
+      bar: int
     FkChild = object
       owner: FkOwner
+      expowner: FkExpOwner
     Card = object
       number: int
 
@@ -289,9 +293,15 @@ suite "Creating and dropping tables, CRUD":
 
   test "Automatic foreign key":
     withDb:
-      var owner = FkOwner(foo: 42)
-      owner.insert()
-      var child = FkChild(owner: owner)
-      child.insert()
+      var
+        owner = FkOwner(foo: 42)
+        expowner = FkExpOwner(bar: 24)
+
+      insert owner
+      insert expowner
+
+      var child = FkChild(owner: owner, expowner: expowner)
+      insert child
 
       check child.owner == owner
+      check child.expowner == expowner
