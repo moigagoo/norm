@@ -28,6 +28,10 @@ db(dbName, "", "", ""):
       title: string
       authorEmail {.fk: User.email, onDelete: "CASCADE".}: string
       publisherTitle {.fk: Publisher.title.}: string
+    FkOwner = object
+      foo: int
+    FkChild = object
+      owner: FkOwner
     Card = object
       number: int
 
@@ -308,4 +312,16 @@ suite "Creating and dropping tables, CRUD":
 
     removeFile customDbName
 
-  removeFile dbName
+  test "Automatic foreign key":
+    withDb:
+      createTables(force=true)
+
+      var owner = FkOwner(foo: 42)
+      owner.insert()
+      var child = FkChild(owner: owner)
+      child.insert()
+
+      check child.owner == owner
+
+    removeFile dbName
+
