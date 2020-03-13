@@ -362,7 +362,7 @@ macro dbTypes*(body: untyped): untyped =
 
   for node in body:
     expectKind(node, nnkTypeSection)
-    result.add ensureForeignKeys(ensureIdFields(node))
+    result.add node.ensureIdFields().ensureForeignKeys()
 
 macro dbFromTypes*(connection, user, password, database: string,
                    types: openArray[typedesc]): untyped =

@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+1.1.2 (WIP)
+======================
+
+-   [f] Fix `#63 <https://github.com/moigagoo/norm/issues/63>`__: foreign key boilerplate code is now correctly injected into exported type definitions.
+
+
 1.1.1 (March 13, 2020)
 ======================
 
