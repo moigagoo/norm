@@ -20,6 +20,8 @@ Norm: A Nim ORM
 -   `API index <theindex.html>`__
 -   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
+Norm works best with `Norman <https://moigagoo.github.io/norman/norman.html>`__.
+
 
 Quickstart
 ==========
@@ -356,7 +358,7 @@ Transactions
 Migrations
 ----------
 
-**Note:** Although Norm provides the means to write and apply migrations manually, the plan is to develop a tool to generate migrations from model diffs and apply them with the option to rollback.
+To apply and undo migrations in your projects, use `Norman <https://moigagoo.github.io/norman/norman.html>`__.
 
 -   ``createTable(T: typedesc, force = false)``
 
