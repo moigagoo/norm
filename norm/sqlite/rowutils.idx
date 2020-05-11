@@ -4,9 +4,9 @@ formatter	norm/sqlite/rowutils.html#formatter.t	rowutils: formatter(op: (any) -&
 formatIt	norm/sqlite/rowutils.html#formatIt.t,untyped	rowutils: formatIt(op: untyped)	
 dbValue	norm/sqlite/rowutils.html#dbValue,bool	rowutils: dbValue(v: bool): DbValue	
 dbValue	norm/sqlite/rowutils.html#dbValue,DateTime	rowutils: dbValue(v: DateTime): DbValue	
-to	norm/sqlite/rowutils.html#to.t,seq[DbValue],	rowutils: to(row: Row; obj: var object)	
-to	norm/sqlite/rowutils.html#to.t,openArray[seq[DbValue]],seq[T][]	rowutils: to(rows: openArray[Row]; objs: var seq[object])	
-to	norm/sqlite/rowutils.html#to,seq[DbValue],typedesc	rowutils: to(row: Row; T: typedesc): T:type	
-to	norm/sqlite/rowutils.html#to,openArray[seq[DbValue]],typedesc	rowutils: to(rows: openArray[Row]; T: typedesc): seq[T:type]	
+to	norm/sqlite/rowutils.html#to.t,Row,	rowutils: to(row: Row; obj: var object)	
+to	norm/sqlite/rowutils.html#to.t,openArray[Row],seq[]	rowutils: to(rows: openArray[Row]; objs: var seq[object])	
+to	norm/sqlite/rowutils.html#to,Row,typedesc	rowutils: to(row: Row; T: typedesc): T:type	
+to	norm/sqlite/rowutils.html#to,openArray[Row],typedesc	rowutils: to(rows: openArray[Row]; T: typedesc): seq[T:type]	
 toRow	norm/sqlite/rowutils.html#toRow	rowutils: toRow(obj: object; force = false): Row	
 toRows	norm/sqlite/rowutils.html#toRows,openArray[]	rowutils: toRows(objs: openArray[object]; force = false): seq[Row]	

@@ -2,9 +2,9 @@ parser	norm/postgres/rowutils.html#parser.t	rowutils: parser(op: (DbValue) -&gt;
 parseIt	norm/postgres/rowutils.html#parseIt.t,untyped	rowutils: parseIt(op: untyped)	
 formatter	norm/postgres/rowutils.html#formatter.t	rowutils: formatter(op: (any) -&gt; DbValue)	
 formatIt	norm/postgres/rowutils.html#formatIt.t,untyped	rowutils: formatIt(op: untyped)	
-to	norm/postgres/rowutils.html#to.t,seq[DbValue],	rowutils: to(row: Row; obj: var object)	
-to	norm/postgres/rowutils.html#to.t,openArray[seq[DbValue]],seq[T][]	rowutils: to(rows: openArray[Row]; objs: var seq[object])	
-to	norm/postgres/rowutils.html#to,seq[DbValue],typedesc	rowutils: to(row: Row; T: typedesc): T:type	
-to	norm/postgres/rowutils.html#to,openArray[seq[DbValue]],typedesc	rowutils: to(rows: openArray[Row]; T: typedesc): seq[T:type]	
+to	norm/postgres/rowutils.html#to.t,Row,	rowutils: to(row: Row; obj: var object)	
+to	norm/postgres/rowutils.html#to.t,openArray[Row],seq[]	rowutils: to(rows: openArray[Row]; objs: var seq[object])	
+to	norm/postgres/rowutils.html#to,Row,typedesc	rowutils: to(row: Row; T: typedesc): T:type	
+to	norm/postgres/rowutils.html#to,openArray[Row],typedesc	rowutils: to(rows: openArray[Row]; T: typedesc): seq[T:type]	
 toRow	norm/postgres/rowutils.html#toRow	rowutils: toRow(obj: object; force = false): Row	
 toRows	norm/postgres/rowutils.html#toRows,openArray[]	rowutils: toRows(objs: openArray[object]; force = false): seq[Row]	
