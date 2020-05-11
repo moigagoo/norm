@@ -164,12 +164,12 @@ proc getByName*[T: ObjRepr | FieldRepr](reprs: openArray[T], name: string): T =
   raise newException(KeyError, "Repr with name $# not found." % name)
 
 macro dot*(obj: object, fieldName: string): untyped =
-  ## Access object field value by name: ``obj["field"]`` translates to ``obj.field``.
+  ## Access object field value by name: ``obj.dot("field")`` translates to ``obj.field``.
 
   newDotExpr(obj, newIdentNode(fieldName.strVal))
 
 macro dot*(obj: var object, fieldName: string, value: untyped): untyped =
-  ## Set object field value by name: ``obj["field"] = value`` translates to ``obj.field = value``.
+  ## Set object field value by name: ``obj.dot("field") = value`` translates to ``obj.field = value``.
 
   newAssignment(newDotExpr(obj, newIdentNode(fieldName.strVal)), value)
 

@@ -26,6 +26,7 @@ proc getTable*(T: typedesc): string =
   ]##
 
   when T.hasCustomPragma(dbTable): T.getCustomPragmaVal(dbTable)
+  elif T.hasCustomPragma(table): T.getCustomPragmaVal(table)
   else: ($T).toLowerAscii()
 
 proc getColumn*(fieldRepr: FieldRepr): string =
