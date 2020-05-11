@@ -9,6 +9,11 @@ Changelog
 -   [t]—test suite improvement
 
 
+1.1.3 (WIP)
+
+-   [f] Fix `#69 <https://github.com/moigagoo/norm/issues/69>`__: `table` pragma is now respected as it should despite being deprecated.
+
+
 1.1.2 (March 13, 2020)
 ======================
 
