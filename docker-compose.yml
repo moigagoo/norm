@@ -1,7 +1,5 @@
 version: '3'
 
-foo
-
 services:
 
   postgres_1:
