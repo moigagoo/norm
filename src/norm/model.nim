@@ -1,18 +1,14 @@
 import strutils
 import macros
 
-import pragmas
+import norm/private/dot
+import norm/pragmas
 
 
 type
   Model* = object of RootObj
     id* {.pk, ro.}: int
 
-
-macro dot*(obj: object, fieldName: string): untyped =
-  ## Access object field value by name: ``obj.dot("field")`` translates to ``obj.field``.
-
-  newDotExpr(obj, newIdentNode(fieldName.strVal))
 
 proc tableName*(T: typedesc[Model]): string =
   when T.hasCustomPragma(dbTable):

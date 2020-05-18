@@ -1,7 +1,11 @@
-## Pragmas to customize the database representation of the object model.
+## Pragmas to customize ``norm.Model``field representation in generated table schemas.
+
 
 template pk* {.pragma.}
-  ## Mark field as primary key. The special field ``id`` is mark with ``pk`` by default.
+  ##[ Mark field as primary key.
+
+  ``id`` field is ``pk`` by default.
+  ]##
 
 template ro* {.pragma.}
   ##[ Mark field as read-only.
@@ -9,26 +13,36 @@ template ro* {.pragma.}
   Read-only fields are ignored in ``insert`` and ``update`` unless ``force`` is passed.
 
   Use for fields that are populated automatically by the DB: ids, timestamps, and so on.
-  The special field ``id`` is mark with ``pk`` by default.
+
+  ``id`` field is ``ro`` by default.
   ]##
 
-template dbCol*(val: string) {.pragma.}
-  ## DB native column name to use in table schema. Field name is used when unset.
+template dbCol*(name: string) {.pragma.}
+  ##[ Name of the column generated for a ``norm.Model`` field.
+
+  If not set, the field name is used.
+  ]##
 
 template dbType*(val: string) {.pragma.}
-  ## DB native type to use in table schema.
+  ##[ DB type to use in table schema for this field.
 
-template check*(val: string) {.pragma.}
-  ## Add a ``CHECK <CONDITION>`` constraint.
+  If not set, matching type from ``norm.sqlite.dbtypes`` is used.
+  ]##
+
+template check*(cond: string) {.pragma.}
+  ## Add ``CHECK <CONDITION>`` constraint.
 
 template unique* {.pragma.}
-  ## Add a ``UNIQUE`` constraint.
+  ## Add ``UNIQUE`` constraint.
 
-template onDelete*(val: string) {.pragma.}
-  ## Add an ``ON DELETE <POLICY>`` constraint.
+template onDelete*(polc: string) {.pragma.}
+  ## Add ``ON DELETE <POLICY>`` constraint.
 
-template onUpdate*(val: string) {.pragma.}
-  ## Add an ``ON UPDATE <POLICY>`` constraint.
+template onUpdate*(polc: string) {.pragma.}
+  ## Add ``ON UPDATE <POLICY>`` constraint.
 
-template dbTable*(val: string) {.pragma.}
-  ## Set table name. Type name is used when unset.
+template dbTable*(name: string) {.pragma.}
+  ##[ Table name.
+
+  If not set, the type name is used.
+  ]##
