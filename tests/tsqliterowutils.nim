@@ -38,7 +38,7 @@ suite "Converting between ``norm.Model`` and ``ndb.sqlite.Row``":
       row: Row = @[?"Alice", ?23, ?1, ?ts]
       fRow: Row = @[?"Alice", ?23, ?1, ?ts, ?person.id]
 
-    var mPerson = initPerson(name="", age=0, married=none bool)
+    var mPerson = initPerson(name = "", age = 0, married = none bool)
     mPerson.fromRow(fRow)
 
     check person.toRow == row
@@ -49,14 +49,17 @@ suite "Converting between ``norm.Model`` and ``ndb.sqlite.Row``":
       Person = object of Model
         initDt {.ro.}: DateTime
 
+    let
+      dt = now().utc
+      ts = dt.toTime().toUnixFloat()
+
     proc initPerson(): Person =
-      Person(initDt: now())
+      Person(initDt: dt)
 
     proc `~=`(p1, p2: Person): bool =
       abs(p1.initDt - p2.initDt) < dtCmpThsld
 
     let
-      ts = now().utc.toTime().toUnixFloat()
       person = initPerson()
       row: Row = @[]
       fRow: Row = @[?ts, ?person.id]
@@ -65,7 +68,7 @@ suite "Converting between ``norm.Model`` and ``ndb.sqlite.Row``":
     mPerson.fromRow(fRow)
 
     check person.toRow == row
-    check person.toRow(force=true) == fRow
+    check person.toRow(force = true) == fRow
     check mPerson ~= person
 
   test "Nested models":
