@@ -6,3 +6,5 @@
 *.html
 *.idx
 htmldocs
+
+tests/tsqliterowutils
