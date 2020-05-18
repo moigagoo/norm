@@ -1,3 +1,4 @@
 ## .. include:: ../README.rst
 
-import norm/[sqlite, postgres, objutils, pragmas, typedefutils]
+import norm/[model, pragmas]
+import norm/private/sqlite/[dbtypes, rowutils]

@@ -1,4 +1,4 @@
-## Pragmas to customize ``norm.Model``field representation in generated table schemas.
+## Pragmas to customize ``norm.Model`` field representation in generated table schemas.
 
 
 template pk* {.pragma.}

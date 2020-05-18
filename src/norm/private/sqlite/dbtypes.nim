@@ -3,7 +3,7 @@
 To add support for ``YourType``, define:
 - ``dbType(T: typedesc[YourType]) -> string``
 - ``dbValue(YourType) -> DbValue``
-- ``to(DbValue, T: typedesc[YourType]) -> T
+- ``to(DbValue, T: typedesc[YourType]) -> T``
 ]##
 
 
