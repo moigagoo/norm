@@ -1,34 +1,53 @@
-import options
 import strutils
-import sugar
+import options
+import std/with
+import macros
 
 import ndb/sqlite
 export sqlite
 
-import pragmas
-import model
-import sqlite/[dbtypes, rowutils]
-
-export rowutils
+import norm/private/dot
+import norm/private/sqlite/[dbtypes, rowutils]
+import norm/model
+import norm/pragmas
 
 
 using dbConn: DbConn
 
 proc dropTable*[T: Model](dbConn; obj: T) =
-  let query = sql "DROP TABLE $#" % T.tableName
+  ## Drop table for ``norm.Model``.
 
-  dbConn.exec query
+  let qry = sql("DROP TABLE IF EXISTS $#" % T.table)
+
+  dbConn.exec qry
+
+proc dropTables*[T: Model](dbConn; obj: T) =
+  ## Drop tables for ``norm.Model`` and its ``norm.Model`` fields.
+
+  for fld, val in obj.fieldPairs:
+    when val is Model:
+      with dbConn:
+        dropTables(val)
+
+  with dbConn:
+    dropTable(obj)
 
 proc createTable*[T: Model](dbConn; obj: T, force = false) =
+  ##[ Create table for ``norm.Model``. Tables for ``norm.Model`` fields must exist beforehand.
+
+  If ``force`` is ``true``, drop the table before creation.
+  ]##
+
   if force:
-    dbConn.dropTable(obj)
+    with dbConn:
+      dropTable(obj)
 
   var colGroups, fkGroups: seq[string]
 
   for fld, val in obj.fieldPairs:
     var colShmParts: seq[string]
 
-    colShmParts.add obj.colName(fld)
+    colShmParts.add obj.col(fld)
 
     colShmParts.add typeof(val).dbType
 
@@ -39,34 +58,48 @@ proc createTable*[T: Model](dbConn; obj: T, force = false) =
       colShmParts.add "PRIMARY KEY"
 
     when val is Model:
-      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.colName(fld), typeof(val).tableName, val.colName("id")]
+      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), val.table, val.col("id")]
 
     colGroups.add colShmParts.join(" ")
 
-  let query = sql "CREATE TABLE $#($#)" % [T.tableName, (colGroups & fkGroups).join(", ")]
+  let qry = sql("CREATE TABLE $#($#)" % [T.table, (colGroups & fkGroups).join(", ")])
 
-  dbConn.exec query
+  dbConn.exec qry
 
-proc insertId*[T: Model](dbConn; obj: T): int =
-  let
-    row = obj.toRow()
-    plcs = "?".repeat(row.len)
-    query = sql "INSERT INTO $# ($#) VALUES($#)" % [T.tableName, obj.nroColNames.join(", "), plcs.join(", ")]
+proc createTables*[T: Model](dbConn; obj: T, force = false) =
+  ##[ Create tables for ``norm.Model`` and its ``norm.Model`` fields.
 
-  dbConn.insertID(query, row).int
+  If ``force`` is ``true``, drop the tables before creation.
+  ]##
 
-proc insert*[T: Model](dbConn; obj: var T) =
-  obj.id = dbConn.insertId(obj)
+  for fld, val in obj.fieldPairs:
+    when val is Model:
+      with dbConn:
+        createTables(val, force = force)
 
-proc getOne*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
-  let
-    joinStmts = collect(newSeq):
-      for grp in obj.joinGroups:
-        "JOIN $# ON $# = $#" % [grp.tbl, grp.lftFld, grp.rgtFld]
-    query = "SELECT $# FROM $# $# WHERE $#" % [obj.fullColNames.join(", "), T.tableName, joinStmts.join(" "), cond]
-    row = dbConn.getRow(sql query, params)
+  with dbConn:
+    createTable(obj, force = force)
 
-  if row.isNone:
-    raise newException(KeyError, "No record found")
+# proc insertId*[T: Model](dbConn; obj: T): int =
+#   let
+#     row = obj.toRow()
+#     plcs = "?".repeat(row.len)
+#     query = sql "INSERT INTO $# ($#) VALUES($#)" % [T.tableName, obj.nroColNames.join(", "), plcs.join(", ")]
 
-  obj.fromRow(get row)
+#   dbConn.insertID(query, row).int
+
+# proc insert*[T: Model](dbConn; obj: var T) =
+#   obj.id = dbConn.insertId(obj)
+
+# proc getOne*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
+#   let
+#     joinStmts = collect(newSeq):
+#       for grp in obj.joinGroups:
+#         "JOIN $# ON $# = $#" % [grp.tbl, grp.lftFld, grp.rgtFld]
+#     query = "SELECT $# FROM $# $# WHERE $#" % [obj.fullColNames.join(", "), T.tableName, joinStmts.join(" "), cond]
+#     row = dbConn.getRow(sql query, params)
+
+#   if row.isNone:
+#     raise newException(KeyError, "No record found")
+
+#   obj.fromRow(get row)
