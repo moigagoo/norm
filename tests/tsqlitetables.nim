@@ -130,4 +130,3 @@ suite "Table creation and dropping":
       dbConn.exec sql "SELECT NULL FROM Toy"
       dbConn.exec sql "SELECT NULL FROM Pet"
       dbConn.exec sql "SELECT NULL FROM Person"
-
