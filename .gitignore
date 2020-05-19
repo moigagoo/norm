@@ -7,4 +7,6 @@
 *.idx
 htmldocs
 
+tests/tmodel
 tests/tsqliterowutils
+tests/tsqlitetables
