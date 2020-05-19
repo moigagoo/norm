@@ -4,5 +4,5 @@
 import macros
 
 
-macro dot*(obj: object, fieldName: string): untyped =
-  newDotExpr(obj, newIdentNode(fieldName.strVal))
+macro dot*(obj: object, fld: string): untyped =
+  newDotExpr(obj, newIdentNode(fld.strVal))
