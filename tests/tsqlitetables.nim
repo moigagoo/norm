@@ -31,6 +31,7 @@ suite "Table creation and dropping":
     Person(name: name, pet: pet)
 
   setup:
+    removeFile dbFile
     let dbConn = open(dbFile, "", "", "")
 
   teardown:
