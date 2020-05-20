@@ -80,16 +80,20 @@ proc createTables*[T: Model](dbConn; obj: T, force = false) =
   with dbConn:
     createTable(obj, force = force)
 
-# proc insertId*[T: Model](dbConn; obj: T): int =
-#   let
-#     row = obj.toRow()
-#     plcs = "?".repeat(row.len)
-#     query = sql "INSERT INTO $# ($#) VALUES($#)" % [T.tableName, obj.nroColNames.join(", "), plcs.join(", ")]
+proc insert*[T: Model](dbConn; obj: var T) =
+  ## Insert rows for ``norm.Model`` instance and its ``norm.Model`` fields, updating their ``id``s.
 
-#   dbConn.insertID(query, row).int
+  for fld, val in obj.fieldPairs:
+    when val is Model:
+      with dbConn:
+        insert val
 
-# proc insert*[T: Model](dbConn; obj: var T) =
-#   obj.id = dbConn.insertId(obj)
+  let
+    row = obj.toRow()
+    phds = "?".repeat(row.len)
+    qry = sql("INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")])
+
+  obj.id = dbConn.insertID(qry, row).int
 
 # proc getOne*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
 #   let
