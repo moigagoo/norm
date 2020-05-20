@@ -2,6 +2,7 @@ import strutils
 import options
 import std/with
 import macros
+import sugar
 
 import ndb/sqlite
 export sqlite
@@ -95,15 +96,23 @@ proc insert*[T: Model](dbConn; obj: var T) =
 
   obj.id = dbConn.insertID(qry, row).int
 
-# proc getOne*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
-#   let
-#     joinStmts = collect(newSeq):
-#       for grp in obj.joinGroups:
-#         "JOIN $# ON $# = $#" % [grp.tbl, grp.lftFld, grp.rgtFld]
-#     query = "SELECT $# FROM $# $# WHERE $#" % [obj.fullColNames.join(", "), T.tableName, joinStmts.join(" "), cond]
-#     row = dbConn.getRow(sql query, params)
+proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
+  ##[ Update a ``norm.Model`` instance and its ``norm.Model`` fields from DB.
 
-#   if row.isNone:
-#     raise newException(KeyError, "No record found")
+  ``cond`` is condition for ``WHERE`` clause but with extra features:
 
-#   obj.fromRow(get row)
+  - use ``?`` placeholders and put the actual values in ``params``
+  - use ``norm.model.table``, ``norm.model.col``, and ``norm.model.fCol`` procs instead of hardcoded table and column names
+  ]##
+
+  let
+    joinStmts = collect(newSeq):
+      for grp in obj.joinGroups:
+        "JOIN $# ON $# = $#" % [grp.tbl, grp.lFld, grp.rFld]
+    qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
+    row = dbConn.getRow(sql qry, params)
+
+  if row.isNone:
+    raise newException(KeyError, "Record not found")
+
+  obj.fromRow(get row)
