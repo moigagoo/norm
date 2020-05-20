@@ -21,12 +21,12 @@ proc table*[T: Model](obj: T): string =
 proc col*[T: Model](obj: T, fld: string): string =
   ## Get column name for a ``norm.Model`` field, which is the field name in single quotes.
 
-  "'$#'" % fld
+  fld
 
 proc fCol*[T: Model](obj: T, fld: string): string =
   ## Get fully qualified column name with the table name: ``table.col``.
 
-  "'$#.$#'" % [$T, fld]
+  "'$#'.$#" % [$T, fld]
 
 proc cols*[T: Model](obj: T, force = false): seq[string] =
   ##[ Get columns for ``norm.Model`` instance.
