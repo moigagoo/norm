@@ -41,7 +41,7 @@ suite "Row CRUD":
 
   teardown:
     close dbConn
-    # removeFile dbFile
+    removeFile dbFile
 
   test "Insert row":
     var toy = initToy(123.45)
