@@ -10,3 +10,4 @@ htmldocs
 tests/tmodel
 tests/tsqliterowutils
 tests/tsqlitetables
+tests/tsqliterows
