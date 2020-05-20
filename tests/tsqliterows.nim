@@ -2,6 +2,7 @@ import unittest
 import std/with
 import os
 import strutils
+import strformat
 
 import norm/[model, sqlite]
 
@@ -33,22 +34,18 @@ suite "Row CRUD":
   setup:
     removeFile dbFile
 
-    let
-      dbConn = open(dbFile, "", "", "")
-
-    var
-      toy = initToy(123.45)
-      pet = initPet("cat", toy)
-      person = initPerson("Alice", pet)
+    let dbConn = open(dbFile, "", "", "")
 
     with dbConn:
-      createTables(person)
+      createTables(initPerson("", initPet("", initToy(0.0))))
 
   teardown:
     close dbConn
-    removeFile dbFile
+    # removeFile dbFile
 
   test "Insert row":
+    var toy = initToy(123.45)
+
     with dbConn:
       insert toy
 
@@ -60,6 +57,8 @@ suite "Row CRUD":
     check rows[0] == @[?123.45, ?toy.id]
 
   test "Insert rows":
+    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+
     with dbConn:
       insert person
 
@@ -80,3 +79,24 @@ suite "Row CRUD":
 
     check toyRows.len == 1
     check toyRows[0] == @[?123.45, ?person.pet.favToy.id]
+
+  test "Get row":
+    var
+      inpToy = initToy(123.45)
+      outToy = initToy(0.0)
+
+    with dbConn:
+      insert inpToy
+      select(outToy, fmt"""{inpToy.col("price")} = ?""", inpToy.price)
+
+    check outToy == inpToy
+
+  test "Get row, nested models":
+    var
+      inpPerson = initPerson("Alice", initPet("cat", initToy(123.45)))
+      outPerson = initPerson("", initPet("", initToy(0.0)))
+
+
+    with dbConn:
+      insert inpPerson
+      select(outPerson, fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
