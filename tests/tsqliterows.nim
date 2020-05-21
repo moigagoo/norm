@@ -36,8 +36,7 @@ suite "Row CRUD":
 
     let dbConn = open(dbFile, "", "", "")
 
-    with dbConn:
-      createTables(initPerson("", initPet("", initToy(0.0))))
+    dbConn.createTables(initPerson("", initPet("", initToy(0.0))))
 
   teardown:
     close dbConn
@@ -46,8 +45,7 @@ suite "Row CRUD":
   test "Insert row":
     var toy = initToy(123.45)
 
-    with dbConn:
-      insert toy
+    dbConn.insert(toy)
 
     check toy.id > 0
 
@@ -59,8 +57,7 @@ suite "Row CRUD":
   test "Insert rows":
     var person = initPerson("Alice", initPet("cat", initToy(123.45)))
 
-    with dbConn:
-      insert person
+    dbConn.insert(person)
 
     check person.id > 0
     check person.pet.id > 0
@@ -96,7 +93,18 @@ suite "Row CRUD":
       inpPerson = initPerson("Alice", initPet("cat", initToy(123.45)))
       outPerson = initPerson("", initPet("", initToy(0.0)))
 
-
     with dbConn:
       insert inpPerson
       select(outPerson, fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
+
+  test "Get rows":
+    var
+      inpToys = @[initToy(123.45), initToy(456.78), initToy(99.99)]
+      outToys = @[initToy(0.0)]
+
+    for inpToy in inpToys.mitems:
+      dbConn.insert(inpToy)
+
+    dbConn.select(outToys, fmt"""{inpToys[0].col("price")} > ?""", 100.00)
+
+    check outToys == inpToys[..1]
