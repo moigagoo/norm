@@ -1,6 +1,6 @@
 import strutils
+import sequtils
 import options
-import std/with
 import macros
 import sugar
 
@@ -27,11 +27,9 @@ proc dropTables*[T: Model](dbConn; obj: T) =
 
   for fld, val in obj.fieldPairs:
     when val is Model:
-      with dbConn:
-        dropTables(val)
+      dbConn.dropTables(val)
 
-  with dbConn:
-    dropTable(obj)
+  dbConn.dropTable(obj)
 
 proc createTable*[T: Model](dbConn; obj: T, force = false) =
   ##[ Create table for ``norm.Model``. Tables for ``norm.Model`` fields must exist beforehand.
@@ -40,8 +38,7 @@ proc createTable*[T: Model](dbConn; obj: T, force = false) =
   ]##
 
   if force:
-    with dbConn:
-      dropTable(obj)
+    dbConn.dropTable(obj)
 
   var colGroups, fkGroups: seq[string]
 
@@ -75,19 +72,16 @@ proc createTables*[T: Model](dbConn; obj: T, force = false) =
 
   for fld, val in obj.fieldPairs:
     when val is Model:
-      with dbConn:
-        createTables(val, force = force)
+      dbConn.createTables(val, force = force)
 
-  with dbConn:
-    createTable(obj, force = force)
+  dbConn.createTable(obj, force = force)
 
 proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for ``norm.Model`` instance and its ``norm.Model`` fields, updating their ``id``s.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
-      with dbConn:
-        insert val
+      dbConn.insert(val)
 
   let
     row = obj.toRow()
@@ -97,7 +91,7 @@ proc insert*[T: Model](dbConn; obj: var T) =
   obj.id = dbConn.insertID(qry, row).int
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
-  ##[ Update a ``norm.Model`` instance and its ``norm.Model`` fields from DB.
+  ##[ Populate a ``norm.Model`` instance and its ``norm.Model`` fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
 
@@ -116,3 +110,24 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
     raise newException(KeyError, "Record not found")
 
   obj.fromRow(get row)
+
+proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) =
+  ##[ Populate a sequence of ``norm.Model`` instances from DB.
+
+  ``objs`` must have at least one item.
+  ]##
+
+  if objs.len < 1:
+    raise newException(ValueError, "``objs`` must have at least one item.")
+
+  let
+    joinStmts = collect(newSeq):
+      for grp in objs[0].joinGroups:
+        "JOIN $# ON $# = $#" % [grp.tbl, grp.lFld, grp.rFld]
+    qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
+    rows = dbConn.getAllRows(sql qry, params)
+
+  objs.setLen(rows.len)
+
+  for i, row in rows:
+    objs[i].fromRow(row)
