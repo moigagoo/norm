@@ -41,8 +41,7 @@ suite "Table creation and dropping":
   test "Create table":
     let toy = initToy(123.45)
 
-    with dbConn:
-      createTable(toy)
+    dbConn.createTable(toy)
 
     let qry = "PRAGMA table_info($#);"
 
@@ -51,8 +50,7 @@ suite "Table creation and dropping":
       @[?1, ?"id", ?"INTEGER", ?1, ?nil, ?1],
     ]
 
-    with dbConn:
-      createTable(toy, force = true)
+    dbConn.createTable(toy, force = true)
 
     check dbConn.getAllRows(sql qry % "Toy") == @[
       @[?0, ?"price", ?"FLOAT", ?1, ?nil, ?0],
@@ -65,8 +63,7 @@ suite "Table creation and dropping":
       pet = initPet("cat", toy)
       person = initPerson("Alice", pet)
 
-    with dbConn:
-      createTables(person)
+    dbConn.createTables(person)
 
     let qry = "PRAGMA table_info($#);"
 
@@ -87,8 +84,7 @@ suite "Table creation and dropping":
       @[?2, ?"id", ?"INTEGER", ?1, ?nil, ?1],
     ]
 
-    with dbConn:
-      createTables(person, force = true)
+    dbConn.createTables(person, force = true)
 
     check dbConn.getAllRows(sql qry % "Toy") == @[
       @[?0, ?"price", ?"FLOAT", ?1, ?nil, ?0],
