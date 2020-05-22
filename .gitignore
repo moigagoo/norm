@@ -13,3 +13,4 @@ tests/tsqliterowutils
 tests/tsqlitetables
 tests/tsqliterows
 tests/tsqlitetransactions
+tests/tsqlitechaining
