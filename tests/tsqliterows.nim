@@ -153,7 +153,7 @@ suite "Row CRUD":
 
     dbConn.select(outPersons, fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
 
-    check outPersons == inpPersons[..1]
+    check outPersons == inpPersons[0..^2]
 
   test "Get rows, nested models, no intermediate objects":
     let
@@ -165,4 +165,4 @@ suite "Row CRUD":
       outPersons = @[Person()].dup:
         dbConn.select(fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
 
-    check outPersons == inpPersons[..1]
+    check outPersons == inpPersons[0..^2]
