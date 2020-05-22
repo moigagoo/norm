@@ -4,6 +4,7 @@ import os
 import strutils
 import strformat
 import sugar
+import options
 
 import norm/[model, sqlite]
 
@@ -166,3 +167,36 @@ suite "Row CRUD":
         dbConn.select(fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
 
     check outPersons == inpPersons[0..^2]
+
+  test "Update row":
+    var toy = initToy(123.45)
+
+    dbConn.insert(toy)
+
+    toy.price *= 2
+
+    dbConn.update(toy)
+
+    let row = get dbConn.getRow(sql"SELECT price, id FROM Toy WHERE id = ?", toy.id)
+
+    check row == @[?246.9, ?toy.id]
+
+  test "Update rows":
+    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+
+    dbConn.insert(person)
+
+    person.name = "Bob"
+    person.pet.species = "dog"
+    person.pet.favToy.price *= 2
+
+    dbConn.update(person)
+
+    let
+      personRow = get dbConn.getRow(sql"SELECT name, pet, id FROM Person WHERE id = ?", person.id)
+      petRow = get dbConn.getRow(sql"SELECT species, favToy, id FROM Pet WHERE id = ?", person.pet.id)
+      toyRow = get dbConn.getRow(sql"SELECT price, id FROM Toy WHERE id = ?", person.pet.favToy.id)
+
+    check personRow == @[?"Bob", ?person.pet.id, ?person.id]
+    check petRow == @[?"dog", ?person.pet.favToy.id, ?person.pet.id]
+    check toyRow == @[?246.9, ?person.pet.favToy.id]
