@@ -85,7 +85,7 @@ suite "Row CRUD":
       outToy = initToy(0.0)
 
     with dbConn:
-      insert inpToy
+      insert(inpToy)
       select(outToy, fmt"""{inpToy.col("price")} = ?""", inpToy.price)
 
     check outToy == inpToy
@@ -104,7 +104,7 @@ suite "Row CRUD":
       outPerson = initPerson("", initPet("", initToy(0.0)))
 
     with dbConn:
-      insert inpPerson
+      insert(inpPerson)
       select(outPerson, fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
 
   test "Get row, nested models, no intermediate objects":
@@ -200,3 +200,30 @@ suite "Row CRUD":
     check personRow == @[?"Bob", ?person.pet.id, ?person.id]
     check petRow == @[?"dog", ?person.pet.favToy.id, ?person.pet.id]
     check toyRow == @[?246.9, ?person.pet.favToy.id]
+
+  test "Delete row":
+    var toy = initToy(123.45)
+
+    with dbConn:
+      insert(toy)
+      delete(toy)
+
+    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+
+    check rows.len == 0
+
+  test "Delete rows":
+    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+
+    with dbConn:
+      insert(person)
+      delete(person)
+
+    let
+      personRows = dbConn.getAllRows(sql"SELECT name, pet, id FROM Person")
+      petRows = dbConn.getAllRows(sql"SELECT species, favToy, id FROM Pet")
+      toyRows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+
+    check personRows.len == 0
+    check petRows.len == 0
+    check toyRows.len == 0
