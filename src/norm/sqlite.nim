@@ -18,6 +18,9 @@ type RollbackError* = object of CatchableError
 
 using dbConn: DbConn
 
+
+## Table manupulation
+
 proc dropTable*[T: Model](dbConn; obj: T) =
   ## Drop table for ``norm.Model``.
 
@@ -79,8 +82,11 @@ proc createTables*[T: Model](dbConn; obj: T, force = false) =
 
   dbConn.createTable(obj, force = force)
 
+
+## Row manupulation
+
 proc insert*[T: Model](dbConn; obj: var T) =
-  ## Insert rows for ``norm.Model`` instance and its ``norm.Model`` fields, updating their ``id``s.
+  ## Insert rows for ``norm.Model`` instance and its ``norm.Model`` fields, updating their ``id`` fields.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
@@ -151,6 +157,11 @@ proc update*[T: Model](dbConn; obj: var T) =
 
   dbConn.exec(sql qry, row)
 
+proc update*[T: Model](dbConn; objs: var openarray[T]) =
+  ## Update rows for each ``norm.Model`` instance in open array.
+
+  for obj in objs.mitems:
+    dbConn.update(obj)
 
 proc delete*[T: Model](dbConn; obj: var T) =
   ## Delete rows for ``norm.Model`` instance and its ``norm.Model`` fields.
@@ -164,6 +175,14 @@ proc delete*[T: Model](dbConn; obj: var T) =
   dbConn.exec(sql qry)
 
   obj.id = 0
+
+proc delete*[T: Model](dbConn; objs: var openarray[T]) =
+  ## Delete rows for each ``norm.Model`` instance in open array.
+
+  for obj in objs.mitems:
+    dbConn.delete(obj)
+
+## Transactions
 
 proc rollback* {.raises: RollbackError.} =
   ## Rollback transaction.
