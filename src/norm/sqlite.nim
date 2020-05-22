@@ -13,6 +13,9 @@ import norm/model
 import norm/pragmas
 
 
+type RollbackError* = object of CatchableError
+
+
 using dbConn: DbConn
 
 proc dropTable*[T: Model](dbConn; obj: T) =
@@ -161,3 +164,25 @@ proc delete*[T: Model](dbConn; obj: var T) =
   dbConn.exec(sql qry)
 
   obj.id = 0
+
+proc rollback* {.raises: RollbackError.} =
+  ## Rollback transaction.
+
+  raise newException(RollbackError, "Rollback transaction")
+
+template transaction*(dbConn; body: untyped): untyped =
+  ## Wrap code in transaction. If an exception is raised, the transaction is rollbacked.
+
+  try:
+    dbConn.exec(sql"BEGIN")
+
+    body
+
+    dbConn.exec(sql"COMMIT")
+
+  except RollbackError:
+    dbConn.exec(sql"ROLLBACK")
+
+  except:
+    dbConn.exec(sql"ROLLBACK")
+    raise
