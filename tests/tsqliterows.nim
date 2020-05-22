@@ -209,7 +209,6 @@ suite "Row CRUD":
       delete(toy)
 
     let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
-
     check rows.len == 0
 
   test "Delete rows":
@@ -227,3 +226,34 @@ suite "Row CRUD":
     check personRows.len == 0
     check petRows.len == 0
     check toyRows.len == 0
+
+  test "Transaction, successful execution":
+    var toy = initToy(123.45)
+
+    dbConn.transaction:
+      dbConn.insert(toy)
+
+    check toy.id > 0
+
+    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+
+    check rows.len == 1
+    check rows[0] == @[?123.45, ?toy.id]
+
+  test "Transaction, rollback on exception":
+    expect ValueError:
+      dbConn.transaction:
+        let toy = Toy().dup(dbConn.insert)
+
+        raise newException(ValueError, "Something went wrong")
+
+    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+    check rows.len == 0
+
+  test "Transaction, manual rollback":
+    dbConn.transaction:
+      let toy = Toy().dup(dbConn.insert)
+      rollback()
+
+    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+    check rows.len == 0
