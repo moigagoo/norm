@@ -18,9 +18,9 @@ using dbConn: DbConn
 proc dropTable*[T: Model](dbConn; obj: T) =
   ## Drop table for ``norm.Model``.
 
-  let qry = sql("DROP TABLE IF EXISTS $#" % T.table)
+  let qry = "DROP TABLE IF EXISTS $#" % T.table
 
-  dbConn.exec qry
+  dbConn.exec(sql qry)
 
 proc dropTables*[T: Model](dbConn; obj: T) =
   ## Drop tables for ``norm.Model`` and its ``norm.Model`` fields.
@@ -60,9 +60,9 @@ proc createTable*[T: Model](dbConn; obj: T, force = false) =
 
     colGroups.add colShmParts.join(" ")
 
-  let qry = sql("CREATE TABLE $#($#)" % [T.table, (colGroups & fkGroups).join(", ")])
+  let qry = "CREATE TABLE $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
-  dbConn.exec qry
+  dbConn.exec(sql qry)
 
 proc createTables*[T: Model](dbConn; obj: T, force = false) =
   ##[ Create tables for ``norm.Model`` and its ``norm.Model`` fields.
@@ -86,9 +86,9 @@ proc insert*[T: Model](dbConn; obj: var T) =
   let
     row = obj.toRow()
     phds = "?".repeat(row.len)
-    qry = sql("INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")])
+    qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
-  obj.id = dbConn.insertID(qry, row).int
+  obj.id = dbConn.insertID(sql qry, row).int
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
   ##[ Populate a ``norm.Model`` instance and its ``norm.Model`` fields from DB.
@@ -131,3 +131,19 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
 
   for i, row in rows:
     objs[i].fromRow(row)
+
+proc update*[T: Model](dbConn; obj: var T) =
+  ## Update rows for ``norm.Model`` instance and its ``norm.Model`` fields.
+
+  for fld, val in obj.fieldPairs:
+    when val is Model:
+      dbConn.update(val)
+
+  let
+    row = obj.toRow()
+    phds = collect(newSeq):
+      for col in obj.cols:
+        "$# = ?" %  col
+    qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
+
+  dbConn.exec(sql qry, row)
