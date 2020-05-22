@@ -12,3 +12,4 @@ tests/tmodel
 tests/tsqliterowutils
 tests/tsqlitetables
 tests/tsqliterows
+tests/tsqlitetransactions
