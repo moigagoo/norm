@@ -127,7 +127,7 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
     qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
     rows = dbConn.getAllRows(sql qry, params)
 
-  objs.setLen(rows.len)
+  objs = objs[0].repeat(rows.len)
 
   for i, row in rows:
     objs[i].fromRow(row)
