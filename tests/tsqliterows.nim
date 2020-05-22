@@ -3,6 +3,7 @@ import std/with
 import os
 import strutils
 import strformat
+import sugar
 
 import norm/[model, sqlite]
 
@@ -88,6 +89,14 @@ suite "Row CRUD":
 
     check outToy == inpToy
 
+  test "Get row, no intermediate objects":
+    let
+      inpToy = Toy(price: 123.45).dup(dbConn.insert)
+      outToy = Toy().dup:
+        dbConn.select(fmt"""{inpToy.col("price")} = ?""", inpToy.price)
+
+    check outToy == inpToy
+
   test "Get row, nested models":
     var
       inpPerson = initPerson("Alice", initPet("cat", initToy(123.45)))
@@ -96,6 +105,15 @@ suite "Row CRUD":
     with dbConn:
       insert inpPerson
       select(outPerson, fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
+
+  test "Get row, nested models, no intermediate objects":
+    let
+      inpPerson = Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup:
+        dbConn.insert
+      outPerson = Person().dup:
+        dbConn.select(fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
+
+    check outPerson == inpPerson
 
   test "Get rows":
     var
@@ -108,3 +126,43 @@ suite "Row CRUD":
     dbConn.select(outToys, fmt"""{inpToys[0].col("price")} > ?""", 100.00)
 
     check outToys == inpToys[..1]
+
+  test "Get rows, no intermediate objects":
+    let
+      inpToys = @[
+        Toy(price: 123.45).dup(dbConn.insert),
+        Toy(price: 456.78).dup(dbConn.insert),
+        Toy(price: 99.99).dup(dbConn.insert)
+      ]
+      outToys = @[Toy()].dup:
+        dbConn.select(fmt"""{inpToys[0].col("price")} > ?""", 100.00)
+
+    check outToys == inpToys[..1]
+
+  test "Get rows, nested models":
+    var
+      inpPersons = @[
+        initPerson("Alice", initPet("cat", initToy(123.45))),
+        initPerson("Bob", initPet("dog", initToy(456.78))),
+        initPerson("Charlie", initPet("frog", initToy(99.99))),
+      ]
+      outPersons = @[initPerson("", initPet("", initToy(0.0)))]
+
+    for inpPerson in inpPersons.mitems:
+      dbConn.insert(inpPerson)
+
+    dbConn.select(outPersons, fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
+
+    check outPersons == inpPersons[..1]
+
+  test "Get rows, nested models, no intermediate objects":
+    let
+      inpPersons = @[
+        Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup(dbConn.insert),
+        Person(name: "Bob", pet: Pet(species: "dog", favToy: Toy(price: 456.78))).dup(dbConn.insert),
+        Person(name: "Charlie", pet: Pet(species: "frog", favToy: Toy(price: 99.99))).dup(dbConn.insert)
+      ]
+      outPersons = @[Person()].dup:
+        dbConn.select(fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
+
+    check outPersons == inpPersons[..1]
