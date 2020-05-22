@@ -147,3 +147,17 @@ proc update*[T: Model](dbConn; obj: var T) =
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
   dbConn.exec(sql qry, row)
+
+
+proc delete*[T: Model](dbConn; obj: var T) =
+  ## Delete rows for ``norm.Model`` instance and its ``norm.Model`` fields.
+
+  for fld, val in obj.fieldPairs:
+    when val is Model:
+      dbConn.delete(val)
+
+  let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
+
+  dbConn.exec(sql qry)
+
+  obj.id = 0
