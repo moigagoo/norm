@@ -35,7 +35,7 @@ proc fromRow*[T: Model](obj: var T, row: Row) =
 proc toRow*[T: Model](obj: T, force = false): Row =
   ##[ Convert ``norm.Model`` instance into ``ndb.sqlite.Row`` instance.
 
-  Fields with ``norm.pragmas.ro``pragma are skipped unless ``force`` is ``true``.
+  If ``force`` is ``true``, fields with ``norm.pragmas.ro`` pragma are not skipped.
   ]##
 
   for fld, val in obj.fieldPairs:
