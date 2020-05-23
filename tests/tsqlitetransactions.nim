@@ -53,9 +53,10 @@ suite "Transactions":
     check rows.len == 0
 
   test "Transaction, manual rollback":
-    dbConn.transaction:
-      let toy = Toy().dup(dbConn.insert)
-      rollback()
+    expect RollbackError:
+      dbConn.transaction:
+        let toy = Toy().dup(dbConn.insert)
+        rollback()
 
     let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
     check rows.len == 0
