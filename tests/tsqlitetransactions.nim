@@ -6,18 +6,13 @@ import options
 
 import norm/[model, sqlite]
 
+import models
+
 
 const dbFile = "test.db"
 
 
 suite "Transactions":
-  type
-    Toy = object of Model
-      price: float
-
-  func initToy(price: float): Toy =
-    Toy(price: price)
-
   setup:
     removeFile dbFile
 

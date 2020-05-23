@@ -5,31 +5,13 @@ import strutils
 
 import norm/[model, sqlite]
 
+import models
+
 
 const dbFile = "test.db"
 
 
 suite "Table creation and dropping":
-  type
-    Toy = object of Model
-      price: float
-
-    Pet = object of Model
-      species: string
-      favToy: Toy
-
-    Person = object of Model
-      name: string
-      pet: Pet
-
-  func initToy(price: float): Toy = Toy(price: price)
-
-  func initPet(species: string, favToy: Toy): Pet =
-    Pet(species: species, favToy: favToy)
-
-  func initPerson(name: string, pet: Pet): Person =
-    Person(name: name, pet: pet)
-
   setup:
     removeFile dbFile
     let dbConn = open(dbFile, "", "", "")

@@ -8,32 +8,13 @@ import options
 
 import norm/[model, sqlite]
 
+import models
+
 
 const dbFile = "test.db"
 
 
 suite "Row CRUD":
-  type
-    Toy = object of Model
-      price: float
-
-    Pet = object of Model
-      species: string
-      favToy: Toy
-
-    Person = object of Model
-      name: string
-      pet: Pet
-
-  func initToy(price: float): Toy =
-    Toy(price: price)
-
-  func initPet(species: string, favToy: Toy): Pet =
-    Pet(species: species, favToy: favToy)
-
-  func initPerson(name: string, pet: Pet): Person =
-    Person(name: name, pet: pet)
-
   setup:
     removeFile dbFile
 
@@ -174,7 +155,7 @@ suite "Row CRUD":
 
     dbConn.insert(toy)
 
-    toy.price *= 2
+    toy.doublePrice()
 
     dbConn.update(toy)
 
@@ -189,7 +170,7 @@ suite "Row CRUD":
 
     person.name = "Bob"
     person.pet.species = "dog"
-    person.pet.favToy.price *= 2
+    person.pet.favToy.doublePrice()
 
     dbConn.update(person)
 

@@ -2,38 +2,14 @@ import unittest
 
 import norm/model
 
+import models
+
 
 suite "Getting table and columns from ``norm.Model``":
   test "Table":
-    type
-      Person = object of Model
-
-    let person = Person()
-
     check Person.table == "'Person'"
-    check person.table == "'Person'"
 
   test "Columns":
-    type
-      Toy = object of Model
-        price: float
-
-      Pet = object of Model
-        species: string
-        favToy: Toy
-
-      Person = object of Model
-        name: string
-        pet: Pet
-
-    func initToy(price: float): Toy = Toy(price: price)
-
-    func initPet(species: string, favToy: Toy): Pet =
-      Pet(species: species, favToy: favToy)
-
-    func initPerson(name: string, pet: Pet): Person =
-      Person(name: name, pet: pet)
-
     let
       toy = initToy(123.45)
       pet = initPet("cat", toy)
@@ -52,26 +28,6 @@ suite "Getting table and columns from ``norm.Model``":
     check toy.rfCols == @["'Toy'.price", "'Toy'.id"]
 
   test "Join groups":
-    type
-      Toy = object of Model
-        price: float
-
-      Pet = object of Model
-        species: string
-        favToy: Toy
-
-      Person = object of Model
-        name: string
-        pet: Pet
-
-    func initToy(price: float): Toy = Toy(price: price)
-
-    func initPet(species: string, favToy: Toy): Pet =
-      Pet(species: species, favToy: favToy)
-
-    func initPerson(name: string, pet: Pet): Person =
-      Person(name: name, pet: pet)
-
     let
       toy = initToy(123.45)
       pet = initPet("cat", toy)

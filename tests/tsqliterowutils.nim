@@ -7,6 +7,8 @@ import ndb/sqlite
 import norm/private/sqlite/rowutils
 import norm/[model, pragmas]
 
+import models
+
 
 const dtCmpThsld = initDuration(nanoseconds = 1000)
 
@@ -72,26 +74,6 @@ suite "Converting between ``norm.Model`` and ``ndb.sqlite.Row``":
     check mPerson ~= person
 
   test "Nested models":
-    type
-      Toy = object of Model
-        price: float
-
-      Pet = object of Model
-        species: string
-        favToy: Toy
-
-      Person = object of Model
-        name: string
-        pet: Pet
-
-    func initToy(price: float): Toy = Toy(price: price)
-
-    func initPet(species: string, favToy: Toy): Pet =
-      Pet(species: species, favToy: favToy)
-
-    func initPerson(name: string, pet: Pet): Person =
-      Person(name: name, pet: pet)
-
     let
       toy = initToy(123.45)
       pet = initPet("cat", toy)
