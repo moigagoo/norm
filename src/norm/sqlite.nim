@@ -13,20 +13,15 @@ import norm/model
 import norm/pragmas
 
 
-type RollbackError* = object of CatchableError
+type
+  RollbackError* = object of CatchableError
+    ## Raised when transaction is manually rollbacked.
 
 
 using dbConn: DbConn
 
 
 ## Table manupulation
-
-proc dropTable*[T: Model](dbConn; obj: T) =
-  ## Drop table for ``norm.Model``.
-
-  let qry = "DROP TABLE IF EXISTS $#" % T.table
-
-  dbConn.exec(sql qry)
 
 proc dropTables*[T: Model](dbConn; obj: T) =
   ## Drop tables for ``norm.Model`` and its ``norm.Model`` fields.
@@ -35,16 +30,22 @@ proc dropTables*[T: Model](dbConn; obj: T) =
     when val is Model:
       dbConn.dropTables(val)
 
-  dbConn.dropTable(obj)
+  let qry = "DROP TABLE IF EXISTS $#" % T.table
 
-proc createTable*[T: Model](dbConn; obj: T, force = false) =
-  ##[ Create table for ``norm.Model``. Tables for ``norm.Model`` fields must exist beforehand.
+  dbConn.exec(sql qry)
+
+proc createTables*[T: Model](dbConn; obj: T, force = false) =
+  ##[ Create tables for ``norm.Model`` and its ``norm.Model`` fields.
 
   If ``force`` is ``true``, drop the table before creation.
   ]##
 
   if force:
-    dbConn.dropTable(obj)
+    dbConn.dropTables(obj)
+
+  for fld, val in obj.fieldPairs:
+    when val is Model:
+      dbConn.createTables(val, force = force)
 
   var colGroups, fkGroups: seq[string]
 
@@ -69,18 +70,6 @@ proc createTable*[T: Model](dbConn; obj: T, force = false) =
   let qry = "CREATE TABLE $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
   dbConn.exec(sql qry)
-
-proc createTables*[T: Model](dbConn; obj: T, force = false) =
-  ##[ Create tables for ``norm.Model`` and its ``norm.Model`` fields.
-
-  If ``force`` is ``true``, drop the tables before creation.
-  ]##
-
-  for fld, val in obj.fieldPairs:
-    when val is Model:
-      dbConn.createTables(val, force = force)
-
-  dbConn.createTable(obj, force = force)
 
 
 ## Row manupulation
@@ -187,7 +176,7 @@ proc delete*[T: Model](dbConn; objs: var openarray[T]) =
 proc rollback* {.raises: RollbackError.} =
   ## Rollback transaction.
 
-  raise newException(RollbackError, "Rollback transaction")
+  raise newException(RollbackError, "Rollback transaction.")
 
 template transaction*(dbConn; body: untyped): untyped =
   ## Wrap code in transaction. If an exception is raised, the transaction is rollbacked.
@@ -198,9 +187,6 @@ template transaction*(dbConn; body: untyped): untyped =
     body
 
     dbConn.exec(sql"COMMIT")
-
-  except RollbackError:
-    dbConn.exec(sql"ROLLBACK")
 
   except:
     dbConn.exec(sql"ROLLBACK")
