@@ -41,7 +41,7 @@ suite "Table creation and dropping":
   test "Create table":
     let toy = initToy(123.45)
 
-    dbConn.createTable(toy)
+    dbConn.createTables(toy)
 
     let qry = "PRAGMA table_info($#);"
 
@@ -50,7 +50,7 @@ suite "Table creation and dropping":
       @[?1, ?"id", ?"INTEGER", ?1, ?nil, ?1],
     ]
 
-    dbConn.createTable(toy, force = true)
+    dbConn.createTables(toy, force = true)
 
     check dbConn.getAllRows(sql qry % "Toy") == @[
       @[?0, ?"price", ?"FLOAT", ?1, ?nil, ?0],
@@ -107,8 +107,8 @@ suite "Table creation and dropping":
     let toy = initToy(123.45)
 
     with dbConn:
-      createTable(toy)
-      dropTable(toy)
+      createTables(toy)
+      dropTables(toy)
 
     expect DbError:
       dbConn.exec sql "SELECT NULL FROM Toy"
