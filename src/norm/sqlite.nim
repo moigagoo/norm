@@ -146,7 +146,7 @@ proc update*[T: Model](dbConn; obj: var T) =
 
   dbConn.exec(sql qry, row)
 
-proc update*[T: Model](dbConn; objs: var openarray[T]) =
+proc update*[T: Model](dbConn; objs: var openArray[T]) =
   ## Update rows for each ``norm.Model`` instance in open array.
 
   for obj in objs.mitems:
@@ -165,7 +165,7 @@ proc delete*[T: Model](dbConn; obj: var T) =
 
   obj.id = 0
 
-proc delete*[T: Model](dbConn; objs: var openarray[T]) =
+proc delete*[T: Model](dbConn; objs: var openArray[T]) =
   ## Delete rows for each ``norm.Model`` instance in open array.
 
   for obj in objs.mitems:
