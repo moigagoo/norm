@@ -7,24 +7,27 @@ import sugar
 import ndb/sqlite
 export sqlite
 
-import norm/private/dot
-import norm/private/sqlite/[dbtypes, rowutils]
-import norm/model
-import norm/pragmas
+import private/sqlite/[dbtypes, rowutils]
+import private/dot
+import model
+import pragmas
 
 
 type
   RollbackError* = object of CatchableError
-    ## Raised when transaction is manually rollbacked.
+    ##[ Raised when transaction is manually rollbacked.
+
+    Do not raise manually, use `rollback <#rollback>`_ proc.
+    ]##
 
 
 using dbConn: DbConn
 
 
-## Table manupulation
+# Table manupulation
 
 proc dropTables*[T: Model](dbConn; obj: T) =
-  ## Drop tables for ``norm.Model`` and its ``norm.Model`` fields.
+  ## Drop tables for `Model <model.html#Model>`_ and its `Model`_ fields.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
@@ -35,7 +38,7 @@ proc dropTables*[T: Model](dbConn; obj: T) =
   dbConn.exec(sql qry)
 
 proc createTables*[T: Model](dbConn; obj: T, force = false) =
-  ##[ Create tables for ``norm.Model`` and its ``norm.Model`` fields.
+  ##[ Create tables for `Model`_ and its `Model`_ fields.
 
   If ``force`` is ``true``, drop the table before creation.
   ]##
@@ -72,10 +75,10 @@ proc createTables*[T: Model](dbConn; obj: T, force = false) =
   dbConn.exec(sql qry)
 
 
-## Row manupulation
+# Row manupulation
 
 proc insert*[T: Model](dbConn; obj: var T) =
-  ## Insert rows for ``norm.Model`` instance and its ``norm.Model`` fields, updating their ``id`` fields.
+  ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
@@ -89,12 +92,14 @@ proc insert*[T: Model](dbConn; obj: var T) =
   obj.id = dbConn.insertID(sql qry, row).int
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
-  ##[ Populate a ``norm.Model`` instance and its ``norm.Model`` fields from DB.
+  ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
 
   - use ``?`` placeholders and put the actual values in ``params``
-  - use ``norm.model.table``, ``norm.model.col``, and ``norm.model.fCol`` procs instead of hardcoded table and column names
+  - use `table <model.html#table,typedesc[Model]>`_, \
+    `col <model.html#col,T,string>`_, and `fCol <model.html#fCol,T,string>`_ procs \
+    instead of hardcoded table and column names
   ]##
 
   let
@@ -110,7 +115,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
   obj.fromRow(get row)
 
 proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) =
-  ##[ Populate a sequence of ``norm.Model`` instances from DB.
+  ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``objs`` must have at least one item.
   ]##
@@ -131,7 +136,7 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
     objs[i].fromRow(row)
 
 proc update*[T: Model](dbConn; obj: var T) =
-  ## Update rows for ``norm.Model`` instance and its ``norm.Model`` fields.
+  ## Update rows for `Model`_ instance and its `Model`_ fields.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
@@ -147,13 +152,13 @@ proc update*[T: Model](dbConn; obj: var T) =
   dbConn.exec(sql qry, row)
 
 proc update*[T: Model](dbConn; objs: var openArray[T]) =
-  ## Update rows for each ``norm.Model`` instance in open array.
+  ## Update rows for each `Model`_ instance in open array.
 
   for obj in objs.mitems:
     dbConn.update(obj)
 
 proc delete*[T: Model](dbConn; obj: var T) =
-  ## Delete rows for ``norm.Model`` instance and its ``norm.Model`` fields.
+  ## Delete rows for `Model`_ instance and its `Model`_ fields.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
@@ -166,20 +171,25 @@ proc delete*[T: Model](dbConn; obj: var T) =
   obj.id = 0
 
 proc delete*[T: Model](dbConn; objs: var openArray[T]) =
-  ## Delete rows for each ``norm.Model`` instance in open array.
+  ## Delete rows for each `Model`_ instance in open array.
 
   for obj in objs.mitems:
     dbConn.delete(obj)
 
-## Transactions
+# Transactions
 
 proc rollback* {.raises: RollbackError.} =
-  ## Rollback transaction.
+  ## Rollback transaction by raising `RollbackError <#RollbackError>`_.
 
   raise newException(RollbackError, "Rollback transaction.")
 
 template transaction*(dbConn; body: untyped): untyped =
-  ## Wrap code in transaction. If an exception is raised, the transaction is rollbacked.
+  ##[ Wrap code in DB transaction.
+
+  If an exception is raised, the transaction is rollbacked.
+
+  To rollback manually, call `rollback`_.
+  ]##
 
   try:
     dbConn.exec(sql"BEGIN")

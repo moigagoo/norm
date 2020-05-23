@@ -1,9 +1,9 @@
-##[ Procs to convert between Nim types and SQLite types and between Nim values and ``DbValue``.
+##[ Procs to convert between Nim types and SQLite types and between Nim values and ``ndb.sqlite.DbValue``.
 
-To add support for ``YourType``, define:
-- ``dbType(T: typedesc[YourType]) -> string``
-- ``dbValue(YourType) -> DbValue``
-- ``to(DbValue, T: typedesc[YourType]) -> T``
+To add support for ``YourType``, define three procs:
+- ``dbType(T: typedesc[YourType]) -> string`` that returns SQL type for given ``YourType``
+- ``dbValue(YourType) -> DbValue`` that converts instances of ``YourType`` to ``ndb.sqlite.DbValue``
+- ``to(DbValue, T: typedesc[YourType]) -> T`` that converts ``ndb.sqlite.DbValue`` instances to ``YourType``.
 ]##
 
 
@@ -12,10 +12,10 @@ import times
 
 import ndb/sqlite
 
-import norm/model
+import ../../model
 
 
-## Procs that return an SQLite type for a given Nim type:
+# Procs that return an SQLite type for a given Nim type:
 
 proc dbType*(T: typedesc[SomeInteger]): string = "INTEGER"
 
@@ -34,7 +34,7 @@ proc dbType*(T: typedesc[Model]): string = "INTEGER"
 proc dbType*[T](_: typedesc[Option[T]]): string = dbType T
 
 
-## Converter procs from Nim values to ``DbValue``:
+# Converter procs from Nim values to ``DbValue``:
 
 proc dbValue*(val: bool): DbValue = dbValue(if val: 1 else: 0)
 
@@ -49,7 +49,7 @@ proc dbValue*(val: DateTime): DbValue = dbValue(val.toTime().toUnixFloat())
 proc dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
 
 
-## Converter procs from ``DbValue`` instances to Nim types:
+# Converter procs from ``DbValue`` instances to Nim types:
 
 using dbVal: DbValue
 

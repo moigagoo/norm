@@ -1,4 +1,4 @@
-## Pragmas to customize ``norm.Model`` field representation in generated table schemas.
+## Pragmas to customize `Model <model.html#Model>`_ field representation in generated table schemas.
 
 
 template pk* {.pragma.}
@@ -10,7 +10,7 @@ template pk* {.pragma.}
 template ro* {.pragma.}
   ##[ Mark field as read-only.
 
-  Read-only fields are ignored in ``insert`` and ``update`` unless ``force`` is passed.
+  Read-only fields are ignored in ``insert`` and ``update`` procs unless ``force`` is passed.
 
   Use for fields that are populated automatically by the DB: ids, timestamps, and so on.
 
