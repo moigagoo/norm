@@ -15,9 +15,6 @@ proc table*(T: typedesc[Model]): string =
 
   "'$#'" % $T
 
-proc table*[T: Model](obj: T): string =
-  T.table
-
 proc col*[T: Model](obj: T, fld: string): string =
   ## Get column name for a ``norm.Model`` field, which is the field name in single quotes.
 
@@ -67,5 +64,5 @@ proc joinGroups*[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]] =
 
   for fld, val in obj.fieldPairs:
     when val is Model:
-      result.add (tbl: val.table, lFld: obj.fCol(fld), rFld: val.fCol("id"))
+      result.add (tbl: typeof(val).table, lFld: obj.fCol(fld), rFld: val.fCol("id"))
       result.add val.joinGroups

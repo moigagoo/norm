@@ -63,7 +63,7 @@ proc createTables*[T: Model](dbConn; obj: T, force = false) =
       colShmParts.add "PRIMARY KEY"
 
     when val is Model:
-      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), val.table, val.col("id")]
+      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(val).table, val.col("id")]
 
     colGroups.add colShmParts.join(" ")
 
