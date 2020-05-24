@@ -13,7 +13,7 @@ import models
 const dtCmpThsld = initDuration(nanoseconds = 1000)
 
 
-suite "Converting between ``norm.Model`` and ``ndb.sqlite.Row``":
+suite "Converting between Model and ndb.sqlite.Row":
   test "Built-in types":
     type
       Person = object of Model
@@ -46,7 +46,7 @@ suite "Converting between ``norm.Model`` and ``ndb.sqlite.Row``":
     check person.toRow == row
     check mPerson ~= person
 
-  test "Field with ``norm.pragmas.ro``":
+  test "Read-only fields":
     type
       Person = object of Model
         initDt {.ro.}: DateTime

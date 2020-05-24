@@ -5,7 +5,7 @@ import norm/model
 import models
 
 
-suite "Getting table and columns from ``norm.Model``":
+suite "Getting table and columns from Model":
   test "Table":
     check Person.table == "'Person'"
 
