@@ -21,7 +21,7 @@ proc table*(T: typedesc[Model]): string =
   "'$#'" % $T
 
 proc col*[T: Model](obj: T, fld: string): string =
-  ## Get column name for a `Model`_ field, which is the field name in single quotes.
+  ## Get column name for a `Model`_ field, which is just the field name.
 
   fld
 
