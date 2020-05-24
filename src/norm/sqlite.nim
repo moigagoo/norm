@@ -1,3 +1,4 @@
+import logging
 import strutils
 import sequtils
 import options
@@ -35,6 +36,7 @@ proc dropTables*[T: Model](dbConn; obj: T) =
 
   let qry = "DROP TABLE IF EXISTS $#" % T.table
 
+  debug qry
   dbConn.exec(sql qry)
 
 proc createTables*[T: Model](dbConn; obj: T, force = false) =
@@ -72,6 +74,7 @@ proc createTables*[T: Model](dbConn; obj: T, force = false) =
 
   let qry = "CREATE TABLE $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
+  debug qry
   dbConn.exec(sql qry)
 
 
@@ -89,6 +92,7 @@ proc insert*[T: Model](dbConn; obj: var T) =
     phds = "?".repeat(row.len)
     qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
+  debug "$# <- $#" % [qry, $row]
   obj.id = dbConn.insertID(sql qry, row).int
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
@@ -107,7 +111,9 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
       for grp in obj.joinGroups:
         "JOIN $# ON $# = $#" % [grp.tbl, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
-    row = dbConn.getRow(sql qry, params)
+
+  debug "$# <- $#" % [qry, $params]
+  let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:
     raise newException(KeyError, "Record not found")
@@ -128,7 +134,9 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
       for grp in objs[0].joinGroups:
         "JOIN $# ON $# = $#" % [grp.tbl, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
-    rows = dbConn.getAllRows(sql qry, params)
+
+  debug "$# <- $#" % [qry, $params]
+  let rows = dbConn.getAllRows(sql qry, params)
 
   objs = objs[0].repeat(rows.len)
 
@@ -149,6 +157,7 @@ proc update*[T: Model](dbConn; obj: var T) =
         "$# = ?" %  col
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
+  debug "$# <- $#" % [qry, $row]
   dbConn.exec(sql qry, row)
 
 proc update*[T: Model](dbConn; objs: var openArray[T]) =
@@ -166,6 +175,7 @@ proc delete*[T: Model](dbConn; obj: var T) =
 
   let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
 
+  debug qry
   dbConn.exec(sql qry)
 
   obj.id = 0
@@ -175,6 +185,7 @@ proc delete*[T: Model](dbConn; objs: var openArray[T]) =
 
   for obj in objs.mitems:
     dbConn.delete(obj)
+
 
 # Transactions
 
@@ -191,13 +202,21 @@ template transaction*(dbConn; body: untyped): untyped =
   To rollback manually, call `rollback`_.
   ]##
 
+  let
+    beginQry = "BEGIN"
+    commitQry = "COMMIT"
+    rollbackQry = "ROLLBACK"
+
   try:
-    dbConn.exec(sql"BEGIN")
+    debug beginQry
+    dbConn.exec(sql beginQry)
 
     body
 
-    dbConn.exec(sql"COMMIT")
+    debug commitQry
+    dbConn.exec(sql commitQry)
 
   except:
-    dbConn.exec(sql"ROLLBACK")
+    debug rollbackQry
+    dbConn.exec(sql rollbackQry)
     raise
