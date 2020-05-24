@@ -2,7 +2,6 @@ import unittest
 import std/with
 import os
 import strutils
-import strformat
 import sugar
 import options
 import sequtils
@@ -25,10 +24,6 @@ suite "Fancy syntax":
       for toy in toys:
         toy.price
 
-  let
-    condPriceLt = fmt"""{Toy().col("price")} < ?"""
-    condPriceGt = fmt"""{Toy().col("price")} > ?"""
-
   setup:
     removeFile dbFile
 
@@ -46,9 +41,9 @@ suite "Fancy syntax":
 
   test "Chaining":
     discard @[Toy()].dup:
-      dbConn.select(condPriceLt, 50)
+      dbConn.select("price < ?", 50)
       dbConn.delete
-      dbConn.select(condPriceGt, 50)
+      dbConn.select("price > ?", 50)
       apply(doublePrice)
       dbConn.update
 
@@ -59,13 +54,13 @@ suite "Fancy syntax":
     var toys = @[initToy(0.0)]
 
     with toys:
-      dbConn.select(condPriceLt, 50)
+      dbConn.select("price < ?", 50)
       dbConn.delete
 
     check dbConn.allToys.len == 3
 
     with toys:
-      dbConn.select(condPriceGt, 50)
+      dbConn.select("price > ?", 50)
       apply(doublePrice)
       dbConn.update
 
@@ -80,8 +75,8 @@ suite "Fancy syntax":
       costlyToys = @[initToy(0.0)]
 
     with dbConn:
-      select(cheapToys, condPriceLt, 50)
-      select(costlyToys, condPriceGt, 50)
+      select(cheapToys, "price < ?", 50)
+      select(costlyToys, "price > ?", 50)
 
     check cheapToys == toys[0..6]
     check costlyToys == toys[7..^1]

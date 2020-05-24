@@ -2,7 +2,6 @@ import unittest
 import std/with
 import os
 import strutils
-import strformat
 import sugar
 import options
 
@@ -68,7 +67,7 @@ suite "Row CRUD":
 
     with dbConn:
       insert(inpToy)
-      select(outToy, fmt"""{inpToy.col("price")} = ?""", inpToy.price)
+      select(outToy, "price = ?", inpToy.price)
 
     check outToy == inpToy
 
@@ -76,7 +75,7 @@ suite "Row CRUD":
     let
       inpToy = Toy(price: 123.45).dup(dbConn.insert)
       outToy = Toy().dup:
-        dbConn.select(fmt"""{inpToy.col("price")} = ?""", inpToy.price)
+        dbConn.select("price = ?", inpToy.price)
 
     check outToy == inpToy
 
@@ -87,14 +86,14 @@ suite "Row CRUD":
 
     with dbConn:
       insert(inpPerson)
-      select(outPerson, fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
+      select(outPerson, "Person.name = ?", inpPerson.name)
 
   test "Get row, nested models, no intermediate objects":
     let
       inpPerson = Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup:
         dbConn.insert
       outPerson = Person().dup:
-        dbConn.select(fmt"""{inpPerson.fCol("name")} = ?""", inpPerson.name)
+        dbConn.select("Person.name = ?", inpPerson.name)
 
     check outPerson == inpPerson
 
@@ -106,7 +105,7 @@ suite "Row CRUD":
     for inpToy in inpToys.mitems:
       dbConn.insert(inpToy)
 
-    dbConn.select(outToys, fmt"""{inpToys[0].col("price")} > ?""", 100.00)
+    dbConn.select(outToys, "price > ?", 100.00)
 
     check outToys == inpToys[..1]
 
@@ -118,7 +117,7 @@ suite "Row CRUD":
         Toy(price: 99.99).dup(dbConn.insert)
       ]
       outToys = @[Toy()].dup:
-        dbConn.select(fmt"""{inpToys[0].col("price")} > ?""", 100.00)
+        dbConn.select("price > ?", 100.00)
 
     check outToys == inpToys[..1]
 
@@ -134,7 +133,7 @@ suite "Row CRUD":
     for inpPerson in inpPersons.mitems:
       dbConn.insert(inpPerson)
 
-    dbConn.select(outPersons, fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
+    dbConn.select(outPersons, "Toy.price > ?", 100.00)
 
     check outPersons == inpPersons[0..^2]
 
@@ -146,7 +145,7 @@ suite "Row CRUD":
         Person(name: "Charlie", pet: Pet(species: "frog", favToy: Toy(price: 99.99))).dup(dbConn.insert)
       ]
       outPersons = @[Person()].dup:
-        dbConn.select(fmt"""{inpPersons[0].pet.favToy.fCol("price")} > ?""", 100.00)
+        dbConn.select("Toy.price > ?", 100.00)
 
     check outPersons == inpPersons[0..^2]
 
