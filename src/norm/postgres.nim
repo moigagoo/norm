@@ -41,13 +41,14 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     colShmParts.add obj.col(fld)
 
-    colShmParts.add typeof(val).dbType
-
-    when val isnot Option:
-      colShmParts.add "NOT NULL"
-
     when obj.dot(fld).hasCustomPragma(pk):
-      colShmParts.add "PRIMARY KEY"
+      colShmParts.add "SERIAL PRIMARY KEY"
+
+    else:
+      colShmParts.add typeof(val).dbType
+
+      when val isnot Option:
+        colShmParts.add "NOT NULL"
 
     when val is Model:
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(val).table, val.col("id")]
@@ -71,7 +72,7 @@ proc insert*[T: Model](dbConn; obj: var T) =
 
   let
     row = obj.toRow()
-    phds = "?".repeat(row.len)
+    phds = collect(newSeq, for i, _ in row: "$" & $(i + 1))
     qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
   debug "$# <- $#" % [qry, $row]
