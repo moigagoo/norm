@@ -136,8 +136,8 @@ proc update*[T: Model](dbConn; obj: var T) =
   let
     row = obj.toRow()
     phds = collect(newSeq):
-      for col in obj.cols:
-        "$# = ?" %  col
+      for i, col in obj.cols:
+        "$# = $$$#" %  [col, $(i + 1)]
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
   debug "$# <- $#" % [qry, $row]
