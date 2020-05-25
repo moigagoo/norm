@@ -18,7 +18,7 @@ type
 proc table*(T: typedesc[Model]): string =
   ## Get table name for `Model <#Model>`_, which is the type name in single quotes.
 
-  "'$#'" % $T
+  '"' & $T & '"'
 
 proc col*[T: Model](obj: T, fld: string): string =
   ## Get column name for a `Model`_ field, which is just the field name.
@@ -28,7 +28,7 @@ proc col*[T: Model](obj: T, fld: string): string =
 proc fCol*[T: Model](obj: T, fld: string): string =
   ## Get fully qualified column name with the table name: ``table.col``.
 
-  "'$#'.$#" % [$T, fld]
+  "$#.$#" % [T.table, obj.col(fld)]
 
 proc cols*[T: Model](obj: T, force = false): seq[string] =
   ##[ Get columns for `Model`_ instance.
