@@ -15,4 +15,5 @@ tests/tsqliterows
 tests/tsqlitetransactions
 tests/tsqlitesugar
 
+tests/tpostgresrowutils
 tests/tpostgrestables
