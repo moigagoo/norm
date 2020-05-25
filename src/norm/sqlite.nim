@@ -27,30 +27,12 @@ using dbConn: DbConn
 
 # Table manupulation
 
-proc dropTables*[T: Model](dbConn; obj: T) =
-  ## Drop tables for `Model <model.html#Model>`_ and its `Model`_ fields.
+proc createTables*[T: Model](dbConn; obj: T) =
+  ## Create tables for `Model`_ and its `Model`_ fields.
 
   for fld, val in obj.fieldPairs:
     when val is Model:
-      dbConn.dropTables(val)
-
-  let qry = "DROP TABLE IF EXISTS $#" % T.table
-
-  debug qry
-  dbConn.exec(sql qry)
-
-proc createTables*[T: Model](dbConn; obj: T, force = false) =
-  ##[ Create tables for `Model`_ and its `Model`_ fields.
-
-  If ``force`` is ``true``, drop the table before creation.
-  ]##
-
-  if force:
-    dbConn.dropTables(obj)
-
-  for fld, val in obj.fieldPairs:
-    when val is Model:
-      dbConn.createTables(val, force = force)
+      dbConn.createTables(val)
 
   var colGroups, fkGroups: seq[string]
 
