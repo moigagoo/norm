@@ -19,7 +19,7 @@ suite "Row CRUD":
 
     let dbConn = open(dbFile, "", "", "")
 
-    dbConn.createTables(initPerson("", initPet("", initToy(0.0))))
+    dbConn.createTables(Person())
 
   teardown:
     close dbConn
