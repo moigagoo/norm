@@ -18,7 +18,7 @@ suite "Transactions":
 
     let dbConn = open(dbFile, "", "", "")
 
-    dbConn.createTables(initToy(0.0))
+    dbConn.createTables(Toy())
 
   teardown:
     close dbConn
