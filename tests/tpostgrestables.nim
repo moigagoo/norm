@@ -1,7 +1,5 @@
 import unittest
 import strutils
-import sequtils
-import sugar
 
 import norm/[model, postgres]
 

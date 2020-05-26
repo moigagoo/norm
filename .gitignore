@@ -18,3 +18,4 @@ tests/tsqlitesugar
 tests/tpostgresrowutils
 tests/tpostgrestables
 tests/tpostgresrows
+tests/tpostgrestransactions
