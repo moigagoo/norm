@@ -3,7 +3,6 @@ import std/with
 import os
 import strutils
 import sugar
-import options
 import sequtils
 
 import norm/[model, sqlite]
