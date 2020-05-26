@@ -183,27 +183,9 @@ suite "Row CRUD":
     check toyRow == @[?246.9, ?person.pet.favToy.id]
 
   test "Delete row":
-    var toy = initToy(123.45)
-
-    with dbConn:
-      insert(toy)
-      delete(toy)
-
-    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
-    check rows.len == 0
-
-  test "Delete rows":
     var person = initPerson("Alice", initPet("cat", initToy(123.45)))
 
-    with dbConn:
-      insert(person)
-      delete(person)
+    dbConn.insert(person)
 
-    let
-      personRows = dbConn.getAllRows(sql"SELECT name, pet, id FROM Person")
-      petRows = dbConn.getAllRows(sql"SELECT species, favToy, id FROM Pet")
-      toyRows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
-
-    check personRows.len == 0
-    check petRows.len == 0
-    check toyRows.len == 0
+    dbConn.delete(person)
+    check dbConn.getRow(sql"SELECT * FROM Person WHERE name = 'Alice'").isNone

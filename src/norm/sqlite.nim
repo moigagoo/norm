@@ -151,10 +151,6 @@ proc update*[T: Model](dbConn; objs: var openArray[T]) =
 proc delete*[T: Model](dbConn; obj: var T) =
   ## Delete rows for `Model`_ instance and its `Model`_ fields.
 
-  for fld, val in obj.fieldPairs:
-    when val is Model:
-      dbConn.delete(val)
-
   let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
 
   debug qry

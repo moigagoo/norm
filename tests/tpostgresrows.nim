@@ -157,61 +157,46 @@ suite "Row CRUD":
 
     check outPersons == inpPersons[0..^2]
 
-  # test "Update row":
-  #   var toy = initToy(123.45)
+  test "Update row":
+    var toy = initToy(123.45)
 
-  #   dbConn.insert(toy)
+    dbConn.insert(toy)
 
-  #   toy.doublePrice()
+    toy.doublePrice()
 
-  #   dbConn.update(toy)
+    dbConn.update(toy)
 
-  #   let row = get dbConn.getRow(sql"SELECT price, id FROM Toy WHERE id = ?", toy.id)
+    let row = get dbConn.getRow(sql"""SELECT price, id FROM "Toy" WHERE id = $1""", toy.id)
 
-  #   check row == @[?246.9, ?toy.id]
+    check row == @[?246.9, ?toy.id]
 
-  # test "Update rows":
-  #   var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+  test "Update rows":
+    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
 
-  #   dbConn.insert(person)
+    dbConn.insert(person)
 
-  #   person.name = "Bob"
-  #   person.pet.species = "dog"
-  #   person.pet.favToy.doublePrice()
+    person.name = "Bob"
+    person.pet.species = "dog"
+    person.pet.favToy.doublePrice()
 
-  #   dbConn.update(person)
+    dbConn.update(person)
 
-  #   let
-  #     personRow = get dbConn.getRow(sql"SELECT name, pet, id FROM Person WHERE id = ?", person.id)
-  #     petRow = get dbConn.getRow(sql"SELECT species, favToy, id FROM Pet WHERE id = ?", person.pet.id)
-  #     toyRow = get dbConn.getRow(sql"SELECT price, id FROM Toy WHERE id = ?", person.pet.favToy.id)
+    let
+      personRow = get dbConn.getRow(sql"""SELECT name, pet, id FROM "Person" WHERE id = $1""", person.id)
+      petRow = get dbConn.getRow(sql"""SELECT species, favToy, id FROM "Pet" WHERE id = $1""", person.pet.id)
+      toyRow = get dbConn.getRow(sql"""SELECT price, id FROM "Toy" WHERE id = $1""", person.pet.favToy.id)
 
-  #   check personRow == @[?"Bob", ?person.pet.id, ?person.id]
-  #   check petRow == @[?"dog", ?person.pet.favToy.id, ?person.pet.id]
-  #   check toyRow == @[?246.9, ?person.pet.favToy.id]
+    check personRow == @[?"Bob", ?person.pet.id, ?person.id]
+    check petRow == @[?"dog", ?person.pet.favToy.id, ?person.pet.id]
+    check toyRow == @[?246.9, ?person.pet.favToy.id]
 
-  # test "Delete row":
-  #   var toy = initToy(123.45)
+  test "Delete row":
+    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
 
-  #   with dbConn:
-  #     insert(toy)
-  #     delete(toy)
+    dbConn.insert(person)
 
-  #   let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
-  #   check rows.len == 0
+    dbConn.delete(person)
+    check dbConn.getRow(sql"""SELECT * FROM "Person" WHERE name = 'Alice'""").isNone
 
-  # test "Delete rows":
-  #   var person = initPerson("Alice", initPet("cat", initToy(123.45)))
-
-  #   with dbConn:
-  #     insert(person)
-  #     delete(person)
-
-  #   let
-  #     personRows = dbConn.getAllRows(sql"SELECT name, pet, id FROM Person")
-  #     petRows = dbConn.getAllRows(sql"SELECT species, favToy, id FROM Pet")
-  #     toyRows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
-
-  #   check personRows.len == 0
-  #   check petRows.len == 0
-  #   check toyRows.len == 0
+    expect DbError:
+      dbConn.delete(person.pet.favToy)
