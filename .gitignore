@@ -19,3 +19,4 @@ tests/tpostgresrowutils
 tests/tpostgrestables
 tests/tpostgresrows
 tests/tpostgrestransactions
+tests/tpostgressugar
