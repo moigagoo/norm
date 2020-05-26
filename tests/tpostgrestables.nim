@@ -35,14 +35,14 @@ suite "Table creation":
 
     dbConn.createTables(toy)
 
-    let qry = sql """SELECT column_name, data_type, is_nullable
+    let qry = sql """SELECT column_name::text, data_type::text
       FROM information_schema.columns
       WHERE table_name = $1
       ORDER BY column_name"""
 
-    let colSpecs = collect(newSeq, for row in dbConn.getAllRows(qry, "Toy"): row.mapIt($it)) == @[
-      @["id", "integer", "NO"],
-      @["price", "real", "NO"]
+    check dbConn.getAllRows(qry, "Toy") == @[
+      @[?"id", ?"integer"],
+      @[?"price", ?"real"]
     ]
 
   test "Create tables":
@@ -55,24 +55,24 @@ suite "Table creation":
 
     check true
 
-    let qry = sql """SELECT column_name, data_type
+    let qry = sql """SELECT column_name::text, data_type::text
       FROM information_schema.columns
       WHERE table_name = $1
       ORDER BY column_name"""
 
-    check collect(newSeq, for row in dbConn.getAllRows(qry, "Toy"): row.mapIt($it)) == @[
-      @["id", "integer"],
-      @["price", "real"]
+    check dbConn.getAllRows(qry, "Toy") == @[
+      @[?"id", ?"integer"],
+      @[?"price", ?"real"]
     ]
 
-    check collect(newSeq, for row in dbConn.getAllRows(qry, "Pet"): row.mapIt($it)) == @[
-      @["favtoy", "integer"],
-      @["id", "integer"],
-      @["species", "text"]
+    check dbConn.getAllRows(qry, "Pet") == @[
+      @[?"favtoy", ?"integer"],
+      @[?"id", ?"integer"],
+      @[?"species", ?"text"]
     ]
 
-    check collect(newSeq, for row in dbConn.getAllRows(qry, "Person"): row.mapIt($it)) == @[
-      @["id", "integer"],
-      @["name", "text"],
-      @["pet", "integer"]
+    check dbConn.getAllRows(qry, "Person") == @[
+      @[?"id", ?"integer"],
+      @[?"name", ?"text"],
+      @[?"pet", ?"integer"]
     ]
