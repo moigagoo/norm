@@ -27,14 +27,14 @@ suite "Row CRUD":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(Person())
+    dbConn.createTables(newPerson())
 
   teardown:
     close dbConn
     resetDb()
 
   test "Insert row":
-    var toy = initToy(123.45)
+    var toy = newToy(123.45)
 
     dbConn.insert(toy)
 
@@ -46,7 +46,7 @@ suite "Row CRUD":
     check rows[0] == @[?123.45, ?toy.id]
 
   test "Insert rows":
-    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+    var person = newPerson("Alice", newPet("cat", newToy(123.45)))
 
     dbConn.insert(person)
 
@@ -70,27 +70,27 @@ suite "Row CRUD":
 
   test "Get row":
     var
-      inpToy = initToy(123.45)
-      outToy = initToy(0.0)
+      inpToy = newToy(123.45)
+      outToy = newToy()
 
     with dbConn:
       insert(inpToy)
       select(outToy, "round(price::numeric, 2) = $1", inpToy.price)
 
-    check outToy == inpToy
+    check outToy === inpToy
 
   test "Get row, no intermediate objects":
     let
-      inpToy = Toy(price: 123.45).dup(dbConn.insert)
-      outToy = Toy().dup:
+      inpToy = newToy(123.45).dup(dbConn.insert)
+      outToy = newToy().dup:
         dbConn.select("round(price::numeric, 2) = $1", inpToy.price)
 
-    check outToy == inpToy
+    check outToy === inpToy
 
   test "Get row, nested models":
     var
-      inpPerson = initPerson("Alice", initPet("cat", initToy(123.45)))
-      outPerson = initPerson("", initPet("", initToy(0.0)))
+      inpPerson = newPerson("Alice", newPet("cat", newToy(123.45)))
+      outPerson = newPerson()
 
     with dbConn:
       insert(inpPerson)
@@ -100,50 +100,50 @@ suite "Row CRUD":
     let
       inpPerson = Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup:
         dbConn.insert
-      outPerson = Person().dup:
+      outPerson = newPerson().dup:
         dbConn.select(""""Person".name = $1""", inpPerson.name)
 
-    check outPerson == inpPerson
+    check outPerson === inpPerson
 
   test "Get rows":
     var
-      inpToys = @[initToy(123.45), initToy(456.78), initToy(99.99)]
-      outToys = @[initToy(0.0)]
+      inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
+      outToys = @[newToy()]
 
     for inpToy in inpToys.mitems:
       dbConn.insert(inpToy)
 
     dbConn.select(outToys, "price > $1", 100.00)
 
-    check outToys == inpToys[..1]
+    check outToys === inpToys[..1]
 
   test "Get rows, no intermediate objects":
     let
       inpToys = @[
-        Toy(price: 123.45).dup(dbConn.insert),
-        Toy(price: 456.78).dup(dbConn.insert),
-        Toy(price: 99.99).dup(dbConn.insert)
+        newToy(123.45).dup(dbConn.insert),
+        newToy(456.78).dup(dbConn.insert),
+        newToy(99.99).dup(dbConn.insert)
       ]
-      outToys = @[Toy()].dup:
+      outToys = @[newToy()].dup:
         dbConn.select("price > $1", 100.00)
 
-    check outToys == inpToys[..1]
+    check outToys === inpToys[..1]
 
   test "Get rows, nested models":
     var
       inpPersons = @[
-        initPerson("Alice", initPet("cat", initToy(123.45))),
-        initPerson("Bob", initPet("dog", initToy(456.78))),
-        initPerson("Charlie", initPet("frog", initToy(99.99))),
+        newPerson("Alice", newPet("cat", newToy(123.45))),
+        newPerson("Bob", newPet("dog", newToy(456.78))),
+        newPerson("Charlie", newPet("frog", newToy(99.99))),
       ]
-      outPersons = @[initPerson("", initPet("", initToy(0.0)))]
+      outPersons = @[newPerson()]
 
     for inpPerson in inpPersons.mitems:
       dbConn.insert(inpPerson)
 
     dbConn.select(outPersons, """"Toy".price > $1""", 100.00)
 
-    check outPersons == inpPersons[0..^2]
+    check outPersons === inpPersons[0..^2]
 
   test "Get rows, nested models, no intermediate objects":
     let
@@ -152,13 +152,13 @@ suite "Row CRUD":
         Person(name: "Bob", pet: Pet(species: "dog", favToy: Toy(price: 456.78))).dup(dbConn.insert),
         Person(name: "Charlie", pet: Pet(species: "frog", favToy: Toy(price: 99.99))).dup(dbConn.insert)
       ]
-      outPersons = @[Person()].dup:
+      outPersons = @[newPerson()].dup:
         dbConn.select(""""Toy".price > $1""", 100.00)
 
-    check outPersons == inpPersons[0..^2]
+    check outPersons === inpPersons[0..^2]
 
   test "Update row":
-    var toy = initToy(123.45)
+    var toy = newToy(123.45)
 
     dbConn.insert(toy)
 
@@ -171,7 +171,7 @@ suite "Row CRUD":
     check row == @[?246.9, ?toy.id]
 
   test "Update rows":
-    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+    var person = newPerson("Alice", newPet("cat", newToy(123.45)))
 
     dbConn.insert(person)
 
@@ -191,7 +191,7 @@ suite "Row CRUD":
     check toyRow == @[?246.9, ?person.pet.favToy.id]
 
   test "Delete row":
-    var person = initPerson("Alice", initPet("cat", initToy(123.45)))
+    var person = newPerson("Alice", newPet("cat", newToy(123.45)))
 
     dbConn.insert(person)
 

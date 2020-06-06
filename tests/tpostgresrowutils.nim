@@ -16,7 +16,7 @@ const dtCmpThsld = initDuration(nanoseconds = 1000)
 suite "Converting between Model and ndb.postgres.Row":
   test "Built-in types":
     type
-      Person = object of Model
+      Person = ref object of Model
         name: string
         age: int
         married: Option[bool]
@@ -24,55 +24,54 @@ suite "Converting between Model and ndb.postgres.Row":
 
     let dt = now().utc
 
-    proc initPerson(name: string, age: int, married: Option[bool]): Person =
+    proc newPerson(name: string, age: int, married: Option[bool]): Person =
       Person(name: name, age: age, married: married, initDt: dt)
 
     let
-      person = initPerson("Alice", 23, some true)
+      person = newPerson("Alice", 23, some true)
       row: Row = @[?"Alice", ?23, ?true, ?dt]
       fRow: Row = @[?"Alice", ?23, ?true, ?dt, ?person.id]
 
-    var mPerson = initPerson(name = "", age = 0, married = none bool)
+    var mPerson = newPerson(name = "", age = 0, married = none bool)
+
     mPerson.fromRow(fRow)
 
     check person.toRow == row
-    check mPerson == person
+    check mPerson[] == person[]
 
   test "Read-only fields":
     type
-      Person = object of Model
+      Person = ref object of Model
         initDt {.ro.}: DateTime
 
     let dt = now().utc
 
-    proc initPerson(): Person =
+    proc newPerson(): Person =
       Person(initDt: dt)
 
     let
-      person = initPerson()
+      person = newPerson()
       row: Row = @[]
       fRow: Row = @[?dt, ?person.id]
 
-    var mPerson = initPerson()
+    var mPerson = newPerson()
     mPerson.fromRow(fRow)
 
     check person.toRow == row
     check person.toRow(force = true) == fRow
-    check mPerson == person
+    check mPerson[] == person[]
 
   test "Nested models":
     let
-      toy = initToy(123.45)
-      pet = initPet("cat", toy)
-      person = initPerson("Alice", pet)
+      toy = newToy(123.45)
+      pet = newPet("cat", toy)
+      person = newPerson("Alice", pet)
       row: Row = @[?"Alice", ?person.pet.id]
       fRow: Row = @[?"Alice", ?"cat", ?123.45, ?person.pet.favToy.id, ?person.pet.id, ?person.id]
 
-    var
-      mToy = initToy(0.0)
-      mPet = initPet("", mToy)
-      mPerson = initPerson("", mPet)
+    var mPerson = newPerson()
+
     mPerson.fromRow(fRow)
 
     check person.toRow == row
-    check mPerson == person
+    check mPerson === person

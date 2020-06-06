@@ -33,7 +33,7 @@ suite "Transactions":
     resetDb()
 
   test "Transaction, successful execution":
-    var toy = initToy(123.45)
+    var toy = newToy(123.45)
 
     dbConn.transaction:
       dbConn.insert(toy)

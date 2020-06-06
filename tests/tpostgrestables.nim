@@ -29,7 +29,7 @@ suite "Table creation":
     resetDb()
 
   test "Create table":
-    let toy = initToy(123.45)
+    let toy = newToy(123.45)
 
     dbConn.createTables(toy)
 
@@ -45,9 +45,9 @@ suite "Table creation":
 
   test "Create tables":
     let
-      toy = initToy(123.45)
-      pet = initPet("cat", toy)
-      person = initPerson("Alice", pet)
+      toy = newToy(123.45)
+      pet = newPet("cat", toy)
+      person = newPerson("Alice", pet)
 
     dbConn.createTables(person)
 

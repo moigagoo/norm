@@ -40,7 +40,7 @@ suite "Fancy syntax":
 
     for i in 1..10:
       let
-        toy = initToy(float i*i).dup(dbConn.insert)
+        toy = newToy(float i*i).dup(dbConn.insert)
 
   teardown:
     close dbConn
@@ -58,7 +58,7 @@ suite "Fancy syntax":
     check dbConn.allToys.prices == @[8 * 8 * 2.0, 9 * 9 * 2.0, 10 * 10 * 2.0]
 
   test "Outplacing objects":
-    var toys = @[initToy(0.0)]
+    var toys = @[newToy(0.0)]
 
     with toys:
       dbConn.select("price < $1", 50)
@@ -72,18 +72,18 @@ suite "Fancy syntax":
       dbConn.update
 
     check toys.prices == @[8 * 8 * 2.0, 9 * 9 * 2.0, 10 * 10 * 2.0]
-    check toys == dbConn.allToys
+    check toys === dbConn.allToys
 
   test "Outplacing DbConn":
     let toys = dbConn.allToys
 
     var
-      cheapToys = @[initToy(0.0)]
-      costlyToys = @[initToy(0.0)]
+      cheapToys = @[newToy(0.0)]
+      costlyToys = @[newToy(0.0)]
 
     with dbConn:
       select(cheapToys, "price < $1", 50)
       select(costlyToys, "price > $1", 50)
 
-    check cheapToys == toys[0..6]
-    check costlyToys == toys[7..^1]
+    check cheapToys === toys[0..6]
+    check costlyToys === toys[7..^1]
