@@ -6,7 +6,7 @@ import pragmas
 
 
 type
-  Model* = object of RootObj
+  Model* = ref object of RootObj
     ##[ Base type for models.
 
     ``id`` corresponds to row id in DB. **Updated automatically, do not update manually!**
@@ -36,14 +36,14 @@ proc cols*[T: Model](obj: T, force = false): seq[string] =
   If ``force`` is ``true``, fields with `ro <pragmas.html#ro.t>`_ are included.
   ]##
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     if force or not obj.dot(fld).hasCustomPragma(ro):
       result.add obj.col(fld)
 
 proc rCols*[T: Model](obj: T): seq[string] =
   ## Recursively get columns for `Model`_ instance and its `Model`_ fields.
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       result.add val.rCols
     else:
@@ -52,7 +52,7 @@ proc rCols*[T: Model](obj: T): seq[string] =
 proc rfCols*[T: Model](obj: T): seq[string] =
   ## Recursively get fully qualified column names for `Model`_ instance and its `Model`_ fields.
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       result.add val.rfCols
     else:
@@ -67,7 +67,7 @@ proc joinGroups*[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]] =
   Used to construct ``JOIN`` statements: ``JOIN {tbl} ON {lFld} = {rFld}``
   ]##
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       result.add (tbl: typeof(val).table, lFld: obj.fCol(fld), rFld: val.fCol("id"))
       result.add val.joinGroups
