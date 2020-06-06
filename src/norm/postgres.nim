@@ -30,13 +30,13 @@ using dbConn: DbConn
 proc createTables*[T: Model](dbConn; obj: T) =
   ## Create tables for `Model`_ and its `Model`_ fields.
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       dbConn.createTables(val)
 
   var colGroups, fkGroups: seq[string]
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     var colShmParts: seq[string]
 
     colShmParts.add obj.col(fld)
@@ -66,7 +66,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       dbConn.insert(val)
 
@@ -121,7 +121,15 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
   debug "$# <- $#" % [qry, $params]
   let rows = dbConn.getAllRows(sql qry, params)
 
-  objs = objs[0].repeat(rows.len)
+  if objs.len > rows.len:
+    objs.setLen(rows.len)
+
+  for _ in 1..(rows.len - objs.len):
+    var obj: T
+    new obj
+    obj.deepCopy(objs[0])
+    objs.add obj
+
 
   for i, row in rows:
     objs[i].fromRow(row)
@@ -129,7 +137,7 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       dbConn.update(val)
 

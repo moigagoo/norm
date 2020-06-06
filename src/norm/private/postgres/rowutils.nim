@@ -16,7 +16,7 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural) =
   This is a helper proc to convert to `Model`_ instances that have fields of the same type.
   ]##
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     when val is Model:
       val.fromRowPos(row, pos)
 
@@ -39,6 +39,6 @@ proc toRow*[T: Model](obj: T, force = false): Row =
   If ``force`` is ``true``, fields with `ro <../../pragmas.html#ro.t>`_ pragma are not skipped.
   ]##
 
-  for fld, val in obj.fieldPairs:
+  for fld, val in obj[].fieldPairs:
     if force or not obj.dot(fld).hasCustomPragma(ro):
       result.add dbValue(val)
