@@ -11,9 +11,9 @@ suite "Getting table and columns from Model":
 
   test "Columns":
     let
-      toy = initToy(123.45)
-      pet = initPet("cat", toy)
-      person = initPerson("Alice", pet)
+      toy = newToy(123.45)
+      pet = newPet("cat", toy)
+      person = newPerson("Alice", pet)
 
     check person.col("name") == "name"
     check person.pet.col("species") == "species"
@@ -29,8 +29,8 @@ suite "Getting table and columns from Model":
 
   test "Join groups":
     let
-      toy = initToy(123.45)
-      pet = initPet("cat", toy)
-      person = initPerson("Alice", pet)
+      toy = newToy(123.45)
+      pet = newPet("cat", toy)
+      person = newPerson("Alice", pet)
 
     check person. joinGroups == @[(""""Pet"""", """"Person".pet""", """"Pet".id"""), (""""Toy"""", """"Pet".favToy""", """"Toy".id""")]

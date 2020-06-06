@@ -16,7 +16,7 @@ const dtCmpThsld = initDuration(nanoseconds = 1000)
 suite "Converting between Model and ndb.sqlite.Row":
   test "Built-in types":
     type
-      Person = object of Model
+      Person = ref object of Model
         name: string
         age: int
         married: Option[bool]
@@ -26,7 +26,7 @@ suite "Converting between Model and ndb.sqlite.Row":
       dt = now().utc
       ts = dt.toTime().toUnixFloat()
 
-    proc initPerson(name: string, age: int, married: Option[bool]): Person =
+    proc newPerson(name: string, age: int, married: Option[bool]): Person =
       Person(name: name, age: age, married: married, initDt: dt)
 
     proc `~=`(p1, p2: Person): bool =
@@ -36,11 +36,11 @@ suite "Converting between Model and ndb.sqlite.Row":
       abs(p1.initDt - p2.initDt) < dtCmpThsld
 
     let
-      person = initPerson("Alice", 23, some true)
+      person = newPerson("Alice", 23, some true)
       row: Row = @[?"Alice", ?23, ?1, ?ts]
       fRow: Row = @[?"Alice", ?23, ?1, ?ts, ?person.id]
 
-    var mPerson = initPerson(name = "", age = 0, married = none bool)
+    var mPerson = newPerson(name = "", age = 0, married = none bool)
     mPerson.fromRow(fRow)
 
     check person.toRow == row
@@ -48,25 +48,25 @@ suite "Converting between Model and ndb.sqlite.Row":
 
   test "Read-only fields":
     type
-      Person = object of Model
+      Person = ref object of Model
         initDt {.ro.}: DateTime
 
     let
       dt = now().utc
       ts = dt.toTime().toUnixFloat()
 
-    proc initPerson(): Person =
+    proc newPerson(): Person =
       Person(initDt: dt)
 
     proc `~=`(p1, p2: Person): bool =
       abs(p1.initDt - p2.initDt) < dtCmpThsld
 
     let
-      person = initPerson()
+      person = newPerson()
       row: Row = @[]
       fRow: Row = @[?ts, ?person.id]
 
-    var mPerson = initPerson()
+    var mPerson = newPerson()
     mPerson.fromRow(fRow)
 
     check person.toRow == row
@@ -75,17 +75,23 @@ suite "Converting between Model and ndb.sqlite.Row":
 
   test "Nested models":
     let
-      toy = initToy(123.45)
-      pet = initPet("cat", toy)
-      person = initPerson("Alice", pet)
+      toy = newToy(123.45)
+      pet = newPet("cat", toy)
+      person = newPerson("Alice", pet)
       row: Row = @[?"Alice", ?person.pet.id]
+      row2: Row = @[?"Alice", ?pet.id]
       fRow: Row = @[?"Alice", ?"cat", ?123.45, ?person.pet.favToy.id, ?person.pet.id, ?person.id]
+      fRow2: Row = @[?"Alice", ?"cat", ?123.45, ?toy.id, ?pet.id, ?person.id]
 
     var
-      mToy = initToy(0.0)
-      mPet = initPet("", mToy)
-      mPerson = initPerson("", mPet)
+      mPerson = newPerson()
+      mPerson2 = newPerson()
+
     mPerson.fromRow(fRow)
+    mPerson2.fromRow(fRow)
 
     check person.toRow == row
-    check mPerson == person
+    check person.toRow == row2
+
+    check mPerson === person
+    check mPerson2 === person
