@@ -41,6 +41,8 @@ suite "Fancy syntax":
     discard @[newToy()].dup:
       dbConn.select("price < ?", 50)
       dbConn.delete
+
+    discard @[newToy()].dup:
       dbConn.select("price > ?", 50)
       apply(doublePrice)
       dbConn.update
@@ -56,6 +58,8 @@ suite "Fancy syntax":
       dbConn.delete
 
     check dbConn.allToys.len == 3
+
+    toys = @[newToy()]
 
     with toys:
       dbConn.select("price > ?", 50)

@@ -26,7 +26,7 @@ suite "Transactions":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(Toy())
+    dbConn.createTables(newToy())
 
   teardown:
     close dbConn
@@ -48,7 +48,7 @@ suite "Transactions":
   test "Transaction, rollback on exception":
     expect ValueError:
       dbConn.transaction:
-        let toy = Toy().dup(dbConn.insert)
+        let toy = newToy().dup(dbConn.insert)
 
         raise newException(ValueError, "Something went wrong")
 
@@ -58,7 +58,7 @@ suite "Transactions":
   test "Transaction, manual rollback":
     expect RollbackError:
       dbConn.transaction:
-        let toy = Toy().dup(dbConn.insert)
+        let toy = newToy().dup(dbConn.insert)
         rollback()
 
     let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")

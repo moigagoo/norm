@@ -163,7 +163,7 @@ proc delete*[T: Model](dbConn; obj: var T) =
   debug qry
   dbConn.exec(sql qry)
 
-  obj.id = 0
+  obj = nil
 
 proc delete*[T: Model](dbConn; objs: var openArray[T]) =
   ## Delete rows for each `Model`_ instance in open array.

@@ -98,7 +98,7 @@ suite "Row CRUD":
 
   test "Get row, nested models, no intermediate objects":
     let
-      inpPerson = Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup:
+      inpPerson = newPerson("Alice", newPet("cat", newToy(123.45))).dup:
         dbConn.insert
       outPerson = newPerson().dup:
         dbConn.select(""""Person".name = $1""", inpPerson.name)
@@ -148,9 +148,9 @@ suite "Row CRUD":
   test "Get rows, nested models, no intermediate objects":
     let
       inpPersons = @[
-        Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup(dbConn.insert),
-        Person(name: "Bob", pet: Pet(species: "dog", favToy: Toy(price: 456.78))).dup(dbConn.insert),
-        Person(name: "Charlie", pet: Pet(species: "frog", favToy: Toy(price: 99.99))).dup(dbConn.insert)
+        newPerson("Alice", newPet("cat", newToy(123.45))).dup(dbConn.insert),
+        newPerson("Bob", newPet("dog", newToy(456.78))).dup(dbConn.insert),
+        newPerson("Charlie", newPet("frog", newToy(99.99))).dup(dbConn.insert)
       ]
       outPersons = @[newPerson()].dup:
         dbConn.select(""""Toy".price > $1""", 100.00)
@@ -197,6 +197,3 @@ suite "Row CRUD":
 
     dbConn.delete(person)
     check dbConn.getRow(sql"""SELECT * FROM "Person" WHERE name = 'Alice'""").isNone
-
-    expect DbError:
-      dbConn.delete(person.pet.favToy)

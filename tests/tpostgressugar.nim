@@ -24,7 +24,7 @@ suite "Fancy syntax":
     close dbConn
 
   proc allToys(dbConn: DbConn): seq[Toy] =
-    @[Toy()].dup:
+    @[newToy()].dup:
       dbConn.select("TRUE")
 
   proc prices(toys: openArray[Toy]): seq[float] =
@@ -36,7 +36,7 @@ suite "Fancy syntax":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(Toy())
+    dbConn.createTables(newToy())
 
     for i in 1..10:
       let
@@ -47,9 +47,10 @@ suite "Fancy syntax":
     resetDb()
 
   test "Chaining":
-    discard @[Toy()].dup:
+    discard @[newToy()].dup:
       dbConn.select("price < $1", 50)
       dbConn.delete
+    discard @[newToy()].dup:
       dbConn.select("price > $1", 50)
       apply(doublePrice)
       dbConn.update
@@ -58,13 +59,15 @@ suite "Fancy syntax":
     check dbConn.allToys.prices == @[8 * 8 * 2.0, 9 * 9 * 2.0, 10 * 10 * 2.0]
 
   test "Outplacing objects":
-    var toys = @[newToy(0.0)]
+    var toys = @[newToy()]
 
     with toys:
       dbConn.select("price < $1", 50)
       dbConn.delete
 
     check dbConn.allToys.len == 3
+
+    toys = @[newToy()]
 
     with toys:
       dbConn.select("price > $1", 50)

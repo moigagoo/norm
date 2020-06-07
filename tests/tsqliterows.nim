@@ -73,8 +73,8 @@ suite "Row CRUD":
 
   test "Get row, no intermediate objects":
     let
-      inpToy = Toy(price: 123.45).dup(dbConn.insert)
-      outToy = Toy().dup:
+      inpToy = newToy(123.45).dup(dbConn.insert)
+      outToy = newToy().dup:
         dbConn.select("price = ?", inpToy.price)
 
     check outToy === inpToy
@@ -116,7 +116,7 @@ suite "Row CRUD":
         Toy(price: 456.78).dup(dbConn.insert),
         Toy(price: 99.99).dup(dbConn.insert)
       ]
-      outToys = @[Toy()].dup:
+      outToys = @[newToy()].dup:
         dbConn.select("price > ?", 100.00)
 
     check outToys === inpToys[..1]
@@ -140,9 +140,9 @@ suite "Row CRUD":
   test "Get rows, nested models, no intermediate objects":
     let
       inpPersons = @[
-        Person(name: "Alice", pet: Pet(species: "cat", favToy: Toy(price: 123.45))).dup(dbConn.insert),
-        Person(name: "Bob", pet: Pet(species: "dog", favToy: Toy(price: 456.78))).dup(dbConn.insert),
-        Person(name: "Charlie", pet: Pet(species: "frog", favToy: Toy(price: 99.99))).dup(dbConn.insert)
+        newPerson("Alice", newPet("cat", newToy(123.45))).dup(dbConn.insert),
+        newPerson("Bob", newPet("dog", newToy(456.78))).dup(dbConn.insert),
+        newPerson("Charlie", newPet("frog", newToy(99.99))).dup(dbConn.insert)
       ]
       outPersons = @[newPerson()].dup:
         dbConn.select("Toy.price > ?", 100.00)
