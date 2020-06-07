@@ -78,20 +78,12 @@ suite "Converting between Model and ndb.sqlite.Row":
       toy = newToy(123.45)
       pet = newPet("cat", toy)
       person = newPerson("Alice", pet)
-      row: Row = @[?"Alice", ?person.pet.id]
-      row2: Row = @[?"Alice", ?pet.id]
-      fRow: Row = @[?"Alice", ?"cat", ?123.45, ?person.pet.favToy.id, ?person.pet.id, ?person.id]
-      fRow2: Row = @[?"Alice", ?"cat", ?123.45, ?toy.id, ?pet.id, ?person.id]
+      row: Row = @[?"Alice", ?pet.id]
+      fRow: Row = @[?"Alice", ?"cat", ?123.45, ?toy.id, ?pet.id, ?person.id]
 
-    var
-      mPerson = newPerson()
-      mPerson2 = newPerson()
+    var mPerson = newPerson()
 
     mPerson.fromRow(fRow)
-    mPerson2.fromRow(fRow)
 
     check person.toRow == row
-    check person.toRow == row2
-
     check mPerson === person
-    check mPerson2 === person

@@ -31,8 +31,8 @@ proc createTables*[T: Model](dbConn; obj: T) =
   ## Create tables for `Model`_ and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
-    when val is Model:
-      dbConn.createTables(val)
+    if val.model.isSome:
+        dbConn.createTables(get val.model)
 
   var colGroups, fkGroups: seq[string]
 
@@ -49,8 +49,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
     when obj.dot(fld).hasCustomPragma(pk):
       colShmParts.add "PRIMARY KEY"
 
-    when val is Model:
-      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(val).table, val.col("id")]
+    if val.model.isSome:
+      let subMod = get val.model
+      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(subMod).table, subMod.col("id")]
 
     colGroups.add colShmParts.join(" ")
 
@@ -66,8 +67,9 @@ proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
   for fld, val in obj[].fieldPairs:
-    when val is Model:
-      dbConn.insert(val)
+    if val.model.isSome:
+      var subMod = get val.model
+      dbConn.insert(subMod)
 
   let
     row = obj.toRow()
@@ -136,8 +138,9 @@ proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
-    when val is Model:
-      dbConn.update(val)
+    if val.model.isSome:
+      var subMod = get val.model
+      dbConn.update(subMod)
 
   let
     row = obj.toRow()

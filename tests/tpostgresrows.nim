@@ -50,9 +50,11 @@ suite "Row CRUD":
 
     dbConn.insert(person)
 
+    let pet = get person.pet
+
     check person.id > 0
-    check person.pet.id > 0
-    check person.pet.favToy.id > 0
+    check pet.id > 0
+    check pet.favToy.id > 0
 
     let
       personRows = dbConn.getAllRows(sql"""SELECT name, pet, id FROM "Person"""")
@@ -60,13 +62,13 @@ suite "Row CRUD":
       toyRows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
 
     check personRows.len == 1
-    check personRows[0] == @[?"Alice", ?person.pet.id, ?person.id]
+    check personRows[0] == @[?"Alice", ?pet.id, ?person.id]
 
     check petRows.len == 1
-    check petRows[0] == @[?"cat", ?person.pet.favToy.id, ?person.pet.id]
+    check petRows[0] == @[?"cat", ?pet.favToy.id, ?pet.id]
 
     check toyRows.len == 1
-    check toyRows[0] == @[?123.45, ?person.pet.favToy.id]
+    check toyRows[0] == @[?123.45, ?pet.favToy.id]
 
   test "Get row":
     var
@@ -171,24 +173,26 @@ suite "Row CRUD":
     check row == @[?246.9, ?toy.id]
 
   test "Update rows":
-    var person = newPerson("Alice", newPet("cat", newToy(123.45)))
+    var
+      person = newPerson("Alice", newPet("cat", newToy(123.45)))
+      pet = get person.pet
 
     dbConn.insert(person)
 
     person.name = "Bob"
-    person.pet.species = "dog"
-    person.pet.favToy.doublePrice()
+    pet.species = "dog"
+    pet.favToy.doublePrice()
 
     dbConn.update(person)
 
     let
       personRow = get dbConn.getRow(sql"""SELECT name, pet, id FROM "Person" WHERE id = $1""", person.id)
-      petRow = get dbConn.getRow(sql"""SELECT species, favToy, id FROM "Pet" WHERE id = $1""", person.pet.id)
-      toyRow = get dbConn.getRow(sql"""SELECT price, id FROM "Toy" WHERE id = $1""", person.pet.favToy.id)
+      petRow = get dbConn.getRow(sql"""SELECT species, favToy, id FROM "Pet" WHERE id = $1""", pet.id)
+      toyRow = get dbConn.getRow(sql"""SELECT price, id FROM "Toy" WHERE id = $1""", pet.favToy.id)
 
-    check personRow == @[?"Bob", ?person.pet.id, ?person.id]
-    check petRow == @[?"dog", ?person.pet.favToy.id, ?person.pet.id]
-    check toyRow == @[?246.9, ?person.pet.favToy.id]
+    check personRow == @[?"Bob", ?pet.id, ?person.id]
+    check petRow == @[?"dog", ?pet.favToy.id, ?pet.id]
+    check toyRow == @[?246.9, ?pet.favToy.id]
 
   test "Delete row":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))

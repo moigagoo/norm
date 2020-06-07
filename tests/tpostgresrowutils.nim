@@ -66,8 +66,8 @@ suite "Converting between Model and ndb.postgres.Row":
       toy = newToy(123.45)
       pet = newPet("cat", toy)
       person = newPerson("Alice", pet)
-      row: Row = @[?"Alice", ?person.pet.id]
-      fRow: Row = @[?"Alice", ?"cat", ?123.45, ?person.pet.favToy.id, ?person.pet.id, ?person.id]
+      row: Row = @[?"Alice", ?pet.id]
+      fRow: Row = @[?"Alice", ?"cat", ?123.45, ?toy.id, ?pet.id, ?person.id]
 
     var mPerson = newPerson()
 

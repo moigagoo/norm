@@ -1,4 +1,5 @@
 import sequtils
+import options
 
 import norm/model
 
@@ -13,7 +14,7 @@ type
 
   Person* = ref object of Model
     name*: string
-    pet*: Pet
+    pet*: Option[Pet]
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -32,8 +33,17 @@ func `===`*(a, b: Pet): bool =
   a.species == b.species and
   a.favToy === b.favToy
 
-func newPerson*(name: string, pet: Pet): Person =
+func `===`*(a, b: Option[Pet]): bool =
+  (a.isNone and b.isNone) or
+  (a.isSome and b.isSome and
+  get(a).species == get(b).species and
+  get(a).favToy === get(b).favToy)
+
+func newPerson*(name: string, pet: Option[Pet]): Person =
   Person(name: name, pet: pet)
+
+func newPerson*(name: string, pet: Pet): Person =
+  Person(name: name, pet: some pet)
 
 func newPerson*(): Person = newPerson("", newPet())
 

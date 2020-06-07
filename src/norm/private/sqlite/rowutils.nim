@@ -1,6 +1,7 @@
 ## Procs to convert `Model <../../model.html#Model>`_ instances to ``ndb.sqlite.Row`` instances and back.
 
 import macros
+import options
 
 import ndb/sqlite
 
@@ -17,8 +18,9 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural) =
   ]##
 
   for fld, val in obj[].fieldPairs:
-    when val is Model:
-      val.fromRowPos(row, pos)
+    if val.model.isSome:
+      var subMod = get val.model
+      subMod.fromRowPos(row, pos)
 
     else:
       val = row[pos].to(typeof(val))

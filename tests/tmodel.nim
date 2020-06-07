@@ -1,4 +1,5 @@
 import unittest
+import options
 
 import norm/model
 
@@ -16,13 +17,13 @@ suite "Getting table and columns from Model":
       person = newPerson("Alice", pet)
 
     check person.col("name") == "name"
-    check person.pet.col("species") == "species"
+    check pet.col("species") == "species"
 
     check person.cols == @["name", "pet"]
     check person.cols(force = true) == @["name", "pet", "id"]
 
     check person.fCol("name") == """"Person".name"""
-    check person.pet.fCol("species") == """"Pet".species"""
+    check pet.fCol("species") == """"Pet".species"""
 
     check person.rfCols == @[""""Person".name""", """"Pet".species""", """"Toy".price""", """"Toy".id""", """"Pet".id""", """"Person".id"""]
     check toy.rfCols == @[""""Toy".price""", """"Toy".id"""]

@@ -1,6 +1,6 @@
-##[ Procs to convert between Nim types and SQLite types and between Nim values and ``ndb.postgres.DbValue``.
+##[ Funcs to convert between Nim types and SQLite types and between Nim values and ``ndb.postgres.DbValue``.
 
-To add support for ``YourType``, define three procs:
+To add support for ``YourType``, define three funcs:
 - ``dbType(T: typedesc[YourType]) -> string`` that returns SQL type for given ``YourType``
 - ``dbValue(YourType) -> DbValue`` that converts instances of ``YourType`` to ``ndb.sqlite.DbValue``
 - ``to(DbValue, T: typedesc[YourType]) -> T`` that converts ``ndb.sqlite.DbValue`` instances to ``YourType``.
@@ -15,43 +15,51 @@ import ndb/postgres
 import ../../model
 
 
-# Procs that return an SQLite type for a given Nim type:
+# Funcs that return an SQLite type for a given Nim type:
 
-proc dbType*(T: typedesc[SomeInteger]): string = "INTEGER"
+func dbType*(T: typedesc[SomeInteger]): string = "INTEGER"
 
-proc dbType*(T: typedesc[SomeFloat]): string = "REAL"
+func dbType*(T: typedesc[SomeFloat]): string = "REAL"
 
-proc dbType*(T: typedesc[string]): string = "TEXT"
+func dbType*(T: typedesc[string]): string = "TEXT"
 
-proc dbType*(T: typedesc[bool]): string = "BOOLEAN"
+func dbType*(T: typedesc[bool]): string = "BOOLEAN"
 
-proc dbType*(T: typedesc[DateTime]): string = "TIMESTAMP WITH TIME ZONE"
+func dbType*(T: typedesc[DateTime]): string = "TIMESTAMP WITH TIME ZONE"
 
-proc dbType*(T: typedesc[Model]): string = "INTEGER"
+func dbType*(T: typedesc[Model]): string = "INTEGER"
 
-proc dbType*[T](_: typedesc[Option[T]]): string = dbType T
-
-
-# Converter procs from Nim values to ``DbValue``:
-
-proc dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
+func dbType*[T](_: typedesc[Option[T]]): string = dbType T
 
 
-# Converter procs from ``DbValue`` instances to Nim types:
+# Converter funcs from Nim values to ``DbValue``:
+
+func dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
+
+func dbValue*[T: Model](val: Option[T]): DbValue =
+  if val.isSome:
+    dbValue(get(val))
+  else:
+    dbValue(nil)
+
+
+# Converter funcs from ``DbValue`` instances to Nim types:
 
 using dbVal: DbValue
 
-proc to*(dbVal; T: typedesc[SomeInteger]): T = dbVal.i.T
+func to*(dbVal; T: typedesc[SomeInteger]): T = dbVal.i.T
 
-proc to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
+func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 
-proc to*(dbVal; T: typedesc[string]): T = dbVal.s
+func to*(dbVal; T: typedesc[string]): T = dbVal.s
 
-proc to*(dbVal; T: typedesc[bool]): T = dbVal.b
+func to*(dbVal; T: typedesc[bool]): T = dbVal.b
 
-proc to*(dbVal; T: typedesc[DateTime]): T = dbVal.t
+func to*(dbVal; T: typedesc[DateTime]): T = dbVal.t
 
-proc to*[T](dbVal; O: typedesc[Option[T]]): O =
+func to*(dbVal; T: typedesc[Model]): T = nil
+
+func to*[T](dbVal; O: typedesc[Option[T]]): O =
   case dbVal.kind
   of dvkNull:
     none T

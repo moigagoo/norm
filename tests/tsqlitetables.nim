@@ -54,6 +54,6 @@ suite "Table creation":
 
     check dbConn.getAllRows(sql qry % "Person") == @[
       @[?0, ?"name", ?"TEXT", ?1, ?nil, ?0],
-      @[?1, ?"pet", ?"INTEGER", ?1, ?nil, ?0],
+      @[?1, ?"pet", ?"INTEGER", ?0, ?nil, ?0],
       @[?2, ?"id", ?"INTEGER", ?1, ?nil, ?1],
     ]
