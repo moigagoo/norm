@@ -57,14 +57,14 @@ func to*(dbVal; T: typedesc[bool]): T = dbVal.b
 
 func to*(dbVal; T: typedesc[DateTime]): T = dbVal.t
 
+func to*(dbVal; T: typedesc[Model]): T =
+  ## This is never called and exists only to please the compiler.
+
+  discard
+
 func to*[T](dbVal; O: typedesc[Option[T]]): O =
   case dbVal.kind
   of dvkNull:
     none T
   else:
     some dbVal.to(T)
-
-func to*(dbVal; T: typedesc[Model]): T =
-  ## This is never called and exists only to please the compiler.
-
-  discard
