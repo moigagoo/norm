@@ -2,4 +2,4 @@
 
 {.warning[UnusedImport]: off.}
 
-import norm/[model, pragmas, sqlite]
+import norm/[model, pragmas, sqlite, postgres]
