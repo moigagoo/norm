@@ -22,12 +22,13 @@ suite "none Model field handling":
     removeFile dbFile
 
   test "Create tables":
+    dbConn.createTables(newPet())
     dbConn.createTables(newPerson("", none Pet))
 
     let rows = dbConn.getAllRows(sql "SELECT name FROM sqlite_master WHERE type = 'table'")
 
-    check rows.len == 1
-    check rows[0] == @[?"Person"]
+    check rows.len == 3
+    check @[?"Person"] in rows
 
   test "Insert row":
     dbConn.createTables(newPerson())

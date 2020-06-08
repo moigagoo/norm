@@ -16,6 +16,12 @@ type
     id* {.pk, ro.}: int
 
 
+func isModel*[T: Model](val: T): bool = true
+
+func isModel*[T: Model](val: Option[T]): bool = true
+
+func isModel*[T](val: T): bool = false
+
 func model*[T: Model](val: T): Option[T] = some val
 
 func model*[T: Model](val: Option[T]): Option[T] = val
@@ -30,10 +36,13 @@ func table*(T: typedesc[Model]): string =
 
   '"' & $T & '"'
 
-func col*[T: Model](obj: T, fld: string): string =
+func col*(T: typedesc[Model], fld: string): string =
   ## Get column name for a `Model`_ field, which is just the field name.
 
   fld
+
+func col*[T: Model](obj: T, fld: string): string =
+  T.col(fld)
 
 func fCol*[T: Model](obj: T, fld: string): string =
   ## Get fully qualified column name with the table name: ``table.col``.
@@ -48,15 +57,6 @@ func cols*[T: Model](obj: T, force = false): seq[string] =
 
   for fld, val in obj[].fieldPairs:
     if force or not obj.dot(fld).hasCustomPragma(ro):
-      result.add obj.col(fld)
-
-func rCols*[T: Model](obj: T): seq[string] =
-  ## Recursively get columns for `Model`_ instance and its `Model`_ fields.
-
-  for fld, val in obj[].fieldPairs:
-    if val.model.isSome:
-      result.add (get val.model).rCols
-    else:
       result.add obj.col(fld)
 
 func rfCols*[T: Model](obj: T): seq[string] =

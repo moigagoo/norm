@@ -31,12 +31,13 @@ suite "none Model field handling":
     resetDb()
 
   test "Create tables":
+    dbConn.createTables(newPet())
     dbConn.createTables(newPerson("", none Pet))
 
     let rows = dbConn.getAllRows(sql"SELECT table_name::text FROM information_schema.tables WHERE table_schema = 'public'")
 
-    check rows.len == 1
-    check rows[0] == @[?"Person"]
+    check rows.len == 3
+    check @[?"Person"] in rows
 
   test "Insert row":
     dbConn.createTables(newPerson())

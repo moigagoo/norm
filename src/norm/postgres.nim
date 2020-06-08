@@ -50,9 +50,8 @@ proc createTables*[T: Model](dbConn; obj: T) =
       when val isnot Option:
         colShmParts.add "NOT NULL"
 
-    if val.model.isSome:
-      let subMod = get val.model
-      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(subMod).table, subMod.col("id")]
+    if val.isModel:
+      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
     colGroups.add colShmParts.join(" ")
 
