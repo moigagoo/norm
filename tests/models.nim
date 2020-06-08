@@ -35,8 +35,7 @@ func `===`*(a, b: Pet): bool =
 
 func `===`*(a, b: Option[Pet]): bool =
   (a.isNone and b.isNone) or
-  (a.isSome and b.isSome and
-  get(a).species == get(b).species and
+  (a.isSome and b.isSome and get(a).species == get(b).species and
   get(a).favToy === get(b).favToy)
 
 func newPerson*(name: string, pet: Option[Pet]): Person =
