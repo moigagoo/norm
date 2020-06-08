@@ -20,7 +20,10 @@ func model*[T: Model](val: T): Option[T] = some val
 
 func model*[T: Model](val: Option[T]): Option[T] = val
 
-func model*[T](val: T): Option[Model] = none Model
+func model*[T](val: T): Option[Model] =
+  ## This is never called and exists only to please the compiler.
+
+  none Model
 
 func table*(T: typedesc[Model]): string =
   ## Get table name for `Model <#Model>`_, which is the type name in single quotes.
