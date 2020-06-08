@@ -82,11 +82,14 @@ func to*(dbVal; T: typedesc[DbBlob]): T = dbVal.b
 
 proc to*(dbVal; T: typedesc[DateTime]): T = utc dbVal.f.fromUnixFloat()
 
-func to*(dbVal; T: typedesc[Model]): T = nil
-
 func to*[T](dbVal; O: typedesc[Option[T]]): O =
   case dbVal.kind
   of dvkNull:
     none T
   else:
     some dbVal.to(T)
+
+func to*(dbVal; T: typedesc[Model]): T =
+  ## This is never called and exists only to please the compiler.
+
+  discard
