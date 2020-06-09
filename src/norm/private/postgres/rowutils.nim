@@ -18,7 +18,7 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural) =
   ]##
 
   for fld, val in obj[].fieldPairs:
-    if val.model.isSome:
+    if val.isModel and val.model.isSome:
       var subMod = get val.model
       subMod.fromRowPos(row, pos)
 

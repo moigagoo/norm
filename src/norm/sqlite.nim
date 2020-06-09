@@ -50,11 +50,12 @@ proc createTables*[T: Model](dbConn; obj: T) =
       colShmParts.add "PRIMARY KEY"
 
     if val.isModel:
-      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" % [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
+      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
+        [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
     colGroups.add colShmParts.join(" ")
 
-  let qry = "CREATE TABLE $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
+  let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
   debug qry
   dbConn.exec(sql qry)
@@ -64,6 +65,10 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
 proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
+
+  # If `id` is not 0, this object has already been inserted before
+  if obj.id != 0:
+    return
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
@@ -77,6 +82,12 @@ proc insert*[T: Model](dbConn; obj: var T) =
 
   debug "$# <- $#" % [qry, $row]
   obj.id = dbConn.insertID(sql qry, row).int
+
+proc insert*[T: Model](dbConn; objs: var openArray[T]) =
+  ## Insert rows for each `Model`_ instance in open array.
+
+  for obj in objs.mitems:
+    dbConn.insert(obj)
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.

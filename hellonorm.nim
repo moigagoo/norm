@@ -28,12 +28,26 @@ when isMainModule:
   var
     alice = newUser("Alice", 23)
     bob = newUser("Bob", 45)
-    snowflake = newPet("cat")
-    fido = newPet("dog")
+    snowflake = newPet("cat", some alice)
+    fido = newPet("dog", some bob)
     spot = newPet("dog")
 
+    users = [alice, bob]
+    pets = [snowflake, fido, spot]
+
   with dbConn:
-    createTables(alice)
     createTables(snowflake)
+
+    insert(users)
+    insert(pets)
+
+  spot.owner = some bob
+  dbConn.update(spot)
+
+  let dogs = @[newPet()].dup:
+    dbConn.select("species = ?", "dog")
+
+  for _ in dogs:
+    echo _[]
 
   close dbConn
