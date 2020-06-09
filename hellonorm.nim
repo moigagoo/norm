@@ -1,6 +1,7 @@
 import options
 import std/with
 import sugar
+import strutils
 
 import logging; addHandler newConsoleLogger(fmtStr = "")
 
@@ -44,10 +45,18 @@ when isMainModule:
   spot.owner = some bob
   dbConn.update(spot)
 
-  let dogs = @[newPet()].dup:
-    dbConn.select("species = ?", "dog")
+  let
+    dogs = @[newPet()].dup:
+      dbConn.select("species = ?", "dog")
+    bobsPets = @[newPet("", some newUser())].dup:
+      dbConn.select("User.name = ?", "Bob")
 
+  echo "Dogs:"
   for _ in dogs:
-    echo _[]
+    echo "\tDog: $#, owner is none: $#" % [$_[], $_.owner.isNone]
+
+  echo "Bob's pets:"
+  for _ in bobsPets:
+    echo "\tDog: $#, owner: $#" % [$_[], $get(_.owner)[]]
 
   close dbConn

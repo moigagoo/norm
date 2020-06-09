@@ -63,8 +63,9 @@ func rfCols*[T: Model](obj: T): seq[string] =
   ## Recursively get fully qualified column names for `Model`_ instance and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
-    if val.isModel and val.model.isSome:
-      result.add (get val.model).rfCols
+    if val.isModel:
+      if val.model.isSome:
+        result.add (get val.model).rfCols
     else:
       result.add obj.fCol(fld)
 
