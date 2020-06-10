@@ -64,5 +64,11 @@ when isMainModule:
   for pet in bobsPets:
     echo "\tpet.id = $#, pet.species = $#, pet.owner.name = $#" %
       [$pet.id, $pet.species, $(get pet.owner).name]
+  discard @[newPet()].dup:
+    dbConn.select("species = ?", "dog")
+    dbConn.delete
+
+  for pet in @[newPet()].dup(dbConn.select("1")):
+    echo pet[]
 
   close dbConn
