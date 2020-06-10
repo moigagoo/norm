@@ -4,7 +4,7 @@ import sugar
 import strutils
 
 import logging
-addHandler newConsoleLogger(fmtStr = "")
+addHandler newConsoleLogger(fmtStr = "\t")
 
 import norm/[model, sqlite]
 
@@ -37,38 +37,42 @@ when isMainModule:
     users = [alice, bob]
     pets = [snowflake, fido, spot]
 
-  with dbConn:
-    createTables(snowflake)
+  dbConn.transaction:
+    with dbConn:
+      createTables(snowflake)
 
-    insert(users)
-    insert(pets)
+      insert(users)
+      insert(pets)
 
   spot.owner = some bob
   dbConn.update(spot)
+
+  echo "Dogs:"
 
   let
     dogs = @[newPet()].dup:
       dbConn.select("species = ?", "dog")
 
-  echo "Dogs:"
-
   for dog in dogs:
-    echo "\tdog.id = $#, dog.species = $#, dog.owner.isNone = $#" %
+    echo "dog.id = $#, dog.species = $#, dog.owner.isNone = $#" %
       [$dog.id, $dog.species, $dog.owner.isNone]
+
+  echo "Bob's pets:"
 
   let bobsPets = @[newPet("", some newUser())].dup:
     dbConn.select("User.name = ?", "Bob")
 
-  echo "Bob's pets:"
-
   for pet in bobsPets:
-    echo "\tpet.id = $#, pet.species = $#, pet.owner.name = $#" %
+    echo "pet.id = $#, pet.species = $#, pet.owner.name = $#" %
       [$pet.id, $pet.species, $(get pet.owner).name]
+
   discard @[newPet()].dup:
     dbConn.select("species = ?", "dog")
     dbConn.delete
 
+  echo "Pets after all dogs were deleted:"
+
   for pet in @[newPet()].dup(dbConn.select("1")):
-    echo pet[]
+    echo "$#" % $pet[]
 
   close dbConn
