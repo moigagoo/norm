@@ -3,7 +3,8 @@ import std/with
 import sugar
 import strutils
 
-import logging; addHandler newConsoleLogger(fmtStr = "")
+import logging
+addHandler newConsoleLogger(fmtStr = "")
 
 import norm/[model, sqlite]
 
@@ -48,15 +49,20 @@ when isMainModule:
   let
     dogs = @[newPet()].dup:
       dbConn.select("species = ?", "dog")
-    bobsPets = @[newPet("", some newUser())].dup:
-      dbConn.select("User.name = ?", "Bob")
 
   echo "Dogs:"
-  for _ in dogs:
-    echo "\tDog: $#, owner is none: $#" % [$_[], $_.owner.isNone]
+
+  for dog in dogs:
+    echo "\tdog.id = $#, dog.species = $#, dog.owner.isNone = $#" %
+      [$dog.id, $dog.species, $dog.owner.isNone]
+
+  let bobsPets = @[newPet("", some newUser())].dup:
+    dbConn.select("User.name = ?", "Bob")
 
   echo "Bob's pets:"
-  for _ in bobsPets:
-    echo "\tDog: $#, owner: $#" % [$_[], $get(_.owner)[]]
+
+  for pet in bobsPets:
+    echo "\tpet.id = $#, pet.species = $#, pet.owner.name = $#" %
+      [$pet.id, $pet.species, $(get pet.owner).name]
 
   close dbConn
