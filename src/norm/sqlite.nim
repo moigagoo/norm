@@ -25,7 +25,7 @@ type
 using dbConn: DbConn
 
 
-# Table manupulation
+# Table manipulation
 
 proc createTables*[T: Model](dbConn; obj: T) =
   ## Create tables for `Model`_ and its `Model`_ fields.
@@ -61,7 +61,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
   dbConn.exec(sql qry)
 
 
-# Row manupulation
+# Row manipulation
 
 proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
