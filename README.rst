@@ -51,18 +51,19 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
     import logging; addHandler newConsoleLogger(fmtStr = "\t")
 
     import norm/[model, sqlite]
-    # For postgres, import `norm/[model, postgres]`
+    # For PostgreSQL, import `norm/[model, postgres]`
 
 
     type
-      # Models are ref objects inherited from `Model`
+      # Define models as ref objects of ``Model``
       User = ref object of Model
         name: string
         age: Natural
 
       Pet = ref object of Model
         species: string
-        # Fields that are `Model` themselves are treated as foreign keys
+        # ``Option`` types mean nullable SQL columns; non-``Option`` fields are ``NOT NULL``
+        # Fields of type ``Model`` are converted to foreign keys
         owner: Option[User]
 
 
@@ -73,10 +74,10 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
 
 
     when isMainModule:
-      # This is a regular `ndb.sqlite.DbConn` database connection
+      # This is a regular ``ndb.sqlite.DbConn`` connection
       let dbConn = open(":memory:", "", "", "")
 
-      # Make sure the objects you want to insert into or update in the database are mutable
+      # Instantiate ``var`` objects to insert and update rows
       var
         alice = newUser("Alice", 23)
         bob = newUser("Bob", 45)
@@ -87,46 +88,49 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
         users = [alice, bob]
         pets = [snowflake, fido, spot]
 
-      # Create tables and populate the db in a transaction
+      # Create tables and populate the db. Optionally, wrap in a transaction.
       dbConn.transaction:
         with dbConn:
           createTables(snowflake)
 
-          # Note that `insert` updates the passed `Model` instances
+          # This add each ``users`` member and updates its ``id``
           insert(users)
           insert(pets)
 
-      # To update a record, modify its object and call `update` on it
+      # To update a record, modify the object and call ``update``
       spot.owner = some bob
       dbConn.update(spot)
 
-      # Use Nim's `dup` syntax to select data from the db into immutable objects.
+      # To select rows, you can use immutable variables.
+      # Nim's ``dup`` syntax fits great to collect data:
       let
-        # Note that we're passing `Pet` instances without `owner` field
+        # Passing a ``seq[Model]`` to ``select`` selects many rows. Pass a single ``Model`` instance to fetch only one row.
         dogs = @[newPet()].dup:
           dbConn.select("species = ?", "dog")
 
       for dog in dogs:
-        # Because each `dog` doesn't have an `owner`, `owner` information is never fetched.
+        # Each ``dog`` was created with ``newPet`` without argument, so its ``owner`` field was ``None``.
+        # This tells Norm not to fetch rows for owners.
         echo "dog.id = $#, dog.species = $#, dog.owner.isNone = $#" %
           [$dog.id, $dog.species, $dog.owner.isNone]
 
-      # The more data you pass to `select`, the more data you get from the db.
-      # Here, we pass `Pet` instances with `User` references in them.
+      # Here, we pass ``Pet`` instances with ``User`` references.
+      # This tells Norm to fetch ``owner`` rows for each ``pet`` with a single ``JOIN`` query.
       let bobsPets = @[newPet("", some newUser())].dup:
         dbConn.select("User.name = ?", "Bob")
 
       for pet in bobsPets:
-        # Because we passed `Pet` instances with `owner` fields, Norm fetches `owner` field too, in a single `JOIN` query
+        # This time, ``owner`` is ``Some`` and can be resolved:
         echo "pet.id = $#, pet.species = $#, pet.owner.name = $#" %
           [$pet.id, $pet.species, $(get pet.owner).name]
 
-      # Chaining procs gives you a fancy way to filter and delete records
+      # The ``dup`` syntax provides a really nice way of chaining DB queries.
+      # Here, we filter records by a condition and delete them:
       discard @[newPet()].dup:
         dbConn.select("species = ?", "dog")
         dbConn.delete
 
-      # `dup` allows you to select records in-place, without storing the result into a variable
+      # ``dup`` allows you to select records in-place, without storing the result into a variable:
       for pet in @[newPet()].dup(dbConn.select("1")):
         echo "$#" % $pet[]
 
