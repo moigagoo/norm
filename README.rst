@@ -137,6 +137,73 @@ Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r 
       close dbConn
 
 
+Tutorial
+=========
+
+Models
+------
+
+**A model** is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.
+
+Models can relate to each each with one-to-one, one-to-many, many-to-many relations. For example, a CartItem can have many Discounts, whereas as a single Discount can be applied to many Products.
+
+Models can also inherit from each other. For example, Customer may inherit from User.
+
+**In Norm**, Models are ref objects inherited from ``Model`` root object:
+
+.. code-block:: nim
+
+    import norm/model
+
+    type
+      User = ref object of Model
+        email: string
+
+From a model definition, Norm deduces SQL queries to create tables and insert, select, update, and delete rows.
+
+For example, for a model definition like this, Norm generates the following table schema:
+
+.. code-block:: sql
+
+    CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+
+Note that a column named ``id`` is created despite not being present in ``User`` object definition. That's because it's a special field inherited from ``Model``. **You should never define your own ``id`` field or manually update its value for Model instances.**
+
+Inherited models are just inherited objects:
+
+.. code-block:: nim
+
+    type
+      Customer = ref object of User
+        name: string
+
+This model is represented with the following schema:
+
+.. code-block:: sql
+
+    CREATE TABLE IF NOT EXISTS "Customer"(name TEXT NOT NULL, email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+
+
+However, in this paricular case, a one-to-one relation may be more suitable. To create relations between models, define fields subtyped from ``Model``:
+
+.. code-block:: nim
+
+    type
+      User = ref object of Model
+        email: string
+
+      Customer = ref object of Model
+        user: User
+        name: string
+
+This gets you:
+
+.. code-block:: sql
+
+    CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+    CREATE TABLE IF NOT EXISTS "Customer"(user INTEGER NOT NULL, name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES "User"(id))
+
+
 Contributing
 ============
 
