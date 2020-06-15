@@ -1,5 +1,0 @@
-switch("define", "dbBackend=sqlite")
-switch("define", "dbConnection=app.db")
-switch("define", "dbUser=")
-switch("define", "dbPassword=")
-switch("define", "dbDatabase=")
