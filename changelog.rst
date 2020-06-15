@@ -12,15 +12,15 @@ Changelog
 2.0.0 (WIP)
 ===========
 
-Norm has been rewritten from scratch. Backward compatibility is completely broken, don't try to use your old models with the new version.
+Norm has been rewritten from scratch. **Backward compatibility is completely broken, don't try to use your old models with the new version.**
 
--   Table and row manipulation procs accept an explicit ``DbConn`` argument, which makes it simple to connect to multiple databases.
--   Models don't have to be declared under ``db`` macro, which is now deprecated. Now, they are regular objects, just inherited from ``Model``.
--   Models can be defined anywhere, there's no need in ``dbTypes`` macro, which has been deprecated.
--   Models are now reference types.
--   If a model has a field of type ``Model``, it's automatically treated as a foreign key. Explicit ``fk`` pragmas are deprecated.
--   When you fetch an object that references other objects, all objects are selected with a single ``JOIN`` query. Pragmas ``parseIt``, ``formatIt``, ``parser``, and ``formatter`` have been deprecated.
-...
+Most notable changes are:
+
+-   Norm procs work only with model instances and never with model types.
+-   Models are ref types instead of value types.
+-   Models must inherit from ``Model``.
+-   Norm procs accept explicit database connection as the first argument.
+
 
 1.1.2 (March 13, 2020)
 ======================
