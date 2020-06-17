@@ -42,7 +42,7 @@ Add Norm to your .nimble file:
 Tutorial
 =========
 
-Before going further, install inim with nimble:
+Before going further, install `inim <https://github.com/inim-repl/INim>`_ with nimble:
 
 .. code-block:: shell
 
@@ -56,13 +56,13 @@ Then, start a new inim session by running ``inim``.
 Models
 ------
 
-**A model** is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.
+A model is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.
 
 Models can relate to each each with one-to-one, one-to-many, many-to-many relations. For example, a CartItem can have many Discounts, whereas as a single Discount can be applied to many Products.
 
 Models can also inherit from each other. For example, Customer may inherit from User.
 
-**In Norm**, Models are ref objects inherited from ``Model`` root object:
+In Norm, Models are ref objects inherited from ``Model`` root object:
 
 .. code-block:: nim
 
@@ -200,6 +200,8 @@ In your inim session, run:
       aliceAndBob = [alice, bob]
 
 Those are the objects we'll insert as rows in the database:
+
+.. code-block:: nim
 
     with dbConn:
       insert aliceAndBob
