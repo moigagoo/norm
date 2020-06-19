@@ -277,6 +277,42 @@ The generated query is similar to the previous one, but the result is populated 
     (email: "foo@foo.foo", id: 1)
 
 
+Update Rows
+-----------
+
+To update a row, you just update the object and call ``update`` on it:
+
+.. code-block:: nim
+
+    nim> customerBar.name = some "Saaam"
+    nim> dbConn.update(customerBar)
+
+Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries:
+
+.. code-block:: sql
+
+    UPDATE "User" SET email = ? WHERE id = 2 <- @['bar@bar.bar']
+    UPDATE "Customer" SET name = ?, user = ? WHERE id = 3 <- @['Saaam', 2]
+
+Updating rows in bulk is also possible:
+
+.. code-block:: nim
+
+    nim> for customer in customersFoo:
+    ....   customer.name = some (get(customer.name) & get(customer.name))
+    ....
+    nim> dbConn.update(customersFoo)
+
+For each object in ``customersFoo``, a pair of queries are generated:
+
+.. code-block:: sql
+
+    UPDATE "User" SET email = ? WHERE id = 1 <- @['foo@foo.foo']
+    UPDATE "Customer" SET name = ?, user = ? WHERE id = 1 <- @['AliceAlice', 1]
+    UPDATE "User" SET email = ? WHERE id = 1 <- @['foo@foo.foo']
+    UPDATE "Customer" SET name = ?, user = ? WHERE id = 2 <- @['BobBob', 1]
+
+
 Contributing
 ============
 
