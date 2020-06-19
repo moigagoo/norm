@@ -313,6 +313,29 @@ For each object in ``customersFoo``, a pair of queries are generated:
     UPDATE "Customer" SET name = ?, user = ? WHERE id = 2 <- @['BobBob', 1]
 
 
+Delete Rows
+-----------
+
+To delete a row, call ``delete`` on an object:
+
+.. code-block:: nim
+
+    nim> dbConn.delete(sam)
+
+That gives you, quite expectedly:
+
+.. code-block:: sql
+
+    DELETE FROM "Customer" WHERE id = 3
+
+After deletion, the object becomes ``nil``:
+
+.. code-block:: nim
+
+    nim> echo sam.isNil
+    true
+
+
 Contributing
 ============
 
