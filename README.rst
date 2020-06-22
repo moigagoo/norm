@@ -23,8 +23,8 @@ Norm: A Nim ORM
 Norm works best with `Norman <https://moigagoo.github.io/norman/norman.html>`__.
 
 
-Quickstart
-==========
+Installation
+============
 
 Install Norm with `Nimble <https://github.com/nim-lang/nimble>`_:
 
@@ -38,408 +38,361 @@ Add Norm to your .nimble file:
 
     requires "norm"
 
-Here's a brief intro to Norm. Save as ``hellonorm.nim`` and run with ``nim c -r hellonorm.nim``:
+
+Tutorial
+=========
+
+Before going further, install `inim <https://github.com/inim-repl/INim>`_ with nimble:
+
+.. code-block::
+
+    $ nimble install  inim
+
+Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use `brew <https://brew.sh/>`_. On Windows, use `scoop <https://scoop.sh/>`_.
+
+Then, start a new inim session by running ``inim``.
+
+
+Models
+------
+
+A model is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.
+
+Models can relate to each each with one-to-one, one-to-many, many-to-many relations. For example, a CartItem can have many Discounts, whereas as a single Discount can be applied to many Products.
+
+Models can also inherit from each other. For example, Customer may inherit from User.
+
+In Norm, Models are ref objects inherited from ``Model`` root object:
 
 .. code-block:: nim
 
-    import norm/sqlite                        # Import SQLite backend; ``norm/postgres`` for PostgreSQL.
+    import norm/model
 
-    import unicode, options                   # Norm supports `Option` type out of the box.
+    type
+      User = ref object of Model
+        email: string
 
-    import logging                            # Import logging to inspect the generated SQL statements.
-    addHandler newConsoleLogger()
+From a model definition, Norm deduces SQL queries to create tables and insert, select, update, and delete rows. Norm converts Nim objects to rows, their fields to columns, and their types to SQL types and vice versa.
 
+For example, for a model definition like the one above, Norm generates the following table schema:
 
-    db("petshop.db", "", "", ""):             # Set DB connection credentials.
-      type                                    # Describe models in a type section.
-        User = object                         # Model is a Nim object.
-          age: Positive                       # Nim types are automatically converted into SQL types
-                                              # and back.
-                                              # You can specify how types are converted using
-                                              # ``parser``, ``formatter``,
-                                              # ``parseIt``, and ``formatIt`` pragmas.
-          name {.
-            formatIt: ?capitalize(it)         # E.g., enforce ``name`` stored in DB capitalized.
-          .}: string
-          ssn: Option[int]                    # ``Option`` fields are allowed to be NULL.
+.. code-block::
 
+    CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 
-    withDb:                                   # Start DB session.
-      createTables(force=true)                # Create tables for objects.
-                                              # ``force=true`` means “drop tables if they exist.”
+Inherited models are just inherited objects:
 
-      var bob = User(                         # Create a ``User`` instance as you normally would.
-        age: 23,                              # You can use ``initUser`` if you want.
-        name: "bob",                          # Note that the instance is mutable. This is necessary,
-        ssn: some 456                         # because implicit ``id``attr is updated on insertion.
-      )
-      bob.insert()                            # Insert ``bob`` into DB.
-      echo "Bob ID = ", bob.id                # ``id`` attr is added by Norm and updated on insertion.
+.. code-block:: nim
 
-      discard insertId User(                  # Insert an immutable model instance and return its ID.
-        age: 12,
-        name: "alice",
-        ssn: none int
-      )
+    type
+      Customer = ref object of User
+        name: string
 
-    withCustomDb("mirror.db", "", "", ""):    # Override default DB credentials
-      createTables(force=true)                # to connect to a different DB with the same models.
+To create relations between models, define fields subtyped from ``Model``:
 
-    withDb:
-      let bobs = User.getMany(                # Read records from DB:
-        100,                                  # - only the first 100 records
-        cond="name LIKE 'Bob%' ORDER BY age"  # - matching condition
-      )
+.. code-block:: nim
 
-      echo "Bobs = ", bobs
+    type
+      User = ref object of Model
+        email: string
 
-    withDb:
-      var bob = User.getOne(1)                # Fetch record from DB and store it as ``User`` instance.
-      bob.age += 10                           # Change attr value.
-      bob.update()                            # Update the record in DB.
+      Customer = ref object of Model
+        name: string
+        user: User
 
-      bob.delete()                            # Delete the record.
-      echo "Bob ID = ", bob.id                # ``id`` is 0 for objects not stored in DB.
 
-    withDb:
-      transaction:                            # Put multiple statements under ``transaction`` to run
-        for i in 1..10:                       # them as a single DB transaction. If any operation fails,
-          var user = User(                    # the entire transaction is cancelled.
-            age: 20+i,
-            name: "User " & $i,
-            ssn: some i
-          )
-          insert user
+Create Tables
+-------------
 
-    withDb:
-      dropTables()                            # Drop all tables.
+Let's create some tables and examine the queries generated by Norm.
 
+In the inim session, enter this code:
 
-Reference Guide
-===============
+.. code-block:: nim
 
-Model Declaration
------------------
+    nim> import logging; addHandler newConsoleLogger(fmtStr = "")
+    nim> import options
+    nim> import norm/[model, sqlite]
 
--   ``db(connection, user, password, database: string, body: untyped)``
+``logging`` allows us to see the generated queries, ``options`` is necessary to support ``Option`` fields, ``norm/model`` provides ``Model`` type to inherit your models from, and ``norm/sqlite`` is the SQLite backend, which implements the actual SQL generation and conversion between Nim objects and SQL rows.
 
-    Declare models from a type section with object declarations.
+Then, define the types:
 
-    Tests:
+.. code-block:: nim
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    nim> type
+    ....   User = ref object of Model
+    ....     email: string
+    ....   Customer = ref object of Model
+    ....     name: Option[string]
+    ....     user: User
 
--   ``dbFromTypes(connection, user, password, database: string, types: openArray[typedesc])``
+These are your models. It's a good habit to define init procs for your types, so let's do so:
 
-    Declare models from type sections in other modules. The type sections must be wrapped in ``dbTypes``.
+.. code-block:: nim
 
-    Tests:
+    nim> func newUser(email = ""): User =
+    ....   User(email: email)
+    nim> func newCustomer(name = none string, user = newUser()): Customer =
+    ....   Customer(name: name, user: user)
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
+Now, we are ready to open a connection to the database:
 
--   ``dbTypes``
+.. code-block:: nim
 
-    Make a type section usable as a model declaration in ``dbFromTypes``.
+    nim> let dbConn = open(":memory:", "", "", "")
 
-    Tests:
+And here is the actual table creation:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/models/user.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/models/pet.nim
+.. code-block:: nim
 
+    nim> dbConn.createTables(newCustomer())
 
-Connection
-----------
+After running this last line, you'll see the generated queries in stdout (formatting added to improve readability):
 
--   ``withDb(body: untyped)``
+.. code-block::
 
-    Connect to the DB using credentials defined in ``db`` section. The connection is closed on block exit.
+    CREATE TABLE IF NOT EXISTS "User"(
+        email TEXT NOT NULL,
+        id INTEGER NOT NULL PRIMARY KEY
+    )
 
-    The connection can be accessed via ``dbConn`` variable if needed.
+    CREATE TABLE IF NOT EXISTS "Customer"(
+        name TEXT,
+        user INTEGER NOT NULL,
+        id INTEGER NOT NULL PRIMARY KEY,
+        FOREIGN KEY(user) REFERENCES "User"(id)
+    )
 
-    Tests:
+``createTables`` proc takes a model instance and generates a table schema for it. For each of the instance's fields, a column is generated. If a field is itself a ``Model``, a foreign key is added. ``Option`` fields are nullable, non-``Option`` ones are ``NOT NULL``.
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+Note that a single ``createTables`` call generated two table schemas. That's because model ``Customer`` refers to ``User``, and therefore its table can't be created without the table for ``User`` existing beforehand. Norm makes sure all dependency tables are created before creating the one that ``createTables`` was actually called with. That's actually why the proc is called ``createTables`` and not ``createTable``.
 
--   ``withCustomDb(customConnection, customUser, customPassword, customDatabase: string, body: untyped)``
+    Make sure to instantiate models with ``Model`` fields so that these fields are not ``nil``. Otherwise, Norm won't be able to create a table schema for them.
 
-    Connect to a custom DB. The connection is closed on block exit.
+To keep the code more explicit, feel free to call both ``dbConn.createTables(newUser())`` and ``dbConn.createTables(newCustomer())``. The worst thing to happen is the same query being called twice, but since they both have a ``IF NOT EXISTS`` constraint, the table will be created only once.
 
-    The connection can be accessed via ``dbConn`` variable if needed.
+    Note that ``id`` column is created despite not being present in ``User`` definition. That's because it's a special read-only field maintained automatically by Norm. It represents row id in the database.
 
-    Tests:
+    **Do not define id field or manually update its value.**
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
 
+Insert Rows
+-----------
 
-Setup
------
+To insert rows, use ``insert`` procs. There is a variant that takes a single model instance or a sequence of them.
 
--   ``createTables(force = false)``
+Instances passed to ``insert`` must be mutable for Norm to be able to update their ``id`` fields.
 
-    Generate and execute DB schema for all models.
+In your inim session, run:
 
-    ``force=true`` prepends ``DROP TABLE IF EXISTS`` for all genereated tables.
+.. code-block:: nim
 
-    Tests:
+    nim> var
+    ....   userFoo = newUser("foo@foo.foo")
+    ....   userBar = newUser("bar@bar.bar")
+    ....   alice = newCustomer(some "Alice", userFoo)
+    ....   bob = newCustomer(some "Bob", userFoo)
+    ....   sam = newCustomer(some "Sam", userBar)
+    ....   aliceAndBob = [alice, bob]
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+Those are the objects we'll insert as rows in the database:
 
+.. code-block:: nim
 
-Teardown
---------
+    nim> import std/with
+    nim> with dbConn:
+    ....   insert aliceAndBob
+    ....   insert userBar
+    ....   insert sam
 
--   ``dropTables(T: typedesc)``
+Let's examine the queries:
 
-    Drop tables for all models.
+.. code-block::
 
-    Tests:
+    INSERT INTO "User" (email) VALUES(?) <- @['foo@foo.foo']
+    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Alice', 3]
+    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Bob', 3]
+    INSERT INTO "User" (email) VALUES(?) <- @['bar@bar.bar']
+    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Sam', 4]
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
+When Norm attempts to insert ``alice``, it detects that ``userFoo`` that it referenced in it has not been inserted yet, so there's no ``id`` to store as foreign key. So, Norm inserts ``userFoo`` automatically and then uses its new ``id`` (in this case, 1) as the foreign key value.
 
+With ``bob``, there's no need to do that since ``userFoo`` is already in the database.
 
+You can insert dependency models explicitly to make the code more verbose, as seen with ``userBar`` and ``sam``.
 
-Create Records
---------------
 
--   ``insert(obj: var object, force = false)``
-
-    Store a model instance into the DB as a row.
-
-    The input object must be mutable because its ``id`` field, initially equal ``0``, is updated after the insertion to reflect the row ID returned by the DB.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
-
--   ``insertId(obj: object, force = false)``
-
-    Store an immutable model instance into the DB as a row, returning the new record ID.
-
-    The object's ``id`` field is **not** updated.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitefromtypes.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresfromtypes.nim
-
-
-
-Read Records
+Select Rows
 ------------
 
--   ``getOne(T: typedesc, id: int)``
+To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call ``select``.
 
-    Fetch one row by ID and store it into a new model instance.
+One curious thing about ``select`` is that its result depends not only on the condition you pass but also on the container. If the container has ``Model`` fields that are not ``None``, Norm will select the related rows in a single ``JOIN`` query giving you a fully populated model object. However, if the container has a ``none Model`` field, it is just ignored.
 
-    Tests:
+In other words, Norm will automatically handle the "n+1" problem when possible.
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+Let's see how that works:
 
+.. code-block:: nim
 
--   ``getOne(obj: var object, id: int)``
+    nim> var customerBar = newCustomer()
+    nim> dbConn.select(customerBar, "User.email = ?", "bar@bar.bar")
 
-    Fetch one row by ID and store it into as existing instance.
+This is the SQL query generated by this ``select`` call:
 
-    Tests:
+.. code-block::
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    SELECT "Customer".name, "User".email, "User".id, "Customer".id
+    FROM "Customer" JOIN "User" ON "Customer".user = "User".id
+    WHERE User.email = ? <- ['bar@bar.bar']
 
--   ``getOne(T: typedesc, cond: string, params: varargs[DbValue, dbValue])``
+Let's examine how Norm populated ``customerBar``:
 
-    Fetch the first row that matches the given condition. Store into a new instance.
+.. code-block:: nim
 
-    Tests:
+    nim> echo customerBar[]
+    (name: Some("Sam"), user: ..., id: 3)
+    nim> echo customerBar.user[]
+    (email: "bar@bar.bar", id: 2)
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+If you pass a sequence to ``select``, you'll get many rows:
 
--   ``getOne(obj: var object, cond: string, params: varargs[DbValue, dbValue])``
+.. code-block:: nim
 
-    Fetch the first row that matches the given condition. Store into an existing instance.
+    nim> var customersFoo = @[newCustomer()]
+    nim> dbConn.select(customersFoo, "User.email = ?", "foo@foo.foo")
 
-    Tests:
+The generated query is similar to the previous one, but the result is populated objects, not one:
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+.. code-block:: nim
 
--   ``getMany(T: typedesc, limit: int, offset = 0, cond = trueCond, params: varargs[DbValue, dbValue])``
-
-    Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into a new sequence of model instances.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
-
--   ``getMany(objs: var seq[object], limit: int, offset = 0, cond = trueCond, params: varargs[DbValue, dbValue])``
-
-    Fetch at most ``limit`` rows from the DB that math the given condition with the given params. The result is stored into an existing sequence of model instances.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
-
--   ``getAll(T: typedesc, cond = trueCond, params: varargs[DbValue, dbValue])``
-
-    Get all rows from a table that match the given condition.
-
-    **Warning:** This is a dangerous operation because you're fetching an unknown number of rows, which could be millions. Consider using ``getMany`` instead.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    nim> for customer in customersFoo:
+    ....   echo customer[]
+    ....   echo customer.user[]
+    ....
+    (name: Some("Alice"), user: ..., id: 1)
+    (email: "foo@foo.foo", id: 1)
+    (name: Some("Bob"), user: ..., id: 2)
+    (email: "foo@foo.foo", id: 1)
 
 
-Update Records
---------------
+Update Rows
+-----------
 
--   ``update(obj: object, force = false)``
+To update a row, you just update the object and call ``update`` on it:
 
-    Update a record in the DB with the current field values of a model instance.
+.. code-block:: nim
 
-    Tests:
+    nim> customerBar.name = some "Saaam"
+    nim> dbConn.update(customerBar)
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries:
+
+.. code-block::
+
+    UPDATE "User" SET email = ? WHERE id = 2 <- @['bar@bar.bar']
+    UPDATE "Customer" SET name = ?, user = ? WHERE id = 3 <- @['Saaam', 2]
+
+Updating rows in bulk is also possible:
+
+.. code-block:: nim
+
+    nim> for customer in customersFoo:
+    ....   customer.name = some (get(customer.name) & get(customer.name))
+    ....
+    nim> dbConn.update(customersFoo)
+
+For each object in ``customersFoo``, a pair of queries are generated:
+
+.. code-block::
+
+    UPDATE "User" SET email = ? WHERE id = 1 <- @['foo@foo.foo']
+    UPDATE "Customer" SET name = ?, user = ? WHERE id = 1 <- @['AliceAlice', 1]
+    UPDATE "User" SET email = ? WHERE id = 1 <- @['foo@foo.foo']
+    UPDATE "Customer" SET name = ?, user = ? WHERE id = 2 <- @['BobBob', 1]
 
 
-Delete Records
---------------
+Delete Rows
+-----------
 
--   ``delete(obj: var object)``
+To delete a row, call ``delete`` on an object:
 
-    Delete a record from the DB by ID from a model instance. The instance's ``id`` fields is set to ``0``.
+.. code-block:: nim
 
-    Tests:
+    nim> dbConn.delete(sam)
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+That gives you, quite expectedly:
+
+.. code-block::
+
+    DELETE FROM "Customer" WHERE id = 3
+
+After deletion, the object becomes ``nil``:
+
+.. code-block:: nim
+
+    nim> echo sam.isNil
+    true
+
+
+Fancy Syntax
+------------
+
+To avoid creating intermediate containers here and there, use Nim's ``dup`` macro to create mutable objects on the fly.
+
+For example, here's how you insert ten rows without having to create ten stale objects
+
+.. code-block:: nim
+
+    nim> for i in 1..10:
+    ....   discard newUser($i & "@example.com").dup:
+    ....     dbConn.insert
+
+``dup`` lets you call multiple procs, which gives a pleasant interface for row filter and bulk manipulation:
+
+.. code-block:: nim
+
+    nim> discard @[newUser()].dup:
+    ....   dbConn.select("email LIKE ?", "_@example.com")
+    ....   dbConn.delete
 
 
 Transactions
 ------------
 
--   ``transaction(transactionBody: untyped)``
+To run queries in a transaction, wrap the code in a ``transaction`` block:
 
-    Wrap statements in a ``transaction`` block to run them as a single DB transaction: if any statements fails, the entire transaction is cancelled.
+.. code-block:: nim
 
-    Tests:
+    nim> dbConn.transaction:
+    ....   for i in 11..13:
+    ....     discard newUser($i & "@example.com").dup:
+    ....       dbConn.insert
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
+This produces the following SQL:
 
--   ``rollback``
+.. code-block::
 
-    Raise ``RollbackError`` that is catched inside a ``transaction`` block and cancels the transaction.
+    BEGIN
+    INSERT INTO "User" (email) VALUES(?) <- @['11@example.com']
+    INSERT INTO "User" (email) VALUES(?) <- @['12@example.com']
+    INSERT INTO "User" (email) VALUES(?) <- @['13@example.com']
+    COMMIT
 
-    Tests:
+If something goes wrong inside a transaction block, i.e. an exception is raised, the transaction is rollbacked.
 
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
+To rollback a transaction manually, call ``rollback`` proc:
 
+.. code-block:: nim
 
-Migrations
-----------
-
-To apply and undo migrations in your projects, use `Norman <https://moigagoo.github.io/norman/norman.html>`__.
-
--   ``createTable(T: typedesc, force = false)``
-
-    Generate and execute an SQL table schema from a type definition. Column schemas are generated from Nim object field definitions. Basic types are mapped automatically. For custom types, *parser* and *formatter* must be provided.
-
-    Use to update the DB schema after adding new models.
-
-    ``force=true`` prepends `DROP TABLE IF EXISTS` to the generated query.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-
--   ``addColumn(field: typedesc)``
-
-    Generate and execute an SQL query to add a column to an existing table.
-
-    Use to create columns after adding new fields to existing models.
-
-    ``field`` should point to the model field for which the column is to be created, e.g. ``Pet.age``.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-
--   ``dropColumns(T: typedesc, cols: openArray[string])``
-
-    PostgreSQL only. Drop all columns of a table.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-
--   ``dropUnusedColumns(T: typedesc)``
-
-    Recreate the table from a model, losing unmatching columns in the process. This involves creating a temporary table and copying the data there, then dropping the original table and renaming the temporary one to the original one's name.
-
-    Use to clean up DB after removing a field from a model.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-
--   ``renameColumnFrom(field: typedesc, oldName: string)``.
-
-    Rename a DB column to match the model field. Provide ``oldName`` to tell Norm which column you are renaming. This has to be done manually since there's no way to guess the programmer's intetion when they rename a model field: is it to rename the underlying DB column or to remove the old column and create a new one instead?
-
-    Use this proc to rename a column. To replace a column, use `addColumn` with conjunction with ``dropUnusedColumns``.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-
--   ``renameTableFrom(T: typedesc, oldName: string)``
-
-    Rename a DB table to match the model name. The old table name must be provided explicitly because when the DB table name for a model changes, there's no way to guess which existing table used to match this model.
-
-    Use after renaming a model or changing its ``dbTable`` pragma value.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlitemigrate.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgresmigrate.nim
-
-
--   ``dropTable(T: typedesc)``
-
-    Drop table associated with a model.
-
-    Use after removing a model.
-
-    Tests:
-
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim
-    -   https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim
+    nim> dbConn.transaction:
+    ....   for i in 14..16:
+    ....     discard newUser($i & "@example.com").dup:
+    ....       dbConn.insert
+    ....
+    ....     if i == 15:
+    ....       rollback()
 
 
 Contributing
@@ -456,20 +409,7 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
     .. code-block::
 
         $ docker-compose run --rm tests                     # run all test suites
-        $ docker-compose run --rm test tests/tpostgres.nim  # run a single test suite
-
-    If you don't mind running two PostgreSQL servers on `postgres_1` and `postgres_2`, feel free to run the test suites natively:
-
-    .. code-block::
-
-        $ nimble test
-
-    Note that you only need the PostgreSQL servers to run the PostgreSQL backend tests, so:
-
-    .. code-block::
-
-        $ nim c -r tests/tsqlite.nim    # doesn't require PostgreSQL servers, but requires SQLite
-        $ nim c -r tests/tobjutils.nim  # doesn't require anything at all
+        $ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
 
 -   Use camelCase instead of snake_case.
 
