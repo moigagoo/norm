@@ -12,14 +12,25 @@ Changelog
 2.0.0 (WIP)
 ===========
 
-Norm has been rewritten from scratch. **Backward compatibility is completely broken, don't try to use your old models with the new version.**
+Rewritten from scratch. **Backward compatibility has been completely brokem.**
 
-Most notable changes are:
+Most noticeable changes are:
 
--   Norm procs work only with model instances and never with model types.
+-   DB procs work only with model instances and never with model types.
+-   DB procs mutate objects in-place. To create new instances, use ``dup``.
 -   Models are ref types instead of value types.
--   Models must inherit from ``Model``.
--   Norm procs accept explicit database connection as the first argument.
+-   Model objects are defined by being inherited from ``Model`` and not by being defined under ``db`` block.
+-   DB procs now take database connection as the first argument.
+-   Foreign keys are created automatically.
+-   N+1 problem has been solved.
+-   Most pragmas are gone, resulting in less customizability but simpler API.
+-   Adding custom converters now means adding procs and not putting expressions in pragmas, which was very fragile.
+
+
+1.1.3 (May 11, 2020)
+====================
+
+-   [f] Fix `#69 <https://github.com/moigagoo/norm/issues/69>`__: `table` pragma is now respected as it should despite being deprecated.
 
 
 1.1.2 (March 13, 2020)
