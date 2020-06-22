@@ -12,7 +12,7 @@ Changelog
 2.0.0 (June 22, 2020)
 =====================
 
-Rewritten from scratch. **Backward compatibility has been completely brokem.**
+Rewritten from scratch. **Backward compatibility has been completely broken.**
 
 Most noticeable changes are:
 
