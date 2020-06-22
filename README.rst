@@ -336,6 +336,65 @@ After deletion, the object becomes ``nil``:
     true
 
 
+Fancy Syntax
+------------
+
+To avoid creating intermediate containers here and there, use Nim's ``dup`` macro to create mutable objects on the fly.
+
+For example, here's how you insert ten rows without having to create ten stale objects
+
+.. code-block:: nim
+
+    nim> for i in 1..10:
+    ....   discard newUser($i & "@example.com").dup:
+    ....     dbConn.insert
+
+``dup`` lets you call multiple procs, which gives a pleasant interface for row filter and bulk manipulation:
+
+.. code-block:: nim
+
+    nim> discard @[newUser()].dup:
+    ....   dbConn.select("email LIKE ?", "_@example.com")
+    ....   dbConn.delete
+
+
+Transactions
+------------
+
+To run queries in a transaction, wrap the code in a ``transaction`` block:
+
+.. code-block:: nim
+
+    nim> dbConn.transaction:
+    ....   for i in 11..13:
+    ....     discard newUser($i & "@example.com").dup:
+    ....       dbConn.insert
+
+This produces the following SQL:
+
+.. code-block:: sql
+
+    BEGIN
+    INSERT INTO "User" (email) VALUES(?) <- @['11@example.com']
+    INSERT INTO "User" (email) VALUES(?) <- @['12@example.com']
+    INSERT INTO "User" (email) VALUES(?) <- @['13@example.com']
+    COMMIT
+
+If something goes wrong inside a transaction block, i.e. an exception is raised, the transaction is rollbacked.
+
+To rollback a transaction manually, call ``rollback`` proc:
+
+.. code-block:: nim
+
+    nim> dbConn.transaction:
+    ....   for i in 14..16:
+    ....     discard newUser($i & "@example.com").dup:
+    ....       dbConn.insert
+    ....
+    ....     if i == 15:
+    ....       rollback()
+
+
 Contributing
 ============
 
