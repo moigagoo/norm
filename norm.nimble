@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.1.3"
+version       = "2.0.0"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.0.0", "ndb >= 0.19.8"
+requires "nim >= 1.2.0", "ndb >= 0.19.8"
 
 task apidoc, "Generate API docs":
   --outdir:"htmldocs"

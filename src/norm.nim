@@ -1,3 +1,5 @@
 ## .. include:: ../README.rst
 
-import norm/[sqlite, postgres, objutils, pragmas, typedefutils]
+{.warning[UnusedImport]: off.}
+
+import norm/[model, pragmas, sqlite, postgres]

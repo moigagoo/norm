@@ -1,13 +1,7 @@
 version: '3'
 
 services:
-
-  postgres_1:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: postgres
-
-  postgres_2:
+  postgres:
     image: postgres
     environment:
       POSTGRES_PASSWORD: postgres
@@ -16,8 +10,7 @@ services:
     build: .
     image: norm
     depends_on:
-      - postgres_1
-      - postgres_2
+      - postgres
     volumes:
       - .:/usr/src/app
     command: nimble test
@@ -26,8 +19,7 @@ services:
     build: .
     image: norm
     depends_on:
-      - postgres_1
-      - postgres_2
+      - postgres
     volumes:
       - .:/usr/src/app
     entrypoint: nim c -r
