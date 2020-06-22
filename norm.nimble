@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.0.0", "ndb >= 0.19.8"
+requires "nim >= 1.2.0", "ndb >= 0.19.8"
 
 task apidoc, "Generate API docs":
   --outdir:"htmldocs"
