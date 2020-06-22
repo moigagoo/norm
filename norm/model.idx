@@ -1,0 +1,14 @@
+Model	norm/model.html#Model	model: Model	
+isModel	norm/model.html#isModel,T	model: isModel[T: Model](val: T): bool	
+isModel	norm/model.html#isModel,Option[T: Model]	model: isModel[T: Model](val: Option[T]): bool	
+isModel	norm/model.html#isModel,T_2	model: isModel[T](val: T): bool	
+model	norm/model.html#model,T	model: model[T: Model](val: T): Option[T]	
+model	norm/model.html#model,Option[T: Model]	model: model[T: Model](val: Option[T]): Option[T]	
+model	norm/model.html#model,T_2	model: model[T](val: T): Option[Model]	
+table	norm/model.html#table,typedesc[Model]	model: table(T: typedesc[Model]): string	
+col	norm/model.html#col,typedesc[Model],string	model: col(T: typedesc[Model]; fld: string): string	
+col	norm/model.html#col,T,string	model: col[T: Model](obj: T; fld: string): string	
+fCol	norm/model.html#fCol,T,string	model: fCol[T: Model](obj: T; fld: string): string	
+cols	norm/model.html#cols,T	model: cols[T: Model](obj: T; force = false): seq[string]	
+rfCols	norm/model.html#rfCols,T	model: rfCols[T: Model](obj: T): seq[string]	
+joinGroups	norm/model.html#joinGroups,T	model: joinGroups[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]]	

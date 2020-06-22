@@ -1,0 +1,22 @@
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeInteger]	dbtypes: dbType(T: typedesc[SomeInteger]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeFloat]	dbtypes: dbType(T: typedesc[SomeFloat]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[string]	dbtypes: dbType(T: typedesc[string]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[bool]	dbtypes: dbType(T: typedesc[bool]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[DbBlob]	dbtypes: dbType(T: typedesc[DbBlob]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[DateTime]	dbtypes: dbType(T: typedesc[DateTime]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Model]	dbtypes: dbType(T: typedesc[Model]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Option[T]]	dbtypes: dbType[T](_: typedesc[Option[T]]): string	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue,bool	dbtypes: dbValue(val: bool): DbValue	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue,DateTime	dbtypes: dbValue(val: DateTime): DbValue	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue,T	dbtypes: dbValue[T: Model](val: T): DbValue	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[bool]	dbtypes: dbValue(val: Option[bool]): DbValue	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[DateTime]	dbtypes: dbValue(val: Option[DateTime]): DbValue	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[T: Model]	dbtypes: dbValue[T: Model](val: Option[T]): DbValue	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[SomeInteger]	dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[SomeFloat]	dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[string]	dbtypes: to(dbVal; T: typedesc[string]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[bool]	dbtypes: to(dbVal; T: typedesc[bool]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[DbBlob]	dbtypes: to(dbVal; T: typedesc[DbBlob]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[DateTime]	dbtypes: to(dbVal; T: typedesc[DateTime]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[Model]	dbtypes: to(dbVal; T: typedesc[Model]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[Option[T]]	dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type	

@@ -17,8 +17,8 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>norm/typedefutils</title>
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
+<title>norm/private/sqlite/rowutils</title>
+<link rel="stylesheet" type="text/css" href="../../../nimdoc.out.css">
 
 <script type="text/javascript" src="dochack.js"></script>
 
@@ -71,7 +71,7 @@ function main() {
 <body onload="main()">
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">norm/typedefutils</h1>
+    <h1 class="title">norm/private/sqlite/rowutils</h1>
     <div class="row">
   <div class="three columns">
   <div class="theme-switch-wrapper">
@@ -106,12 +106,10 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#ensureIdFields%2CNimNode"
-    title="ensureIdFields(typeSection: NimNode): NimNode"><wbr />ensure<wbr />Id<wbr />Fields<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#ensureForeignKey%2CNimNode%2Cseq%5Bstring%5D"
-    title="ensureForeignKey(typeDef: NimNode; typeNames: seq[string]): NimNode"><wbr />ensure<wbr />Foreign<wbr />Key<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#ensureForeignKeys%2CNimNode"
-    title="ensureForeignKeys(typeSection: NimNode): NimNode"><wbr />ensure<wbr />Foreign<wbr />Keys<span class="attachedType"></span></a></li>
+      <li><a class="reference" href="#fromRow%2CT%2CRow"
+    title="fromRow[T: Model](obj: var T; row: Row)"><wbr />from<wbr />Row<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#toRow%2CT"
+    title="toRow[T: Model](obj: T; force = false): Row"><wbr />to<wbr />Row<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -122,51 +120,39 @@ function main() {
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc"><p>In order for a type to be usable in DB schema generation, it must have <tt class="docutils literal"><span class="pre">id</span></tt> field marked with <tt class="docutils literal"><span class="pre">pk</span></tt> and <tt class="docutils literal"><span class="pre">ro</span></tt> pragmas.</p>
-<p>This module contains procs to do that for a single type definition and entire type section. </p>
-</p>
+  <p class="module-desc">Procs to convert <a class="reference external" href="../../model.html#Model">Model</a> instances to <tt class="docutils literal"><span class="pre">ndb.sqlite.Row</span></tt> instances and back.</p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="objutils.html">objutils</a>
+<a class="reference external" href="dbtypes.html">dbtypes</a>, <a class="reference external" href="../dot.html">../dot</a>, <a class="reference external" href="../../model.html">../../model</a>, <a class="reference external" href="../../pragmas.html">../../pragmas</a>
 </dl></div>
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="ensureIdFields,NimNode"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#ensureIdFields%2CNimNode"><span class="Identifier">ensureIdFields</span></a><span class="Other">(</span><span class="Identifier">typeSection</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="fromRow,T,Row"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#fromRow%2CT%2CRow"><span class="Identifier">fromRow</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="../../model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">row</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Check if <tt class="docutils literal"><span class="pre">id</span></tt> field is in all object definitions in the given type section, insert it if it's not.
+<p>Populate <a class="reference external" href="#model">Model</a> instance from <tt class="docutils literal"><span class="pre">ndb.sqlite.Row</span></tt> instance.</p>
+<p>Nested <a class="reference external" href="#model">Model</a> fields are populated from the same <tt class="docutils literal"><span class="pre">ndb.sqlite.Row</span></tt> instance. </p>
+
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L36"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/sqlite/rowutils.nim#L30"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L36" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/sqlite/rowutils.nim#L30" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="ensureForeignKey,NimNode,seq[string]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#ensureForeignKey%2CNimNode%2Cseq%5Bstring%5D"><span class="Identifier">ensureForeignKey</span></a><span class="Other">(</span><span class="Identifier">typeDef</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">;</span> <span class="Identifier">typeNames</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<a id="toRow,T"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#toRow%2CT"><span class="Identifier">toRow</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="../../model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Row</span></pre></dt>
 <dd>
 
-Check if a foreign key is in the object definition, insert it if it's not.
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L44"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L44" class="link-seesrc" target="_blank" >Edit</a>
+<p>Convert <a class="reference external" href="#model">Model</a> instance into <tt class="docutils literal"><span class="pre">ndb.sqlite.Row</span></tt> instance.</p>
+<p>If <tt class="docutils literal"><span class="pre">force</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, fields with <a class="reference external" href="../../pragmas.html#ro.t">ro</a> pragma are not skipped. </p>
 
-</dd>
-<a id="ensureForeignKeys,NimNode"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#ensureForeignKeys%2CNimNode"><span class="Identifier">ensureForeignKeys</span></a><span class="Other">(</span><span class="Identifier">typeSection</span><span class="Other">:</span> <span class="Identifier">NimNode</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">NimNode</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">Exception</span><span class="Other">]</span><span class="Other">,</span>
-    <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">RootEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Check if a foreign key is in all object definitions that require it, insert it if it's not.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/devel/src/norm/typedefutils.nim#L87"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/sqlite/rowutils.nim#L39"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/typedefutils.nim#L87" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/sqlite/rowutils.nim#L39" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -179,7 +165,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-05-11 11:56:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-06-22 19:26:16 UTC</small>
       </div>
     </div>
   </div>

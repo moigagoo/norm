@@ -1,15 +1,13 @@
 Norm: A Nim ORM	norm.html
-Quickstart	norm.html#quickstart	 Quickstart	
-Reference Guide	norm.html#reference-guide	 Reference Guide	
-Model Declaration	norm.html#reference-guide-model-declaration	  Model Declaration	
-Connection	norm.html#reference-guide-connection	  Connection	
-Setup	norm.html#reference-guide-setup	  Setup	
-Teardown	norm.html#reference-guide-teardown	  Teardown	
-Create Records	norm.html#reference-guide-create-records	  Create Records	
-Read Records	norm.html#reference-guide-read-records	  Read Records	
-Update Records	norm.html#reference-guide-update-records	  Update Records	
-Delete Records	norm.html#reference-guide-delete-records	  Delete Records	
-Transactions	norm.html#reference-guide-transactions	  Transactions	
-Migrations	norm.html#reference-guide-migrations	  Migrations	
+Installation	norm.html#installation	 Installation	
+Tutorial	norm.html#tutorial	 Tutorial	
+Models	norm.html#tutorial-models	  Models	
+Create Tables	norm.html#tutorial-create-tables	  Create Tables	
+Insert Rows	norm.html#tutorial-insert-rows	  Insert Rows	
+Select Rows	norm.html#tutorial-select-rows	  Select Rows	
+Update Rows	norm.html#tutorial-update-rows	  Update Rows	
+Delete Rows	norm.html#tutorial-delete-rows	  Delete Rows	
+Fancy Syntax	norm.html#tutorial-fancy-syntax	  Fancy Syntax	
+Transactions	norm.html#tutorial-transactions	  Transactions	
 Contributing	norm.html#contributing	 Contributing	
 ❤ Contributors ❤	norm.html#contributing-❤-contributors-❤	  ❤ Contributors ❤	
