@@ -211,10 +211,10 @@ Let's examine the queries:
 .. code-block::
 
     INSERT INTO "User" (email) VALUES(?) <- @['foo@foo.foo']
-    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Alice', 3]
-    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Bob', 3]
+    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Alice', 1]
+    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Bob', 1]
     INSERT INTO "User" (email) VALUES(?) <- @['bar@bar.bar']
-    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Sam', 4]
+    INSERT INTO "Customer" (name, user) VALUES(?, ?) <- @['Sam', 2]
 
 When Norm attempts to insert ``alice``, it detects that ``userFoo`` that it referenced in it has not been inserted yet, so there's no ``id`` to store as foreign key. So, Norm inserts ``userFoo`` automatically and then uses its new ``id`` (in this case, 1) as the foreign key value.
 
