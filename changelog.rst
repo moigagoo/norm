@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.0.1 (June 24, 2020)
+=====================
+
+-   [f] Replace func with proc in dbtypes since ``to`` can have side effects.
+
+
 2.0.0 (June 22, 2020)
 =====================
 
