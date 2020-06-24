@@ -108,6 +108,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#to%2C%2Ctypedesc%5BDateTime%5D"
     title="to(dbVal; T: typedesc[DateTime]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#to%2C%2Ctypedesc%5BOption%5BT%5D%5D"
+    title="to[T](dbVal; O: typedesc[Option[T]]): O:type"><wbr />to<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -154,8 +156,6 @@ function main() {
     title="to(dbVal; T: typedesc[DbBlob]): T:type"><wbr />to<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BModel%5D"
     title="to(dbVal; T: typedesc[Model]): T:type"><wbr />to<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#to%2C%2Ctypedesc%5BOption%5BT%5D%5D"
-    title="to[T](dbVal; O: typedesc[Option[T]]): O:type"><wbr />to<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -190,6 +190,17 @@ function main() {
 href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/sqlite/dbtypes.nim#L83"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/sqlite/dbtypes.nim#L83" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+<a id="to,,typedesc[Option[T]]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#to%2C%2Ctypedesc%5BOption%5BT%5D%5D"><span class="Identifier">to</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">O</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">O:type</span></pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/sqlite/dbtypes.nim#L90"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/sqlite/dbtypes.nim#L90" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -417,17 +428,6 @@ class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/sqlite/dbtypes.nim#L85" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="to,,typedesc[Option[T]]"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BOption%5BT%5D%5D"><span class="Identifier">to</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">O</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">O:type</span></pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/sqlite/dbtypes.nim#L90"
-class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/sqlite/dbtypes.nim#L90" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
 
 </dl></div>
 
@@ -438,7 +438,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-06-23 08:50:32 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-06-24 13:42:43 UTC</small>
       </div>
     </div>
   </div>
