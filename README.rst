@@ -400,11 +400,11 @@ Contributing
 
 Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.
 
--   See the [issues on GitHub](http://github.com/moigagoo/norm/issues).
+-   See the `issues on GitHub <http://github.com/moigagoo/norm/issues>`__.
 
 -   Run the tests before and after you change the code.
 
-    The recommended way to run the tests is via [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/):
+    The recommended way to run the tests is via Docker and Docker Compose:
 
     .. code-block::
 
@@ -421,4 +421,4 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 ❤ Contributors ❤
 ------------------
 
-Norm would not be where it is today without the efforts of these fine folks: `https://github.com/moigagoo/norm/graphs/contributors <https://github.com/moigagoo/norm/graphs/contributors>`_
+Norm would not be where it is today without the efforts of these fine folks: `https://github.com/moigagoo/norm/graphs/contributors <https://github.com/moigagoo/norm/graphs/contributors>`__.
