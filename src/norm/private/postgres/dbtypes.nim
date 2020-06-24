@@ -62,7 +62,7 @@ func to*(dbVal; T: typedesc[Model]): T =
 
   discard
 
-func to*[T](dbVal; O: typedesc[Option[T]]): O =
+proc to*[T](dbVal; O: typedesc[Option[T]]): O =
   case dbVal.kind
   of dvkNull:
     none T
