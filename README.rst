@@ -404,6 +404,8 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
 
 .. code-block:: nim
 
+    nim> import os
+    nim> putEnv("DB_HOST", ":memory:")
     nim> let db = getDb()
     nim> var customerBar = newCustomer()
     nim> db.select(customerBar, "User.email = ?", "bar@bar.bar")
