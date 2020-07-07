@@ -13,12 +13,14 @@ Norm: A Nim ORM
 
 **Norm** is an object-oriented, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
--   `Repo <https://github.com/moigagoo/norm>`__
+*   `Repo <https://github.com/moigagoo/norm>`__
+
     -   `Issues <https://github.com/moigagoo/norm/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norm/pulls>`__
--   `Sample app <https://github.com/moigagoo/norm-sample-webapp>`__
--   `API index <theindex.html>`__
--   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
+
+*   `Sample app <https://github.com/moigagoo/norm-sample-webapp>`__
+*   `API index <theindex.html>`__
+*   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
 Norm works best with `Norman <https://moigagoo.github.io/norman/norman.html>`__.
 
