@@ -1,3 +1,4 @@
+import os
 import logging
 import strutils
 import sequtils
@@ -22,10 +23,32 @@ type
     ]##
 
 
+const
+  dbHostEnv* = "DB_HOST"
+  dbUserEnv* = "DB_USER"
+  dbPassEnv* = "DB_PASS"
+  dbNameEnv* = "DB_NAME"
+
+
+# Sugar to get DB config from environment variables
+
+proc getDb*(): DbConn =
+  open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), getEnv(dbNameEnv))
+
+template withDb*(body: untyped): untyped =
+  let db {.inject.} = getDb()
+
+  try:
+    body
+
+  finally:
+    close db
+
+
+# Table manipulation
+
 using dbConn: DbConn
 
-
-# Table manupulation
 
 proc createTables*[T: Model](dbConn; obj: T) =
   ## Create tables for `Model`_ and its `Model`_ fields.
