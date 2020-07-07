@@ -107,6 +107,7 @@ function main() {
 <li><a class="reference" id="tutorial-delete-rows_toc" href="#tutorial-delete-rows">Delete Rows</a></li>
 <li><a class="reference" id="tutorial-fancy-syntax_toc" href="#tutorial-fancy-syntax">Fancy Syntax</a></li>
 <li><a class="reference" id="tutorial-transactions_toc" href="#tutorial-transactions">Transactions</a></li>
+<li><a class="reference" id="tutorial-read-configuration-from-environment-variables_toc" href="#tutorial-read-configuration-from-environment-variables">Read Configuration from Environment Variables</a></li>
 </ul><li><a class="reference" id="contributing_toc" href="#contributing">Contributing</a></li>
 <ul class="simple"><li><a class="reference" id="contributing-❤-contributors-❤_toc" href="#contributing-❤-contributors-❤">❤ Contributors ❤</a></li>
 </ul><li>
@@ -287,6 +288,16 @@ function main() {
 <span class="Operator">....</span>
 <span class="Operator">....</span>     <span class="Keyword">if</span> <span class="Identifier">i</span> <span class="Operator">==</span> <span class="DecNumber">15</span><span class="Punctuation">:</span>
 <span class="Operator">....</span>       <span class="Identifier">rollback</span><span class="Punctuation">(</span><span class="Punctuation">)</span></pre>
+<h2><a class="toc-backref" id="tutorial-read-configuration-from-environment-variables" href="#tutorial-read-configuration-from-environment-variables">Read Configuration from Environment Variables</a></h2><p>In a real-life project, you want to keep your DB configuration separate from the code. Common pattern is to put it in environment variables, probably in a <tt class="docutils literal"><span class="pre">.env</span></tt> file that's processed during the app startup.</p>
+<p>Norm's <tt class="docutils literal"><span class="pre">getDb</span></tt> proc lets you create a DB connection using <tt class="docutils literal"><span class="pre">DB_HOST</span></tt>, <tt class="docutils literal"><span class="pre">DB_USER</span></tt>, <tt class="docutils literal"><span class="pre">DB_PASS</span></tt>, and <tt class="docutils literal"><span class="pre">DB_NAME</span></tt> environment variables:</p>
+<pre class="listing"><span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Keyword">import</span> <span class="Identifier">os</span>
+<span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">putEnv</span><span class="Punctuation">(</span><span class="StringLit">&quot;DB_HOST&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;:memory:&quot;</span><span class="Punctuation">)</span>
+<span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Keyword">let</span> <span class="Identifier">db</span> <span class="Operator">=</span> <span class="Identifier">getDb</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Keyword">var</span> <span class="Identifier">customerBar</span> <span class="Operator">=</span> <span class="Identifier">newCustomer</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">select</span><span class="Punctuation">(</span><span class="Identifier">customerBar</span><span class="Punctuation">,</span> <span class="StringLit">&quot;User.email = ?&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;bar@bar.bar&quot;</span><span class="Punctuation">)</span></pre><p><tt class="docutils literal"><span class="pre">withDb</span></tt> template is even handier as it lets you run code without explicitly creating or closing a DB connection:</p>
+<pre class="listing"><span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">withDb</span><span class="Punctuation">:</span>
+<span class="Operator">....</span>   <span class="Keyword">var</span> <span class="Identifier">customerBar</span> <span class="Operator">=</span> <span class="Identifier">newCustomer</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
+<span class="Operator">....</span>   <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">select</span><span class="Punctuation">(</span><span class="Identifier">customerBar</span><span class="Punctuation">,</span> <span class="StringLit">&quot;User.email = ?&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;bar@bar.bar&quot;</span><span class="Punctuation">)</span></pre>
 <h1><a class="toc-backref" id="contributing" href="#contributing">Contributing</a></h1><p>Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.</p>
 <ul class="simple"><li>See the <a class="reference external" href="http://github.com/moigagoo/norm/issues">issues on GitHub</a>.</li>
 <li><p>Run the tests before and after you change the code.</p>
@@ -314,7 +325,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-06-24 13:42:43 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-07-07 20:51:15 UTC</small>
       </div>
     </div>
   </div>
