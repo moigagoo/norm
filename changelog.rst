@@ -9,7 +9,7 @@ Changelog
 -   [t]—test suite improvement
 
 
-2.0.2 (WIP)
+2.1.0 (WIP)
 ===========
 
 -   [+] Add ``getDb`` and ``withDb`` sugars to get DB configuration from environment variables ``DB_HOST``, ``DB_USER``, ``DB_PASS``, and ``DB_NAME``.
