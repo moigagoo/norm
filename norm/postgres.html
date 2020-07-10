@@ -252,7 +252,7 @@ class="link-seesrc" target="_blank">Source</a>
 <dt><pre><span class="Keyword">proc</span> <a href="#getDb"><span class="Identifier">getDb</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbConn</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-
+Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from <tt class="docutils literal"><span class="pre">DB_HOST</span></tt>, <tt class="docutils literal"><span class="pre">DB_USER</span></tt>, <tt class="docutils literal"><span class="pre">DB_PASS</span></tt>, and <tt class="docutils literal"><span class="pre">DB_NAME</span></tt> environment variables.
 &nbsp;&nbsp;<a
 href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L35"
 class="link-seesrc" target="_blank">Source</a>
@@ -265,9 +265,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Create tables for <a class="reference external" href="#model">Model</a> and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L53"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L61"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L53" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L61" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="insert,,T"></a>
@@ -276,9 +276,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Insert rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L90"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L98"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L90" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L98" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="insert,,openArray[T]"></a>
@@ -287,9 +287,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Insert rows for each <a class="reference external" href="#model">Model</a> instance in open array.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L110"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L118"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L110" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L118" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="select,,T,string,varargs[DbValue,dbValue]"></a>
@@ -306,9 +306,9 @@ instead of hardcoded table and column names</li>
 </ul>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L116"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L124"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L116" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L124" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="select,,seq[T],string,varargs[DbValue,dbValue]"></a>
@@ -320,9 +320,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L141"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L149"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L141" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L149" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="update,,T"></a>
@@ -331,9 +331,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Update rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L171"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L179"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L171" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L179" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="update,,openArray[T]"></a>
@@ -342,9 +342,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Update rows for each <a class="reference external" href="#model">Model</a> instance in open array.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L189"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L197"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L189" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L197" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="delete,,T"></a>
@@ -353,9 +353,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Delete rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L195"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L203"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L195" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L203" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="delete,,openArray[T]"></a>
@@ -364,9 +364,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Delete rows for each <a class="reference external" href="#model">Model</a> instance in open array.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L205"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L213"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L205" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L213" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="rollback"></a>
@@ -375,9 +375,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Rollback transaction by raising <a class="reference external" href="#RollbackError">RollbackError</a>.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L214"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L222"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L214" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L222" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -389,11 +389,13 @@ class="link-seesrc" target="_blank">Source</a>
 <dt><pre><span class="Keyword">template</span> <a href="#withDb.t%2Cuntyped"><span class="Identifier">withDb</span></a><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
+<p>Wrapper for DB operations.</p>
+<p>Creates a <tt class="docutils literal"><span class="pre">DbConn</span></tt> with <a class="reference external" href="#getDb">getDb</a> as <tt class="docutils literal"><span class="pre">db</span></tt> variable, runs your code in a <tt class="docutils literal"><span class="pre">try</span></tt> block, and closes <tt class="docutils literal"><span class="pre">db</span></tt> afterward. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L38"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L40"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L38" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L40" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="transaction.t,,untyped"></a>
@@ -405,9 +407,9 @@ class="link-seesrc" target="_blank">Source</a>
 <p>To rollback manually, call <a class="reference external" href="#rollback">rollback</a>. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L219"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/postgres.nim#L227"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L219" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/postgres.nim#L227" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -420,7 +422,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-07-10 18:50:08 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-07-10 19:02:59 UTC</small>
       </div>
     </div>
   </div>
