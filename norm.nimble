@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.0.1"
+version       = "2.1.0"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -13,7 +13,7 @@ skipDirs      = @["tests", "htmldocs"]
 requires "nim >= 1.2.0", "ndb >= 0.19.8"
 
 task apidoc, "Generate API docs":
-  --outdir:"htmldocs"
+  --outdir: "htmldocs"
   --git.url: https://github.com/moigagoo/norm/
   --git.commit: develop
   --project
