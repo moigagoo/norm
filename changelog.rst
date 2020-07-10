@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.1 (July 10, 2020)
+=====================
+
+-   [r] Add missing docstrings for ``getDb`` and ``withDb``.
+
+
 2.1.0 (July 10, 2020)
 =====================
 
