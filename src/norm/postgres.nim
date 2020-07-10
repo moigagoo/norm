@@ -33,9 +33,17 @@ const
 # Sugar to get DB config from environment variables
 
 proc getDb*(): DbConn =
+  ## Create a ``DbConn`` from ``DB_HOST``, ``DB_USER``, ``DB_PASS``, and ``DB_NAME`` environment variables.
+
   open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), getEnv(dbNameEnv))
 
 template withDb*(body: untyped): untyped =
+  ##[ Wrapper for DB operations.
+
+  Creates a ``DbConn`` with `getDb <#getDb>`_ as ``db`` variable,
+  runs your code in a ``try`` block, and closes ``db`` afterward.
+  ]##
+
   let db {.inject.} = getDb()
 
   try:
