@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.2 (August 12, 2020)
+=======================
+
+-   [f] Fix ``select`` for models that relate to two models that are related with each other as well.
+
+
 2.1.1 (July 10, 2020)
 =====================
 

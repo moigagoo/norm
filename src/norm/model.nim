@@ -1,6 +1,8 @@
 import macros
 import options
 import strutils
+import sequtils
+import sugar
 
 import private/dot
 import pragmas
@@ -83,4 +85,9 @@ func joinGroups*[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]] =
       let subMod = get val.model
 
       result.add (tbl: typeof(subMod).table, lFld: obj.fCol(fld), rFld: subMod.fCol("id"))
-      result.add subMod.joinGroups
+
+      let resTbls = collect(newSeq):
+        for joinGrp in result:
+          joinGrp.tbl
+
+      result.add subMod.joinGroups.filterIt(it.tbl notin resTbls)
