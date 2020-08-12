@@ -25,21 +25,22 @@ suite "Relation triangle":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newToyPet())
+    dbConn.createTables(newPetPerson())
 
     var
       toy = newToy(123.45)
       pet = newPet("cat", toy)
-      toyPet = newToyPet(toy, pet)
+      person = newPerson("Alice", pet)
+      petPerson = newPetPerson(pet, person)
 
-    dbConn.insert(toyPet)
+    dbConn.insert(petPerson)
 
   teardown:
     close dbConn
     resetDb()
 
   test "Get row":
-    let outToyPet = newToyPet().dup:
-      dbConn.select(""""ToyPet".id = $1""", toyPet.id)
+    let outPetPerson = newPetPerson().dup:
+      dbConn.select(""""PetPerson".id = $1""", petPerson.id)
 
-    check outToyPet === toyPet
+    check outPetPerson === petPerson

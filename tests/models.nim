@@ -20,6 +20,10 @@ type
     toy*: Toy
     pet*: Pet
 
+  PetPerson* = ref object of Model
+    pet*: Pet
+    person*: Person
+
 func newToy*(price: float): Toy =
   Toy(price: price)
 
@@ -67,5 +71,15 @@ func `===`*(a, b: ToyPet): bool =
   a.toy === b.toy and
   a.pet === b.pet
 
-func `===`*[T: Toy | Pet | Person | ToyPet](a, b: openArray[T]): bool =
+func newPetPerson*(pet: Pet, person: Person): PetPerson =
+  PetPerson(pet: pet, person: person)
+
+func newPetPerson*(): PetPerson =
+  newPetPerson(newPet(), newPerson())
+
+func `===`*(a, b: PetPerson): bool =
+  a.pet === b.pet and
+  a.person === b.person
+
+func `===`*[T: Toy | Pet | Person | ToyPet | PetPerson](a, b: openArray[T]): bool =
   zip(a, b).allIt(it[0] === it[1])
