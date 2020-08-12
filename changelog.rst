@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.3 (August 13, 2020)
+=======================
+
+-   [f] Fix relation triangle with more deeply nested relations.
+
+
 2.1.2 (August 12, 2020)
 =======================
 

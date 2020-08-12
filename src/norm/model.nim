@@ -1,8 +1,6 @@
 import macros
 import options
 import strutils
-import sequtils
-import sugar
 
 import private/dot
 import pragmas
@@ -71,6 +69,21 @@ func rfCols*[T: Model](obj: T): seq[string] =
     else:
       result.add obj.fCol(fld)
 
+func joinGroups[T: Model](obj: T, tbls: var seq[string]): seq[tuple[tbl, lFld, rFld: string]] =
+  ## Collect join groups mentioning each table exactly once.
+
+  for fld, val in obj[].fieldPairs:
+    if val.model.isSome:
+      let
+        subMod = get val.model
+        grp = (tbl: typeof(subMod).table, lFld: obj.fCol(fld), rFld: subMod.fCol("id"))
+
+      if grp.tbl notin tbls:
+        result.add grp
+        tbls.add grp.tbl
+
+      result.add subMod.joinGroups(tbls)
+
 func joinGroups*[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]] =
   ##[ For each `Model`_ field of `Model`_ instance, get:
   - table name for the field type
@@ -80,14 +93,5 @@ func joinGroups*[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]] =
   Used to construct ``JOIN`` statements: ``JOIN {tbl} ON {lFld} = {rFld}``
   ]##
 
-  for fld, val in obj[].fieldPairs:
-    if val.model.isSome:
-      let subMod = get val.model
-
-      result.add (tbl: typeof(subMod).table, lFld: obj.fCol(fld), rFld: subMod.fCol("id"))
-
-      let resTbls = collect(newSeq):
-        for joinGrp in result:
-          joinGrp.tbl
-
-      result.add subMod.joinGroups.filterIt(it.tbl notin resTbls)
+  var tbls: seq[string]
+  obj.joinGroups(tbls)
