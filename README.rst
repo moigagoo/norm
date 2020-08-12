@@ -18,7 +18,7 @@ Norm: A Nim ORM
     -   `Issues <https://github.com/moigagoo/norm/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norm/pulls>`__
 
-*   `Sample app <https://github.com/moigagoo/norm-sample-webapp>`__
+*   `Sample app <https://github.com/moigagoo/shop-api>`__
 *   `API index <theindex.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
@@ -32,7 +32,7 @@ Install Norm with `Nimble <https://github.com/nim-lang/nimble>`_:
 
 .. code-block::
 
-    $ nimble install norm
+    $ nimble install -y norm
 
 Add Norm to your .nimble file:
 
