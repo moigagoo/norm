@@ -44,19 +44,30 @@ template withDb*(body: untyped): untyped =
   runs your code in a ``try`` block, and closes ``db`` afterward.
   ]##
 
-  let db {.inject.} = getDb()
+  block:
+    let db {.inject.} = getDb()
 
-  try:
-    body
+    try:
+      body
 
-  finally:
-    close db
+    finally:
+      close db
 
-
-# Table manipulation
 
 using dbConn: DbConn
 
+
+# DB manipulation
+
+proc dropDb* =
+  ## Drop the database defined in environment variables.
+
+  let dbConn = open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), "template1")
+  dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % getEnv(dbNameEnv))
+  close dbConn
+
+
+# Table manipulation
 
 proc createTables*[T: Model](dbConn; obj: T) =
   ## Create tables for `Model`_ and its `Model`_ fields.

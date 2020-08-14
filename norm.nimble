@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.3"
+version       = "2.1.4"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"

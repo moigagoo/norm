@@ -16,10 +16,6 @@ type
     name*: string
     pet*: Option[Pet]
 
-  ToyPet* = ref object of Model
-    toy*: Toy
-    pet*: Pet
-
   PetPerson* = ref object of Model
     pet*: Pet
     person*: Person
@@ -61,16 +57,6 @@ func `===`*(a, b: Person): bool =
 proc doublePrice*(toy: var Toy) =
   toy.price *= 2
 
-func newToyPet*(toy: Toy, pet: Pet): ToyPet =
-  ToyPet(toy: toy, pet: pet)
-
-func newToyPet*(): ToyPet =
-  newToyPet(newToy(), newPet())
-
-func `===`*(a, b: ToyPet): bool =
-  a.toy === b.toy and
-  a.pet === b.pet
-
 func newPetPerson*(pet: Pet, person: Person): PetPerson =
   PetPerson(pet: pet, person: person)
 
@@ -81,5 +67,5 @@ func `===`*(a, b: PetPerson): bool =
   a.pet === b.pet and
   a.person === b.person
 
-func `===`*[T: Toy | Pet | Person | ToyPet | PetPerson](a, b: openArray[T]): bool =
+func `===`*[T: Toy | Pet | Person | PetPerson](a, b: openArray[T]): bool =
   zip(a, b).allIt(it[0] === it[1])

@@ -16,6 +16,8 @@ tests/tsqlitetransactions
 tests/tsqlitesugar
 tests/tsqlitenone
 tests/tsqliteenv
+tests/tsqlitetriangle
+tests/tsqlitedb
 
 tests/tpostgresrowutils
 tests/tpostgrestables
@@ -24,3 +26,5 @@ tests/tpostgrestransactions
 tests/tpostgressugar
 tests/tpostgresnone
 tests/tpostgresenv
+tests/tpostgrestriangle
+tests/tpostgresdb
