@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.4 (August 14, 2020)
+=======================
+
+-   [+] Add ``dropDb`` procs.
+
+
 2.1.3 (August 13, 2020)
 =======================
 
