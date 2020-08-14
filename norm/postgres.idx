@@ -5,6 +5,7 @@ dbPassEnv	norm/postgres.html#dbPassEnv	postgres: dbPassEnv
 dbNameEnv	norm/postgres.html#dbNameEnv	postgres: dbNameEnv	
 getDb	norm/postgres.html#getDb	postgres: getDb(): DbConn	
 withDb	norm/postgres.html#withDb.t,untyped	postgres: withDb(body: untyped): untyped	
+dropDb	norm/postgres.html#dropDb	postgres: dropDb()	
 createTables	norm/postgres.html#createTables,,T	postgres: createTables[T: Model](dbConn; obj: T)	
 insert	norm/postgres.html#insert,,T	postgres: insert[T: Model](dbConn; obj: var T)	
 insert	norm/postgres.html#insert,,openArray[T]	postgres: insert[T: Model](dbConn; objs: var openArray[T])	
