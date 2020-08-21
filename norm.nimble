@@ -29,3 +29,4 @@ task docs, "Generate docs":
   exec "nimble apidoc"
   exec "nimble idx"
   exec "nim rst2html -o:htmldocs/index.html README.rst"
+  cpFile("CNAME", "htmldocs/CNAME")
