@@ -28,3 +28,4 @@ task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble apidoc"
   exec "nimble idx"
+  exec "nim rst2html -o:htmldocs/index.html README.rst"
