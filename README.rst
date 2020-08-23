@@ -48,7 +48,7 @@ Before going further, install `inim <https://github.com/inim-repl/INim>`_ with n
 
 .. code-block::
 
-    $ nimble install inim
+    $ nimble install -y inim
 
 Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use `brew <https://brew.sh/>`_. On Windows, use `scoop <https://scoop.sh/>`_.
 
