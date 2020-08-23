@@ -48,7 +48,7 @@ Before going further, install `inim <https://github.com/inim-repl/INim>`_ with n
 
 .. code-block::
 
-    $ nimble install  inim
+    $ nimble install inim
 
 Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use `brew <https://brew.sh/>`_. On Windows, use `scoop <https://scoop.sh/>`_.
 
@@ -430,7 +430,7 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
 -   Run the tests before and after you change the code.
 
-    The recommended way to run the tests is via Docker and Docker Compose:
+    The recommended way to run the tests is with Docker Compose:
 
     .. code-block::
 
