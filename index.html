@@ -87,7 +87,7 @@ function main() {
 <pre class="listing"><span class="Operator">$</span> <span class="Identifier">nimble</span> <span class="Identifier">install</span> <span class="Operator">-</span><span class="Identifier">y</span> <span class="Identifier">norm</span></pre><p>Add Norm to your .nimble file:</p>
 <pre class="listing"><span class="Identifier">requires</span> <span class="StringLit">&quot;norm&quot;</span></pre>
 <h1 id="tutorial">Tutorial</h1><p>Before going further, install <a class="reference external" href="https://github.com/inim-repl/INim">inim</a> with nimble:</p>
-<pre class="listing"><span class="Operator">$</span> <span class="Identifier">nimble</span> <span class="Identifier">install</span>  <span class="Identifier">inim</span></pre><p>Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use <a class="reference external" href="https://brew.sh/">brew</a>. On Windows, use <a class="reference external" href="https://scoop.sh/">scoop</a>.</p>
+<pre class="listing"><span class="Operator">$</span> <span class="Identifier">nimble</span> <span class="Identifier">install</span> <span class="Identifier">inim</span></pre><p>Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use <a class="reference external" href="https://brew.sh/">brew</a>. On Windows, use <a class="reference external" href="https://scoop.sh/">scoop</a>.</p>
 <p>Then, start a new inim session by running <tt class="docutils literal"><span class="pre">inim</span></tt>.</p>
 
 <h2 id="models">Models</h2><p>A model is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.</p>
@@ -250,7 +250,7 @@ function main() {
 <h1 id="contributing">Contributing</h1><p>Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.</p>
 <ul class="simple"><li>See the <a class="reference external" href="http://github.com/moigagoo/norm/issues">issues on GitHub</a>.</li>
 <li><p>Run the tests before and after you change the code.</p>
-<p>The recommended way to run the tests is via Docker and Docker Compose:</p>
+<p>The recommended way to run the tests is with Docker Compose:</p>
 <pre class="listing"><span class="Operator">$</span> <span class="Identifier">docker</span><span class="Operator">-</span><span class="Identifier">compose</span> <span class="Identifier">run</span> <span class="Operator">--</span><span class="Identifier">rm</span> <span class="Identifier">tests</span>                     <span class="Comment"># run all test suites</span>
 <span class="Operator">$</span> <span class="Identifier">docker</span><span class="Operator">-</span><span class="Identifier">compose</span> <span class="Identifier">run</span> <span class="Operator">--</span><span class="Identifier">rm</span> <span class="Identifier">test</span> <span class="Identifier">tests</span><span class="Operator">/</span><span class="Identifier">tmodel</span><span class="Operator">.</span><span class="Identifier">nim</span>     <span class="Comment"># run a single test suite</span></pre></li>
 </ul>
@@ -267,7 +267,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-21 12:08:29 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-08-23 09:54:57 UTC</small>
       </div>
     </div>
   </div>
