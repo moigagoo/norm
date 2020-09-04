@@ -22,7 +22,7 @@ Norm: A Nim ORM
 *   `API index <theindex.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
-Norm works best with `Norman <https://moigagoo.github.io/norman/norman.html>`__.
+Norm works best with `Norman <https://norman.nim.town>`__.
 
 
 Installation
