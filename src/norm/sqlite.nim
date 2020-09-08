@@ -14,6 +14,8 @@ import private/dot
 import model
 import pragmas
 
+export dbtypes
+
 
 type
   RollbackError* = object of CatchableError
