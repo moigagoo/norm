@@ -1,5 +1,6 @@
 import sequtils
 import options
+import times
 
 import norm/model
 
@@ -19,6 +20,10 @@ type
   PetPerson* = ref object of Model
     pet*: Pet
     person*: Person
+
+  User* = ref object of Model
+    lastLogin*: DateTime
+
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -69,3 +74,5 @@ func `===`*(a, b: PetPerson): bool =
 
 func `===`*[T: Toy | Pet | Person | PetPerson](a, b: openArray[T]): bool =
   zip(a, b).allIt(it[0] === it[1])
+
+proc newUser*(): User = User(lastLogin: now())

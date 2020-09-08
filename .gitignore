@@ -18,6 +18,7 @@ tests/tsqlitenone
 tests/tsqliteenv
 tests/tsqlitetriangle
 tests/tsqlitedb
+tests/tsqlitedbtypes
 
 tests/tpostgresrowutils
 tests/tpostgrestables
@@ -28,3 +29,4 @@ tests/tpostgresnone
 tests/tpostgresenv
 tests/tpostgrestriangle
 tests/tpostgresdb
+tests/tpostgresdbtypes
