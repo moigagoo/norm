@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.1.5 (September 8, 2020)
+=========================
+
+-   [+] Export private ``dbValue``, and ``to`` procs in public modules.
+
+
 2.1.4 (August 14, 2020)
 =======================
 

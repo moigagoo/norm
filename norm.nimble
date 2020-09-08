@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.4"
+version       = "2.1.5"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -28,3 +28,5 @@ task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble apidoc"
   exec "nimble idx"
+  exec "nim rst2html -o:htmldocs/index.html README.rst"
+  cpFile("CNAME", "htmldocs/CNAME")
