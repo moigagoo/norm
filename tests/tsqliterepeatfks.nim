@@ -21,7 +21,7 @@ suite "Model with repeating foreign keys":
 
   teardown:
     close dbConn
-    # removeFile dbFile
+    removeFile dbFile
 
   test "Get row":
     var
