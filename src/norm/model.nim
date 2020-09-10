@@ -89,7 +89,9 @@ func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls
         subMod = get val.model
         tbl = typeof(subMod).table
         tAls = """"$#"""" % (flds & fld).join("_")
+        ptAls = if len(flds) == 0: typeof(obj).table else: """"$#"""" % flds.join("_")
+        lFld = obj.fCol(fld, ptAls)
         rFld = subMod.fCol("id", tAls)
-        grp = (tbl: tbl, tAls: tAls, lFld: obj.fCol(fld), rFld: rFld)
+        grp = (tbl: tbl, tAls: tAls, lFld: lFld, rFld: rFld)
 
       result.add grp & subMod.joinGroups(flds & fld)
