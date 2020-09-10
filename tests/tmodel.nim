@@ -42,5 +42,5 @@ suite "Getting table and columns from Model":
 
     check person.joinGroups == @[
       (""""Pet"""", """"pet"""", """"Person".pet""", """"pet".id"""),
-      (""""Toy"""", """"pet_favToy"""", """"Pet".favToy""", """"pet_favToy".id""")
+      (""""Toy"""", """"pet_favToy"""", """"pet".favToy""", """"pet_favToy".id""")
     ]
