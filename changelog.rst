@@ -14,13 +14,13 @@ Changelog
 
 -   [!] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
 
-    Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
+Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
 
-    The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table.
+The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table.
 
-    **With the change in the algorithm, the way ``select`` conditions must be composed has changed.** Here's an example from the tests to illustrate this change (`tests/tpostgresrows.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgresrows.nim>`_):
+**With the change in the algorithm, the way ``select`` conditions must be composed has changed.** Here's an example from the tests to illustrate this change (`tests/tpostgresrows.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgresrows.nim>`_):
 
-    .. code-block:: nim
+.. code-block:: nim
 
     # Old way:
     test "Get rows, nested models":
