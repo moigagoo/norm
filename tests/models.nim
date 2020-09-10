@@ -24,6 +24,11 @@ type
   User* = ref object of Model
     lastLogin*: DateTime
 
+  PlayfulPet* = ref object of Model
+    species*: string
+    favToy*: Toy
+    secondFavToy*: Toy
+
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -76,3 +81,20 @@ func `===`*[T: Toy | Pet | Person | PetPerson](a, b: openArray[T]): bool =
   zip(a, b).allIt(it[0] === it[1])
 
 proc newUser*(): User = User(lastLogin: now())
+
+func newPlayfulPet*(species: string, favToy, secondFavToy: Toy): PlayfulPet =
+  PlayfulPet(species: species, favToy: favToy, secondFavToy: secondFavToy)
+
+func newPlayfulPet*(): PlayfulPet = newPlayfulPet("", newToy(), newToy())
+
+func `===`*(a, b: PlayfulPet): bool =
+  a.species == b.species and
+  a.favToy === b.favToy and
+  a.secondFavToy === b.secondFavToy
+
+func `===`*(a, b: Option[PlayfulPet]): bool =
+  (a.isNone and b.isNone) or
+  (a.isSome and b.isSome and
+  get(a).species == get(b).species and
+  get(a).favToy === get(b).favToy and
+  get(a).secondFavToy === get(b).secondFavToy)
