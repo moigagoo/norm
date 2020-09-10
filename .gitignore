@@ -31,3 +31,4 @@ tests/tpostgresenv
 tests/tpostgrestriangle
 tests/tpostgresdb
 tests/tpostgresdbtypes
+tests/tpostgresrepeatfks
