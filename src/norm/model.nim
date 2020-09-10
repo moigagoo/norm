@@ -49,6 +49,11 @@ func fCol*[T: Model](obj: T, fld: string): string =
 
   "$#.$#" % [T.table, obj.col(fld)]
 
+func fCol*[T: Model](obj: T, fld, tAls: string): string =
+  ## Get fully qualified column name with the alias for the table name: ``alias.col``.
+
+  "$#.$#" % [tAls, obj.col(fld)]
+
 func cols*[T: Model](obj: T, force = false): seq[string] =
   ##[ Get columns for `Model`_ instance.
 
@@ -59,39 +64,32 @@ func cols*[T: Model](obj: T, force = false): seq[string] =
     if force or not obj.dot(fld).hasCustomPragma(ro):
       result.add obj.col(fld)
 
-func rfCols*[T: Model](obj: T): seq[string] =
+func rfCols*[T: Model](obj: T, flds: seq[string] = @[]): seq[string] =
   ## Recursively get fully qualified column names for `Model`_ instance and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
     if val.isModel:
       if val.model.isSome:
-        result.add (get val.model).rfCols
+        result.add (get val.model).rfCols(flds & fld)
     else:
-      result.add obj.fCol(fld)
+      result.add if len(flds) == 0: obj.fCol(fld) else: obj.fCol(fld, """"$#"""" % flds.join("_"))
 
-func joinGroups[T: Model](obj: T, tbls: var seq[string]): seq[tuple[tbl, lFld, rFld: string]] =
-  ## Collect join groups mentioning each table exactly once.
-
-  for fld, val in obj[].fieldPairs:
-    if val.model.isSome:
-      let
-        subMod = get val.model
-        grp = (tbl: typeof(subMod).table, lFld: obj.fCol(fld), rFld: subMod.fCol("id"))
-
-      if grp.tbl notin tbls:
-        result.add grp
-        tbls.add grp.tbl
-
-      result.add subMod.joinGroups(tbls)
-
-func joinGroups*[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]] =
+func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls, lFld, rFld: string]] =
   ##[ For each `Model`_ field of `Model`_ instance, get:
   - table name for the field type
   - full column name for the field
   - full column name for ``id`` field of the field type
 
-  Used to construct ``JOIN`` statements: ``JOIN {tbl} ON {lFld} = {rFld}``
+  Used to construct ``JOIN`` statements: ``JOIN {tbl} AS {tAls} ON {lFld} = {rFld}``
   ]##
 
-  var tbls: seq[string]
-  obj.joinGroups(tbls)
+  for fld, val in obj[].fieldPairs:
+    if val.model.isSome:
+      let
+        subMod = get val.model
+        tbl = typeof(subMod).table
+        tAls = """"$#"""" % (flds & fld).join("_")
+        rFld = subMod.fCol("id", tAls)
+        grp = (tbl: tbl, tAls: tAls, lFld: obj.fCol(fld), rFld: rFld)
+
+      result.add grp & subMod.joinGroups(flds & fld)
