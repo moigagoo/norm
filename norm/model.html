@@ -135,12 +135,15 @@ function main() {
     title="col[T: Model](obj: T; fld: string): string"><wbr />col<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#fCol%2CT%2Cstring"
     title="fCol[T: Model](obj: T; fld: string): string"><wbr />f<wbr />Col<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#fCol%2CT%2Cstring%2Cstring"
+    title="fCol[T: Model](obj: T; fld, tAls: string): string"><wbr />f<wbr />Col<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#cols%2CT"
     title="cols[T: Model](obj: T; force = false): seq[string]"><wbr />cols<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#rfCols%2CT"
-    title="rfCols[T: Model](obj: T): seq[string]"><wbr />rf<wbr />Cols<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#joinGroups%2CT"
-    title="joinGroups[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]]"><wbr />join<wbr />Groups<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#rfCols%2CT%2Cseq%5Bstring%5D"
+    title="rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]"><wbr />rf<wbr />Cols<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#joinGroups%2CT%2Cseq%5Bstring%5D"
+    title="joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[
+    tuple[tbl, tAls, lFld, rFld: string]]"><wbr />join<wbr />Groups<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -290,6 +293,17 @@ class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L47" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
+<a id="fCol,T,string,string"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+Get fully qualified column name with the alias for the table name: <tt class="docutils literal"><span class="pre">alias.col</span></tt>.
+&nbsp;&nbsp;<a
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L52"
+class="link-seesrc" target="_blank">Source</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L52" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
 <a id="cols,T"></a>
 <dt><pre><span class="Keyword">func</span> <a href="#cols%2CT"><span class="Identifier">cols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
@@ -298,36 +312,37 @@ class="link-seesrc" target="_blank">Source</a>
 <p>If <tt class="docutils literal"><span class="pre">force</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, fields with <a class="reference external" href="pragmas.html#ro.t">ro</a> are included. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L52"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L57"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L52" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L57" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="rfCols,T"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#rfCols%2CT"><span class="Identifier">rfCols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<a id="rfCols,T,seq[string]"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#rfCols%2CT%2Cseq%5Bstring%5D"><span class="Identifier">rfCols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">flds</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
 <dd>
 
 Recursively get fully qualified column names for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L62"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L67"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L62" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L67" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
-<a id="joinGroups,T"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#joinGroups%2CT"><span class="Identifier">joinGroups</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">tbl</span><span class="Other">,</span> <span class="Identifier">lFld</span><span class="Other">,</span> <span class="Identifier">rFld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
+<a id="joinGroups,T,seq[string]"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#joinGroups%2CT%2Cseq%5Bstring%5D"><span class="Identifier">joinGroups</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">flds</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+    <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">tbl</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">,</span> <span class="Identifier">lFld</span><span class="Other">,</span> <span class="Identifier">rFld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
 <dd>
 
 For each <a class="reference external" href="#model">Model</a> field of <a class="reference external" href="#model">Model</a> instance, get:<ul class="simple"><li>table name for the field type</li>
 <li>full column name for the field</li>
 <li>full column name for <tt class="docutils literal"><span class="pre">id</span></tt> field of the field type</li>
 </ul>
-<p>Used to construct <tt class="docutils literal"><span class="pre">JOIN</span></tt> statements: <tt class="docutils literal"><span class="pre">JOIN {tbl} ON {lFld} = {rFld}</span></tt> </p>
+<p>Used to construct <tt class="docutils literal"><span class="pre">JOIN</span></tt> statements: <tt class="docutils literal"><span class="pre">JOIN {tbl} AS {tAls} ON {lFld} = {rFld}</span></tt> </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L87"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L77"
 class="link-seesrc" target="_blank">Source</a>
-<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L87" class="link-seesrc" target="_blank" >Edit</a>
+<a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L77" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 
@@ -340,7 +355,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-08 14:12:55 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-11 07:13:43 UTC</small>
       </div>
     </div>
   </div>

@@ -9,6 +9,7 @@ table	norm/model.html#table,typedesc[Model]	model: table(T: typedesc[Model]): st
 col	norm/model.html#col,typedesc[Model],string	model: col(T: typedesc[Model]; fld: string): string	
 col	norm/model.html#col,T,string	model: col[T: Model](obj: T; fld: string): string	
 fCol	norm/model.html#fCol,T,string	model: fCol[T: Model](obj: T; fld: string): string	
+fCol	norm/model.html#fCol,T,string,string	model: fCol[T: Model](obj: T; fld, tAls: string): string	
 cols	norm/model.html#cols,T	model: cols[T: Model](obj: T; force = false): seq[string]	
-rfCols	norm/model.html#rfCols,T	model: rfCols[T: Model](obj: T): seq[string]	
-joinGroups	norm/model.html#joinGroups,T	model: joinGroups[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]]	
+rfCols	norm/model.html#rfCols,T,seq[string]	model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]	
+joinGroups	norm/model.html#joinGroups,T,seq[string]	model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[\n    tuple[tbl, tAls, lFld, rFld: string]]	

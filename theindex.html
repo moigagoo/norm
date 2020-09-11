@@ -180,6 +180,8 @@ function main() {
 <dt><a name="fCol" href="#fCol"><span>fCol:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: fCol[T: Model](obj: T; fld: string): string" href="norm/model.html#fCol%2CT%2Cstring">model: fCol[T: Model](obj: T; fld: string): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="model: fCol[T: Model](obj: T; fld, tAls: string): string" href="norm/model.html#fCol%2CT%2Cstring%2Cstring">model: fCol[T: Model](obj: T; fld, tAls: string): string</a></li>
           </ul></dd>
 <dt><a name="fromRow" href="#fromRow"><span>fromRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -213,7 +215,9 @@ function main() {
           </ul></dd>
 <dt><a name="joinGroups" href="#joinGroups"><span>joinGroups:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="model: joinGroups[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]]" href="norm/model.html#joinGroups%2CT">model: joinGroups[T: Model](obj: T): seq[tuple[tbl, lFld, rFld: string]]</a></li>
+          data-doc-search-tag="model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[
+    tuple[tbl, tAls, lFld, rFld: string]]" href="norm/model.html#joinGroups%2CT%2Cseq%5Bstring%5D">model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[
+    tuple[tbl, tAls, lFld, rFld: string]]</a></li>
           </ul></dd>
 <dt><a name="Model" href="#Model"><span>Model:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -233,7 +237,7 @@ function main() {
           </ul></dd>
 <dt><a name="rfCols" href="#rfCols"><span>rfCols:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="model: rfCols[T: Model](obj: T): seq[string]" href="norm/model.html#rfCols%2CT">model: rfCols[T: Model](obj: T): seq[string]</a></li>
+          data-doc-search-tag="model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]" href="norm/model.html#rfCols%2CT%2Cseq%5Bstring%5D">model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]</a></li>
           </ul></dd>
 <dt><a name="ro" href="#ro"><span>ro:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -334,7 +338,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-08 14:12:56 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-09-11 07:13:44 UTC</small>
       </div>
     </div>
   </div>
