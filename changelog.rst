@@ -18,7 +18,7 @@ Long story short, the old algorithm would rely on table names with no regard for
 
 The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table. Compare `tests/tmodel.nim <https://github.com/moigagoo/norm/blob/develop/tests/tmodel.nim>`_ before and after the change:
 
-.. code-block: nim
+.. code-block:: nim
 
     # Old way:
     test "Join groups":
