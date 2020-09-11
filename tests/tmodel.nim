@@ -24,7 +24,14 @@ suite "Getting table and columns from Model":
     check person.fCol("name") == """"Person".name"""
     check pet.fCol("species") == """"Pet".species"""
 
-    check person.rfCols == @[""""Person".name""", """"Pet".species""", """"Toy".price""", """"Toy".id""", """"Pet".id""", """"Person".id"""]
+    check person.rfCols == @[
+      """"Person".name""",
+      """"pet".species""",
+      """"pet_favToy".price""",
+      """"pet_favToy".id""",
+      """"pet".id""",
+      """"Person".id"""
+    ]
     check toy.rfCols == @[""""Toy".price""", """"Toy".id"""]
 
   test "Join groups":
@@ -33,4 +40,7 @@ suite "Getting table and columns from Model":
       pet = newPet("cat", toy)
       person = newPerson("Alice", pet)
 
-    check person. joinGroups == @[(""""Pet"""", """"Person".pet""", """"Pet".id"""), (""""Toy"""", """"Pet".favToy""", """"Toy".id""")]
+    check person.joinGroups == @[
+      (""""Pet"""", """"pet"""", """"Person".pet""", """"pet".id"""),
+      (""""Toy"""", """"pet_favToy"""", """"pet".favToy""", """"pet_favToy".id""")
+    ]

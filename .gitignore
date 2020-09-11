@@ -19,6 +19,7 @@ tests/tsqliteenv
 tests/tsqlitetriangle
 tests/tsqlitedb
 tests/tsqlitedbtypes
+tests/tsqliterepeatfks
 
 tests/tpostgresrowutils
 tests/tpostgrestables
@@ -30,3 +31,4 @@ tests/tpostgresenv
 tests/tpostgrestriangle
 tests/tpostgresdb
 tests/tpostgresdbtypes
+tests/tpostgresrepeatfks
