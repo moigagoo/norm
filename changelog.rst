@@ -16,7 +16,37 @@ Changelog
 
 Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
 
-The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table.
+The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table. Compare `tests/tmodel.nim <https://github.com/moigagoo/norm/blob/develop/tests/tmodel.nim>`_ before and after the change:
+
+.. code-block: nim
+
+    # Old way:
+    test "Join groups":
+      let
+        toy = newToy(123.45)
+        pet = newPet("cat", toy)
+        person = newPerson("Alice", pet)
+
+      check person. joinGroups == @[
+        (""""Pet"""", """"Person".pet""", """"Pet".id"""),
+        (""""Toy"""", """"Pet".favToy""", """"Toy".id""")
+      ]
+      # produces the following ``JOIN`` statement:
+      # ``JOIN "Pet" ON "Person".pet = "Pet".id JOIN "Toy" ON "Pet".favToy = "Toy".id``
+
+    # New way:
+    test "Join groups":
+      let
+        toy = newToy(123.45)
+        pet = newPet("cat", toy)
+        person = newPerson("Alice", pet)
+
+      check person.joinGroups == @[
+        (""""Pet"""", """"pet"""", """"Person".pet""", """"pet".id"""),
+        (""""Toy"""", """"pet_favToy"""", """"pet".favToy""", """"pet_favToy".id""")
+      ]
+      # produces the following ``JOIN`` statement:
+      # ``JOIN "Pet" AS "pet" ON "Person".pet = "pet".id JOIN "Toy" AS "pet_favToy" ON "pet".favToy = "pet_favToy".id``
 
 **With the change in the algorithm, the way ``select`` conditions must be composed has changed.** Here's an example from the tests to illustrate this change (`tests/tpostgresrows.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgresrows.nim>`_):
 
