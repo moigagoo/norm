@@ -14,7 +14,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "DB config from environment variables":
+suite "Database manipulation":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
