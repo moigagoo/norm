@@ -78,7 +78,7 @@ func `===`*(a, b: PetPerson): bool =
   a.person === b.person
 
 func `===`*[T: Toy | Pet | Person | PetPerson](a, b: openArray[T]): bool =
-  zip(a, b).allIt(it[0] === it[1])
+  len(a) == len(b) and zip(a, b).allIt(it[0] === it[1])
 
 proc newUser*(): User = User(lastLogin: now())
 
