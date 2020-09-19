@@ -10,7 +10,7 @@ import models
 const dbFile = "test.db"
 
 
-suite "Drop DB defined in environment variables":
+suite "Database manipulation":
   setup:
     removeFile dbFile
 
