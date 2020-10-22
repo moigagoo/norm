@@ -16,3 +16,11 @@ template ro* {.pragma.}
 
   ``id`` field is ``ro`` by default.
   ]##
+
+template fk*(val: typed) {.pragma.}
+  ##[ Mark field as foreign key another type. ``val`` is either a type or a "type.field"
+  expression. If a type is provided, its ``id`` field is referenced.
+  ]##
+
+template unique* {.pragma.}
+  ## Add a ``UNIQUE`` constraint.

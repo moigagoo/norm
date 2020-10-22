@@ -91,6 +91,14 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
+    when obj.dot(fld).hasCustomPragma(unique):
+      colShmParts.add "UNIQUE"
+
+    when obj.dot(fld).hasCustomPragma(fk):
+      let pragVal = obj.dot(fld).getCustomPragmaVal(fk).split(".")
+      fkGroups.add "FOREIGN KEY ($#) REFERENCES $#($#)" % [fld, pragVal[0], pragVal[1]]
+
+
     colGroups.add colShmParts.join(" ")
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
