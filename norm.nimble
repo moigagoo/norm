@@ -12,21 +12,8 @@ skipDirs      = @["tests", "htmldocs"]
 
 requires "nim >= 1.2.0", "ndb >= 0.19.8"
 
-task apidoc, "Generate API docs":
-  --outdir: "htmldocs"
-  --git.url: https://github.com/moigagoo/norm/
-  --git.commit: develop
-  --project
-  --index:on
-
-  setCommand "doc", "src/norm"
-
-task idx, "Generate index":
-  selfExec "buildIndex --out:htmldocs/theindex.html htmldocs"
-
 task docs, "Generate docs":
   rmDir "htmldocs"
-  exec "nimble apidoc"
-  exec "nimble idx"
+  exec "nimble doc --outdir:htmldocs --project --index:on src/norm"
   exec "nim rst2html -o:htmldocs/index.html README.rst"
   cpFile("CNAME", "htmldocs/CNAME")
