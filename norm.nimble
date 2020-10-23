@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.2.0", "ndb >= 0.19.8"
+requires "nim >= 1.4.0", "ndb >= 0.19.8"
 
 task docs, "Generate docs":
   rmDir "htmldocs"
