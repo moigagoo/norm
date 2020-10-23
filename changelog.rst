@@ -88,6 +88,8 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
       check outPersons === inpPersons[0..^2]
 
+-   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
+
 
 2.1.5 (September 8, 2020)
 =========================
