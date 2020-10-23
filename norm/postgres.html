@@ -122,7 +122,12 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">dropDb
+      <ul class="simple nested-toc-section">selectAll
+      <li><a class="reference" href="#selectAll%2C%2Cseq%5BT%5D"
+    title="selectAll[T: Model](dbConn; objs: var seq[T])">selectAll,,seq[T]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">dropDb
       <li><a class="reference" href="#dropDb"
     title="dropDb()">dropDb<span class="attachedType"></span></a></li>
 
@@ -316,6 +321,16 @@ instead of hardcoded table and column names</li>
 
 
 </dd>
+<a id="selectAll,,seq[T]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#selectAll%2C%2Cseq%5BT%5D"><span class="Identifier">selectAll</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+<p>Populate a sequence of <a class="reference external" href="#model">Model</a> instances from DB, fetching all rows in the matching table.</p>
+<p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item.</p>
+<p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
+
+
+</dd>
 <a id="update,,T"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#update%2C%2CT"><span class="Identifier">update</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
 <dd>
@@ -390,7 +405,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:39:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 16:23:06 UTC</small>
       </div>
     </div>
   </div>
