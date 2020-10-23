@@ -103,9 +103,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
   let foreignKeyQuery = sql "PRAGMA foreign_keys = ON"
   dbConn.exec(foreignKeyQuery)
 
-  debug qry
+  when defined(normDebug):
+    debug qry
   dbConn.exec(sql qry)
-
 
 # Row manipulation
 proc insert*[T: Model](dbConn; obj: var T) =
@@ -115,17 +115,18 @@ proc insert*[T: Model](dbConn; obj: var T) =
   if obj.id != 0:
     return
 
+
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
       var subMod = get val.model
       dbConn.insert(subMod)
-
   let
     row = obj.toRow()
     phds = "?".repeat(row.len)
     qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
-  debug "$# <- $#" % [qry, $row]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $row]
   obj.id = dbConn.insertID(sql qry, row).int
 
 proc insert*[T: Model](dbConn; objs: var openArray[T]) =
@@ -151,7 +152,8 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
         "JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
-  debug "$# <- $#" % [qry, $params]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $params]
   let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:
@@ -174,7 +176,8 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
         "JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
-  debug "$# <- $#" % [qry, $params]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $params]
   let rows = dbConn.getAllRows(sql qry, params)
 
   if objs.len > rows.len:
@@ -204,7 +207,8 @@ proc update*[T: Model](dbConn; obj: var T) =
         "$# = ?" %  col
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
-  debug "$# <- $#" % [qry, $row]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $row]
   dbConn.exec(sql qry, row)
 
 proc update*[T: Model](dbConn; objs: var openArray[T]) =
@@ -218,7 +222,8 @@ proc delete*[T: Model](dbConn; obj: var T) =
 
   let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
 
-  debug qry
+  when defined(normDebug):
+    debug qry
   dbConn.exec(sql qry)
 
   obj = nil
@@ -251,15 +256,18 @@ template transaction*(dbConn; body: untyped): untyped =
     rollbackQry = "ROLLBACK"
 
   try:
-    debug beginQry
+    when defined(normDebug):
+      debug beginQry
     dbConn.exec(sql beginQry)
 
     body
 
-    debug commitQry
+    when defined(normDebug):
+      debug commitQry
     dbConn.exec(sql commitQry)
 
   except:
-    debug rollbackQry
+    when defined(normDebug):
+      debug rollbackQry
     dbConn.exec(sql rollbackQry)
     raise
