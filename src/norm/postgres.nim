@@ -148,7 +148,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
   let
     joinStmts = collect(newSeq):
       for grp in obj.joinGroups:
-        "JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
+        "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
   debug "$# <- $#" % [qry, $params]
@@ -171,7 +171,7 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
   let
     joinStmts = collect(newSeq):
       for grp in objs[0].joinGroups:
-        "JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
+        "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
   debug "$# <- $#" % [qry, $params]
