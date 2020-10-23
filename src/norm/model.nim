@@ -68,11 +68,10 @@ func rfCols*[T: Model](obj: T, flds: seq[string] = @[]): seq[string] =
   ## Recursively get fully qualified column names for `Model`_ instance and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
-    if val.isModel:
-      if val.model.isSome:
-        result.add (get val.model).rfCols(flds & fld)
-    else:
-      result.add if len(flds) == 0: obj.fCol(fld) else: obj.fCol(fld, """"$#"""" % flds.join("_"))
+    result.add if len(flds) == 0: obj.fCol(fld) else: obj.fCol(fld, """"$#"""" % flds.join("_"))
+
+    if val.isModel and val.model.isSome:
+      result.add (get val.model).rfCols(flds & fld)
 
 func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls, lFld, rFld: string]] =
   ##[ For each `Model`_ field of `Model`_ instance, get:
