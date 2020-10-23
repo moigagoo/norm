@@ -182,6 +182,16 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
   for i, row in rows:
     objs[i].fromRow(row)
 
+proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
+  ##[ Populate a sequence of `Model`_ instances from DB, fetching all rows in the matching table.
+
+  ``objs`` must have at least one item.
+
+  **Warning:** this is a dangerous operation because you don't control how many rows will be fetched.
+  ]##
+
+  dbConn.select(objs, "1")
+
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.
 
