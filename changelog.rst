@@ -90,6 +90,8 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
 
+-   [r] Require Nim version >= 1.4.0.
+
 -   [r] Update Nim version to 1.4.0 in Dockerfile.
 
 
