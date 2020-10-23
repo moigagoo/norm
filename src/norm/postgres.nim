@@ -102,7 +102,10 @@ proc createTables*[T: Model](dbConn; obj: T) =
       colShmParts.add "UNIQUE"
 
     when obj.dot(fld).hasCustomPragma(fk):
-      fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
+      when val is SomeInteger:
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
+      else:
+        {.error: "Pragma fk must be used on SomeInteger field" .}
 
 
     colGroups.add colShmParts.join(" ")

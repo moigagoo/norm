@@ -78,6 +78,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
     var colShmParts: seq[string]
 
     colShmParts.add obj.col(fld)
+
     colShmParts.add typeof(val).dbType
 
     when val isnot Option:
@@ -91,7 +92,10 @@ proc createTables*[T: Model](dbConn; obj: T) =
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
     when obj.dot(fld).hasCustomPragma(fk):
-      fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
+      when val is SomeInteger:
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
+      else:
+        {.error: "Pragma fk must be used on SomeInteger field" .}
 
     when obj.dot(fld).hasCustomPragma(unique):
       colShmParts.add "UNIQUE"
