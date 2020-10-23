@@ -90,24 +90,27 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
-    when obj.dot(fld).hasCustomPragma(unique):
-      colShmParts.add "UNIQUE"
-
     when obj.dot(fld).hasCustomPragma(fk):
       fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
 
+    when obj.dot(fld).hasCustomPragma(unique):
+      colShmParts.add "UNIQUE"
+
     colGroups.add colShmParts.join(" ")
 
-  let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
+  # Enable foreign key
+  if fkGroups.len > 0:
+    let foreignKeyQuery = sql "PRAGMA foreign_keys = ON"
+    dbConn.exec(foreignKeyQuery)
 
-  let foreignKeyQuery = sql "PRAGMA foreign_keys = ON"
-  dbConn.exec(foreignKeyQuery)
+  let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
   when defined(normDebug):
     debug qry
   dbConn.exec(sql qry)
 
 # Row manipulation
+#
 proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
