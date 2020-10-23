@@ -20,7 +20,7 @@
 <title>norm/model</title>
 <link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
 
-<script type="text/javascript" src="dochack.js"></script>
+<script type="text/javascript" src="../dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="../theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -115,35 +109,59 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#13" id="63">Funcs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#isModel%2CT"
-    title="isModel[T: Model](val: T): bool"><wbr />is<wbr />Model<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#isModel%2COption%5BT%3A+Model%5D"
-    title="isModel[T: Model](val: Option[T]): bool"><wbr />is<wbr />Model<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#isModel%2CT_2"
-    title="isModel[T](val: T): bool"><wbr />is<wbr />Model<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#model%2CT"
-    title="model[T: Model](val: T): Option[T]"><wbr />model<span class="attachedType"></span></a></li>
+      <ul class="simple nested-toc-section">model
+      <li><a class="reference" href="#model%2CT"
+    title="model[T: Model](val: T): Option[T]">model,T<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#model%2COption%5BT%3A+Model%5D"
-    title="model[T: Model](val: Option[T]): Option[T]"><wbr />model<span class="attachedType"></span></a></li>
+    title="model[T: Model](val: Option[T]): Option[T]">model,Option[T: Model]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#model%2CT_2"
-    title="model[T](val: T): Option[Model]"><wbr />model<span class="attachedType">Model</span></a></li>
-  <li><a class="reference" href="#table%2Ctypedesc%5BModel%5D"
-    title="table(T: typedesc[Model]): string"><wbr />table<span class="attachedType">Model</span></a></li>
-  <li><a class="reference" href="#col%2Ctypedesc%5BModel%5D%2Cstring"
-    title="col(T: typedesc[Model]; fld: string): string"><wbr />col<span class="attachedType">Model</span></a></li>
-  <li><a class="reference" href="#col%2CT%2Cstring"
-    title="col[T: Model](obj: T; fld: string): string"><wbr />col<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#fCol%2CT%2Cstring"
-    title="fCol[T: Model](obj: T; fld: string): string"><wbr />f<wbr />Col<span class="attachedType"></span></a></li>
+    title="model[T](val: T): Option[Model]">model,T_2<span class="attachedType">Model</span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">isModel
+      <li><a class="reference" href="#isModel%2CT"
+    title="isModel[T: Model](val: T): bool">isModel,T<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#isModel%2COption%5BT%3A+Model%5D"
+    title="isModel[T: Model](val: Option[T]): bool">isModel,Option[T: Model]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#isModel%2CT_2"
+    title="isModel[T](val: T): bool">isModel,T_2<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">rfCols
+      <li><a class="reference" href="#rfCols%2CT%2Cseq%5Bstring%5D"
+    title="rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]">rfCols,T,seq[string]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">table
+      <li><a class="reference" href="#table%2Ctypedesc%5BModel%5D"
+    title="table(T: typedesc[Model]): string">table,typedesc[Model]<span class="attachedType">Model</span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">cols
+      <li><a class="reference" href="#cols%2CT"
+    title="cols[T: Model](obj: T; force = false): seq[string]">cols,T<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">fCol
+      <li><a class="reference" href="#fCol%2CT%2Cstring"
+    title="fCol[T: Model](obj: T; fld: string): string">fCol,T,string<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#fCol%2CT%2Cstring%2Cstring"
-    title="fCol[T: Model](obj: T; fld, tAls: string): string"><wbr />f<wbr />Col<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#cols%2CT"
-    title="cols[T: Model](obj: T; force = false): seq[string]"><wbr />cols<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#rfCols%2CT%2Cseq%5Bstring%5D"
-    title="rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]"><wbr />rf<wbr />Cols<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#joinGroups%2CT%2Cseq%5Bstring%5D"
+    title="fCol[T: Model](obj: T; fld, tAls: string): string">fCol,T,string,string<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">joinGroups
+      <li><a class="reference" href="#joinGroups%2CT%2Cseq%5Bstring%5D"
     title="joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[
-    tuple[tbl, tAls, lFld, rFld: string]]"><wbr />join<wbr />Groups<span class="attachedType"></span></a></li>
+    tuple[tbl, tAls, lFld, rFld: string]]">joinGroups,T,seq[string]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">col
+      <li><a class="reference" href="#col%2Ctypedesc%5BModel%5D%2Cstring"
+    title="col(T: typedesc[Model]; fld: string): string">col,typedesc[Model],string<span class="attachedType">Model</span></a></li>
+  <li><a class="reference" href="#col%2CT%2Cstring"
+    title="col[T: Model](obj: T; fld: string): string">col,T,string<span class="attachedType"></span></a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -173,7 +191,7 @@ function main() {
 <p><tt class="docutils literal"><span class="pre">id</span></tt> corresponds to row id in DB. <strong>Updated automatically, do not update manually!</strong> </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L10"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L10"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L10" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -189,7 +207,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L19"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L19"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L19" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -200,7 +218,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L21"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L21"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L21" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -211,7 +229,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L23"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L23"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L23" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -222,7 +240,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L25"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L25"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L25" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -233,7 +251,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L27"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L27"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L27" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -244,7 +262,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 This is never called and exists only to please the compiler.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L29"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L29"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L29" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -255,7 +273,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Get table name for <a class="reference external" href="#Model">Model</a>, which is the type name in single quotes.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L34"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L34"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L34" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -266,7 +284,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Get column name for a <a class="reference external" href="#model">Model</a> field, which is just the field name.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L39"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L39"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L39" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -277,7 +295,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L44"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L44"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L44" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -288,7 +306,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Get fully qualified column name with the table name: <tt class="docutils literal"><span class="pre">table.col</span></tt>.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L47"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L47"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L47" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -299,7 +317,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Get fully qualified column name with the alias for the table name: <tt class="docutils literal"><span class="pre">alias.col</span></tt>.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L52"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L52"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L52" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -312,7 +330,7 @@ class="link-seesrc" target="_blank">Source</a>
 <p>If <tt class="docutils literal"><span class="pre">force</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, fields with <a class="reference external" href="pragmas.html#ro.t">ro</a> are included. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L57"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L57"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L57" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -323,7 +341,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Recursively get fully qualified column names for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L67"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L67"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L67" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -340,7 +358,7 @@ For each <a class="reference external" href="#model">Model</a> field of <a class
 <p>Used to construct <tt class="docutils literal"><span class="pre">JOIN</span></tt> statements: <tt class="docutils literal"><span class="pre">JOIN {tbl} AS {tAls} ON {lFld} = {rFld}</span></tt> </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/model.nim#L76"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/model.nim#L76"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/model.nim#L76" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -355,7 +373,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:16:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:28:53 UTC</small>
       </div>
     </div>
   </div>

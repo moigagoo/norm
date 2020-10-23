@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -72,7 +63,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Norm: A Nim ORM</h1>
-    <img src="https://travis-ci.com/moigagoo/norm.svg?branch=develop" alt="Build Status"/><img src="https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png" alt="Nimble"/><p><strong>Norm</strong> is an object-oriented, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.</p>
+    <a class="reference external" href="https://travis-ci.com/moigagoo/norm"><img src="https://travis-ci.com/moigagoo/norm.svg?branch=develop" alt="Build Status"/></a><a class="reference external" href="https://nimble.directory/pkg/norm"><img src="https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png" alt="Nimble"/></a><p><strong>Norm</strong> is an object-oriented, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.</p>
 <ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm">Repo</a><ul class="simple"><li><a class="reference external" href="https://github.com/moigagoo/norm/issues">Issues</a></li>
 <li><a class="reference external" href="https://github.com/moigagoo/norm/pulls">Pull requests</a></li>
 </ul>
@@ -267,7 +258,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:16:12 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:28:54 UTC</small>
       </div>
     </div>
   </div>

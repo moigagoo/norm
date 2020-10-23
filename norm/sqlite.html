@@ -20,7 +20,7 @@
 <title>norm/sqlite</title>
 <link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
 
-<script type="text/javascript" src="dochack.js"></script>
+<script type="text/javascript" src="../dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="../theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -122,31 +116,56 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">dropDb
+      <li><a class="reference" href="#dropDb"
+    title="dropDb()">dropDb<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">getDb
       <li><a class="reference" href="#getDb"
-    title="getDb(): DbConn"><wbr />get<wbr />Db<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dropDb"
-    title="dropDb()"><wbr />drop<wbr />Db<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#createTables%2C%2CT"
-    title="createTables[T: Model](dbConn; obj: T)"><wbr />create<wbr />Tables<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#insert%2C%2CT"
-    title="insert[T: Model](dbConn; obj: var T)"><wbr />insert<span class="attachedType"></span></a></li>
+    title="getDb(): DbConn">getDb<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">insert
+      <li><a class="reference" href="#insert%2C%2CT"
+    title="insert[T: Model](dbConn; obj: var T)">insert,,T<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#insert%2C%2CopenArray%5BT%5D"
-    title="insert[T: Model](dbConn; objs: var openArray[T])"><wbr />insert<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
-    title="select[T: Model](dbConn; obj: var T; cond: string; params: varargs[DbValue, dbValue])"><wbr />select<span class="attachedType"></span></a></li>
+    title="insert[T: Model](dbConn; objs: var openArray[T])">insert,,openArray[T]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">rollback
+      <li><a class="reference" href="#rollback"
+    title="rollback()">rollback<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">delete
+      <li><a class="reference" href="#delete%2C%2CT"
+    title="delete[T: Model](dbConn; obj: var T)">delete,,T<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#delete%2C%2CopenArray%5BT%5D"
+    title="delete[T: Model](dbConn; objs: var openArray[T])">delete,,openArray[T]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">createTables
+      <li><a class="reference" href="#createTables%2C%2CT"
+    title="createTables[T: Model](dbConn; obj: T)">createTables,,T<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">select
+      <li><a class="reference" href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
+    title="select[T: Model](dbConn; obj: var T; cond: string;
+                 params: varargs[DbValue, dbValue])">select,,T,string,varargs[DbValue,dbValue]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
     title="select[T: Model](dbConn; objs: var seq[T]; cond: string;
-                params: varargs[DbValue, dbValue])"><wbr />select<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#update%2C%2CT"
-    title="update[T: Model](dbConn; obj: var T)"><wbr />update<span class="attachedType"></span></a></li>
+                 params: varargs[DbValue, dbValue])">select,,seq[T],string,varargs[DbValue,dbValue]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">update
+      <li><a class="reference" href="#update%2C%2CT"
+    title="update[T: Model](dbConn; obj: var T)">update,,T<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#update%2C%2CopenArray%5BT%5D"
-    title="update[T: Model](dbConn; objs: var openArray[T])"><wbr />update<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#delete%2C%2CT"
-    title="delete[T: Model](dbConn; obj: var T)"><wbr />delete<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#delete%2C%2CopenArray%5BT%5D"
-    title="delete[T: Model](dbConn; objs: var openArray[T])"><wbr />delete<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#rollback"
-    title="rollback()"><wbr />rollback<span class="attachedType"></span></a></li>
+    title="update[T: Model](dbConn; objs: var openArray[T])">update,,openArray[T]<span class="attachedType"></span></a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -191,7 +210,7 @@ function main() {
 <p>Do not raise manually, use <a class="reference external" href="#rollback">rollback</a> proc. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L21"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L21"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L21" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -207,7 +226,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L28"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L28"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L28" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -223,7 +242,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from <tt class="docutils literal"><span class="pre">DB_HOST</span></tt> environment variable.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L33"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L33"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L33" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -234,7 +253,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Remove the DB file defined in environment variable.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L60"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L60"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L60" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -245,7 +264,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Create tables for <a class="reference external" href="#model">Model</a> and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L68"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L68"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L68" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -256,7 +275,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Insert rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L104"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L104"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L104" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -267,14 +286,14 @@ class="link-seesrc" target="_blank">Source</a>
 
 Insert rows for each <a class="reference external" href="#model">Model</a> instance in open array.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L124"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L124"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L124" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="select,,T,string,varargs[DbValue,dbValue]"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                    <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
 <p>Populate a <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields from DB.</p>
@@ -286,21 +305,21 @@ instead of hardcoded table and column names</li>
 </ul>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L130"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L130"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L130" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 <a id="select,,seq[T],string,varargs[DbValue,dbValue]"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                    <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
 <p>Populate a sequence of <a class="reference external" href="#model">Model</a> instances from DB.</p>
 <p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L155"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L155"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L155" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -311,7 +330,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Update rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L185"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L185"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L185" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -322,7 +341,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Update rows for each <a class="reference external" href="#model">Model</a> instance in open array.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L203"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L203"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L203" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -333,7 +352,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Delete rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L209"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L209"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L209" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -344,7 +363,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Delete rows for each <a class="reference external" href="#model">Model</a> instance in open array.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L219"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L219"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L219" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -355,7 +374,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 Rollback transaction by raising <a class="reference external" href="#RollbackError">RollbackError</a>.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L228"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L228"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L228" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -373,7 +392,7 @@ class="link-seesrc" target="_blank">Source</a>
 <p>Creates a <tt class="docutils literal"><span class="pre">DbConn</span></tt> with <a class="reference external" href="#getDb">getDb</a> as <tt class="docutils literal"><span class="pre">db</span></tt> variable, runs your code in a <tt class="docutils literal"><span class="pre">try</span></tt> block, and closes <tt class="docutils literal"><span class="pre">db</span></tt> afterward. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L38"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L38"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L38" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -387,7 +406,7 @@ class="link-seesrc" target="_blank">Source</a>
 <p>To rollback manually, call <a class="reference external" href="#rollback">rollback</a>. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/sqlite.nim#L233"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/sqlite.nim#L233"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/sqlite.nim#L233" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -407,7 +426,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:16:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:28:53 UTC</small>
       </div>
     </div>
   </div>

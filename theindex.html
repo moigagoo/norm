@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -258,16 +249,20 @@ function main() {
 <dt><a name="select" href="#select"><span>select:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="postgres: select[T: Model](dbConn; objs: var seq[T]; cond: string;
-                params: varargs[DbValue, dbValue])" href="norm/postgres.html#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: select[T: Model](dbConn; objs: var seq[T]; cond: string;
-                params: varargs[DbValue, dbValue])</a></li>
+                 params: varargs[DbValue, dbValue])" href="norm/postgres.html#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: select[T: Model](dbConn; objs: var seq[T]; cond: string;
+                 params: varargs[DbValue, dbValue])</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="postgres: select[T: Model](dbConn; obj: var T; cond: string; params: varargs[DbValue, dbValue])" href="norm/postgres.html#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: select[T: Model](dbConn; obj: var T; cond: string; params: varargs[DbValue, dbValue])</a></li>
+          data-doc-search-tag="postgres: select[T: Model](dbConn; obj: var T; cond: string;
+                 params: varargs[DbValue, dbValue])" href="norm/postgres.html#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: select[T: Model](dbConn; obj: var T; cond: string;
+                 params: varargs[DbValue, dbValue])</a></li>
           <li><a class="reference external"
           data-doc-search-tag="sqlite: select[T: Model](dbConn; objs: var seq[T]; cond: string;
-                params: varargs[DbValue, dbValue])" href="norm/sqlite.html#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: select[T: Model](dbConn; objs: var seq[T]; cond: string;
-                params: varargs[DbValue, dbValue])</a></li>
+                 params: varargs[DbValue, dbValue])" href="norm/sqlite.html#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: select[T: Model](dbConn; objs: var seq[T]; cond: string;
+                 params: varargs[DbValue, dbValue])</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="sqlite: select[T: Model](dbConn; obj: var T; cond: string; params: varargs[DbValue, dbValue])" href="norm/sqlite.html#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: select[T: Model](dbConn; obj: var T; cond: string; params: varargs[DbValue, dbValue])</a></li>
+          data-doc-search-tag="sqlite: select[T: Model](dbConn; obj: var T; cond: string;
+                 params: varargs[DbValue, dbValue])" href="norm/sqlite.html#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: select[T: Model](dbConn; obj: var T; cond: string;
+                 params: varargs[DbValue, dbValue])</a></li>
           </ul></dd>
 <dt><a name="table" href="#table"><span>table:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -338,7 +333,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:16:12 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:28:54 UTC</small>
       </div>
     </div>
   </div>

@@ -20,7 +20,7 @@
 <title>norm/private/postgres/rowutils</title>
 <link rel="stylesheet" type="text/css" href="../../../nimdoc.out.css">
 
-<script type="text/javascript" src="dochack.js"></script>
+<script type="text/javascript" src="../../../dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="../../../theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -106,10 +100,16 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">fromRow
       <li><a class="reference" href="#fromRow%2CT%2CRow"
-    title="fromRow[T: Model](obj: var T; row: Row)"><wbr />from<wbr />Row<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#toRow%2CT"
-    title="toRow[T: Model](obj: T; force = false): Row"><wbr />to<wbr />Row<span class="attachedType"></span></a></li>
+    title="fromRow[T: Model](obj: var T; row: Row)">fromRow,T,Row<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">toRow
+      <li><a class="reference" href="#toRow%2CT"
+    title="toRow[T: Model](obj: T; force = false): Row">toRow,T<span class="attachedType"></span></a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -137,7 +137,7 @@ function main() {
 <p>Nested <a class="reference external" href="#model">Model</a> fields are populated from the same <tt class="docutils literal"><span class="pre">ndb.postgres.Row</span></tt> instance. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/rowutils.nim#L44"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/rowutils.nim#L44"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/rowutils.nim#L44" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -150,7 +150,7 @@ class="link-seesrc" target="_blank">Source</a>
 <p>If <tt class="docutils literal"><span class="pre">force</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, fields with <a class="reference external" href="../../pragmas.html#ro.t">ro</a> pragma are not skipped. </p>
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/rowutils.nim#L53"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/rowutils.nim#L53"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/rowutils.nim#L53" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -165,7 +165,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:16:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:28:53 UTC</small>
       </div>
     </div>
   </div>

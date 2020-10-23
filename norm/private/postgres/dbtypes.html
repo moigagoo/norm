@@ -20,7 +20,7 @@
 <title>norm/private/postgres/dbtypes</title>
 <link rel="stylesheet" type="text/css" href="../../../nimdoc.out.css">
 
-<script type="text/javascript" src="dochack.js"></script>
+<script type="text/javascript" src="../../../dochack.js"></script>
 
 <script type="text/javascript">
 function main() {
@@ -47,21 +47,12 @@ function main() {
 
   toggleSwitch.addEventListener('change', switchTheme, false);
 
+  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', "dark");
-    toggleSwitch.checked = true;
-  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    document.documentElement.setAttribute('data-theme', "light");
-    toggleSwitch.checked = false;
-  } else {
-    const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
-    if (currentTheme) {
-      document.documentElement.setAttribute('data-theme', currentTheme);
-
-      if (currentTheme === 'dark') {
-        toggleSwitch.checked = true;
-      }
+    if (currentTheme === 'dark') {
+      toggleSwitch.checked = true;
     }
   }
 }
@@ -83,6 +74,9 @@ function main() {
   </div>
   <div id="global-links">
     <ul class="simple">
+    <li>
+      <a href="../../../theindex.html">Index</a>
+    </li>
     </ul>
   </div>
   <div id="searchInputDiv">
@@ -106,44 +100,56 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">to
       <li><a class="reference" href="#to%2C%2Ctypedesc%5BOption%5BT%5D%5D"
-    title="to[T](dbVal; O: typedesc[Option[T]]): O:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="to[T](dbVal; O: typedesc[Option[T]]): O:type">to,,typedesc[Option[T]]<span class="attachedType"></span></a></li>
+
+  </ul>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#13" id="63">Funcs</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#dbType%2Ctypedesc%5BSomeInteger%5D"
-    title="dbType(T: typedesc[SomeInteger]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5BSomeFloat%5D"
-    title="dbType(T: typedesc[SomeFloat]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5Bstring%5D"
-    title="dbType(T: typedesc[string]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5Bbool%5D"
-    title="dbType(T: typedesc[bool]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5BDateTime%5D"
-    title="dbType(T: typedesc[DateTime]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5BModel%5D"
-    title="dbType(T: typedesc[Model]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5BOption%5BT%5D%5D"
-    title="dbType[T](_: typedesc[Option[T]]): string"><wbr />db<wbr />Type<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#dbValue%2CT"
-    title="dbValue[T: Model](val: T): DbValue"><wbr />db<wbr />Value<span class="attachedType"></span></a></li>
+      <ul class="simple nested-toc-section">dbValue
+      <li><a class="reference" href="#dbValue%2CT"
+    title="dbValue[T: Model](val: T): DbValue">dbValue,T<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#dbValue%2COption%5BT%3A+Model%5D"
-    title="dbValue[T: Model](val: Option[T]): DbValue"><wbr />db<wbr />Value<span class="attachedType"></span></a></li>
-  <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeInteger%5D"
-    title="to(dbVal; T: typedesc[SomeInteger]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="dbValue[T: Model](val: Option[T]): DbValue">dbValue,Option[T: Model]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">to
+      <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeInteger%5D"
+    title="to(dbVal; T: typedesc[SomeInteger]): T:type">to,,typedesc[SomeInteger]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeFloat%5D"
-    title="to(dbVal; T: typedesc[SomeFloat]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="to(dbVal; T: typedesc[SomeFloat]): T:type">to,,typedesc[SomeFloat]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5Bstring%5D"
-    title="to(dbVal; T: typedesc[string]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="to(dbVal; T: typedesc[string]): T:type">to,,typedesc[string]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5Bbool%5D"
-    title="to(dbVal; T: typedesc[bool]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="to(dbVal; T: typedesc[bool]): T:type">to,,typedesc[bool]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BDateTime%5D"
-    title="to(dbVal; T: typedesc[DateTime]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="to(dbVal; T: typedesc[DateTime]): T:type">to,,typedesc[DateTime]<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BModel%5D"
-    title="to(dbVal; T: typedesc[Model]): T:type"><wbr />to<span class="attachedType"></span></a></li>
+    title="to(dbVal; T: typedesc[Model]): T:type">to,,typedesc[Model]<span class="attachedType"></span></a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">dbType
+      <li><a class="reference" href="#dbType%2Ctypedesc%5BSomeInteger%5D"
+    title="dbType(T: typedesc[SomeInteger]): string">dbType,typedesc[SomeInteger]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5BSomeFloat%5D"
+    title="dbType(T: typedesc[SomeFloat]): string">dbType,typedesc[SomeFloat]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5Bstring%5D"
+    title="dbType(T: typedesc[string]): string">dbType,typedesc[string]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5Bbool%5D"
+    title="dbType(T: typedesc[bool]): string">dbType,typedesc[bool]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5BDateTime%5D"
+    title="dbType(T: typedesc[DateTime]): string">dbType,typedesc[DateTime]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5BModel%5D"
+    title="dbType(T: typedesc[Model]): string">dbType,typedesc[Model]<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5BOption%5BT%5D%5D"
+    title="dbType[T](_: typedesc[Option[T]]): string">dbType,typedesc[Option[T]]<span class="attachedType"></span></a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -175,7 +181,7 @@ function main() {
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L65"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L65"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L65" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -191,7 +197,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L20"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L20"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L20" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -202,7 +208,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L22"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L22"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L22" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -213,7 +219,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L24"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L24"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L24" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -224,7 +230,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L26"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L26"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L26" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -235,7 +241,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L28"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L28"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L28" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -246,7 +252,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L30"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L30"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L30" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -257,7 +263,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L32"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L32"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L32" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -268,7 +274,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L37"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L37"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L37" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -279,7 +285,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L39"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L39"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L39" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -290,7 +296,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L50"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L50"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L50" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -301,7 +307,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L52"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L52"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L52" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -312,7 +318,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L54"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L54"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L54" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -323,7 +329,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L56"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L56"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L56" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -334,7 +340,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L58"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L58"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L58" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -345,7 +351,7 @@ class="link-seesrc" target="_blank">Source</a>
 
 This is never called and exists only to please the compiler.
 &nbsp;&nbsp;<a
-href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-2/src/norm/private/postgres/dbtypes.nim#L60"
+href="https :// github.com / moigagoo / norm / --git.commit/tree/version-1-4/src/norm/private/postgres/dbtypes.nim#L60"
 class="link-seesrc" target="_blank">Source</a>
 <a href="https :// github.com / moigagoo / norm / --git.commit/edit/devel/src/norm/private/postgres/dbtypes.nim#L60" class="link-seesrc" target="_blank" >Edit</a>
 
@@ -360,7 +366,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:16:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-23 07:28:53 UTC</small>
       </div>
     </div>
   </div>
