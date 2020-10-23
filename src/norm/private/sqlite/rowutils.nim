@@ -24,7 +24,7 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) 
 
         if row[pos].kind == dvkNull:                ## If we have a ``NULL`` at this point, we return an empty ``Model``:
           when val is Option:                       ## ``val`` is guaranteed to be either ``Model`` or an ``Option[Model]`` at this point,
-            when get(val) is Model:                   ## and the fact that we got a ``NULL`` tells us it's an ``Option[Model]``,
+            when get(val) is Model:                 ## and the fact that we got a ``NULL`` tells us it's an ``Option[Model]``,
               val = none typeof(subMod)             ## so we return a ``none Model``.
 
           inc pos
@@ -36,7 +36,6 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) 
 
     elif not skip:                                  ## If we're dealing with an "orginary" field,
       val = row[pos].to(typeof(val))                ## just convert it.
-
       inc pos
 
     else:
