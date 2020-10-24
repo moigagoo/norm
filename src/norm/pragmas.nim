@@ -1,5 +1,6 @@
 ## Pragmas to customize `Model <model.html#Model>`_ field representation in generated table schemas.
 
+# from model import Model
 
 template pk* {.pragma.}
   ##[ Mark field as primary key.
@@ -18,6 +19,5 @@ template ro* {.pragma.}
   ]##
 
 template fk*(val: typed) {.pragma.}
-  ##[ Mark field as foreign key another type. ``val`` is either a type or a "type.field"
-  expression. If a type is provided, its ``id`` field is referenced.
+  ##[ Mark ``int`` field as foreign key. Foreign keys always references the field ``id`` of ``val``. ``val`` should be a Model.
   ]##

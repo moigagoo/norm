@@ -99,12 +99,18 @@ proc createTables*[T: Model](dbConn; obj: T) =
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
     when obj.dot(fld).hasCustomPragma(fk):
-      const pragVal = $(obj.dot(fld).getCustomPragmaVal(fk))
-      const fkTargetIsModel = isModel(none(typeof(obj.dot(fld).getCustomPragmaVal(fk))))
-      when val is SomeInteger and fkTargetIsModel:
-        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $pragVal]
+      # Check val is int
+      when val is not int:
+        {.error: "Pragma fk must be used on an integer field. " & fld & " is not an integer." .}
       else:
-        {.error: "Pragma fk must be used on SomeInteger field and target a Model." .}
+        # Check pragma value is Model
+        const fkTargetIsModel = (obj.dot(fld).getCustomPragmaVal(fk)) is Model
+        when not fkTargetIsModel:
+          # Const string to output error message
+          const fkTargetName = $(obj.dot(fld).getCustomPragmaVal(fk))
+          {.error: "Pragma fk must reference a Model. " & fkTargetName & " is not a Model.".}
+        else:
+          fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
     colGroups.add colShmParts.join(" ")
 
