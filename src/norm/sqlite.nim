@@ -97,9 +97,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   when defined(normDebug):
     debug qry
-
   dbConn.exec(sql qry)
-
 
 # Row manipulation
 
