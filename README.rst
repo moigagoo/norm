@@ -423,9 +423,9 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
 Debugging SQL Queries
 ---------------------
 
-To enable the logging of SQL queries, define `normDebug` either by compiling with `-d:debugNorm`, or by adding `switch("define", "normDebug")` to config.nims
+To enable the logging of SQL queries, define ``normDebug`` either by compiling with ``-d:debugNorm``, or by adding ``switch("define", "normDebug")`` to config.nims
 
-Once `debugNorm` is defined, simply add a logger on debug level (see https://nim-lang.org/docs/logging.html for more info):
+Once ``debugNorm`` is defined, simply add a logger on debug level (see https://nim-lang.org/docs/logging.html for more info):
 
 .. code-block:: nim
 
