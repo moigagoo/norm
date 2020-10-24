@@ -98,6 +98,12 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
+    when obj.dot(fld).hasCustomPragma(fk):
+      when val is SomeInteger:
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
+      else:
+        {.error: "Pragma fk must be used on SomeInteger field" .}
+
     colGroups.add colShmParts.join(" ")
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
