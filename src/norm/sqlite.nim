@@ -92,10 +92,12 @@ proc createTables*[T: Model](dbConn; obj: T) =
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
     when obj.dot(fld).hasCustomPragma(fk):
-      when val is SomeInteger:
-        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $obj.dot(fld).getCustomPragmaVal(fk)]
+      const pragVal = $(obj.dot(fld).getCustomPragmaVal(fk))
+      const fkTargetIsModel = isModel(none(typeof(obj.dot(fld).getCustomPragmaVal(fk))))
+      when val is SomeInteger and fkTargetIsModel:
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, $pragVal]
       else:
-        {.error: "Pragma fk must be used on SomeInteger field" .}
+        {.error: "Pragma fk must be used on SomeInteger field and target a Model." .}
 
     colGroups.add colShmParts.join(" ")
 
