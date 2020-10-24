@@ -111,6 +111,18 @@ suite "Row CRUD":
 
     check outToys === inpToys[..1]
 
+  test "Get all rows":
+    var
+      inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
+      outToys = @[newToy()]
+
+    for inpToy in inpToys.mitems:
+      dbConn.insert(inpToy)
+
+    dbConn.selectAll(outToys)
+
+    check outToys === inpToys
+
   test "Get rows, no intermediate objects":
     let
       inpToys = @[
