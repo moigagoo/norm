@@ -16,3 +16,5 @@ template ro* {.pragma.}
 
   ``id`` field is ``ro`` by default.
   ]##
+
+template unique* {.pragma.}
