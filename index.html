@@ -79,8 +79,8 @@ function main() {
 <pre class="listing"><span class="Identifier">requires</span> <span class="StringLit">&quot;norm&quot;</span></pre>
 <h1 id="tutorial">Tutorial</h1><p>Before going further, install <a class="reference external" href="https://github.com/inim-repl/INim">inim</a> with nimble:</p>
 <pre class="listing"><span class="Operator">$</span> <span class="Identifier">nimble</span> <span class="Identifier">install</span> <span class="Operator">-</span><span class="Identifier">y</span> <span class="Identifier">inim</span></pre><p>Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use <a class="reference external" href="https://brew.sh/">brew</a>. On Windows, use <a class="reference external" href="https://scoop.sh/">scoop</a>.</p>
-<p>Then, start a new inim session by running <tt class="docutils literal"><span class="pre">inim</span></tt>.</p>
-
+<p>Then, start a new inim session:</p>
+<pre class="listing"><span class="Operator">$</span> <span class="Identifier">inim</span> <span class="Operator">-</span><span class="Identifier">d</span><span class="Punctuation">:</span><span class="Identifier">normDebug</span></pre>
 <h2 id="models">Models</h2><p>A model is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.</p>
 <p>Models can relate to each each with one-to-one, one-to-many, many-to-many relations. For example, a CartItem can have many Discounts, whereas as a single Discount can be applied to many Products.</p>
 <p>Models can also inherit from each other. For example, Customer may inherit from User.</p>
@@ -263,7 +263,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-25 11:02:43 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-25 11:08:30 UTC</small>
       </div>
     </div>
   </div>
