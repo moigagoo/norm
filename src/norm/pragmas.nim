@@ -1,6 +1,5 @@
 ## Pragmas to customize `Model <model.html#Model>`_ field representation in generated table schemas.
 
-# from model import Model
 
 template pk* {.pragma.}
   ##[ Mark field as primary key.
