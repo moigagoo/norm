@@ -241,7 +241,7 @@ function main() {
 <h2 id="debugging-sql-queries">Debugging SQL Queries</h2><p>To enable the logging of SQL queries, define <tt class="docutils literal"><span class="pre">normDebug</span></tt> either by compiling with <tt class="docutils literal"><span class="pre">-d:normDebug</span></tt>, or by adding <tt class="docutils literal"><span class="pre">switch(&quot;define&quot;, &quot;normDebug&quot;)</span></tt> to config.nims</p>
 <p>Once <tt class="docutils literal"><span class="pre">normDebug</span></tt> is defined, simply add a logger on debug level (see <a class="reference external" href="https://nim-lang.org/docs/logging.html">https://nim-lang.org/docs/logging.html</a> for more info):</p>
 <pre class="listing"><span class="Keyword">import</span> <span class="Identifier">logging</span>
-<span class="Keyword">var</span> <span class="Identifier">consoleLog</span> <span class="Operator">=</span> <span class="Identifier">newConsoleLogger</span><span class="Punctuation">(</span><span class="Identifier">levelThreshold</span><span class="Operator">=</span><span class="Identifier">lvlDebug</span><span class="Punctuation">)</span>
+<span class="Keyword">var</span> <span class="Identifier">consoleLog</span> <span class="Operator">=</span> <span class="Identifier">newConsoleLogger</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Identifier">addHandler</span><span class="Punctuation">(</span><span class="Identifier">consoleLog</span><span class="Punctuation">)</span></pre>
 <h1 id="contributing">Contributing</h1><p>Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.</p>
 <ul class="simple"><li>See the <a class="reference external" href="http://github.com/moigagoo/norm/issues">issues on GitHub</a>.</li>
@@ -263,7 +263,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-25 11:01:39 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-25 11:02:43 UTC</small>
       </div>
     </div>
   </div>
