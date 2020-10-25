@@ -18,5 +18,4 @@ template ro* {.pragma.}
   ]##
 
 template unique* {.pragma.}
-##[ Mark field  as unique
-]##
+## Mark field  as unique
