@@ -9,7 +9,7 @@ import models
 
 const dbFile = "test.db"
 
-suite "Table creation":
+suite "Unique constraint":
   proc resetDb =
     removeFile dbFile
     let dbConn = open(dbFile, "", "", "")
@@ -36,7 +36,7 @@ suite "Table creation":
 
     block:
       var alice = newPerson()
-      dbConn.select(alice, "Person.name = ?", "Alice")
+      dbConn.select(alice, "Person.name = $1", "Alice")
       check alice.name == "Alice"
       check alice.id == 1
 

@@ -5,14 +5,13 @@ import norm/[model, postgres]
 
 import models
 
-
 const
   dbHost = "postgres"
   dbUser = "postgres"
   dbPassword = "postgres"
   dbDatabase = "postgres"
 
-suite "Table creation":
+suite "Unique constraint":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -41,7 +40,7 @@ suite "Table creation":
 
     block:
       var alice = newPerson()
-      dbConn.select(alice, "Person.name = ?", "Alice")
+      dbConn.select(alice, "Person.name = $1", "Alice")
       check alice.name == "Alice"
       check alice.id == 1
 
