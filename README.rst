@@ -52,7 +52,11 @@ Before going further, install `inim <https://github.com/inim-repl/INim>`_ with n
 
 Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use `brew <https://brew.sh/>`_. On Windows, use `scoop <https://scoop.sh/>`_.
 
-Then, start a new inim session by running ``inim``.
+Then, start a new inim session:
+
+.. code-block::
+
+    $ inim -d:normDebug
 
 
 Models
