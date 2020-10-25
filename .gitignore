@@ -20,6 +20,7 @@ tests/tsqlitetriangle
 tests/tsqlitedb
 tests/tsqlitedbtypes
 tests/tsqliterepeatfks
+tests/tsqliteunique
 
 tests/tpostgresrowutils
 tests/tpostgrestables
@@ -32,3 +33,4 @@ tests/tpostgrestriangle
 tests/tpostgresdb
 tests/tpostgresdbtypes
 tests/tpostgresrepeatfks
+tests/tpostgresunique
