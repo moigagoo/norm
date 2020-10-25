@@ -88,6 +88,16 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
       check outPersons === inpPersons[0..^2]
 
+-   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
+
+-   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85`_).
+
+-   [r] Require Nim version >= 1.4.0.
+
+-   [r] Update Nim version to 1.4.0 in Dockerfile.
+
+-   [+] Added a define to enable logging
+
 -   [+] Added unique PRAGMA that declare a field as unique.
 
 2.1.5 (September 8, 2020)

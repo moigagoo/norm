@@ -33,7 +33,6 @@ suite "Converting between Model and ndb.postgres.Row":
       fRow: Row = @[?"Alice", ?23, ?true, ?dt, ?person.id]
 
     var mPerson = newPerson(name = "", age = 0, married = none bool)
-
     mPerson.fromRow(fRow)
 
     check person.toRow == row
@@ -67,7 +66,7 @@ suite "Converting between Model and ndb.postgres.Row":
       pet = newPet("cat", toy)
       person = newPerson("Alice", pet)
       row: Row = @[?"Alice", ?pet.id]
-      fRow: Row = @[?"Alice", ?"cat", ?123.45, ?toy.id, ?pet.id, ?person.id]
+      fRow: Row = @[?"Alice", ?pet.id, ?"cat", ?toy.id, ?123.45, ?toy.id, ?pet.id, ?person.id]
 
     var mPerson = newPerson()
 

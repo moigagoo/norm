@@ -26,7 +26,9 @@ suite "Getting table and columns from Model":
 
     check person.rfCols == @[
       """"Person".name""",
+      """"Person".pet""",
       """"pet".species""",
+      """"pet".favToy""",
       """"pet_favToy".price""",
       """"pet_favToy".id""",
       """"pet".id""",
