@@ -420,6 +420,7 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
     ....   var customerBar = newCustomer()
     ....   db.select(customerBar, "User.email = ?", "bar@bar.bar")
 
+
 Debugging SQL Queries
 ---------------------
 
@@ -430,8 +431,9 @@ Once ``normDebug`` is defined, simply add a logger on debug level (see https://n
 .. code-block:: nim
 
   import logging
-  var consoleLog = newConsoleLogger(levelThreshold=lvlDebug)
+  var consoleLog = newConsoleLogger()
   addHandler(consoleLog)
+
 
 Contributing
 ============
