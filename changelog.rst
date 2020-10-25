@@ -97,6 +97,8 @@ The new algorithm adds alias for each joined table. The alias is named after the
 -   [r] Update Nim version to 1.4.0 in Dockerfile.
 
 
+-   [+] Added a define to enable logging
+
 2.1.5 (September 8, 2020)
 =========================
 
