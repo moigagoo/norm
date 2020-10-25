@@ -40,7 +40,7 @@ suite "Unique constraint":
 
     block:
       var alice = newPerson()
-      dbConn.select(alice, "Person.name = $1", "Alice")
+      dbConn.select(alice, "name = $1", "Alice")
       check alice.name == "Alice"
       check alice.id == 1
 
