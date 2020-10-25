@@ -17,6 +17,7 @@ suite "Table creation":
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
     dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    dbConn.createTables(newPerson())
     close dbConn
 
   setup:
