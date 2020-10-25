@@ -12,8 +12,6 @@ Changelog
 2.2.0 (WIP)
 ===========
 
--   [+] Added a define to enable logging
-
 -   [!][f][t] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
 
 Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
@@ -90,6 +88,8 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
       check outPersons === inpPersons[0..^2]
 
+
+-   [+] Added a define to enable logging
 
 2.1.5 (September 8, 2020)
 =========================
