@@ -98,6 +98,8 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [+] Added a define to enable logging
 
+-   [+] Hide logging behind ``normDebug`` compilation flag to improve runtime performance.
+
 -   [+] Added unique PRAGMA that declare a field as unique.
 
 2.1.5 (September 8, 2020)
