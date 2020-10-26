@@ -112,11 +112,6 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
-  # Enable foreign key
-  if fkGroups.len > 0:
-    let foreignKeyQuery = sql "PRAGMA foreign_keys = ON"
-    dbConn.exec(foreignKeyQuery)
-
   when defined(normDebug):
     debug qry
   dbConn.exec(sql qry)

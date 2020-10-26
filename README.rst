@@ -123,6 +123,97 @@ Norm will generate the following table schema:
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
 
+Handle FOREIGN KEY manually
+````````````````````````````
+
+It is possible to declare an **integer field** as a ``FOREIGN KEY`` using ``{.fk: FooModel .}``. The ``FOREIGN KEY`` field will then references the ``id`` field of ``FooModel``.
+
+.. code-block:: nim
+
+  type
+    Product = ref object of Model
+      name : string
+      price : float
+
+    Consumer = ref object of Model
+      email: string
+      productId {.fk: Product.}: int
+
+  proc newProduct(): Product=
+    Product(name: "", price: 0.0)
+
+  proc newConsumer(email: string = "", productId: int = 0): Consumer=
+    Consumer(email: email, productId: productId)
+
+When using the ``fk`` pragma, the ``FOREIGN KEY`` must be handled manually, therefore ``createTables`` needs to be called for both ``Model``
+
+.. code-block:: nim
+
+  let dbName = "st.db"
+  let db = open("", "", "", "")
+  db.createTables(newProduct())
+  db.createTables(newConsumer())
+
+Norm will generate the following table schema:
+
+.. code-block::
+
+  CREATE TABLE IF NOT EXISTS "Product"(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+  CREATE TABLE IF NOT EXISTS "Consumer"(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES "Product"(id))
+
+
+An ``insert`` statement can be done using only the ``id``. This allows for more flexibility at the cost of more manual queries.
+
+.. code-block:: nim
+
+  var cheese = Product(name:"Cheese", price: 13.30)
+  db.insert(cheese)
+  var bob = newConsumer("bob@mail.org", cheese.id)
+  db.insert(bob)
+
+
+On ``insert`` norm will generate the following queries:
+
+.. code-block::
+
+  DEBUG INSERT INTO "Product" (name, price) VALUES(?, ?) <- @['Cheese', 13.3]
+  DEBUG INSERT INTO "Consumer" (email, productId) VALUES(?, ?) <- @['bob@mail.org', 1]
+
+
+On ``insert`` with a **bad id**, Norm will raise a ``DbError`` exception:
+
+.. code-block:: nim
+
+  let badProductId = 133
+  var bob = newConsumer("Paul", badProductId)
+  db.insert(bob)
+
+Output
+
+.. code-block::
+
+  Error: unhandled exception: FOREIGN KEY constraint failed [DbError]
+
+
+Since the ``FOREIGN KEY`` is managed manually, a select query will only return the ``id`` referenced and not the associated fields.
+
+.. code-block:: nim
+
+  var consumer = newConsumer()
+  db.select(consumer, "name = $1", "Bob")
+  doAssert(consumer.name == "Bob")
+  var product = newProduct()
+  db.select(product, "id = $1", consumer.productId)
+  doAssert(product.name == "Cheese")
+  doAssert(product.price == 13.30)
+
+Norm will generate :
+
+.. code-block::
+
+  DEBUG SELECT "Consumer".name, "Consumer".productId, "Consumer".id FROM "Consumer"  WHERE name = $1 <- ['Bob']
+  DEBUG SELECT "Product".name, "Product".price, "Product".id FROM "Product"  WHERE id = $1 <- [1]
+
 
 Create Tables
 -------------
