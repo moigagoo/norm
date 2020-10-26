@@ -14,8 +14,11 @@ Changelog
 
 -   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
 
+
 2.2.0 (October 26, 2020)
 ========================
+
+-   [!][f][t] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
 
 Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
 
@@ -93,13 +96,11 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
 
--   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85>`_)
+-   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85>`_).
 
 -   [r] Require Nim version >= 1.4.0.
 
 -   [r] Update Nim version to 1.4.0 in Dockerfile.
-
--   [!][f][t] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
 
 -   [+] Hide logging behind ``normDebug`` compilation flag to improve runtime performance.
 
@@ -253,7 +254,7 @@ Most noticeable changes are:
 ======================
 
 -   [!] SQLite: Switch to `ndb <https://github.com/xzfc/ndb.nim>`__.
--   [!] SQLite: Non-``Option`` non-custom types are ``NOT NULL`` by default.
+-   [!] SQLite: Non-``Option`` non-custom types are ``NOT NULL`` by default.
 -   [+] SQLite: Support inserting and retreiving ``NULL`` values with ``Option`` types.
 -   [+] SQLite, PostgreSQL: Add ``withCustomDb`` to run DB procs on a non-default DB (i.e. not the one defined in ``db`` declaration).
 -   [r] Replace ``type`` with ``typedesc`` and ``typeof`` where it is not a type definition.
