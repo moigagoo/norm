@@ -5,13 +5,15 @@ import norm/[model, postgres]
 
 import models
 
+
 const
   dbHost = "postgres"
   dbUser = "postgres"
   dbPassword = "postgres"
   dbDatabase = "postgres"
 
-suite "Unique constraint":
+
+suite "Unique fields":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -28,28 +30,12 @@ suite "Unique constraint":
     close dbConn
     resetDb()
 
-  test "Duplicate insert":
-    block:
-      let
-        toy = newToy(123.45)
-        pet = newPet("cat", toy)
+  test "Insert duplicate values":
+    var
+      person1 = newPerson("Alice", newPet("cat", newToy(123.45)))
+      person2 = newPerson("Alice", newPet("dog", newToy(678.90)))
 
-      var person = newPerson("Alice", pet)
-      dbConn.insert(person)
-      check person.id == 1
+    dbConn.insert(person1)
 
-    block:
-      var alice = newPerson()
-      dbConn.select(alice, "name = $1", "Alice")
-      check alice.name == "Alice"
-      check alice.id == 1
-
-    block:
-      let
-        toy = newToy(36.66)
-        pet = newPet("dog", toy)
-
-      var person = newPerson("Alice", pet)
-
-      expect DbError:
-        dbConn.insert(person)
+    expect DbError:
+      dbConn.insert(person2)
