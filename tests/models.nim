@@ -3,6 +3,7 @@ import options
 import times
 
 import norm/model
+import norm/pragmas
 
 
 type
@@ -14,7 +15,7 @@ type
     favToy*: Toy
 
   Person* = ref object of Model
-    name*: string
+    name* {.unique.} : string
     pet*: Option[Pet]
 
   PetPerson* = ref object of Model

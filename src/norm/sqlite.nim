@@ -87,6 +87,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
     when obj.dot(fld).hasCustomPragma(pk):
       colShmParts.add "PRIMARY KEY"
 
+    when obj.dot(fld).hasCustomPragma(unique):
+      colShmParts.add "UNIQUE"
+
     if val.isModel:
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]

@@ -9,8 +9,13 @@ Changelog
 -   [t]—test suite improvement
 
 
-2.2.0 (WIP)
-===========
+2.2.1 (October XX, 2020)
+========================
+
+-   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
+
+2.2.0 (October 26, 2020)
+========================
 
 Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
 
@@ -88,7 +93,7 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
 
--   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85`_).
+-   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85>`_)
 
 -   [r] Require Nim version >= 1.4.0.
 
@@ -98,7 +103,7 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [+] Hide logging behind ``normDebug`` compilation flag to improve runtime performance.
 
--   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
+-   [+] Add ``unique`` pragma to add ``UNIQUE`` constaints to fields.
 
 
 2.1.5 (September 8, 2020)

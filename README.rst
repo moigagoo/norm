@@ -106,6 +106,23 @@ To create relations between models, define fields subtyped from ``Model``:
         name: string
         user: User
 
+To add a ``UNIQUE`` constraint to a field, use ``{.unique.}`` pragma.
+
+``UNIQUE`` constraint ensures all values in a column or a group of columns are distinct from one another.
+
+.. code-block:: nim
+
+    type
+      User = ref object of Model
+        email: string
+        name {.unique.}: string
+
+Norm will generate the following table schema:
+
+.. code-block::
+
+    CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
+
 
 Create Tables
 -------------
