@@ -90,7 +90,7 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
 
--   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85`_).
+-   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85>`_).
 
 -   [r] Require Nim version >= 1.4.0.
 
