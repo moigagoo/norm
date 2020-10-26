@@ -119,6 +119,18 @@ suite "Row CRUD":
 
     check outToys === inpToys[..1]
 
+  test "Get all rows":
+    var
+      inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
+      outToys = @[newToy()]
+
+    for inpToy in inpToys.mitems:
+      dbConn.insert(inpToy)
+
+    dbConn.selectAll(outToys)
+
+    check outToys === inpToys
+
   test "Get rows, no intermediate objects":
     let
       inpToys = @[
@@ -143,7 +155,7 @@ suite "Row CRUD":
     for inpPerson in inpPersons.mitems:
       dbConn.insert(inpPerson)
 
-    dbConn.select(outPersons, """"Toy".price > $1""", 100.00)
+    dbConn.select(outPersons, """"pet_favToy".price > $1""", 100.00)
 
     check outPersons === inpPersons[0..^2]
 
@@ -155,7 +167,7 @@ suite "Row CRUD":
         newPerson("Charlie", newPet("frog", newToy(99.99))).dup(dbConn.insert)
       ]
       outPersons = @[newPerson()].dup:
-        dbConn.select(""""Toy".price > $1""", 100.00)
+        dbConn.select(""""pet_favToy".price > $1""", 100.00)
 
     check outPersons === inpPersons[0..^2]
 

@@ -79,7 +79,7 @@ suite "Converting between Model and ndb.sqlite.Row":
       pet = newPet("cat", toy)
       person = newPerson("Alice", pet)
       row: Row = @[?"Alice", ?pet.id]
-      fRow: Row = @[?"Alice", ?"cat", ?123.45, ?toy.id, ?pet.id, ?person.id]
+      fRow: Row = @[?"Alice", ?pet.id, ?"cat", ?toy.id, ?123.45, ?toy.id, ?pet.id, ?person.id]
 
     var mPerson = newPerson()
 

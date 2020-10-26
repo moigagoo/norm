@@ -1,5 +1,4 @@
 import unittest
-import os
 import strutils
 
 import norm/[model, postgres]
@@ -14,7 +13,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "Database manipulation":
+suite "Unique fields":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -23,26 +22,20 @@ suite "Database manipulation":
 
   setup:
     resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    putEnv(dbHostEnv, dbHost)
-    putEnv(dbUserEnv, dbUser)
-    putEnv(dbPassEnv, dbPassword)
-    putEnv(dbNameEnv, dbDatabase)
-
-    withDb:
-      db.createTables(newToy())
+    dbConn.createTables(newPerson())
 
   teardown:
-    delEnv(dbHostEnv)
-    delEnv(dbUserEnv)
-    delEnv(dbPassEnv)
-    delEnv(dbNameEnv)
-
+    close dbConn
     resetDb()
 
-  test "Drop DB":
-    dropDb()
+  test "Insert duplicate values":
+    var
+      person1 = newPerson("Alice", newPet("cat", newToy(123.45)))
+      person2 = newPerson("Alice", newPet("dog", newToy(678.90)))
+
+    dbConn.insert(person1)
 
     expect DbError:
-      withDb:
-        discard
+      dbConn.insert(person2)

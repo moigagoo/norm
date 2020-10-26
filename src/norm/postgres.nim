@@ -94,6 +94,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
       when val isnot Option:
         colShmParts.add "NOT NULL"
 
+    when obj.dot(fld).hasCustomPragma(unique):
+      colShmParts.add "UNIQUE"
+
     if val.isModel:
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
@@ -102,7 +105,8 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
-  debug qry
+  when defined(normDebug):
+    debug qry
   dbConn.exec(sql qry)
 
 
@@ -125,7 +129,8 @@ proc insert*[T: Model](dbConn; obj: var T) =
     phds = collect(newSeq, for i, _ in row: "$" & $(i + 1))
     qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
-  debug "$# <- $#" % [qry, $row]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $row]
   obj.id = dbConn.insertID(sql qry, row).int
 
 proc insert*[T: Model](dbConn; objs: var openArray[T]) =
@@ -148,10 +153,11 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
   let
     joinStmts = collect(newSeq):
       for grp in obj.joinGroups:
-        "JOIN $# ON $# = $#" % [grp.tbl, grp.lFld, grp.rFld]
+        "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
-  debug "$# <- $#" % [qry, $params]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $params]
   let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:
@@ -171,10 +177,11 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
   let
     joinStmts = collect(newSeq):
       for grp in objs[0].joinGroups:
-        "JOIN $# ON $# = $#" % [grp.tbl, grp.lFld, grp.rFld]
+        "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
-  debug "$# <- $#" % [qry, $params]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $params]
   let rows = dbConn.getAllRows(sql qry, params)
 
   if objs.len > rows.len:
@@ -188,6 +195,16 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
 
   for i, row in rows:
     objs[i].fromRow(row)
+
+proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
+  ##[ Populate a sequence of `Model`_ instances from DB, fetching all rows in the matching table.
+
+  ``objs`` must have at least one item.
+
+  **Warning:** this is a dangerous operation because you don't control how many rows will be fetched.
+  ]##
+
+  dbConn.select(objs, "TRUE")
 
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.
@@ -204,7 +221,8 @@ proc update*[T: Model](dbConn; obj: var T) =
         "$# = $$$#" %  [col, $(i + 1)]
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
-  debug "$# <- $#" % [qry, $row]
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $row]
   dbConn.exec(sql qry, row)
 
 proc update*[T: Model](dbConn; objs: var openArray[T]) =
@@ -218,7 +236,8 @@ proc delete*[T: Model](dbConn; obj: var T) =
 
   let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
 
-  debug qry
+  when defined(normDebug):
+    debug qry
   dbConn.exec(sql qry)
 
   obj = nil
@@ -251,15 +270,18 @@ template transaction*(dbConn; body: untyped): untyped =
     rollbackQry = "ROLLBACK"
 
   try:
-    debug beginQry
+    when defined(normDebug):
+      debug beginQry
     dbConn.exec(sql beginQry)
 
     body
 
-    debug commitQry
+    when defined(normDebug):
+      debug commitQry
     dbConn.exec(sql commitQry)
 
   except:
-    debug rollbackQry
+    when defined(normDebug):
+      debug rollbackQry
     dbConn.exec(sql rollbackQry)
     raise

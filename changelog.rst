@@ -9,6 +9,98 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.2.0 (October 26, 2020)
+========================
+
+-   [!][f][t] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
+
+Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the ``JOIN`` statement would make no difference between them, which led to invalid selections (see `#82 <https://github.com/moigagoo/norm/issues/82>`_).
+
+The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table. Compare `tests/tmodel.nim <https://github.com/moigagoo/norm/blob/develop/tests/tmodel.nim>`_ before and after the change:
+
+.. code-block:: nim
+
+    # Old way:
+    test "Join groups":
+      let
+        toy = newToy(123.45)
+        pet = newPet("cat", toy)
+        person = newPerson("Alice", pet)
+
+      check person. joinGroups == @[
+        (""""Pet"""", """"Person".pet""", """"Pet".id"""),
+        (""""Toy"""", """"Pet".favToy""", """"Toy".id""")
+      ]
+      # produces the following ``JOIN`` statement:
+      # ``JOIN "Pet" ON "Person".pet = "Pet".id JOIN "Toy" ON "Pet".favToy = "Toy".id``
+
+    # New way:
+    test "Join groups":
+      let
+        toy = newToy(123.45)
+        pet = newPet("cat", toy)
+        person = newPerson("Alice", pet)
+
+      check person.joinGroups == @[
+        (""""Pet"""", """"pet"""", """"Person".pet""", """"pet".id"""),
+        (""""Toy"""", """"pet_favToy"""", """"pet".favToy""", """"pet_favToy".id""")
+      ]
+      # produces the following ``JOIN`` statement:
+      # ``JOIN "Pet" AS "pet" ON "Person".pet = "pet".id JOIN "Toy" AS "pet_favToy" ON "pet".favToy = "pet_favToy".id``
+
+**With the change in the algorithm, the way ``select`` conditions must be composed has changed.** Here's an example from the tests to illustrate this change (`tests/tpostgresrows.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgresrows.nim>`_):
+
+.. code-block:: nim
+
+    # Old way:
+    test "Get rows, nested models":
+      var
+        inpPersons = @[
+          newPerson("Alice", newPet("cat", newToy(123.45))),
+          newPerson("Bob", newPet("dog", newToy(456.78))),
+          newPerson("Charlie", newPet("frog", newToy(99.99))),
+        ]
+        outPersons = @[newPerson()]
+
+      for inpPerson in inpPersons.mitems:
+        dbConn.insert(inpPerson)
+
+      # We're querying by ``"Toy".price`` as if it weren't ``favToy`` field of ``pet`` field of ``Person`` model:
+      dbConn.select(outPersons, """"Toy".price > $1""", 100.00)
+
+      check outPersons === inpPersons[0..^2]
+
+    # New way:
+    test "Get rows, nested models":
+      var
+        inpPersons = @[
+          newPerson("Alice", newPet("cat", newToy(123.45))),
+          newPerson("Bob", newPet("dog", newToy(456.78))),
+          newPerson("Charlie", newPet("frog", newToy(99.99))),
+        ]
+        outPersons = @[newPerson()]
+
+      for inpPerson in inpPersons.mitems:
+        dbConn.insert(inpPerson)
+
+      # Querying by ``"pet_favToy".price`` to indicate that we want to match specifically by ``Person.pet.favToy``:
+      dbConn.select(outPersons, """"pet_favToy".price > $1""", 100.00)
+
+      check outPersons === inpPersons[0..^2]
+
+-   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
+
+-   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85`_).
+
+-   [r] Require Nim version >= 1.4.0.
+
+-   [r] Update Nim version to 1.4.0 in Dockerfile.
+
+-   [+] Hide logging behind ``normDebug`` compilation flag to improve runtime performance.
+
+-   [+] Add ``unique`` pragma to add ``UNIQUE`` constaints to fields.
+
+
 2.1.5 (September 8, 2020)
 =========================
 
@@ -72,13 +164,13 @@ Most noticeable changes are:
 1.1.3 (May 11, 2020)
 ====================
 
--   [f] Fix `#69 <https://github.com/moigagoo/norm/issues/69>`__: `table` pragma is now respected as it should despite being deprecated.
+-   [f] Fix `#69 <https://github.com/moigagoo/norm/issues/69>`_: `table` pragma is now respected as it should despite being deprecated.
 
 
 1.1.2 (March 13, 2020)
 ======================
 
--   [f] Fix `#63 <https://github.com/moigagoo/norm/issues/63>`__: foreign key boilerplate code is now correctly injected into exported type definitions.
+-   [f] Fix `#63 <https://github.com/moigagoo/norm/issues/63>`_: foreign key boilerplate code is now correctly injected into exported type definitions.
 
 
 1.1.1 (March 13, 2020)
@@ -86,7 +178,7 @@ Most noticeable changes are:
 
 -   [+] Add ``insertId`` proc that takes an immutable object and inserts it as a record to the DB. The inserted record ID is returned. The object ``id`` field is **not** updated.
 
--   [+] Automatically generate foreign key boilerplate for models defined under the same ``type`` section. See examples in `tests/tpostgres.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim>`__ and `tests/tsqlite.nim <https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim>`__.
+-   [+] Automatically generate foreign key boilerplate for models defined under the same ``type`` section. See examples in `tests/tpostgres.nim <https://github.com/moigagoo/norm/blob/develop/tests/tpostgres.nim>`_ and `tests/tsqlite.nim <https://github.com/moigagoo/norm/blob/develop/tests/tsqlite.nim>`_.
 
 
 1.1.0 (January 27, 2020)
@@ -112,14 +204,14 @@ Most noticeable changes are:
 1.0.17 (September 12, 2019)
 ===========================
 
--   [f] Fixed table schema generation for ``Positive`` and ``Natural`` types: they used to be stored as ``TEXT``, now they are stored as ``INTEGER``. Also, fixed `#28 <https://github.com/moigagoo/norm/issues/28>`__.
+-   [f] Fixed table schema generation for ``Positive`` and ``Natural`` types: they used to be stored as ``TEXT``, now they are stored as ``INTEGER``. Also, fixed `#28 <https://github.com/moigagoo/norm/issues/28>`_.
 
 
 1.0.16 (September 11, 2019)
 ===========================
 
--   [f] Added missing ``strutils`` export to eliminate ``Error: undeclared identifier: '%'`` and fix `#27 <https://github.com/moigagoo/norm/issues/27>`__.
--   [r] ``genTableSchema`` now returns ``SqlQuery`` instead of ``string`` to be in line with the other ``gen*`` procs.
+-   [f] Added missing ``strutils`` export to eliminate ``Error: undeclared identifier: '%'`` and fix `#27 <https://github.com/moigagoo/norm/issues/27>`_.
+-   [r] ``genTableSchema`` now returns ``SqlQuery`` instead of ``string`` to be in line with the other ``gen*`` procs.
 
 
 1.0.15 (September 06, 2019)
