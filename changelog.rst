@@ -9,8 +9,8 @@ Changelog
 -   [t]—test suite improvement
 
 
-2.2.0 (WIP)
-===========
+2.2.0 (October 26, 2020)
+========================
 
 -   [!][f][t] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
 
