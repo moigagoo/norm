@@ -52,7 +52,11 @@ Before going further, install `inim <https://github.com/inim-repl/INim>`_ with n
 
 Also, make sure you have SQLite installed. On most Linux distributions, it should be preinstalled. To install SQLite in macOS, use `brew <https://brew.sh/>`_. On Windows, use `scoop <https://scoop.sh/>`_.
 
-Then, start a new inim session by running ``inim``.
+Then, start a new inim session:
+
+.. code-block::
+
+    $ inim -d:normDebug
 
 
 Models
@@ -419,6 +423,20 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
     nim> withDb:
     ....   var customerBar = newCustomer()
     ....   db.select(customerBar, "User.email = ?", "bar@bar.bar")
+
+
+Debugging SQL Queries
+---------------------
+
+To enable the logging of SQL queries, define ``normDebug`` either by compiling with ``-d:normDebug``, or by adding ``switch("define", "normDebug")`` to config.nims
+
+Once ``normDebug`` is defined, simply add a logger on debug level (see https://nim-lang.org/docs/logging.html for more info):
+
+.. code-block:: nim
+
+  import logging
+  var consoleLog = newConsoleLogger()
+  addHandler(consoleLog)
 
 
 Contributing
