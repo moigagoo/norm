@@ -96,6 +96,10 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [!][f][t] The way ``JOIN`` statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its ``Model`` fields or their ``Model`` fields.
 
+-   [+] Hide logging behind ``normDebug`` compilation flag to improve runtime performance.
+
+-   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
+
 
 2.1.5 (September 8, 2020)
 =========================
