@@ -106,8 +106,9 @@ To create relations between models, define fields subtyped from ``Model``:
         name: string
         user: User
 
-To declare add a UNIQUE constraint to a field, use the `{.unique.}` pragma.
-A UNIQUE constraint ensures all values in a column or a group of columns are distinct from one another or unique.
+To add a ``UNIQUE`` constraint to a field, use ``{.unique.}`` pragma.
+
+``UNIQUE`` constraint ensures all values in a column or a group of columns are distinct from one another.
 
 .. code-block:: nim
 
@@ -115,7 +116,6 @@ A UNIQUE constraint ensures all values in a column or a group of columns are dis
       User = ref object of Model
         email: string
         name {.unique.}: string
-
 
 Norm will generate the following table schema:
 
