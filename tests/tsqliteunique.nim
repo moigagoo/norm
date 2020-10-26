@@ -12,19 +12,16 @@ const dbFile = "test.db"
 
 
 suite "Unique constraint":
-  proc resetDb =
-    removeFile dbFile
-    let dbConn = open(dbFile, "", "", "")
-    dbConn.createTables(newPerson())
-    close dbConn
-
   setup:
-    resetDb()
+    removeFile dbFile
+
     let dbConn = open(dbFile, "", "", "")
+
+    dbConn.createTables(newPerson())
 
   teardown:
     close dbConn
-    resetDb()
+    removeFile dbFile
 
   test "Insert duplicate values":
     var
