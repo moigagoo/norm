@@ -12,17 +12,21 @@ DEBUG SELECT "Bar".foo, "foo".a, "foo".b, "foo".id, "Bar".baz, "baz".value, "baz
 '''
 """
 
-import os
+import strutils
 import unittest
 
 import norm/model
-import norm/sqlite
+import norm/postgres
 
 import logging
 var consoleLog = newConsoleLogger()
 addHandler(consoleLog)
 
-const dbFile = "tsqlitefkmodel.db"
+const
+  dbHost = "postgres"
+  dbUser = "postgres"
+  dbPassword = "postgres"
+  dbDatabase = "postgres"
 
 type
   Foo = ref object of Model
@@ -46,14 +50,19 @@ proc newBar(): Bar=
   Bar(foo: newFoo(), baz: newBaz())
 
 suite "Foreign Key: Nested Model":
-  setup:
-    removeFile dbFile
+  proc resetDb =
+    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
+    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    close dbConn
 
-    let dbConn = open(dbFile, "", "", "")
+  setup:
+    resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
   teardown:
     close dbConn
-    removeFile dbFile
+    resetDb()
 
   test "Create, Insert, Select with FK and Nested Models":
     block: # Create table

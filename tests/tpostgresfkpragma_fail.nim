@@ -4,14 +4,18 @@ errormsg : "Pragma fk must be used on an integer field. aaa is not an integer."
 file: "sqlite.nim"
 """
 
-import os
+import strutils
 import unittest
 
 import norm/model
 import norm/pragmas
-import norm/sqlite
+import norm/postgres
 
-const dbFile = "tfkfail.db"
+const
+  dbHost = "postgres"
+  dbUser = "postgres"
+  dbPassword = "postgres"
+  dbDatabase = "postgres"
 
 type
   Fooz = object
@@ -40,14 +44,19 @@ proc newBar(): Bar=
   Bar(aaa: 0.1, bbb: newFoo(), ccc: newBaz())
 
 suite "FK Pragma: wrong field":
-  setup:
-    removeFile dbFile
+  proc resetDb =
+    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
+    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    close dbConn
 
-    let dbConn = open(dbFile, "", "", "")
+  setup:
+    resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
   teardown:
     close dbConn
-    removeFile dbFile
+    resetDb()
 
   test "Create bad table":
     # When using testament "testing" is defined

@@ -42,3 +42,8 @@ tests/tpostgresdb
 tests/tpostgresdbtypes
 tests/tpostgresrepeatfks
 tests/tpostgresunique
+
+tests/tpostgresfkmodel
+tests/tpostgresfkpragma
+tests/tpostgresfkpragma_fail
+tests/tpostgresfkpragma_fail2

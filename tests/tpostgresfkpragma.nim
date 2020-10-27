@@ -11,18 +11,22 @@ DEBUG SELECT "Bar".fooId, "Bar".id FROM "Bar"  WHERE "Bar".fooId = $1 <- [1]
 '''
 """
 
-import os
+import strutils
 import unittest
 
 import norm/model
 import norm/pragmas
-import norm/sqlite
+import norm/postgres
 
 import logging
 var consoleLog = newConsoleLogger()
 addHandler(consoleLog)
 
-const dbFile = "tsqlitefkpragma.db"
+const
+  dbHost = "postgres"
+  dbUser = "postgres"
+  dbPassword = "postgres"
+  dbDatabase = "postgres"
 
 type
   Foo = ref object of Model
@@ -40,13 +44,19 @@ proc newBar(): Bar=
 
 
 suite "FK Pragma: Query":
+  proc resetDb =
+    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
+    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    close dbConn
+
   setup:
-    removeFile dbFile
-    let dbConn = open(dbFile, "", "", "")
+    resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
   teardown:
     close dbConn
-    removeFile dbFile
+    resetDb()
 
   test "Create, Insert, Select with FK and Nested Models":
     block: # Create table

@@ -4,14 +4,18 @@ errormsg: "Pragma fk must reference a Model. Fooz is not a Model."
 file: "sqlite.nim"
 """
 
-import os
+import strutils
 import unittest
 
 import norm/model
 import norm/pragmas
-import norm/sqlite
+import norm/postgres
 
-const dbFile = "tfkfail2.db"
+const
+  dbHost = "postgres"
+  dbUser = "postgres"
+  dbPassword = "postgres"
+  dbDatabase = "postgres"
 
 type
   Fooz = object
@@ -41,14 +45,19 @@ proc newBar(): Bar=
 
 
 suite "FK Pragma: not Model":
-  setup:
-    removeFile dbFile
+  proc resetDb =
+    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
+    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    close dbConn
 
-    let dbConn = open(dbFile, "", "", "")
+  setup:
+    resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
   teardown:
     close dbConn
-    removeFile dbFile
+    resetDb()
 
   test "Create bad table":
     # When using testament "testing" is defined
