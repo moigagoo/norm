@@ -19,9 +19,9 @@ import norm/model
 import norm/pragmas
 import norm/sqlite
 
-import logging
-var consoleLog = newConsoleLogger()
-addHandler(consoleLog)
+# import logging
+# var consoleLog = newConsoleLogger()
+# addHandler(consoleLog)
 
 const dbFile = "tsqlitefkpragma.db"
 
@@ -39,10 +39,10 @@ proc newFoo(): Foo=
 proc newBar(): Bar=
   Bar(fooId: 0)
 
+
 suite "FK Pragma: Query":
   setup:
     removeFile dbFile
-
     let dbConn = open(dbFile, "", "", "")
 
   teardown:
@@ -58,17 +58,21 @@ suite "FK Pragma: Query":
       var foo : Foo = Foo(a: 11, b: 12.36)
       dbConn.insert(foo)
       doAssert foo.id == 1
+      check foo.id == 1
 
       var bar : Bar = Bar(fooId: foo.id)
       dbConn.insert(bar)
       doAssert bar.id == 1
+      check bar.id == 1
 
     block: # select
       var foo = newFoo()
       dbConn.select(foo, "Foo.a = ?", 11)
-      doAssert foo.id == 1
+      check foo.id == 1
 
       var bar = newBar()
       dbConn.select(bar, "Bar.fooId = ?", foo.id)
       doAssert bar.id == 1
       doAssert bar.fooId == foo.id
+      check bar.id == 1
+      check bar.fooId == foo.id

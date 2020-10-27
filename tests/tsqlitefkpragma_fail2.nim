@@ -51,4 +51,5 @@ suite "FK Pragma: not Model":
     removeFile dbFile
 
   test "Create bad table":
-    dbConn.createTables(newBar())
+    skip()
+    # dbConn.createTables(newBar())

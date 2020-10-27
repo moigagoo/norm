@@ -66,12 +66,18 @@ suite "Foreign Key: Nested Model":
       var bar : Bar = Bar(foo: foo, baz: baz)
       dbConn.insert(bar)
       doAssert bar.id == 1
+      check bar.id == 1
 
     block: # select
       var bar = newBar()
       dbConn.select(bar, "Bar.id = ?", 1)
       doAssert bar.id == 1
+      check bar.id == 1
 
       doAssert bar.foo.a == 11
       doAssert bar.foo.b == 12.36
       doAssert bar.baz.value == 36.36
+
+      check bar.foo.a == 11
+      check bar.foo.b == 12.36
+      check bar.baz.value == 36.36
