@@ -7,6 +7,9 @@
 *.idx
 htmldocs
 
+nimcache/
+testresults/
+
 tests/tmodel
 
 tests/tsqliterowutils
@@ -21,6 +24,11 @@ tests/tsqlitedb
 tests/tsqlitedbtypes
 tests/tsqliterepeatfks
 tests/tsqliteunique
+
+tests/tsqlitefkpragma
+tests/tsqlitefkpragma_fail
+tests/tsqlitefkpragma_fail2
+tests/tsqlitefkmodel
 
 tests/tpostgresrowutils
 tests/tpostgrestables

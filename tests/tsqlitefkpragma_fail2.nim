@@ -1,15 +1,17 @@
 discard """
-  action: "compile"
-  errormsg: "Pragma fk must reference a Model. Fooz is not a Model."
-  file: "sqlite.nim"
+action: "compile"
+errormsg: "Pragma fk must reference a Model. Fooz is not a Model."
+file: "sqlite.nim"
 """
 
 import os
+import unittest
+
 import norm/model
 import norm/pragmas
 import norm/sqlite
 
-const dbName = "tfkfail2.db"
+const dbFile = "tfkfail2.db"
 
 type
   Fooz = object
@@ -38,10 +40,15 @@ proc newBar(): Bar=
   Bar(aaa: 0, bbb: newFoo(), ccc: newBaz())
 
 
-when isMainModule:
-  discard tryRemoveFile(dbName)
-  let db = open(dbName, "", "", "")
-  db.exec(sql"DROP TABLE IF EXISTS Foo")
-  db.exec(sql"DROP TABLE IF EXISTS Bar")
-  db.exec(sql"DROP TABLE IF EXISTS Baz")
-  db.createTables(newBar())
+suite "FK Pragma: not Model":
+  setup:
+    removeFile dbFile
+
+    let dbConn = open(dbFile, "", "", "")
+
+  teardown:
+    close dbConn
+    removeFile dbFile
+
+  test "Create bad table":
+    dbConn.createTables(newBar())

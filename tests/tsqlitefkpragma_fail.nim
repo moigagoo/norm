@@ -1,19 +1,17 @@
 discard """
-  action: "compile"
-  errormsg : "Pragma fk must be used on an integer field. aaa is not an integer."
-  file: "sqlite.nim"
+action: "compile"
+errormsg : "Pragma fk must be used on an integer field. aaa is not an integer."
+file: "sqlite.nim"
 """
 
-import macros
-import strutils
-import options
 import os
+import unittest
 
 import norm/model
 import norm/pragmas
 import norm/sqlite
 
-const dbName = "tfkfail.db"
+const dbFile = "tfkfail.db"
 
 type
   Fooz = object
@@ -41,10 +39,15 @@ proc newBaz(): Baz=
 proc newBar(): Bar=
   Bar(aaa: 0.1, bbb: newFoo(), ccc: newBaz())
 
-when isMainModule:
-  discard tryRemoveFile(dbName)
-  let db = open(dbName, "", "", "")
-  db.exec(sql"DROP TABLE IF EXISTS Foo")
-  db.exec(sql"DROP TABLE IF EXISTS Bar")
-  db.exec(sql"DROP TABLE IF EXISTS Baz")
-  db.createTables(newBar())
+suite "FK Pragma: wrong field":
+  setup:
+    removeFile dbFile
+
+    let dbConn = open(dbFile, "", "", "")
+
+  teardown:
+    close dbConn
+    removeFile dbFile
+
+  test "Create bad table":
+    dbConn.createTables(newBar())
