@@ -49,13 +49,14 @@ suite "Foreign Key: Nested Model":
   setup:
     removeFile dbFile
     let dbConn = open(dbFile, "", "", "")
-    dbConn.createTables(newBar())
 
   teardown:
     close dbConn
     removeFile dbFile
 
   test "Insert & select with FK with Nested Models":
+    dbConn.createTables(newBar())
+
     var
       inputfoo = Foo(a: 11, b: 12.36)
       inputbaz = Baz(value: 36.36)

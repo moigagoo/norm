@@ -59,6 +59,7 @@ suite "Foreign Key: Nested Model":
   setup:
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
+    dbConn.createTables(newBar())
 
   teardown:
     close dbConn
