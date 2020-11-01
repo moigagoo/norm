@@ -103,7 +103,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     when obj.dot(fld).hasCustomPragma(fk):
       # Check val is int
-      when val isnot int:
+      when val isnot SomeInteger:
         {.fatal: "Pragma fk must be used on an integer field. " & fld & " is not an integer." .}
       else:
         # Check pragma value is Model
