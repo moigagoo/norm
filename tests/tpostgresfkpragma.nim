@@ -53,35 +53,31 @@ suite "FK Pragma: Query":
   setup:
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
+    dbConn.createTables(newFoo())
+    dbConn.createTables(newBar())
 
   teardown:
     close dbConn
     resetDb()
 
-  test "Create, Insert, Select with FK and Nested Models":
-    block: # Create table
-      dbConn.createTables(newFoo())
-      dbConn.createTables(newBar())
+  test "Insert, Select with FK Pragma":
+    var inputfoo = Foo(a: 11, b: 12.36)
+    dbConn.insert(inputfoo)
+    doAssert inputfoo.id == 1
+    check inputfoo.id == 1
 
-    block: # Insert
-      var foo : Foo = Foo(a: 11, b: 12.36)
-      dbConn.insert(foo)
-      doAssert foo.id == 1
-      check foo.id == 1
+    var inputbar = Bar(fooId: inputfoo.id)
+    dbConn.insert(inputbar)
+    doAssert inputbar.id == 1
+    check inputbar.id == 1
 
-      var bar : Bar = Bar(fooId: foo.id)
-      dbConn.insert(bar)
-      doAssert bar.id == 1
-      check bar.id == 1
+    var foo = newFoo()
+    dbConn.select(foo, """"Foo".a = $1""", 11)
+    check foo.id == 1
 
-    block: # select
-      var foo = newFoo()
-      dbConn.select(foo, """"Foo".a = $1""", 11)
-      check foo.id == 1
-
-      var bar = newBar()
-      dbConn.select(bar, """"Bar".fooId = $1""", foo.id)
-      doAssert bar.id == 1
-      doAssert bar.fooId == foo.id
-      check bar.id == 1
-      check bar.fooId == foo.id
+    var bar = newBar()
+    dbConn.select(bar, """"Bar".fooId = $1""", foo.id)
+    doAssert bar.id == 1
+    doAssert bar.fooId == foo.id
+    check bar.id == 1
+    check bar.fooId == foo.id
