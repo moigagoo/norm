@@ -441,10 +441,10 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
     ....   db.select(customerBar, "User.email = ?", "bar@bar.bar")
 
 
-Handle FOREIGN KEY manually
+Manual FOREIGN KEY handling
 ---------------------------
 
-It is possible to declare an **integer field** as a ``FOREIGN KEY`` using ``{.fk: FooModel .}``. The ``FOREIGN KEY`` field will then references the ``id`` field of ``FooModel``.
+It is possible to declare an **integer field** (``SomeInteger``) as a ``FOREIGN KEY`` using ``{.fk: FooModel .}`` pragma. The ``FOREIGN KEY`` field will then references the ``id`` field of ``FooModel``.
 
 .. code-block:: nim
 
@@ -490,7 +490,7 @@ An ``insert`` statement can be done using only the ``id``. This allows for more 
   db.insert(bob)
 
 
-On ``insert`` norm will generate the following queries:
+On ``insert``, norm will generate the following queries :
 
 .. code-block::
 
@@ -498,7 +498,7 @@ On ``insert`` norm will generate the following queries:
   DEBUG INSERT INTO "Consumer" (email, productId) VALUES(?, ?) <- @['bob@mail.org', 1]
 
 
-On ``insert`` with a **bad id**, Norm will raise a ``DbError`` exception:
+On ``insert`` with a **bad id**, Norm will raise a ``DbError`` exception :
 
 .. code-block:: nim
 
@@ -506,7 +506,7 @@ On ``insert`` with a **bad id**, Norm will raise a ``DbError`` exception:
   var bob = newConsumer("Paul", badProductId)
   db.insert(bob)
 
-Output
+Output :
 
 .. code-block::
 
@@ -525,7 +525,7 @@ Since the ``FOREIGN KEY`` is managed manually, a select query will only return t
   doAssert(product.name == "Cheese")
   doAssert(product.price == 13.30)
 
-Norm will generate :
+Norm will generate the following ``select query``:
 
 .. code-block::
 
