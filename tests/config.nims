@@ -1,3 +1,4 @@
 switch("path", "$projectDir/../src")
-switch("verbosity", "0")
-switch("hints", "off")
+when not defined(testing):
+  switch("verbosity", "0")
+  switch("hints", "off")

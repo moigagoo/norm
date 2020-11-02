@@ -1,5 +1,5 @@
 discard """
-  cmd: "nim c -d:normDebug -r $file"
+  cmd: "nim c -d:testing -d:normDebug -r $file"
   output: '''
 [Suite] Foreign Key: Nested Model
 DEBUG CREATE TABLE IF NOT EXISTS "Foo"(a INTEGER NOT NULL, b FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)

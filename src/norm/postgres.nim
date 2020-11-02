@@ -106,7 +106,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
         {.fatal: "Pragma fk must be used on an integer field. " & fld & " is not an integer." .}
       elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
         const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
-        {.fatal: "Pragma fk must reference a Model. " & pragmaValTypeName  & " is not a Model.".}
+        {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
       else:
         fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 

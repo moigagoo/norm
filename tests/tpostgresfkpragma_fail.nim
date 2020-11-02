@@ -1,6 +1,6 @@
 discard """
 action: "compile"
-errormsg : "Pragma fk must be used on an integer field. aaa is not an integer."
+errormsg: "Pragma fk: field must be SomeInteger. aaa is not SomeInteger."
 file: "sqlite.nim"
 """
 

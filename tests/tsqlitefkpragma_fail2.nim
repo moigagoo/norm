@@ -1,6 +1,6 @@
 discard """
 action: "compile"
-errormsg: "Pragma fk must reference a Model. Fooz is not a Model."
+errormsg: "Pragma fk: value must be a Model. Fooz is not a Model."
 file: "sqlite.nim"
 """
 
