@@ -30,7 +30,7 @@ const
 
 type
   Foo = ref object of Model
-    a : int
+    a: int
     b: float
 
   Bar = ref object of Model

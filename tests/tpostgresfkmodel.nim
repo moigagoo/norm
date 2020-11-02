@@ -30,15 +30,15 @@ const
 
 type
   Foo = ref object of Model
-    a : int
+    a: int
     b: float
 
   Baz = ref object of Model
     value: float64
 
   Bar = ref object of Model
-    foo : Foo
-    baz : Baz
+    foo: Foo
+    baz: Baz
 
 proc newFoo(): Foo=
   Foo(a: 0, b: 0.0)

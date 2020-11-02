@@ -18,7 +18,7 @@ type
     s: int
 
   Foo = ref object of Model
-    a : int
+    a: int
     b: float
 
   Baz = ref object of Model
@@ -27,7 +27,7 @@ type
   Bar = ref object of Model
     # Does not compile : Fooz is not a Model
     aaa {. fk: Fooz .}: int
-    bbb : Foo
+    bbb: Foo
     ccc: Baz
 
 proc newFoo(): Foo=
