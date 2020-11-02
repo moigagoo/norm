@@ -103,7 +103,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     when obj.dot(fld).hasCustomPragma(fk):
       when val isnot SomeInteger:
-        {.fatal: "Pragma fk must be used on an integer field. " & fld & " is not an integer." .}
+        {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger." .}
       elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
         const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
         {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
