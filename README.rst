@@ -441,175 +441,96 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
     ....   db.select(customerBar, "User.email = ?", "bar@bar.bar")
 
 
-Manual FOREIGN KEY handling
+Manual Foreign Key Handling
 ---------------------------
 
-It is possible to declare an **integer field** (``SomeInteger``) as a ``FOREIGN KEY`` using ``{.fk: FooModel .}`` pragma. The ``FOREIGN KEY`` field will then references the ``id`` field of ``FooModel``.
+Norm handles foreign keys automatically if you have a field of type ``Model``. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
+
+To work around that limitation, you can declare and handle foreign keys manually, with ``fk`` pragma. To
 
 .. code-block:: nim
 
   type
     Product = ref object of Model
-      name : string
-      price : float
+      name: string
+      price: float
 
     Consumer = ref object of Model
       email: string
-      productId {.fk: Product.}: int
+      productId {.fk: Product.}: int # manually defined foreign key
 
-  proc newProduct(): Product=
+  proc newProduct(): Product =
     Product(name: "", price: 0.0)
 
-  proc newConsumer(email: string = "", productId: int = 0): Consumer=
+  proc newConsumer(email: string = "", productId: int = 0): Consumer =
     Consumer(email: email, productId: productId)
 
-When using the ``fk`` pragma, the ``FOREIGN KEY`` must be handled manually, therefore ``createTables`` needs to be called for both ``Model``
+When using ``fk`` pragma, foreign key must be handled manually, so ``createTables`` needs to be called for both ``Model``s:
 
 .. code-block:: nim
 
-  let dbName = "st.db"
-  let db = open("", "", "", "")
-  db.createTables(newProduct())
-  db.createTables(newConsumer())
+    let db = open("", "", "", "")
+
+    db.createTables(newProduct())
+    db.createTables(newConsumer())
 
 Norm will generate the following table schema:
 
 .. code-block::
 
-  CREATE TABLE IF NOT EXISTS "Product"(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-  CREATE TABLE IF NOT EXISTS "Consumer"(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES "Product"(id))
+    CREATE TABLE IF NOT EXISTS "Product"(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+    CREATE TABLE IF NOT EXISTS "Consumer"(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES "Product"(id))
 
-
-An ``insert`` statement can be done using only the ``id``. This allows for more flexibility at the cost of more manual queries.
-
-.. code-block:: nim
-
-  var cheese = Product(name:"Cheese", price: 13.30)
-  db.insert(cheese)
-  var bob = newConsumer("bob@mail.org", cheese.id)
-  db.insert(bob)
-
-
-On ``insert``, norm will generate the following queries :
-
-.. code-block::
-
-  DEBUG INSERT INTO "Product" (name, price) VALUES(?, ?) <- @['Cheese', 13.3]
-  DEBUG INSERT INTO "Consumer" (email, productId) VALUES(?, ?) <- @['bob@mail.org', 1]
-
-
-On ``insert`` with a **bad id**, Norm will raise a ``DbError`` exception :
+``insert`` statements can now be done using only ``id``. This allows for more flexibility at the cost of more manual queries:
 
 .. code-block:: nim
 
-  let badProductId = 133
-  var bob = newConsumer("Paul", badProductId)
-  db.insert(bob)
-
-Output :
-
-.. code-block::
-
-  Error: unhandled exception: FOREIGN KEY constraint failed [DbError]
-
-
-Since the ``FOREIGN KEY`` is managed manually, a select query will only return the ``id`` referenced and not the associated fields.
-
-.. code-block:: nim
-
-  var consumer = newConsumer()
-  db.select(consumer, "name = $1", "Bob")
-  doAssert(consumer.name == "Bob")
-  var product = newProduct()
-  db.select(product, "id = $1", consumer.productId)
-  doAssert(product.name == "Cheese")
-  doAssert(product.price == 13.30)
-
-Norm will generate the following ``select query``:
-
-.. code-block::
-
-  DEBUG SELECT "Consumer".name, "Consumer".productId, "Consumer".id FROM "Consumer"  WHERE name = $1 <- ['Bob']
-  DEBUG SELECT "Product".name, "Product".price, "Product".id FROM "Product"  WHERE id = $1 <- [1]
-
-
-Full sample code
-````````````````
-
-.. code-block:: nim
-
-  import os
-  import norm/model
-  import norm/sqlite
-  import norm/pragmas
-
-  type
-    Product = ref object of Model
-      name : string
-      price : float
-
-    Consumer = ref object of Model
-      name: string
-      productId {.fk: Product.}: int
-
-  proc newProduct(): Product=
-    Product(name: "", price: 0.0)
-
-  proc newConsumer(name: string = "", productId: int = 0): Consumer=
-    Consumer(name: name, productId: productId)
-
-  let dbName = getTempDir() / "example.db"
-  # Clean db
-  discard tryRemoveFile(dbName)
-  let db = open(dbName, "", "", "")
-  # Depending on how sqlite3 was compiled, enabling foreign_keys may be necessary
-  db.exec(sql"PRAGMA foreign_keys = ON")
-
-  block:
-    db.createTables(newProduct())
-    db.createTables(newConsumer())
-    ##[Query Output:
-    DEBUG CREATE TABLE IF NOT EXISTS "Product"(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-    DEBUG CREATE TABLE IF NOT EXISTS "Consumer"(name TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES "Product"(id))
-    ]##
-
-  block:
-    var cheese = Product(name:"Cheese", price: 13.30)
+    var cheese = Product(name: "Cheese", price: 13.30)
     db.insert(cheese)
-    var bob = newConsumer("Bob", cheese.id)
-    db.insert(bob)
-    ##[Query Output:
-    DEBUG INSERT INTO "Product" (name, price) VALUES(?, ?) <- @['Cheese', 13.3]
-    DEBUG INSERT INTO "Consumer" (name, productId) VALUES(?, ?) <- @['Bob', 1]
-    ]##
 
-  block:
+    var bob = newConsumer("bob@mail.org", cheese.id)
+    db.insert(bob)
+
+On ``insert``, Norm will generate the following queries :
+
+.. code-block::
+
+    DEBUG INSERT INTO "Product" (name, price) VALUES(?, ?) <- @['Cheese', 13.3]
+    DEBUG INSERT INTO "Consumer" (email, productId) VALUES(?, ?) <- @['bob@mail.org', 1]
+
+If an invalid ID is passed, Norm will raise a ``DbError`` exception:
+
+.. code-block:: nim
+
     let badProductId = 133
     var bob = newConsumer("Paul", badProductId)
-    try:
-      db.insert(bob)
-    except DbError:
-      discard
-    ##[Query Output:
-    Error: unhandled exception: FOREIGN KEY constraint failed [DbError]
-    ]##
+    db.insert(bob)
 
-  block:
+Output:
+
+.. code-block::
+
+    Error: unhandled exception: FOREIGN KEY constraint failed [DbError]
+
+``select`` queries will only return the ``id`` referenced and not the associated fields:
+
+.. code-block:: nim
+
     var consumer = newConsumer()
     db.select(consumer, "name = $1", "Bob")
     doAssert(consumer.name == "Bob")
+
     var product = newProduct()
     db.select(product, "id = $1", consumer.productId)
     doAssert(product.name == "Cheese")
     doAssert(product.price == 13.30)
-    ##[Query Output:
+
+Norm will generate the following query:
+
+.. code-block::
+
     DEBUG SELECT "Consumer".name, "Consumer".productId, "Consumer".id FROM "Consumer"  WHERE name = $1 <- ['Bob']
     DEBUG SELECT "Product".name, "Product".price, "Product".id FROM "Product"  WHERE id = $1 <- [1]
-    ]##
-
-  db.close()
-  discard tryRemoveFile(dbName)
-
 
 
 Debugging SQL Queries
