@@ -94,6 +94,15 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
+    when obj.dot(fld).hasCustomPragma(fk):
+      when val isnot SomeInteger:
+        {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger." .}
+      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
+        const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
+        {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
+      else:
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
+
     colGroups.add colShmParts.join(" ")
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]

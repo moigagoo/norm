@@ -9,6 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
+2.2.1 (October XX, 2020)
+========================
+
+-   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
+
+
 2.2.0 (October 26, 2020)
 ========================
 
@@ -248,7 +254,7 @@ Most noticeable changes are:
 ======================
 
 -   [!] SQLite: Switch to `ndb <https://github.com/xzfc/ndb.nim>`__.
--   [!] SQLite: Non-``Option`` non-custom types are ``NOT NULL`` by default.
+-   [!] SQLite: Non-``Option`` non-custom types are ``NOT NULL`` by default.
 -   [+] SQLite: Support inserting and retreiving ``NULL`` values with ``Option`` types.
 -   [+] SQLite, PostgreSQL: Add ``withCustomDb`` to run DB procs on a non-default DB (i.e. not the one defined in ``db`` declaration).
 -   [r] Replace ``type`` with ``typedesc`` and ``typeof`` where it is not a type definition.
