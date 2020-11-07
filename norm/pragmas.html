@@ -100,6 +100,8 @@ function main() {
     title="ro()"><wbr />ro<span class="attachedType"></span></a></li>
   <li><a class="reference" href="#unique.t"
     title="unique()"><wbr />unique<span class="attachedType"></span></a></li>
+  <li><a class="reference" href="#fk.t%2Ctyped"
+    title="fk(val: typed)"><wbr />fk<span class="attachedType"></span></a></li>
 
   </ul>
 </li>
@@ -141,6 +143,13 @@ function main() {
 Mark field as unique.
 
 </dd>
+<a id="fk.t,typed"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#fk.t%2Ctyped"><span class="Identifier">fk</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">typed</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Mark <tt class="docutils literal"><span class="pre">int</span></tt> field as foreign key. Foreign keys always references the field <tt class="docutils literal"><span class="pre">id</span></tt> of <tt class="docutils literal"><span class="pre">val</span></tt>. <tt class="docutils literal"><span class="pre">val</span></tt> should be a Model.
+
+</dd>
 
 </dl></div>
 
@@ -151,7 +160,7 @@ Mark field as unique.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-10-26 20:12:55 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-07 13:33:34 UTC</small>
       </div>
     </div>
   </div>
