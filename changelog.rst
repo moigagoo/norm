@@ -9,10 +9,12 @@ Changelog
 -   [t]—test suite improvement
 
 
-2.2.1 (October XX, 2020)
-========================
+2.2.1 WIP
+=========
 
--   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
+-   [+] Added ``fk`` pragma that allows to manually declare a ``SomeInteger`` field of ``Model`` as a foreign key.
+
+    Pragma value must be a ``Model``. The foreign key will reference the referenced model's ``id`` field.
 
 
 2.2.0 (October 26, 2020)
