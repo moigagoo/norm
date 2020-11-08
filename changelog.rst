@@ -14,6 +14,7 @@ Changelog
 
 -   [+] Added fk pragmas that allow to declare an integer field of Model as a Foreign Key. Pragma value must be a Model. The foreign key will reference the field ``id``
 
+-   [t] Tests now pass with testament.
 
 2.2.0 (October 26, 2020)
 ========================
