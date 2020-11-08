@@ -1,3 +1,7 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
 import unittest
 import std/with
 import os
@@ -10,7 +14,7 @@ import norm/[model, sqlite]
 import models
 
 
-const dbFile = "test.db"
+const dbFile = getTempDir() / "test.db"
 
 
 suite "Row CRUD":

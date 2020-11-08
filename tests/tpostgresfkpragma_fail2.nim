@@ -1,7 +1,7 @@
 discard """
 action: "compile"
 errormsg: "Pragma fk: value must be a Model. Fooz is not a Model."
-file: "sqlite.nim"
+file: "postgres.nim"
 """
 
 import strutils

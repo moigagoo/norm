@@ -11,7 +11,7 @@ import norm/model
 import norm/pragmas
 import norm/sqlite
 
-const dbFile = "tfkfail2.db"
+const dbFile =getTempDir() / "tfkfail2.db"
 
 type
   Fooz = object

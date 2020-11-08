@@ -1,3 +1,7 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
 import unittest
 import os
 import strutils
@@ -7,7 +11,7 @@ import norm/[model, sqlite]
 import models
 
 
-const dbFile = "test.db"
+const dbFile = getTempDir() / "test.db"
 
 
 suite "Table creation":

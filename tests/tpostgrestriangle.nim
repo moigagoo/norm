@@ -1,3 +1,7 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
 import unittest
 import strutils
 import sugar

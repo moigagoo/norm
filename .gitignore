@@ -24,7 +24,6 @@ tests/tsqlitedb
 tests/tsqlitedbtypes
 tests/tsqliterepeatfks
 tests/tsqliteunique
-
 tests/tsqlitefkpragma
 tests/tsqlitefkpragma_fail
 tests/tsqlitefkpragma_fail2
@@ -42,7 +41,6 @@ tests/tpostgresdb
 tests/tpostgresdbtypes
 tests/tpostgresrepeatfks
 tests/tpostgresunique
-
 tests/tpostgresfkmodel
 tests/tpostgresfkpragma
 tests/tpostgresfkpragma_fail

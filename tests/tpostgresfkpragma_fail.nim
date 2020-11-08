@@ -1,7 +1,7 @@
 discard """
 action: "compile"
 errormsg: "Pragma fk: field must be SomeInteger. aaa is not SomeInteger."
-file: "sqlite.nim"
+file: "postgres.nim"
 """
 
 import strutils
