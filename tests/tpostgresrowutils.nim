@@ -10,9 +10,6 @@ import norm/[model, pragmas]
 import models
 
 
-const dtCmpThsld = initDuration(nanoseconds = 1000)
-
-
 suite "Converting between Model and ndb.postgres.Row":
   test "Built-in types":
     type
