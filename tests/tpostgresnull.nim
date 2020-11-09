@@ -1,35 +1,43 @@
 import unittest
-import os
 import options
-import sugar
+import strutils
 
-import norm/[model, sqlite]
+import norm/[model, postgres]
 
 import models
 
 
-const dbFile = "test.db"
+const
+  dbHost = "postgres"
+  dbUser = "postgres"
+  dbPassword = "postgres"
+  dbDatabase = "postgres"
 
 
 suite "``NULL`` foreign keys":
-  setup:
-    removeFile dbFile
+  proc resetDb =
+    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
+    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    close dbConn
 
-    let dbConn = open(dbFile, "", "", "")
+  setup:
+    resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
+
+    dbConn.createTables(newPerson())
 
   teardown:
     close dbConn
-    removeFile dbFile
+    resetDb()
 
   test "Get row, nested models, NULL foreign key, container is ``some Model``":
-    dbConn.createTables(newPerson())
-
     var
       inpPerson = newPerson("Alice", none Pet)
       outPerson = newPerson("", newPet())
 
     dbConn.insert(inpPerson)
 
-    dbConn.select(outPerson, "Person.id = ?", inpPerson.id)
+    dbConn.select(outPerson, """"Person".id = $1""", inpPerson.id)
 
     check outPerson === inpPerson
