@@ -17,13 +17,13 @@ suite "``NULL`` foreign keys":
 
     let dbConn = open(dbFile, "", "", "")
 
+    dbConn.createTables(newPerson())
+
   teardown:
     close dbConn
     removeFile dbFile
 
   test "Get row, nested models, NULL foreign key, container is ``some Model``":
-    dbConn.createTables(newPerson())
-
     var
       inpPerson = newPerson("Alice", none Pet)
       outPerson = newPerson("", newPet())
