@@ -43,7 +43,7 @@ suite "``fk`` pragma":
     check customer.id > 0
 
     let
-      userRows = dbConn.getAllRows(sql"""SELECT lastLogin::timestamptz, id FROM "User"""")
+      userRows = dbConn.getAllRows(sql"""SELECT lastLogin, id FROM "User"""")
       customerRows = dbConn.getAllRows(sql"""SELECT userId, email, id FROM "Customer"""")
 
     check userRows.len == 1
