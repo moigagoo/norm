@@ -1,7 +1,6 @@
 import unittest
 import os
 import options
-import sugar
 
 import norm/[model, sqlite]
 
