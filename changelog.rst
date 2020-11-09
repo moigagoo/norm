@@ -7,6 +7,7 @@ Changelog
 -   [f]—bugfix
 -   [r]—refactoring
 -   [t]—test suite improvement
+-   [d]—docs improvement
 
 
 2.2.1 WIP
@@ -15,6 +16,9 @@ Changelog
 -   [+] Added ``fk`` pragma that allows to manually declare a ``SomeInteger`` field of ``Model`` as a foreign key.
 
     Pragma value must be a ``Model``. The foreign key will reference the referenced model's ``id`` field.
+
+-   [t] Added missing tests for ``NULL`` foreign keys in Postgres.
+-   [t] Cleaned up redundant imports and consts.
 
 
 2.2.0 (October 26, 2020)
