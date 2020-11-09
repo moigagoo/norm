@@ -1,26 +1,11 @@
-discard """
-  cmd: "nim c -d:testing -d:normDebug -r $file"
-  output: '''
-[Suite] FK Pragma: Query
-DEBUG CREATE TABLE IF NOT EXISTS "Foo"(a INTEGER NOT NULL, b FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-DEBUG CREATE TABLE IF NOT EXISTS "Bar"(fooId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (fooId) REFERENCES "Foo"(id))
-DEBUG INSERT INTO "Foo" (a, b) VALUES(?, ?) <- @[11, 12.36]
-DEBUG INSERT INTO "Bar" (fooId) VALUES(?) <- @[1]
-DEBUG SELECT "Foo".a, "Foo".b, "Foo".id FROM "Foo"  WHERE "Foo".a = $1 <- [11]
-DEBUG SELECT "Bar".fooId, "Bar".id FROM "Bar"  WHERE "Bar".fooId = $1 <- [1]
-'''
-"""
-
 import strutils
+import times
 import unittest
 
-import norm/model
-import norm/pragmas
-import norm/postgres
+import norm/[model, postgres]
 
-import logging
-var consoleLog = newConsoleLogger()
-addHandler(consoleLog)
+import models
+
 
 const
   dbHost = "postgres"
@@ -28,22 +13,8 @@ const
   dbPassword = "postgres"
   dbDatabase = "postgres"
 
-type
-  Foo = ref object of Model
-    a: int
-    b: float
 
-  Bar = ref object of Model
-    fooId {. fk: Foo .}: int
-
-proc newFoo(): Foo=
-  Foo(a: 0, b: 0.0)
-
-proc newBar(): Bar=
-  Bar(fooId: 0)
-
-
-suite "FK Pragma: Query":
+suite "``fk`` pragma":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -53,31 +24,54 @@ suite "FK Pragma: Query":
   setup:
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
-    dbConn.createTables(newFoo())
-    dbConn.createTables(newBar())
+
+    dbConn.createTables(newUser())
+    dbConn.createTables(newCustomer())
 
   teardown:
     close dbConn
     resetDb()
 
-  test "Insert, Select with FK Pragma":
-    var inputfoo = Foo(a: 11, b: 12.36)
-    dbConn.insert(inputfoo)
-    doAssert inputfoo.id == 1
-    check inputfoo.id == 1
+  test "Insert rows":
+    var user = newUser()
+    dbConn.insert user
 
-    var inputbar = Bar(fooId: inputfoo.id)
-    dbConn.insert(inputbar)
-    doAssert inputbar.id == 1
-    check inputbar.id == 1
+    var customer = newCustomer(user.id, "test@test.test")
+    dbConn.insert customer
 
-    var foo = newFoo()
-    dbConn.select(foo, """"Foo".a = $1""", 11)
-    check foo.id == 1
+    check user.id > 0
+    check customer.id > 0
 
-    var bar = newBar()
-    dbConn.select(bar, """"Bar".fooId = $1""", foo.id)
-    doAssert bar.id == 1
-    doAssert bar.fooId == foo.id
-    check bar.id == 1
-    check bar.fooId == foo.id
+    let
+      userRows = dbConn.getAllRows(sql"""SELECT lastLogin::timestamptz, id FROM "User"""")
+      customerRows = dbConn.getAllRows(sql"""SELECT userId, email, id FROM "Customer"""")
+
+    check userRows.len == 1
+    check userRows[0][1] == ?user.id
+    check abs(userRows[0][0].t - user.lastLogin) < initDuration(milliseconds = 1000)
+
+    check customerRows.len == 1
+    check customerRows[0] == @[?user.id, ?customer.email, ?customer.id]
+
+  test "Get rows":
+    var
+      userA = newUser()
+      userB = newUser()
+
+    dbConn.insert userA
+    dbConn.insert userB
+
+    var
+      inpCustomers = @[
+        newCustomer(userA.id, "a@test.test"),
+        newCustomer(userA.id, "b@test.test"),
+        newCustomer(userB.id, "c@test.test")
+      ]
+      outCustomers = @[newCustomer()]
+
+    for inpCustomer in inpCustomers.mitems:
+      dbConn.insert inpCustomer
+
+    dbConn.select(outCustomers, """"userid" = $1""", userA.id)
+
+    check outCustomers === inpCustomers[0..^2]
