@@ -2,8 +2,7 @@ import sequtils
 import options
 import times
 
-import norm/model
-import norm/pragmas
+import norm/[model, pragmas]
 
 
 type
@@ -15,7 +14,7 @@ type
     favToy*: Toy
 
   Person* = ref object of Model
-    name* {.unique.} : string
+    name* {.unique.}: string
     pet*: Option[Pet]
 
   PetPerson* = ref object of Model
@@ -24,6 +23,10 @@ type
 
   User* = ref object of Model
     lastLogin*: DateTime
+
+  Customer* = ref object of Model
+    userId* {.fk: User.}: int
+    email*: string
 
   PlayfulPet* = ref object of Model
     species*: string
@@ -78,10 +81,23 @@ func `===`*(a, b: PetPerson): bool =
   a.pet === b.pet and
   a.person === b.person
 
-func `===`*[T: Toy | Pet | Person | PetPerson](a, b: openArray[T]): bool =
-  len(a) == len(b) and zip(a, b).allIt(it[0] === it[1])
-
 proc newUser*(): User = User(lastLogin: now())
+
+func `===`*(a, b: User): bool =
+  a.lastLogin == b.lastLogin
+
+proc newCustomer*(userId: int, email: string): Customer =
+  Customer(userId: userId, email: email)
+
+proc newCustomer*(userId: int): Customer =
+  newCustomer(userId, "")
+
+proc newCustomer*(): Customer =
+  newCustomer(newUser().id)
+
+func `===`*(a, b: Customer): bool =
+  a.userId == b.userId and
+  a.email == b.email
 
 func newPlayfulPet*(species: string, favToy, secondFavToy: Toy): PlayfulPet =
   PlayfulPet(species: species, favToy: favToy, secondFavToy: secondFavToy)
@@ -99,3 +115,7 @@ func `===`*(a, b: Option[PlayfulPet]): bool =
   get(a).species == get(b).species and
   get(a).favToy === get(b).favToy and
   get(a).secondFavToy === get(b).secondFavToy)
+
+func `===`*[T: Toy | Pet | Person | PetPerson | User | Customer](a, b: openArray[T]): bool =
+  len(a) == len(b) and zip(a, b).allIt(it[0] === it[1])
+
