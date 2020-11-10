@@ -246,7 +246,7 @@ function main() {
 <span class="Operator">....</span>   <span class="Keyword">var</span> <span class="Identifier">customerBar</span> <span class="Operator">=</span> <span class="Identifier">newCustomer</span><span class="Punctuation">(</span><span class="Punctuation">)</span>
 <span class="Operator">....</span>   <span class="Identifier">db</span><span class="Operator">.</span><span class="Identifier">select</span><span class="Punctuation">(</span><span class="Identifier">customerBar</span><span class="Punctuation">,</span> <span class="StringLit">&quot;User.email = ?&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;bar@bar.bar&quot;</span><span class="Punctuation">)</span></pre>
 <h2 id="manual-foreign-key-handling">Manual Foreign Key Handling</h2><p>Norm handles foreign keys automatically if you have a field of type <tt class="docutils literal"><span class="pre">Model</span></tt>. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.</p>
-<p>To work around that limitation, you can declare and handle foreign keys manually, with <tt class="docutils literal"><span class="pre">fk</span></tt> pragma. To</p>
+<p>To work around that limitation, you can declare and handle foreign keys manually, with <tt class="docutils literal"><span class="pre">fk</span></tt> pragma:</p>
 <pre class="listing"><span class="Keyword">type</span>
   <span class="Identifier">Product</span> <span class="Operator">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Model</span>
     <span class="Identifier">name</span><span class="Punctuation">:</span> <span class="Identifier">string</span>
@@ -254,7 +254,7 @@ function main() {
   
   <span class="Identifier">Consumer</span> <span class="Operator">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">Model</span>
     <span class="Identifier">email</span><span class="Punctuation">:</span> <span class="Identifier">string</span>
-    <span class="Identifier">productId</span> <span class="Punctuation">{</span><span class="Operator">.</span><span class="Identifier">fk</span><span class="Punctuation">:</span> <span class="Identifier">Product</span><span class="Operator">.</span><span class="Punctuation">}</span><span class="Punctuation">:</span> <span class="Identifier">int</span> <span class="Comment"># manually defined foreign key</span>
+    <span class="Identifier">productId</span> <span class="Punctuation">{</span><span class="Operator">.</span><span class="Identifier">fk</span><span class="Punctuation">:</span> <span class="Identifier">Product</span><span class="Operator">.</span><span class="Punctuation">}</span><span class="Punctuation">:</span> <span class="Identifier">int</span>
 
 <span class="Keyword">proc</span> <span class="Identifier">newProduct</span><span class="Punctuation">(</span><span class="Punctuation">)</span><span class="Punctuation">:</span> <span class="Identifier">Product</span> <span class="Operator">=</span>
   <span class="Identifier">Product</span><span class="Punctuation">(</span><span class="Identifier">name</span><span class="Punctuation">:</span> <span class="StringLit">&quot;&quot;</span><span class="Punctuation">,</span> <span class="Identifier">price</span><span class="Punctuation">:</span> <span class="FloatNumber">0.0</span><span class="Punctuation">)</span>
@@ -313,7 +313,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-10 13:04:32 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2020-11-10 16:25:42 UTC</small>
       </div>
     </div>
   </div>
