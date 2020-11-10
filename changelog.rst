@@ -10,8 +10,8 @@ Changelog
 -   [d]—docs improvement
 
 
-2.2.1 WIP
-=========
+2.2.1 (November 10, 2020)
+=========================
 
 -   [+] Added ``fk`` pragma that allows to manually declare a ``SomeInteger`` field of ``Model`` as a foreign key.
 
