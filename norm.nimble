@@ -20,5 +20,5 @@ task docs, "Generate docs":
   exec "nimble doc --outdir:htmldocs --project --index:on src/norm"
   exec "nim rst2html -o:htmldocs/index.html README.rst"
   exec "testament html"
-  cpFile("testresults.html", "htmldocs/testresults.html")
+  mvFile("testresults.html", "htmldocs/testresults.html")
   cpFile("CNAME", "htmldocs/CNAME")
