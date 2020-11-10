@@ -1,10 +1,15 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import strutils
 import times
 import unittest
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const
