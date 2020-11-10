@@ -19,4 +19,6 @@ task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble doc --outdir:htmldocs --project --index:on src/norm"
   exec "nim rst2html -o:htmldocs/index.html README.rst"
+  exec "testament html"
+  cpFile("testresults.html", "htmldocs/testresults.html")
   cpFile("CNAME", "htmldocs/CNAME")
