@@ -1,8 +1,13 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 
 import norm/model
 
-import models
+import ../models
 
 
 suite "Getting table and columns from Model":

@@ -1,9 +1,15 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import strutils
+import sugar
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const
@@ -13,7 +19,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "Unique fields":
+suite "Relation triangle":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -24,18 +30,22 @@ suite "Unique fields":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newPerson())
+    dbConn.createTables(newPetPerson())
+
+    var
+      toy = newToy(123.45)
+      pet = newPet("cat", toy)
+      person = newPerson("Alice", pet)
+      petPerson = newPetPerson(pet, person)
+
+    dbConn.insert(petPerson)
 
   teardown:
     close dbConn
     resetDb()
 
-  test "Insert duplicate values":
-    var
-      person1 = newPerson("Alice", newPet("cat", newToy(123.45)))
-      person2 = newPerson("Alice", newPet("dog", newToy(678.90)))
+  test "Get row":
+    let outPetPerson = newPetPerson().dup:
+      dbConn.select(""""PetPerson".id = $1""", petPerson.id)
 
-    dbConn.insert(person1)
-
-    expect DbError:
-      dbConn.insert(person2)
+    check outPetPerson === petPerson

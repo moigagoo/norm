@@ -19,3 +19,6 @@ template ro* {.pragma.}
 
 template unique* {.pragma.}
   ## Mark field as unique.
+
+template fk*(val: typed) {.pragma.}
+  ## Mark ``int`` field as foreign key. Foreign keys always references the field ``id`` of ``val``. ``val`` should be a Model.

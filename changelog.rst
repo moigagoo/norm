@@ -7,6 +7,20 @@ Changelog
 -   [f]—bugfix
 -   [r]—refactoring
 -   [t]—test suite improvement
+-   [d]—docs improvement
+
+
+2.2.1 (November 10, 2020)
+=========================
+
+-   [+] Added ``fk`` pragma that allows to manually declare a ``SomeInteger`` field of ``Model`` as a foreign key.
+
+    Pragma value must be a ``Model``. The foreign key will reference the referenced model's ``id`` field.
+
+-   [t] Reorganized tests into folders.
+-   [t] Switch from vanilla ``nimble test`` to testament.
+-   [t] Added missing tests for ``NULL`` foreign keys in Postgres.
+-   [t] Cleaned up redundant imports and consts.
 
 
 2.2.0 (October 26, 2020)
@@ -90,7 +104,7 @@ The new algorithm adds alias for each joined table. The alias is named after the
 
 -   [f][t] Fix `#79 <https://github.com/moigagoo/norm/issues/79>`_. ``NULL`` foreign keys are not omitted in selects anymore if the container objects is ``some Model``.
 
--   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85`_).
+-   [+] Add ``selectAll`` procs to select all rows without condition (see `#85 <https://github.com/moigagoo/norm/issues/85>`_).
 
 -   [r] Require Nim version >= 1.4.0.
 
@@ -248,7 +262,7 @@ Most noticeable changes are:
 ======================
 
 -   [!] SQLite: Switch to `ndb <https://github.com/xzfc/ndb.nim>`__.
--   [!] SQLite: Non-``Option`` non-custom types are ``NOT NULL`` by default.
+-   [!] SQLite: Non-``Option`` non-custom types are ``NOT NULL`` by default.
 -   [+] SQLite: Support inserting and retreiving ``NULL`` values with ``Option`` types.
 -   [+] SQLite, PostgreSQL: Add ``withCustomDb`` to run DB procs on a non-default DB (i.e. not the one defined in ``db`` declaration).
 -   [r] Replace ``type`` with ``typedesc`` and ``typeof`` where it is not a type definition.

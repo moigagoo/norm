@@ -1,28 +1,41 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
-import os
 import strutils
 import sugar
 import options
 
-import norm/[model, sqlite]
+import norm/[model, postgres]
 
-import models
+import ../models
 
 
-const dbFile = "test.db"
+const
+  dbHost = "postgres"
+  dbUser = "postgres"
+  dbPassword = "postgres"
+  dbDatabase = "postgres"
 
 
 suite "Transactions":
-  setup:
-    removeFile dbFile
+  proc resetDb =
+    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
+    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
+    close dbConn
 
-    let dbConn = open(dbFile, "", "", "")
+  setup:
+    resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
     dbConn.createTables(newToy())
 
   teardown:
     close dbConn
-    removeFile dbFile
+    resetDb()
 
   test "Transaction, successful execution":
     var toy = newToy(123.45)
@@ -32,7 +45,7 @@ suite "Transactions":
 
     check toy.id > 0
 
-    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+    let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
 
     check rows.len == 1
     check rows[0] == @[?123.45, ?toy.id]
@@ -44,7 +57,7 @@ suite "Transactions":
 
         raise newException(ValueError, "Something went wrong")
 
-    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+    let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
     check rows.len == 0
 
   test "Transaction, manual rollback":
@@ -53,5 +66,5 @@ suite "Transactions":
         let toy = newToy().dup(dbConn.insert)
         rollback()
 
-    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
+    let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
     check rows.len == 0

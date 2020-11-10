@@ -11,7 +11,7 @@ Norm: A Nim ORM
     :target: https://nimble.directory/pkg/norm
 
 
-**Norm** is an object-oriented, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
+**Norm** is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
 *   `Repo <https://github.com/moigagoo/norm>`__
 
@@ -20,6 +20,7 @@ Norm: A Nim ORM
 
 *   `Sample app <https://github.com/moigagoo/shop-api>`__
 *   `API index <theindex.html>`__
+*   `Test results <testresults.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
 Norm works best with `Norman <https://norman.nim.town>`__.
@@ -122,7 +123,6 @@ Norm will generate the following table schema:
 .. code-block::
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
-
 
 Create Tables
 -------------
@@ -440,6 +440,98 @@ Norm's ``getDb`` proc lets you create a DB connection using ``DB_HOST``, ``DB_US
     nim> withDb:
     ....   var customerBar = newCustomer()
     ....   db.select(customerBar, "User.email = ?", "bar@bar.bar")
+
+
+Manual Foreign Key Handling
+---------------------------
+
+Norm handles foreign keys automatically if you have a field of type ``Model``. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
+
+To work around that limitation, you can declare and handle foreign keys manually, with ``fk`` pragma. To
+
+.. code-block:: nim
+
+  type
+    Product = ref object of Model
+      name: string
+      price: float
+
+    Consumer = ref object of Model
+      email: string
+      productId {.fk: Product.}: int # manually defined foreign key
+
+  proc newProduct(): Product =
+    Product(name: "", price: 0.0)
+
+  proc newConsumer(email: string = "", productId: int = 0): Consumer =
+    Consumer(email: email, productId: productId)
+
+When using ``fk`` pragma, foreign key must be handled manually, so ``createTables`` needs to be called for both ``Model``s:
+
+.. code-block:: nim
+
+    let db = open("", "", "", "")
+
+    db.createTables(newProduct())
+    db.createTables(newConsumer())
+
+Norm will generate the following table schema:
+
+.. code-block::
+
+    CREATE TABLE IF NOT EXISTS "Product"(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+    CREATE TABLE IF NOT EXISTS "Consumer"(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES "Product"(id))
+
+``insert`` statements can now be done using only ``id``. This allows for more flexibility at the cost of more manual queries:
+
+.. code-block:: nim
+
+    var cheese = Product(name: "Cheese", price: 13.30)
+    db.insert(cheese)
+
+    var bob = newConsumer("bob@mail.org", cheese.id)
+    db.insert(bob)
+
+On ``insert``, Norm will generate the following queries :
+
+.. code-block::
+
+    DEBUG INSERT INTO "Product" (name, price) VALUES(?, ?) <- @['Cheese', 13.3]
+    DEBUG INSERT INTO "Consumer" (email, productId) VALUES(?, ?) <- @['bob@mail.org', 1]
+
+If an invalid ID is passed, Norm will raise a ``DbError`` exception:
+
+.. code-block:: nim
+
+    let badProductId = 133
+    var bob = newConsumer("Paul", badProductId)
+    db.insert(bob)
+
+Output:
+
+.. code-block::
+
+    Error: unhandled exception: FOREIGN KEY constraint failed [DbError]
+
+``select`` queries will only return the ``id`` referenced and not the associated fields:
+
+.. code-block:: nim
+
+    var consumer = newConsumer()
+    db.select(consumer, "name = $1", "Bob")
+    doAssert(consumer.name == "Bob")
+
+    var product = newProduct()
+    db.select(product, "id = $1", consumer.productId)
+    doAssert(product.name == "Cheese")
+    doAssert(product.price == 13.30)
+
+Norm will generate the following query:
+
+.. code-block::
+
+    DEBUG SELECT "Consumer".name, "Consumer".productId, "Consumer".id FROM "Consumer"  WHERE name = $1 <- ['Bob']
+    DEBUG SELECT "Product".name, "Product".price, "Product".id FROM "Product"  WHERE id = $1 <- [1]
 
 
 Debugging SQL Queries

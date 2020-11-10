@@ -1,3 +1,8 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import strutils
 import options
@@ -5,7 +10,7 @@ import os
 
 import norm/[model, sqlite]
 
-import models
+import ../models
 
 
 const dbFile = "test.db"

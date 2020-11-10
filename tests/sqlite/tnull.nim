@@ -1,11 +1,15 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import os
 import options
-import sugar
 
 import norm/[model, sqlite]
 
-import models
+import ../models
 
 
 const dbFile = "test.db"
@@ -17,13 +21,13 @@ suite "``NULL`` foreign keys":
 
     let dbConn = open(dbFile, "", "", "")
 
+    dbConn.createTables(newPerson())
+
   teardown:
     close dbConn
     removeFile dbFile
 
   test "Get row, nested models, NULL foreign key, container is ``some Model``":
-    dbConn.createTables(newPerson())
-
     var
       inpPerson = newPerson("Alice", none Pet)
       outPerson = newPerson("", newPet())

@@ -1,3 +1,8 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import std/with
 import os
@@ -7,7 +12,7 @@ import options
 
 import norm/[model, sqlite]
 
-import models
+import ../models
 
 
 const dbFile = "test.db"

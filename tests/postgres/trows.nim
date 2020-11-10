@@ -1,3 +1,8 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import std/with
 import strutils
@@ -6,7 +11,7 @@ import options
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const
