@@ -1,3 +1,8 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import options
 import times
@@ -7,7 +12,7 @@ import ndb/sqlite
 import norm/private/sqlite/rowutils
 import norm/[model, pragmas]
 
-import models
+import ../models
 
 
 const dtCmpThsld = initDuration(nanoseconds = 1000)

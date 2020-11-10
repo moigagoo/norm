@@ -1,10 +1,14 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
-import options
 import strutils
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const
@@ -14,7 +18,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "``NULL`` foreign keys":
+suite "Model with repeating foreign keys":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -23,21 +27,22 @@ suite "``NULL`` foreign keys":
 
   setup:
     resetDb()
+
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newPerson())
+    dbConn.createTables(newPlayfulPet())
 
   teardown:
     close dbConn
     resetDb()
 
-  test "Get row, nested models, NULL foreign key, container is ``some Model``":
+  test "Get row":
     var
-      inpPerson = newPerson("Alice", none Pet)
-      outPerson = newPerson("", newPet())
+      inpPlayfulPet = newPlayfulPet("cat", newToy(123.45), newToy(456.78))
+      outPlayfulPet = newPlayfulPet()
 
-    dbConn.insert(inpPerson)
+    dbConn.insert(inpPlayfulPet)
 
-    dbConn.select(outPerson, """"Person".id = $1""", inpPerson.id)
+    dbConn.select(outPlayfulPet, """"PlayfulPet".id = $1""", inpPlayfulPet.id)
 
-    check outPerson === inpPerson
+    check outPlayfulPet === inpPlayfulPet

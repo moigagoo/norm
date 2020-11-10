@@ -1,9 +1,14 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import strutils
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const

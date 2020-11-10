@@ -17,6 +17,8 @@ Changelog
 
     Pragma value must be a ``Model``. The foreign key will reference the referenced model's ``id`` field.
 
+-   [t] Reorganized tests into folders.
+-   [t] Switch from vanilla ``nimble test`` to testament.
 -   [t] Added missing tests for ``NULL`` foreign keys in Postgres.
 -   [t] Cleaned up redundant imports and consts.
 

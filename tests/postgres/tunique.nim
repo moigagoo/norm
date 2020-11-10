@@ -1,9 +1,14 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import strutils
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const
@@ -13,7 +18,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "Model with repeating foreign keys":
+suite "Unique fields":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -22,22 +27,20 @@ suite "Model with repeating foreign keys":
 
   setup:
     resetDb()
-
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newPlayfulPet())
+    dbConn.createTables(newPerson())
 
   teardown:
     close dbConn
     resetDb()
 
-  test "Get row":
+  test "Insert duplicate values":
     var
-      inpPlayfulPet = newPlayfulPet("cat", newToy(123.45), newToy(456.78))
-      outPlayfulPet = newPlayfulPet()
+      person1 = newPerson("Alice", newPet("cat", newToy(123.45)))
+      person2 = newPerson("Alice", newPet("dog", newToy(678.90)))
 
-    dbConn.insert(inpPlayfulPet)
+    dbConn.insert(person1)
 
-    dbConn.select(outPlayfulPet, """"PlayfulPet".id = $1""", inpPlayfulPet.id)
-
-    check outPlayfulPet === inpPlayfulPet
+    expect DbError:
+      dbConn.insert(person2)

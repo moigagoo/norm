@@ -12,6 +12,9 @@ skipDirs      = @["tests", "htmldocs"]
 
 requires "nim >= 1.4.0", "ndb >= 0.19.8"
 
+task test, "Run tests":
+  exec "testament all"
+
 task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble doc --outdir:htmldocs --project --index:on src/norm"

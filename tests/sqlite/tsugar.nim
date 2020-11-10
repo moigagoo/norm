@@ -1,31 +1,27 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import std/with
+import os
 import strutils
 import sugar
 import sequtils
 
-import norm/[model, postgres]
+import norm/[model, sqlite]
 
-import models
+import ../models
 
 
-const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+const dbFile = "test.db"
 
 
 suite "Fancy syntax":
-  proc resetDb =
-    let dbConn = open(dbHost, dbUser, dbPassword, "template1")
-    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
-    dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
-    close dbConn
-
   proc allToys(dbConn: DbConn): seq[Toy] =
     @[newToy()].dup:
-      dbConn.select("TRUE")
+      dbConn.select("1")
 
   proc prices(toys: openArray[Toy]): seq[float] =
     collect(newSeq):
@@ -33,25 +29,26 @@ suite "Fancy syntax":
         toy.price
 
   setup:
-    resetDb()
-    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
+    removeFile dbFile
+
+    let dbConn = open(dbFile, "", "", "")
 
     dbConn.createTables(newToy())
 
     for i in 1..10:
-      let
-        toy = newToy(float i*i).dup(dbConn.insert)
+      let toy = newToy(float i*i).dup(dbConn.insert)
 
   teardown:
     close dbConn
-    resetDb()
+    removeFile dbFile
 
   test "Chaining":
     discard @[newToy()].dup:
-      dbConn.select("price < $1", 50)
+      dbConn.select("price < ?", 50)
       dbConn.delete
+
     discard @[newToy()].dup:
-      dbConn.select("price > $1", 50)
+      dbConn.select("price > ?", 50)
       apply(doublePrice)
       dbConn.update
 
@@ -62,7 +59,7 @@ suite "Fancy syntax":
     var toys = @[newToy()]
 
     with toys:
-      dbConn.select("price < $1", 50)
+      dbConn.select("price < ?", 50)
       dbConn.delete
 
     check dbConn.allToys.len == 3
@@ -70,7 +67,7 @@ suite "Fancy syntax":
     toys = @[newToy()]
 
     with toys:
-      dbConn.select("price > $1", 50)
+      dbConn.select("price > ?", 50)
       apply(doublePrice)
       dbConn.update
 
@@ -81,12 +78,12 @@ suite "Fancy syntax":
     let toys = dbConn.allToys
 
     var
-      cheapToys = @[newToy(0.0)]
-      costlyToys = @[newToy(0.0)]
+      cheapToys = @[newToy()]
+      costlyToys = @[newToy()]
 
     with dbConn:
-      select(cheapToys, "price < $1", 50)
-      select(costlyToys, "price > $1", 50)
+      select(cheapToys, "price < ?", 50)
+      select(costlyToys, "price > ?", 50)
 
     check cheapToys === toys[0..6]
     check costlyToys === toys[7..^1]

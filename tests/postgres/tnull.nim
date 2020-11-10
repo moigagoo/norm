@@ -1,10 +1,15 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
+import options
 import strutils
-import sugar
 
 import norm/[model, postgres]
 
-import models
+import ../models
 
 
 const
@@ -14,7 +19,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "Relation triangle":
+suite "``NULL`` foreign keys":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
@@ -25,22 +30,19 @@ suite "Relation triangle":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newPetPerson())
-
-    var
-      toy = newToy(123.45)
-      pet = newPet("cat", toy)
-      person = newPerson("Alice", pet)
-      petPerson = newPetPerson(pet, person)
-
-    dbConn.insert(petPerson)
+    dbConn.createTables(newPerson())
 
   teardown:
     close dbConn
     resetDb()
 
-  test "Get row":
-    let outPetPerson = newPetPerson().dup:
-      dbConn.select(""""PetPerson".id = $1""", petPerson.id)
+  test "Get row, nested models, NULL foreign key, container is ``some Model``":
+    var
+      inpPerson = newPerson("Alice", none Pet)
+      outPerson = newPerson("", newPet())
 
-    check outPetPerson === petPerson
+    dbConn.insert(inpPerson)
+
+    dbConn.select(outPerson, """"Person".id = $1""", inpPerson.id)
+
+    check outPerson === inpPerson

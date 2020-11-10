@@ -1,3 +1,8 @@
+discard """
+  action: "run"
+  exitcode: 0
+"""
+
 import unittest
 import options
 import times
@@ -7,7 +12,7 @@ import ndb/postgres
 import norm/private/postgres/rowutils
 import norm/[model, pragmas]
 
-import models
+import ../models
 
 
 suite "Converting between Model and ndb.postgres.Row":
