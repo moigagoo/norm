@@ -124,9 +124,9 @@
         <h1>Testament Test Results <small>Nim Tester</small></h1>
         <dl class="dl-horizontal">
             <dt>Hostname</dt>
-            <dd>485414c24105</dd>
+            <dd>32934c9118f7</dd>
             <dt>Git Commit</dt>
-            <dd><code>7eabb2d54a2</code></dd>
+            <dd><code>810fdde39b0</code></dd>
             <dt title="Git Branch reference">Branch ref.</dt>
             <dd>fatal: ref HEAD is not a symbolic ref</dd>
         </dl>
@@ -134,12 +134,12 @@
             <dt>All Tests</dt>
             <dd>
                 <span class="glyphicon glyphicon-th-list"></span>
-                27
+                31
             </dd>
             <dt>Successful Tests</dt>
             <dd>
                 <span class="glyphicon glyphicon-ok-sign"></span>
-                27 (100.00%)
+                31 (100.00%)
             </dd>
             <dt>Skipped Tests</dt>
             <dd>
@@ -349,6 +349,96 @@
                         <dd><code class="text-success">reSuccess</code></dd>
                     </dl>
                     <p class="sr-only">No output details</p>
+                </div>
+            </div>
+            <div id="panel-testResult-postgres_tests_postgres_tfkpragmanotint_nim_C" class="panel panel-success">
+                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target="#panel-body-testResult-postgres_tests_postgres_tfkpragmanotint_nim_C" aria-controls="panel-body-testResult-postgres_tests_postgres_tfkpragmanotint_nim_C" aria-expanded="false">
+                    <div class="row">
+                        <h4 class="col-xs-3 col-sm-1 panel-title">
+                            <span class="glyphicon glyphicon-ok-sign"></span>
+                            <strong>PASS</strong>
+                        </h4>
+                        <h4 class="col-xs-1 panel-title"><span class="badge">C</span></h4>
+                        <h4 class="col-xs-5 col-sm-7 panel-title" title="tests/postgres/tfkpragmanotint.nim C"><code class="text-success">tests/postgres/tfkpragmanotint.nim C</code></h4>
+                        <h4 class="col-xs-3 col-sm-3 panel-title text-right"><span class="badge">postgres</span></h4>
+                    </div>
+                </div>
+                <div id="panel-body-testResult-postgres_tests_postgres_tfkpragmanotint_nim_C" class="panel-body collapse bg-success">
+                    <dl class="dl-horizontal">
+                        <dt>Name</dt>
+                        <dd><code class="text-success">tests/postgres/tfkpragmanotint.nim C</code></dd>
+                        <dt>Category</dt>
+                        <dd><span class="badge">postgres</span></dd>
+                        <dt>Timestamp</dt>
+                        <dd>unknown</dd>
+                        <dt>Nim Action</dt>
+                        <dd><code class="text-success">reject</code></dd>
+                        <dt>Nim Backend Target</dt>
+                        <dd><span class="badge">C</span></dd>
+                        <dt>Code</dt>
+                        <dd><code class="text-success">reSuccess</code></dd>
+                    </dl>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Expected</th>
+                                    <th>Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><pre></pre></td>
+                                    <td><pre>type mismatch: got &lt;int&gt; but expected &apos;float&apos;</pre></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="panel-testResult-postgres_tests_postgres_tfkpragmanotmodel_nim_C" class="panel panel-success">
+                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target="#panel-body-testResult-postgres_tests_postgres_tfkpragmanotmodel_nim_C" aria-controls="panel-body-testResult-postgres_tests_postgres_tfkpragmanotmodel_nim_C" aria-expanded="false">
+                    <div class="row">
+                        <h4 class="col-xs-3 col-sm-1 panel-title">
+                            <span class="glyphicon glyphicon-ok-sign"></span>
+                            <strong>PASS</strong>
+                        </h4>
+                        <h4 class="col-xs-1 panel-title"><span class="badge">C</span></h4>
+                        <h4 class="col-xs-5 col-sm-7 panel-title" title="tests/postgres/tfkpragmanotmodel.nim C"><code class="text-success">tests/postgres/tfkpragmanotmodel.nim C</code></h4>
+                        <h4 class="col-xs-3 col-sm-3 panel-title text-right"><span class="badge">postgres</span></h4>
+                    </div>
+                </div>
+                <div id="panel-body-testResult-postgres_tests_postgres_tfkpragmanotmodel_nim_C" class="panel-body collapse bg-success">
+                    <dl class="dl-horizontal">
+                        <dt>Name</dt>
+                        <dd><code class="text-success">tests/postgres/tfkpragmanotmodel.nim C</code></dd>
+                        <dt>Category</dt>
+                        <dd><span class="badge">postgres</span></dd>
+                        <dt>Timestamp</dt>
+                        <dd>unknown</dd>
+                        <dt>Nim Action</dt>
+                        <dd><code class="text-success">reject</code></dd>
+                        <dt>Nim Backend Target</dt>
+                        <dd><span class="badge">C</span></dd>
+                        <dt>Code</dt>
+                        <dd><code class="text-success">reSuccess</code></dd>
+                    </dl>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Expected</th>
+                                    <th>Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><pre></pre></td>
+                                    <td><pre>undeclared field: &apos;id&apos; for type tfkpragmanotmodel.User [declared in /usr/src/app/tests/postgres/tfkpragmanotmodel.nim(21, 3)]</pre></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div id="panel-testResult-postgres_tests_postgres_tnull_nim_C" class="panel panel-success">
@@ -741,6 +831,96 @@
                     <p class="sr-only">No output details</p>
                 </div>
             </div>
+            <div id="panel-testResult-sqlite_tests_sqlite_tfkpragmanotint_nim_C" class="panel panel-success">
+                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target="#panel-body-testResult-sqlite_tests_sqlite_tfkpragmanotint_nim_C" aria-controls="panel-body-testResult-sqlite_tests_sqlite_tfkpragmanotint_nim_C" aria-expanded="false">
+                    <div class="row">
+                        <h4 class="col-xs-3 col-sm-1 panel-title">
+                            <span class="glyphicon glyphicon-ok-sign"></span>
+                            <strong>PASS</strong>
+                        </h4>
+                        <h4 class="col-xs-1 panel-title"><span class="badge">C</span></h4>
+                        <h4 class="col-xs-5 col-sm-7 panel-title" title="tests/sqlite/tfkpragmanotint.nim C"><code class="text-success">tests/sqlite/tfkpragmanotint.nim C</code></h4>
+                        <h4 class="col-xs-3 col-sm-3 panel-title text-right"><span class="badge">sqlite</span></h4>
+                    </div>
+                </div>
+                <div id="panel-body-testResult-sqlite_tests_sqlite_tfkpragmanotint_nim_C" class="panel-body collapse bg-success">
+                    <dl class="dl-horizontal">
+                        <dt>Name</dt>
+                        <dd><code class="text-success">tests/sqlite/tfkpragmanotint.nim C</code></dd>
+                        <dt>Category</dt>
+                        <dd><span class="badge">sqlite</span></dd>
+                        <dt>Timestamp</dt>
+                        <dd>unknown</dd>
+                        <dt>Nim Action</dt>
+                        <dd><code class="text-success">reject</code></dd>
+                        <dt>Nim Backend Target</dt>
+                        <dd><span class="badge">C</span></dd>
+                        <dt>Code</dt>
+                        <dd><code class="text-success">reSuccess</code></dd>
+                    </dl>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Expected</th>
+                                    <th>Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><pre></pre></td>
+                                    <td><pre>type mismatch: got &lt;int&gt; but expected &apos;float&apos;</pre></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="panel-testResult-sqlite_tests_sqlite_tfkpragmanotmodel_nim_C" class="panel panel-success">
+                <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target="#panel-body-testResult-sqlite_tests_sqlite_tfkpragmanotmodel_nim_C" aria-controls="panel-body-testResult-sqlite_tests_sqlite_tfkpragmanotmodel_nim_C" aria-expanded="false">
+                    <div class="row">
+                        <h4 class="col-xs-3 col-sm-1 panel-title">
+                            <span class="glyphicon glyphicon-ok-sign"></span>
+                            <strong>PASS</strong>
+                        </h4>
+                        <h4 class="col-xs-1 panel-title"><span class="badge">C</span></h4>
+                        <h4 class="col-xs-5 col-sm-7 panel-title" title="tests/sqlite/tfkpragmanotmodel.nim C"><code class="text-success">tests/sqlite/tfkpragmanotmodel.nim C</code></h4>
+                        <h4 class="col-xs-3 col-sm-3 panel-title text-right"><span class="badge">sqlite</span></h4>
+                    </div>
+                </div>
+                <div id="panel-body-testResult-sqlite_tests_sqlite_tfkpragmanotmodel_nim_C" class="panel-body collapse bg-success">
+                    <dl class="dl-horizontal">
+                        <dt>Name</dt>
+                        <dd><code class="text-success">tests/sqlite/tfkpragmanotmodel.nim C</code></dd>
+                        <dt>Category</dt>
+                        <dd><span class="badge">sqlite</span></dd>
+                        <dt>Timestamp</dt>
+                        <dd>unknown</dd>
+                        <dt>Nim Action</dt>
+                        <dd><code class="text-success">reject</code></dd>
+                        <dt>Nim Backend Target</dt>
+                        <dd><span class="badge">C</span></dd>
+                        <dt>Code</dt>
+                        <dd><code class="text-success">reSuccess</code></dd>
+                    </dl>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Expected</th>
+                                    <th>Actual</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><pre></pre></td>
+                                    <td><pre>undeclared field: &apos;id&apos; for type tfkpragmanotmodel.User [declared in /usr/src/app/tests/sqlite/tfkpragmanotmodel.nim(17, 3)]</pre></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             <div id="panel-testResult-sqlite_tests_sqlite_tnull_nim_C" class="panel panel-success">
                 <div class="panel-heading" style="cursor:pointer" data-toggle="collapse" data-target="#panel-body-testResult-sqlite_tests_sqlite_tnull_nim_C" aria-controls="panel-body-testResult-sqlite_tests_sqlite_tnull_nim_C" aria-expanded="false">
                     <div class="row">
@@ -1017,7 +1197,7 @@
             <p>
                 Report generated by: <code>testament</code> &ndash; Nim Tester
                 <br />
-                Made with Nim. Generated on: 2020-11-10 11:59:37 UTC+00:00
+                Made with Nim. Generated on: 2020-11-10 12:57:20 UTC+00:00
             </p>
         </footer>
     </div>
