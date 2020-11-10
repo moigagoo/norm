@@ -20,6 +20,7 @@ Norm: A Nim ORM
 
 *   `Sample app <https://github.com/moigagoo/shop-api>`__
 *   `API index <theindex.html>`__
+*   `Test results <testresults.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
 Norm works best with `Norman <https://norman.nim.town>`__.
