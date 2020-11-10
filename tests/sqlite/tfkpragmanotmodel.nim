@@ -1,5 +1,5 @@
 discard """
-  action: "compile"
+  action: "reject"
 """
 
 import strutils
