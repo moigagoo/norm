@@ -1,8 +1,3 @@
-discard """
-  action: "run"
-  exitcode: 0
-"""
-
 import strutils
 import unittest
 import os
