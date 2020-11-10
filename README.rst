@@ -447,7 +447,7 @@ Manual Foreign Key Handling
 
 Norm handles foreign keys automatically if you have a field of type ``Model``. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
 
-To work around that limitation, you can declare and handle foreign keys manually, with ``fk`` pragma. To
+To work around that limitation, you can declare and handle foreign keys manually, with ``fk`` pragma:
 
 .. code-block:: nim
 
@@ -458,7 +458,7 @@ To work around that limitation, you can declare and handle foreign keys manually
 
     Consumer = ref object of Model
       email: string
-      productId {.fk: Product.}: int # manually defined foreign key
+      productId {.fk: Product.}: int
 
   proc newProduct(): Product =
     Product(name: "", price: 0.0)
