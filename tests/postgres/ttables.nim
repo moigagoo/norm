@@ -1,7 +1,7 @@
 import unittest
 import strutils
 
-import norm/[model, postgres]
+import norm/postgres
 
 import ../models
 
