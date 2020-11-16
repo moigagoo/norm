@@ -2,7 +2,7 @@ import unittest
 import os
 import strutils
 
-import norm/[model, sqlite]
+import norm/sqlite
 
 import ../models
 
