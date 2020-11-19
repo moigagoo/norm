@@ -10,6 +10,12 @@ Changelog
 -   [d]—docs improvement
 
 
+2.2.2 (November 19, 2020)
+=========================
+
+-   [f] Fix ``ProveInit`` warning.
+
+
 2.2.1 (November 10, 2020)
 =========================
 
