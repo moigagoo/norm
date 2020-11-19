@@ -189,10 +189,7 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
     objs.setLen(rows.len)
 
   for _ in 1..(rows.len - objs.len):
-    var obj: T
-    new obj
-    obj.deepCopy(objs[0])
-    objs.add obj
+    objs.add deepCopy(objs[0])
 
   for i, row in rows:
     objs[i].fromRow(row)
