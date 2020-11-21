@@ -159,6 +159,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   when defined(normDebug):
     debug "$# <- $#" % [qry, $params]
+
   let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:
