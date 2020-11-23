@@ -18,7 +18,7 @@ Norm: A Nim ORM
     -   `Issues <https://github.com/moigagoo/norm/issues>`__
     -   `Pull requests <https://github.com/moigagoo/norm/pulls>`__
 
-*   `Sample app <https://github.com/moigagoo/shop-api>`__
+*   `Sample app <https://github.com/moigagoo/shopapp>`__
 *   `API index <theindex.html>`__
 *   `Test results <testresults.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
