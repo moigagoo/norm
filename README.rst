@@ -19,8 +19,8 @@ Norm: A Nim ORM
     -   `Pull requests <https://github.com/moigagoo/norm/pulls>`__
 
 *   `Sample app <https://github.com/moigagoo/shopapp>`__
-*   `API index <theindex.html>`__
-*   `Test results <testresults.html>`__
+*   `API index <https://norm.nim.town/theindex.html>`__
+*   `Test results <https://norm.nim.town/testresults.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
 Norm works best with `Norman <https://norman.nim.town>`__.
