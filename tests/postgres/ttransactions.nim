@@ -63,3 +63,21 @@ suite "Transactions":
 
     let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
     check rows.len == 0
+
+  test "Test transaction rollbacks after run":
+    dbConn.testTransaction:
+      let top = newToy().dup(dbConn.insert)
+      let uncommitedRows = dbConn.getAllRows(sql""" SELECT price, id FROM "Toy" """)
+      check uncommitedRows.len == 1
+
+    let rows = dbConn.getAllRows(sql""" SELECT price, id FROM "Toy" """)
+    check rows.len == 0
+
+  test "Test transaction rollbacks on exception":
+    expect ValueError:
+      dbConn.testTransaction:
+        let top = newToy().dup(dbConn.insert)
+        raise newException(ValueError, "Something went wrong")
+
+    let rows = dbConn.getAllRows(sql""" SELECT price, id FROM "Toy" """)
+    check rows.len == 0

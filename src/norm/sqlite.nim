@@ -284,3 +284,26 @@ template transaction*(dbConn; body: untyped): untyped =
       debug rollbackQry
     dbConn.exec(sql rollbackQry)
     raise
+
+template testTransaction*(dbConn; body: untyped): untyped =
+  ##[ Wrap code in DB test transaction.
+
+  This is useful for unit testing database operations in isloation.
+
+  ]##
+
+  let
+    beginQry = "BEGIN"
+    rollbackQry = "ROLLBACK"
+
+  try:
+    when defined(normDebug):
+      debug beginQry
+    dbConn.exec(sql beginQry)
+
+    body
+
+  finally:
+    when defined(normDebug):
+      debug rollbackQry
+    dbConn.exec(sql rollbackQry)
