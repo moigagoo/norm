@@ -15,18 +15,16 @@ suite "Import dbTypes from norm/private/sqlite/dbtypes":
   setup:
     removeFile dbFile
 
-    putEnv(dbHostEnv, dbFile)
+    let dbConn = open(dbFile, "", "", "")
 
-    withDb:
-      db.createTables(newUser())
+    dbConn.createTables(newUser())
 
   teardown:
-    delEnv(dbHostEnv)
+    close dbConn
     removeFile dbFile
 
   test "dbValue[DateTime] is imported":
-    withDb:
-      let users = @[newUser()].dup:
-        db.select("""lastLogin <= ?""", ?now())
+    let users = @[newUser()].dup:
+      dbConn.select("""lastLogin <= ?""", ?now())
 
-      check len(users) == 0
+    check len(users) == 0

@@ -25,26 +25,16 @@ suite "Import dbTypes from norm/private/postgres/dbtypes":
 
   setup:
     resetDb()
+    let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    putEnv(dbHostEnv, dbHost)
-    putEnv(dbUserEnv, dbUser)
-    putEnv(dbPassEnv, dbPassword)
-    putEnv(dbNameEnv, dbDatabase)
-
-    withDb:
-      db.createTables(newUser())
+    dbConn.createTables(newUser())
 
   teardown:
-    delEnv(dbHostEnv)
-    delEnv(dbUserEnv)
-    delEnv(dbPassEnv)
-    delEnv(dbNameEnv)
-
+    close dbConn
     resetDb()
 
   test "dbValue[DateTime] is imported":
-    withDb:
-      let users = @[newUser()].dup:
-        db.select("""lastLogin <= $1""", ?now())
+    let users = @[newUser()].dup:
+      dbConn.select("""lastLogin <= $1""", ?now())
 
-      check len(users) == 0
+    check len(users) == 0
