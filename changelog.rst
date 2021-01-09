@@ -10,6 +10,12 @@ Changelog
 -   [d]—docs improvement
 
 
+2.2.3 (WIP)
+===========
+
+-   [t] Remove redundant environment variable usage from ``tdbtypes`` tests.
+
+
 2.2.2 (November 19, 2020)
 =========================
 
