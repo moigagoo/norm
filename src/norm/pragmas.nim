@@ -23,6 +23,6 @@ template unique* {.pragma.}
 template fk*(val: typed) {.pragma.}
   ## Mark ``int`` field as foreign key. Foreign keys always references the field ``id`` of ``val``. ``val`` should be a Model.
 
-template size*(val: Positive) {.pragma.}
+template size*(val: int) {.pragma.}
   ## Enforce ``string`` to max size
 

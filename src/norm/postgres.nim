@@ -97,14 +97,6 @@ proc createTables*[T: Model](dbConn; obj: T) =
     else:
       colShmParts.add typeof(val).dbType
 
-    # when obj.dot(fld).hasCustomPragma(size): 
-    #   # const sizeValue = obj.dot(fld).getCustomPragmaVal(size)
-    #   # if obj.dot(fld).getCustomPragmaVal(size) isnot Positive:
-    #   #   {.fatal: "Field size error: field must be int positive and into a string like {.size \"100\".}" .}
-    #   # else:
-    #   colShmParts.add typeof(val).dbType 
-    #   colShmParts.add "($#)"%( $(obj.dot(fld).getCustomPragmaVal(size)) )
-
     when val isnot Option:
       colShmParts.add "NOT NULL"
 
@@ -127,7 +119,6 @@ proc createTables*[T: Model](dbConn; obj: T) =
     colGroups.add colShmParts.join(" ")
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
-  echo qry
 
   when defined(normDebug):
     debug qry
