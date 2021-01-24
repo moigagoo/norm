@@ -78,6 +78,12 @@ proc createTables*[T: Model](dbConn; obj: T) =
     var colShmParts: seq[string]
 
     colShmParts.add obj.col(fld)
+    if obj.dot(fld).hasCustomPragma(size):
+      when val isnot int:
+        {.fatal: "Pragma size: filed must be int like {.size 100.}" .}
+      else:
+        const sizeValue = obj.dot(fld).getCustomPragmaVal(size)
+        colShmParts.add "(" & $(sizeValue) & ")"
 
     colShmParts.add typeof(val).dbType
 
@@ -85,7 +91,16 @@ proc createTables*[T: Model](dbConn; obj: T) =
       colShmParts.add "NOT NULL"
 
     when obj.dot(fld).hasCustomPragma(pk):
-      colShmParts.add "PRIMARY KEY"
+      colShmParts.add "SERIAL PRIMARY KEY"
+    elif obj.dot(fld).hasCustomPragma(size):
+      const sizeVal = obj.dot(fld).getCustomPragmaVal(size)
+      if sizeVal is int and sizeVal > 0:
+        colShmParts.add typeof(val).dbType 
+        colShmParts.add "($#)"%( $(obj.dot(fld).getCustomPragmaVal(size)) )
+      else:
+        {.fatal: "Field size error: field must be int positive like {.size 100.}" .}
+    else:
+      colShmParts.add typeof(val).dbType
 
     when obj.dot(fld).hasCustomPragma(unique):
       colShmParts.add "UNIQUE"

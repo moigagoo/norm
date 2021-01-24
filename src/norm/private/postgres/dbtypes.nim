@@ -21,7 +21,9 @@ func dbType*(T: typedesc[SomeInteger]): string = "INTEGER"
 
 func dbType*(T: typedesc[SomeFloat]): string = "REAL"
 
-func dbType*(T: typedesc[string]): string = "TEXT"
+#func dbType*(T: typedesc[string]): string = "TEXT"
+
+func dbType*(T: typedesc[string]): string = "VARCHAR"
 
 func dbType*(T: typedesc[bool]): string = "BOOLEAN"
 

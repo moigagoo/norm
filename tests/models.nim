@@ -15,6 +15,8 @@ type
 
   Person* = ref object of Model
     name* {.unique.}: string
+    lastname* {.size: 10.}: string
+    personId* {.unique, size: 5.}: string
     pet*: Option[Pet]
 
   PetPerson* = ref object of Model
@@ -56,16 +58,20 @@ func `===`*(a, b: Option[Pet]): bool =
   (a.isSome and b.isSome and get(a).species == get(b).species and
   get(a).favToy === get(b).favToy)
 
-func newPerson*(name: string, pet: Option[Pet]): Person =
-  Person(name: name, pet: pet)
+func newPerson*(name: string, lastname:string, personId: string, pet: Option[Pet]): Person = 
+  Person(name: name, lastname: lastname, personId: personId, pet: pet)
 
-func newPerson*(name: string, pet: Pet): Person =
-  Person(name: name, pet: some pet)
+# func newPerson*(name: string, pet: Option[Pet]): Person =
+#   Person(name: name, pet: pet)
 
-func newPerson*(): Person = newPerson("", newPet())
+func newPerson*(name: string, lastname:string, personId: string, pet: Pet): Person =
+  Person(name: name, lastname: lastname, personId: personId, pet: some pet)
+
+func newPerson*(): Person = newPerson("", "", "", newPet())
 
 func `===`*(a, b: Person): bool =
   a.name == b.name and
+  a.lastname == b.lastname and
   a.pet === b.pet
 
 proc doublePrice*(toy: var Toy) =
