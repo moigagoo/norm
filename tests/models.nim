@@ -2,7 +2,7 @@ import sequtils
 import options
 import times
 
-import norm/[model, pragmas]
+import norm/[model, pragmas, types]
 
 
 type
@@ -25,7 +25,7 @@ type
     lastLogin*: DateTime
 
   Customer* = ref object of Model
-    userId* {.fk: User.}: int
+    userId* {.fk: User.}: int64
     email*: string
 
   PlayfulPet* = ref object of Model
@@ -33,6 +33,16 @@ type
     favToy*: Toy
     secondFavToy*: Toy
 
+  Number* = ref object of Model
+    n*: int
+    n16*: int16
+    n32*: int32
+    n64*: int64
+
+  String* = ref object of Model
+    s*: string
+    sc10*: StringOfCap[10]
+    psc5*: PaddedStringOfCap[5]
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -86,10 +96,10 @@ proc newUser*(): User = User(lastLogin: now())
 func `===`*(a, b: User): bool =
   a.lastLogin == b.lastLogin
 
-proc newCustomer*(userId: int, email: string): Customer =
+proc newCustomer*(userId: int64, email: string): Customer =
   Customer(userId: userId, email: email)
 
-proc newCustomer*(userId: int): Customer =
+proc newCustomer*(userId: int64): Customer =
   newCustomer(userId, "")
 
 proc newCustomer*(): Customer =
@@ -119,3 +129,20 @@ func `===`*(a, b: Option[PlayfulPet]): bool =
 func `===`*[T: Toy | Pet | Person | PetPerson | User | Customer](a, b: openArray[T]): bool =
   len(a) == len(b) and zip(a, b).allIt(it[0] === it[1])
 
+func newNumber*(n: int, n16: int16, n32: int32, n64: int64): Number =
+  Number(n: n, n16: n16, n32: n32, n64: n64)
+
+func newNumber*: Number =
+  newNumber(0, 0'i16, 0'i32, 0'i64)
+
+func `===`*(a, b: Number): bool =
+  a[] == b[]
+
+func newString*(s: string, sc10: StringOfCap[10], psc5: PaddedStringOfCap[5]): String =
+  String(s: s,  sc10: sc10, psc5: psc5)
+
+func newString*: String =
+  newString("", StringOfCap[10]"", PaddedStringOfCap[5]"")
+
+func `===`*(a, b: String): bool =
+  a[] == b[]
