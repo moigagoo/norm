@@ -12,7 +12,7 @@ import times
 
 import ndb/sqlite
 
-import ../../model
+import ../../model, ../../types
 
 
 # Funcs that return an SQLite type for a given Nim type:
@@ -31,6 +31,10 @@ func dbType*(T: typedesc[DateTime]): string = "FLOAT"
 
 func dbType*(T: typedesc[Model]): string = "INTEGER"
 
+func dbType*[C](_: typedesc[StringOfCap[C]]): string = "TEXT"
+
+func dbType*[C](_: typedesc[PaddedStringOfCap[C]]): string = "TEXT"
+
 func dbType*[T](_: typedesc[Option[T]]): string = dbType T
 
 
@@ -41,6 +45,10 @@ func dbValue*(val: bool): DbValue = dbValue(if val: 1 else: 0)
 func dbValue*(val: DateTime): DbValue = dbValue(val.toTime().toUnixFloat())
 
 func dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
+
+func dbValue*[_](val: StringOfCap[_]): DbValue = dbValue(string(val))
+
+func dbValue*[_](val: PaddedStringOfCap[_]): DbValue = dbValue(string(val))
 
 func dbValue*(val: Option[bool]): DbValue =
   if val.isSome:
@@ -81,6 +89,10 @@ func to*(dbVal; T: typedesc[bool]): T =
 func to*(dbVal; T: typedesc[DbBlob]): T = dbVal.b
 
 proc to*(dbVal; T: typedesc[DateTime]): T = utc dbVal.f.fromUnixFloat()
+
+func to*[_](dbVal; T: typedesc[StringOfCap[_]]): T = dbVal.s.T
+
+func to*[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T = dbVal.s.T
 
 func to*(dbVal; T: typedesc[Model]): T =
   ## This is never called and exists only to please the compiler.

@@ -13,7 +13,7 @@ type
     ``id`` corresponds to row id in DB. **Updated automatically, do not update manually!**
     ]##
 
-    id* {.pk, ro.}: int
+    id* {.pk, ro.}: int64
 
 
 func isModel*[T: Model](val: T): bool = true

@@ -13,6 +13,11 @@ Changelog
 2.2.3 (WIP)
 ===========
 
+-   [+] ``id`` is now ``int64`` instead of ``int`` to produce a DB type in Postgres that doesn't depend on the processor architecture of a particular computer running the code.
+-   [+] Add granular convertors for ``int16``, ``int32``, and ``int64`` in Postgres.
+-   [+] Add granular convertors for ``float32`` and ``float64`` in Postgres.
+-   [+] Add type ``StringOfCap[static n]`` that is converted to ``VARCHAR(n)`` in Postgres.
+-   [+] Add type ``PaddedStringOfCap[static n]`` that is converted to ``CHAR(n)`` in Postgres.
 -   [t] Remove redundant environment variable usage from ``tdbtypes`` tests.
 
 

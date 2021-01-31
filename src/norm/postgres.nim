@@ -86,7 +86,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
     colShmParts.add obj.col(fld)
 
     when obj.dot(fld).hasCustomPragma(pk):
-      colShmParts.add "SERIAL PRIMARY KEY"
+      colShmParts.add "BIGSERIAL PRIMARY KEY"
 
     else:
       colShmParts.add typeof(val).dbType
@@ -140,7 +140,7 @@ proc insert*[T: Model](dbConn; obj: var T) =
 
   when defined(normDebug):
     debug "$# <- $#" % [qry, $row]
-  obj.id = dbConn.insertID(sql qry, row).int
+  obj.id = dbConn.insertID(sql qry, row)
 
 proc insert*[T: Model](dbConn; objs: var openArray[T]) =
   ## Insert rows for each `Model`_ instance in open array.

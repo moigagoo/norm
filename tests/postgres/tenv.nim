@@ -51,8 +51,8 @@ suite "DB config from environment variables":
       ORDER BY column_name"""
 
     check db.getAllRows(qry, "Toy") == @[
-      @[?"id", ?"integer"],
-      @[?"price", ?"real"]
+      @[?"id", ?"bigint"],
+      @[?"price", ?"double precision"]
     ]
 
   test "Implicit DB connection":
@@ -65,6 +65,6 @@ suite "DB config from environment variables":
         ORDER BY column_name"""
 
       check db.getAllRows(qry, "Toy") == @[
-        @[?"id", ?"integer"],
-        @[?"price", ?"real"]
+        @[?"id", ?"bigint"],
+        @[?"price", ?"double precision"]
       ]
