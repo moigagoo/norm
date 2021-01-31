@@ -134,9 +134,9 @@ proc insert*[T: Model](dbConn; obj: var T) =
       dbConn.insert(subMod)
 
   let
-    row = obj.torow()
-    phds = collect(newseq, for i, _ in row: "$" & $(i + 1))
-    qry = "insert into $# ($#) values($#)" % [t.table, obj.cols.join(", "), phds.join(", ")]
+    row = obj.toRow()
+    phds = collect(newSeq, for i, _ in row: "$" & $(i + 1))
+    qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
   when defined(normDebug):
     debug "$# <- $#" % [qry, $row]
