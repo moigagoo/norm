@@ -44,6 +44,7 @@ type
     sc10*: StringOfCap[10]
     psc5*: PaddedStringOfCap[5]
 
+
 func newToy*(price: float): Toy =
   Toy(price: price)
 

@@ -1,4 +1,4 @@
-## Custom Nim types to give more granular control over DB types.
+## Custom Nim types to give granular control over DB types.
 
 import strutils
 
