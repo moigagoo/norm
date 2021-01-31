@@ -102,7 +102,7 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#Model"
     title="Model = ref object of RootObj
-  id* {.pk, ro.}: int"><wbr />Model<span class="attachedType"></span></a></li>
+  id* {.pk, ro.}: int64">Model</a></li>
 
   </ul>
 </li>
@@ -111,55 +111,55 @@ function main() {
   <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">model
       <li><a class="reference" href="#model%2CT"
-    title="model[T: Model](val: T): Option[T]">model,T<span class="attachedType"></span></a></li>
+    title="model[T: Model](val: T): Option[T]">model,<wbr>T</a></li>
   <li><a class="reference" href="#model%2COption%5BT%3A+Model%5D"
-    title="model[T: Model](val: Option[T]): Option[T]">model,Option[T: Model]<span class="attachedType"></span></a></li>
+    title="model[T: Model](val: Option[T]): Option[T]">model,<wbr>Option[T: Model]</a></li>
   <li><a class="reference" href="#model%2CT_2"
-    title="model[T](val: T): Option[Model]">model,T_2<span class="attachedType">Model</span></a></li>
+    title="model[T](val: T): Option[Model]">model,<wbr>T_2</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">isModel
       <li><a class="reference" href="#isModel%2CT"
-    title="isModel[T: Model](val: T): bool">isModel,T<span class="attachedType"></span></a></li>
+    title="isModel[T: Model](val: T): bool">isModel,<wbr>T</a></li>
   <li><a class="reference" href="#isModel%2COption%5BT%3A+Model%5D"
-    title="isModel[T: Model](val: Option[T]): bool">isModel,Option[T: Model]<span class="attachedType"></span></a></li>
+    title="isModel[T: Model](val: Option[T]): bool">isModel,<wbr>Option[T: Model]</a></li>
   <li><a class="reference" href="#isModel%2CT_2"
-    title="isModel[T](val: T): bool">isModel,T_2<span class="attachedType"></span></a></li>
+    title="isModel[T](val: T): bool">isModel,<wbr>T_2</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">rfCols
       <li><a class="reference" href="#rfCols%2CT%2Cseq%5Bstring%5D"
-    title="rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]">rfCols,T,seq[string]<span class="attachedType"></span></a></li>
+    title="rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]">rfCols,<wbr>T,<wbr>seq[string]</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">table
       <li><a class="reference" href="#table%2Ctypedesc%5BModel%5D"
-    title="table(T: typedesc[Model]): string">table,typedesc[Model]<span class="attachedType">Model</span></a></li>
+    title="table(T: typedesc[Model]): string">table,<wbr>typedesc[Model]</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">cols
       <li><a class="reference" href="#cols%2CT"
-    title="cols[T: Model](obj: T; force = false): seq[string]">cols,T<span class="attachedType"></span></a></li>
+    title="cols[T: Model](obj: T; force = false): seq[string]">cols,<wbr>T</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">fCol
       <li><a class="reference" href="#fCol%2CT%2Cstring"
-    title="fCol[T: Model](obj: T; fld: string): string">fCol,T,string<span class="attachedType"></span></a></li>
+    title="fCol[T: Model](obj: T; fld: string): string">fCol,<wbr>T,<wbr>string</a></li>
   <li><a class="reference" href="#fCol%2CT%2Cstring%2Cstring"
-    title="fCol[T: Model](obj: T; fld, tAls: string): string">fCol,T,string,string<span class="attachedType"></span></a></li>
+    title="fCol[T: Model](obj: T; fld, tAls: string): string">fCol,<wbr>T,<wbr>string,<wbr>string</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">joinGroups
       <li><a class="reference" href="#joinGroups%2CT%2Cseq%5Bstring%5D"
     title="joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[
-    tuple[tbl, tAls, lFld, rFld: string]]">joinGroups,T,seq[string]<span class="attachedType"></span></a></li>
+    tuple[tbl, tAls, lFld, rFld: string]]">joinGroups,<wbr>T,<wbr>seq[string]</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">col
       <li><a class="reference" href="#col%2Ctypedesc%5BModel%5D%2Cstring"
-    title="col(T: typedesc[Model]; fld: string): string">col,typedesc[Model],string<span class="attachedType">Model</span></a></li>
+    title="col(T: typedesc[Model]; fld: string): string">col,<wbr>typedesc[Model],<wbr>string</a></li>
   <li><a class="reference" href="#col%2CT%2Cstring"
-    title="col[T: Model](obj: T; fld: string): string">col,T,string<span class="attachedType"></span></a></li>
+    title="col[T: Model](obj: T; fld: string): string">col,<wbr>T,<wbr>string</a></li>
 
   </ul>
 
@@ -183,7 +183,7 @@ function main() {
 <dl class="item">
 <a id="Model"></a>
 <dt><pre><a href="model.html#Model"><span class="Identifier">Model</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
-  <span class="Identifier">id</span><span class="Operator">*</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pk</span><span class="Other">,</span> <span class="Identifier">ro</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">int</span>
+  <span class="Identifier">id</span><span class="Operator">*</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pk</span><span class="Other">,</span> <span class="Identifier">ro</span></span><span class="Other">.}</span></span><span class="Other">:</span> <span class="Identifier">int64</span>
 </pre></dt>
 <dd>
 
@@ -313,7 +313,7 @@ For each <a class="reference external" href="#model">Model</a> field of <a class
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-01-09 18:56:59 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-01-31 08:24:05 UTC</small>
       </div>
     </div>
   </div>

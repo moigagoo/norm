@@ -63,8 +63,20 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>.<br/><p /><h2>API symbols</h2>
-<dl><dt><a name="col" href="#col"><span>col:</span></a></dt><dd><ul class="simple">
+    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
+<dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="types: `$`[_](s: StringOfCap[_]): string" href="norm/types.html#%24%2CStringOfCap%5B_%5D">types: `$`[_](s: StringOfCap[_]): string</a></li>
+          </ul></dd>
+<dt><a name="%60%3D%3D%60" href="#%60%3D%3D%60"><span>`==`:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="types: `==`[_](x, y: PaddedStringOfCap[_]): bool" href="norm/types.html#%3D%3D%2CPaddedStringOfCap%5B_%5D%2CPaddedStringOfCap%5B_%5D">types: `==`[_](x, y: PaddedStringOfCap[_]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="types: `==`[_](x, y: StringOfCap[_]): bool" href="norm/types.html#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D">types: `==`[_](x, y: StringOfCap[_]): bool</a></li>
+          </ul></dd>
+<dt><a name="col" href="#col"><span>col:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: col[T: Model](obj: T; fld: string): string" href="norm/model.html#col%2CT%2Cstring">model: col[T: Model](obj: T; fld: string): string</a></li>
           <li><a class="reference external"
@@ -100,15 +112,25 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[DateTime]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BDateTime%5D">dbtypes: dbType(T: typedesc[DateTime]): string</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[float32]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bfloat32%5D">dbtypes: dbType(T: typedesc[float32]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[float64]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bfloat64%5D">dbtypes: dbType(T: typedesc[float64]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[int16]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint16%5D">dbtypes: dbType(T: typedesc[int16]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[int32]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint32%5D">dbtypes: dbType(T: typedesc[int32]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[int64]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint64%5D">dbtypes: dbType(T: typedesc[int64]): string</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[Model]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BModel%5D">dbtypes: dbType(T: typedesc[Model]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType[T](_: typedesc[Option[T]]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: dbType[T](_: typedesc[Option[T]]): string</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeFloat]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BSomeFloat%5D">dbtypes: dbType(T: typedesc[SomeFloat]): string</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeInteger]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BSomeInteger%5D">dbtypes: dbType(T: typedesc[SomeInteger]): string</a></li>
+          data-doc-search-tag="dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BPaddedStringOfCap%5BC%5D%5D">dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[string]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bstring%5D">dbtypes: dbType(T: typedesc[string]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BStringOfCap%5BC%5D%5D">dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[bool]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5Bbool%5D">dbtypes: dbType(T: typedesc[bool]): string</a></li>
           <li><a class="reference external"
@@ -120,11 +142,15 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType[T](_: typedesc[Option[T]]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: dbType[T](_: typedesc[Option[T]]): string</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BPaddedStringOfCap%5BC%5D%5D">dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeFloat]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BSomeFloat%5D">dbtypes: dbType(T: typedesc[SomeFloat]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeInteger]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BSomeInteger%5D">dbtypes: dbType(T: typedesc[SomeInteger]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[string]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5Bstring%5D">dbtypes: dbType(T: typedesc[string]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BStringOfCap%5BC%5D%5D">dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string</a></li>
           </ul></dd>
 <dt><a name="dbUserEnv" href="#dbUserEnv"><span>dbUserEnv:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -133,6 +159,10 @@ function main() {
 <dt><a name="dbValue" href="#dbValue"><span>dbValue:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: Option[T]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2COption%5BT%3A%20Model%5D">dbtypes: dbValue[T: Model](val: Option[T]): DbValue</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CPaddedStringOfCap%5B_%5D">dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbValue[_](val: StringOfCap[_]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CStringOfCap%5B_%5D">dbtypes: dbValue[_](val: StringOfCap[_]): DbValue</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: T): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CT">dbtypes: dbValue[T: Model](val: T): DbValue</a></li>
           <li><a class="reference external"
@@ -145,6 +175,10 @@ function main() {
           data-doc-search-tag="dbtypes: dbValue(val: Option[DateTime]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2COption%5BDateTime%5D">dbtypes: dbValue(val: Option[DateTime]): DbValue</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: Option[T]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2COption%5BT%3A%20Model%5D">dbtypes: dbValue[T: Model](val: Option[T]): DbValue</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CPaddedStringOfCap%5B_%5D">dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbValue[_](val: StringOfCap[_]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CStringOfCap%5B_%5D">dbtypes: dbValue[_](val: StringOfCap[_]): DbValue</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: T): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CT">dbtypes: dbValue[T: Model](val: T): DbValue</a></li>
           </ul></dd>
@@ -226,6 +260,18 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="model: model[T](val: T): Option[Model]" href="norm/model.html#model%2CT_2">model: model[T](val: T): Option[Model]</a></li>
           </ul></dd>
+<dt><a name="newPaddedStringOfCap" href="#newPaddedStringOfCap"><span>newPaddedStringOfCap:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="types: newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]" href="norm/types.html#newPaddedStringOfCap%2Cstring">types: newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]</a></li>
+          </ul></dd>
+<dt><a name="newStringOfCap" href="#newStringOfCap"><span>newStringOfCap:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="types: newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]" href="norm/types.html#newStringOfCap%2Cstring">types: newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]</a></li>
+          </ul></dd>
+<dt><a name="PaddedStringOfCap" href="#PaddedStringOfCap"><span>PaddedStringOfCap:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="types: PaddedStringOfCap" href="norm/types.html#PaddedStringOfCap">types: PaddedStringOfCap</a></li>
+          </ul></dd>
 <dt><a name="pk" href="#pk"><span>pk:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="pragmas: pk()" href="norm/pragmas.html#pk.t">pragmas: pk()</a></li>
@@ -274,6 +320,10 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="sqlite: selectAll[T: Model](dbConn; objs: var seq[T])" href="norm/sqlite.html#selectAll%2C%2Cseq%5BT%5D">sqlite: selectAll[T: Model](dbConn; objs: var seq[T])</a></li>
           </ul></dd>
+<dt><a name="StringOfCap" href="#StringOfCap"><span>StringOfCap:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="types: StringOfCap" href="norm/types.html#StringOfCap">types: StringOfCap</a></li>
+          </ul></dd>
 <dt><a name="table" href="#table"><span>table:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: table(T: typedesc[Model]): string" href="norm/model.html#table%2Ctypedesc%5BModel%5D">model: table(T: typedesc[Model]): string</a></li>
@@ -288,11 +338,15 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BSomeFloat%5D">dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BSomeInteger%5D">dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[string]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5Bstring%5D">dbtypes: to(dbVal; T: typedesc[string]): T:type</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[bool]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5Bbool%5D">dbtypes: to(dbVal; T: typedesc[bool]): T:type</a></li>
           <li><a class="reference external"
@@ -304,11 +358,15 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BSomeFloat%5D">dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BSomeInteger%5D">dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[string]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5Bstring%5D">dbtypes: to(dbVal; T: typedesc[string]): T:type</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type</a></li>
           </ul></dd>
 <dt><a name="toRow" href="#toRow"><span>toRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -347,7 +405,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-01-09 18:56:59 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-01-31 08:24:05 UTC</small>
       </div>
     </div>
   </div>
