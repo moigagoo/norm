@@ -12,7 +12,7 @@ import ../../pragmas
 
 
 proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) =
-  ##[ Convert ``ndb.sqlite.Row`` instance into `Model`_ instance, from a given position.
+  ##[ Convert ``ndb.postgres.Row`` instance into `Model`_ instance, from a given position.
 
   This is a helper proc to convert to `Model`_ instances that have fields of the same type.
   ]##

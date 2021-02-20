@@ -9,6 +9,7 @@ To add support for ``YourType``, define three funcs:
 
 import options
 import times
+import json
 import strutils
 
 import ndb/postgres
@@ -30,13 +31,15 @@ func dbType*(T: typedesc[float64]): string = "DOUBLE PRECISION"
 
 func dbType*(T: typedesc[string]): string = "TEXT"
 
+func dbType*(T: typedesc[bool]): string = "BOOLEAN"
+
+func dbType*(T: typedesc[DateTime]): string = "TIMESTAMP WITH TIME ZONE"
+
 func dbType*[C](_: typedesc[StringOfCap[C]]): string = "VARCHAR($#)" % $C
 
 func dbType*[C](_: typedesc[PaddedStringOfCap[C]]): string = "CHAR($#)" % $C
 
-func dbType*(T: typedesc[bool]): string = "BOOLEAN"
-
-func dbType*(T: typedesc[DateTime]): string = "TIMESTAMP WITH TIME ZONE"
+func dbType*(T: typedesc[JsonNode]): string = "JSON"
 
 func dbType*(T: typedesc[Model]): string = "BIGINT"
 
@@ -57,6 +60,9 @@ func dbValue*[_](val: StringOfCap[_]): DbValue = dbValue(string(val))
 
 func dbValue*[_](val: PaddedStringOfCap[_]): DbValue = dbValue(string(val))
 
+func dbValue*(val: JsonNode): DbValue =
+  DbValue(kind: dvkOther, o: DbOther(oid: 0, value: $val))
+
 
 # Converter funcs from ``DbValue`` instances to Nim types:
 
@@ -68,13 +74,15 @@ func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 
 func to*(dbVal; T: typedesc[string]): T = dbVal.s
 
+func to*(dbVal; T: typedesc[bool]): T = dbVal.b
+
+func to*(dbVal; T: typedesc[DateTime]): T = dbVal.t
+
 func to*[_](dbVal; T: typedesc[StringOfCap[_]]): T = dbVal.o.value.T
 
 func to*[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T = dbVal.o.value.T
 
-func to*(dbVal; T: typedesc[bool]): T = dbVal.b
-
-func to*(dbVal; T: typedesc[DateTime]): T = dbVal.t
+func to*(dbVal; T: typedesc[JsonNode]): T = parseJson(dbVal.o.value)
 
 func to*(dbVal; T: typedesc[Model]): T =
   ## This is never called and exists only to please the compiler.

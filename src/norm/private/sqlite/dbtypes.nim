@@ -15,6 +15,12 @@ import ndb/sqlite
 import ../../model, ../../types
 
 
+type
+  InpDbValue* = tuple
+    dbVal*: DbValue
+    caster*: string
+
+
 # Funcs that return an SQLite type for a given Nim type:
 
 func dbType*(T: typedesc[SomeInteger]): string = "INTEGER"

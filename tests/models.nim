@@ -1,6 +1,7 @@
 import sequtils
 import options
 import times
+import json
 
 import norm/[model, pragmas, types]
 
@@ -43,6 +44,12 @@ type
     s*: string
     sc10*: StringOfCap[10]
     psc5*: PaddedStringOfCap[5]
+
+  Json* = ref object of Model
+    jstr*: JsonNode
+    jint*: JsonNode
+    jobj*: JsonNode
+    jarr*: JsonNode
 
 
 func newToy*(price: float): Toy =
@@ -146,4 +153,13 @@ func newString*: String =
   newString("", StringOfCap[10]"", PaddedStringOfCap[5]"")
 
 func `===`*(a, b: String): bool =
+  a[] == b[]
+
+func newJson*(jstr, jint, jobj, jarr: JsonNode): Json =
+  Json(jstr: jstr, jint: jint, jobj: jobj, jarr: jarr)
+
+func newJson*: Json =
+  newJson(%"", %0, %* {}, %* [])
+
+func `===`*(a, b: Json): bool =
   a[] == b[]

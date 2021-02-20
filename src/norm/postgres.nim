@@ -135,7 +135,7 @@ proc insert*[T: Model](dbConn; obj: var T) =
 
   let
     row = obj.toRow()
-    phds = collect(newSeq, for i, _ in row: "$" & $(i + 1))
+    phds = collect(newSeq, for i, _ in row: "$" & $(i + 1) & "::json")
     qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
   when defined(normDebug):
