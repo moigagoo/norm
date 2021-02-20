@@ -132,7 +132,7 @@ proc insert*[T: Model](dbConn; obj: var T) =
 
   when defined(normDebug):
     debug "$# <- $#" % [qry, $row]
-  obj.id = dbConn.insertID(sql qry, row).int
+  obj.id = dbConn.insertID(sql qry, row)
 
 proc insert*[T: Model](dbConn; objs: var openArray[T]) =
   ## Insert rows for each `Model`_ instance in open array.
@@ -159,6 +159,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   when defined(normDebug):
     debug "$# <- $#" % [qry, $params]
+
   let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:

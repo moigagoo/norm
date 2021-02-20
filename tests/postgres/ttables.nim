@@ -39,8 +39,8 @@ suite "Table creation":
       ORDER BY column_name"""
 
     check dbConn.getAllRows(qry, "Toy") == @[
-      @[?"id", ?"integer"],
-      @[?"price", ?"real"]
+      @[?"id", ?"bigint"],
+      @[?"price", ?"double precision"]
     ]
 
   test "Create tables":
@@ -59,18 +59,18 @@ suite "Table creation":
       ORDER BY column_name"""
 
     check dbConn.getAllRows(qry, "Toy") == @[
-      @[?"id", ?"integer"],
-      @[?"price", ?"real"]
+      @[?"id", ?"bigint"],
+      @[?"price", ?"double precision"]
     ]
 
     check dbConn.getAllRows(qry, "Pet") == @[
-      @[?"favtoy", ?"integer"],
-      @[?"id", ?"integer"],
+      @[?"favtoy", ?"bigint"],
+      @[?"id", ?"bigint"],
       @[?"species", ?"text"]
     ]
 
     check dbConn.getAllRows(qry, "Person") == @[
-      @[?"id", ?"integer"],
+      @[?"id", ?"bigint"],
       @[?"name", ?"text"],
-      @[?"pet", ?"integer"]
+      @[?"pet", ?"bigint"]
     ]
