@@ -10,8 +10,8 @@ Changelog
 -   [d]—docs improvement
 
 
-2.2.3 (WIP)
-===========
+2.2.3 (February 20, 2021)
+=========================
 
 -   [+] ``id`` is now ``int64`` instead of ``int`` to produce a DB type in Postgres that doesn't depend on the processor architecture of a particular computer running the code.
 -   [+] Add granular convertors for ``int16``, ``int32``, and ``int64`` in Postgres.
