@@ -251,9 +251,9 @@ Select Rows
 
 To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call ``select``.
 
-One curious thing about ``select`` is that its result depends not only on the condition you pass but also on the container. If the container has ``Model`` fields that are not ``None``, Norm will select the related rows in a single ``JOIN`` query giving you a fully populated model object. However, if the container has a ``none Model`` field, it is just ignored.
+One curious thing about ``select`` is that its result depends not only on the condition you pass but also on the container. If the container has ``Model`` fields, Norm will select the related rows in a single ``JOIN`` query giving you a fully populated model object.
 
-In other words, Norm will automatically handle the "n+1" problem when possible.
+In other words, Norm automatically handles the "n+1" problem.
 
 Let's see how that works:
 
@@ -298,6 +298,8 @@ The generated query is similar to the previous one, but the result is populated 
     (email: "foo@foo.foo", id: 1)
     (name: Some("Bob"), user: ..., id: 2)
     (email: "foo@foo.foo", id: 1)
+
+**Important:** container fields of type ``Option[Model]`` *must* be initialized to ``Some[Model]`` to be able to hold a value returned from the DB. Containers with ``None[Model]`` fields are considered invalid as they can't possibly hold values!
 
 
 Update Rows

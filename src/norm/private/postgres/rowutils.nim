@@ -11,6 +11,10 @@ import ../../model
 import ../../pragmas
 
 
+type
+  InvalidContainerError* = object of CatchableError
+
+
 proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) =
   ##[ Convert ``ndb.sqlite.Row`` instance into `Model`_ instance, from a given position.
 
@@ -31,8 +35,11 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) 
           subMod.fromRowPos(row, pos, skip = true)  ## Then we skip all the ``row`` values that should've gone into this submodel.
 
         else:                                       ## If ``row[pos]`` is not a ``NULL``,
-          inc pos
+          inc pos                                   ##
           subMod.fromRowPos(row, pos)               ## we actually populate the submodel.
+
+      else:                                         ## If the field is a ``none Model``, the container is considered invalid.
+        raise newException(InvalidContainerError, "Field '" & fld & "' is `None[Model]`")
 
     elif not skip:                                  ## If we're dealing with an "orginary" field,
       val = row[pos].to(typeof(val))                ## just convert it.
