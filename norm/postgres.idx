@@ -1,4 +1,5 @@
 RollbackError	norm/postgres.html#RollbackError	postgres: RollbackError	
+NotFoundError	norm/postgres.html#NotFoundError	postgres: NotFoundError	
 dbHostEnv	norm/postgres.html#dbHostEnv	postgres: dbHostEnv	
 dbUserEnv	norm/postgres.html#dbUserEnv	postgres: dbUserEnv	
 dbPassEnv	norm/postgres.html#dbPassEnv	postgres: dbPassEnv	

@@ -1,4 +1,5 @@
 RollbackError	norm/sqlite.html#RollbackError	sqlite: RollbackError	
+NotFoundError	norm/sqlite.html#NotFoundError	sqlite: NotFoundError	
 dbHostEnv	norm/sqlite.html#dbHostEnv	sqlite: dbHostEnv	
 getDb	norm/sqlite.html#getDb	sqlite: getDb(): DbConn	
 withDb	norm/sqlite.html#withDb.t,untyped	sqlite: withDb(body: untyped): untyped	

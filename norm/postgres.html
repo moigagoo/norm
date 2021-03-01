@@ -102,6 +102,8 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#RollbackError"
     title="RollbackError = object of CatchableError">RollbackError</a></li>
+  <li><a class="reference" href="#NotFoundError"
+    title="NotFoundError = object of KeyError">NotFoundError</a></li>
 
   </ul>
 </li>
@@ -219,6 +221,13 @@ function main() {
 
 <p>Raised when transaction is manually rollbacked.</p>
 <p>Do not raise manually, use <a class="reference external" href="#rollback">rollback</a> proc. </p>
+
+
+</dd>
+<a id="NotFoundError"></a>
+<dt><pre><a href="postgres.html#NotFoundError"><span class="Identifier">NotFoundError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">KeyError</span></pre></dt>
+<dd>
+
 
 
 </dd>
@@ -395,7 +404,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
 <div class="section" id="19">
 <h1><a class="toc-backref" href="#19">Exports</a></h1>
 <dl class="item">
-<a href="private/postgres/dbtypes.html#to,,typedesc[DateTime]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Model]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbValue,T"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbValue,StringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Option[T]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[StringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeFloat]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float64]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[bool]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[string]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Option[T]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,Option[T: Model]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[StringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Model]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[DateTime]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[PaddedStringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[string]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int16]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[bool]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeInteger]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int64]"><span class="Identifier">dbType</span></a>
+<a href="private/postgres/dbtypes.html#to,,typedesc[DateTime]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Model]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbValue,T"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbValue,StringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Option[T]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[StringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeFloat]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float64]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[bool]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[string]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Option[T]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,Option[T: Model]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[StringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Model]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[DateTime]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[PaddedStringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[string]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int16]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[bool]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeInteger]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int64]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/rowutils.html#InvalidContainerError"><span class="Identifier">InvalidContainerError</span></a>
 </dl></div>
 
   </div>
@@ -405,7 +414,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-02-20 18:42:38 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-03-01 20:30:04 UTC</small>
       </div>
     </div>
   </div>
