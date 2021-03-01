@@ -15,6 +15,7 @@ import model
 import pragmas
 
 export dbtypes
+export InvalidContainerError
 
 
 type
@@ -23,6 +24,7 @@ type
 
     Do not raise manually, use `rollback <#rollback>`_ proc.
     ]##
+  NotFoundError* = object of KeyError
 
 
 const dbHostEnv* = "DB_HOST"
@@ -163,7 +165,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
   let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:
-    raise newException(KeyError, "Record not found")
+    raise newException(NotFoundError, "Record not found")
 
   obj.fromRow(get row)
 

@@ -10,6 +10,16 @@ Changelog
 -   [d]—docs improvement
 
 
+2.2.4 (WIP)
+===========
+
+-   [d] Documented important information that container fields can't be ``none Model``.
+-   [+] ``InvalidContainerError`` exception is raised if container object has ``none Model`` fields.
+-   [+] ``NotFoundError`` exception is raised instead of ``KeyError`` if a record is not found.
+-   [t] Added tests for record not found case.
+-   [t] Added tests for ``none Model`` container fields.
+
+
 2.2.3 (February 20, 2021)
 =========================
 

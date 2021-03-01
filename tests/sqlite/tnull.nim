@@ -32,3 +32,13 @@ suite "``NULL`` foreign keys":
     dbConn.select(outPerson, "Person.id = ?", inpPerson.id)
 
     check outPerson === inpPerson
+
+  test "Get row, nested models, NULL foreign key, container is ``none Model``":
+    var
+      inpPerson = newPerson("Alice", none Pet)
+      outPerson = newPerson("", none Pet)
+
+    dbConn.insert(inpPerson)
+
+    expect InvalidContainerError:
+      dbConn.select(outPerson, "Person.id = ?", inpPerson.id)

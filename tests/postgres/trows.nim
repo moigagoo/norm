@@ -81,6 +81,17 @@ suite "Row CRUD":
 
     check outToy === inpToy
 
+  test "Get row, record not found":
+    var outToy = newToy()
+
+    expect KeyError:
+      with dbConn:
+        select(outToy, """"Toy".id = $1""", 1)
+
+    expect NotFoundError:
+      with dbConn:
+        select(outToy, """"Toy".id = $1""", 1)
+
   test "Get row, no intermediate objects":
     let
       inpToy = newToy(123.45).dup(dbConn.insert)
