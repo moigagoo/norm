@@ -49,5 +49,6 @@ suite "``NULL`` foreign keys":
 
     dbConn.insert(inpPerson)
 
-    expect InvalidContainerError:
-      dbConn.select(outPerson, """"Person".id = $1""", inpPerson.id)
+    dbConn.select(outPerson, """"Person".id = $1""", inpPerson.id)
+
+    check outPerson === inpPerson

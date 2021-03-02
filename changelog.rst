@@ -13,9 +13,8 @@ Changelog
 2.2.4 (WIP)
 ===========
 
--   [d] Documented important information that container fields can't be ``none Model``.
--   [+] ``InvalidContainerError`` exception is raised if container object has ``none Model`` fields.
 -   [+] ``NotFoundError`` exception is raised instead of ``KeyError`` if a record is not found.
+-   [f] Fix issue with objects with ``none Model`` fields failing to be used as containers to select records into (see `#103 <https://github.com/moigagoo/norm/issues/103>`_).
 -   [t] Added tests for record not found case.
 -   [t] Added tests for ``none Model`` container fields.
 

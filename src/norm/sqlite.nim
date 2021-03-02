@@ -15,7 +15,6 @@ import model
 import pragmas
 
 export dbtypes
-export InvalidContainerError
 
 
 type
