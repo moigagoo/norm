@@ -1,3 +1,2 @@
-InvalidContainerError	norm/private/postgres/rowutils.html#InvalidContainerError	rowutils: InvalidContainerError	
 fromRow	norm/private/postgres/rowutils.html#fromRow,T,Row	rowutils: fromRow[T: Model](obj: var T; row: Row)	
 toRow	norm/private/postgres/rowutils.html#toRow,T	rowutils: toRow[T: Model](obj: T; force = false): Row	
