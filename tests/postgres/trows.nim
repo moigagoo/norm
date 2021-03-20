@@ -45,6 +45,19 @@ suite "Row CRUD":
     check rows.len == 1
     check rows[0] == @[?123.45, ?toy.id]
 
+  test "Insert row twice":
+    var toy = newToy(123.45)
+
+    dbConn.insert(toy)
+    dbConn.insert(toy)
+
+    check toy.id > 1
+
+    let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
+
+    check rows.len == 2
+    check rows[^1] == @[?123.45, ?toy.id]
+
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
 
