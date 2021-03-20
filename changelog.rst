@@ -10,8 +10,8 @@ Changelog
 -   [d]—docs improvement
 
 
-2.2.4 (WIP)
-===========
+2.2.4 (March 21, 2021)
+======================
 
 -   [+] ``NotFoundError`` exception is raised instead of ``KeyError`` if a record is not found.
 -   [f] Fix issue with objects with ``none Model`` fields failing to be used as containers to select records into (see `#103 <https://github.com/moigagoo/norm/issues/103>`_).
