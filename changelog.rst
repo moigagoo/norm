@@ -10,6 +10,16 @@ Changelog
 -   [d]—docs improvement
 
 
+2.2.4 (March 21, 2021)
+======================
+
+-   [+] ``NotFoundError`` exception is raised instead of ``KeyError`` if a record is not found.
+-   [f] Fix issue with objects with ``none Model`` fields failing to be used as containers to select records into (see `#103 <https://github.com/moigagoo/norm/issues/103>`_).
+-   [f] Allow objects to be inserted multiple times. The ``id`` is updated with each insertion (see `#104 <https://github.com/moigagoo/norm/issues/104>`_).
+-   [t] Added tests for record not found case.
+-   [t] Added tests for ``none Model`` container fields.
+
+
 2.2.3 (February 20, 2021)
 =========================
 

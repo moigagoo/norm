@@ -45,6 +45,19 @@ suite "Row CRUD":
     check rows.len == 1
     check rows[0] == @[?123.45, ?toy.id]
 
+  test "Insert row twice":
+    var toy = newToy(123.45)
+
+    dbConn.insert(toy)
+    dbConn.insert(toy)
+
+    check toy.id > 1
+
+    let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
+
+    check rows.len == 2
+    check rows[^1] == @[?123.45, ?toy.id]
+
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
 
@@ -80,6 +93,17 @@ suite "Row CRUD":
       select(outToy, "round(price::numeric, 2) = $1", inpToy.price)
 
     check outToy === inpToy
+
+  test "Get row, record not found":
+    var outToy = newToy()
+
+    expect KeyError:
+      with dbConn:
+        select(outToy, """"Toy".id = $1""", 1)
+
+    expect NotFoundError:
+      with dbConn:
+        select(outToy, """"Toy".id = $1""", 1)
 
   test "Get row, no intermediate objects":
     let

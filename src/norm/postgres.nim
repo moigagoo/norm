@@ -23,6 +23,7 @@ type
 
     Do not raise manually, use `rollback <#rollback>`_ proc.
     ]##
+  NotFoundError* = object of KeyError
 
 
 const
@@ -124,10 +125,6 @@ proc createTables*[T: Model](dbConn; obj: T) =
 proc insert*[T: Model](dbConn; obj: var T) =
   ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
-  # If `id` is not 0, this object has already been inserted before
-  if obj.id != 0:
-    return
-
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
       var subMod = get val.model
@@ -170,7 +167,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
   let row = dbConn.getRow(sql qry, params)
 
   if row.isNone:
-    raise newException(KeyError, "Record not found")
+    raise newException(NotFoundError, "Record not found")
 
   obj.fromRow(get row)
 

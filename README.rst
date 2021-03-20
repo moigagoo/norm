@@ -253,7 +253,7 @@ To select a rows with Norm, you instantiate a model that serves as a container f
 
 One curious thing about ``select`` is that its result depends not only on the condition you pass but also on the container. If the container has ``Model`` fields that are not ``None``, Norm will select the related rows in a single ``JOIN`` query giving you a fully populated model object. However, if the container has a ``none Model`` field, it is just ignored.
 
-In other words, Norm will automatically handle the "n+1" problem when possible.
+In other words, Norm will automatically handle the "n+1" problem.
 
 Let's see how that works:
 
