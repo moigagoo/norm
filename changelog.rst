@@ -14,7 +14,7 @@ Changelog
 ===========
 
 -   [+] Add ``onDelete`` pragma that lets add ``ON DELETE`` constraints to foreign keys.
-
+-   [r] Improve formatting of import statements: use ``std/`` notation.
 
 
 2.2.4 (March 21, 2021)
