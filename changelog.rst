@@ -10,6 +10,13 @@ Changelog
 -   [d]—docs improvement
 
 
+2.2.5 (WIP)
+===========
+
+-   [+] Add ``onDelete`` pragma to add ``ON DELETE`` constraints.
+
+
+
 2.2.4 (March 21, 2021)
 ======================
 
