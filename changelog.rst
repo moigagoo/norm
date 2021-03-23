@@ -13,7 +13,7 @@ Changelog
 2.2.5 (WIP)
 ===========
 
--   [+] Add ``onDelete`` pragma to add ``ON DELETE`` constraints.
+-   [+] Add ``onDelete`` pragma that lets add ``ON DELETE`` constraints to foreign keys.
 
 
 
