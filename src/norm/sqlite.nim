@@ -1,10 +1,4 @@
-import os
-import logging
-import strutils
-import sequtils
-import options
-import macros
-import sugar
+import std/[os, logging, strutils, sequtils, options, macros, sugar]
 
 import ndb/sqlite
 export sqlite
@@ -92,8 +86,13 @@ proc createTables*[T: Model](dbConn; obj: T) =
       colShmParts.add "UNIQUE"
 
     if val.isModel:
-      fkGroups.add "FOREIGN KEY($#) REFERENCES $#($#)" %
+      var fkGroup = "FOREIGN KEY($#) REFERENCES $#($#)" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
+
+      when obj.dot(fld).hasCustomPragma(onDelete):
+        fkGroup &= " ON DELETE " & obj.dot(fld).getCustomPragmaVal(onDelete)
+
+      fkGroups.add fkGroup
 
     when obj.dot(fld).hasCustomPragma(fk):
       when val isnot SomeInteger:

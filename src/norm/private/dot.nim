@@ -1,4 +1,4 @@
-import macros
+import std/macros
 
 
 macro dot*(obj: ref object, fld: string): untyped =

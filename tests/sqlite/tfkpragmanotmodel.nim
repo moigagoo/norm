@@ -2,10 +2,7 @@ discard """
   action: "reject"
 """
 
-import strutils
-import unittest
-import times
-import os
+import std/[unittest, os, times, strutils]
 
 import norm/[model, pragmas, sqlite]
 
