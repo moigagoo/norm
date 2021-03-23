@@ -1,6 +1,4 @@
-import unittest
-import os
-import sugar
+import std/[unittest, os, sugar]
 
 import norm/[model, sqlite]
 

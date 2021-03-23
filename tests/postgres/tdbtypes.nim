@@ -1,8 +1,4 @@
-import unittest
-import std/with
-import strutils
-import times
-import sugar
+import std/[unittest, with, strutils, times, sugar]
 
 import norm/[model, postgres, types]
 

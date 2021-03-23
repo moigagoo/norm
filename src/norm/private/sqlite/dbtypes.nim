@@ -7,12 +7,12 @@ To add support for ``YourType``, define three funcs:
 ]##
 
 
-import options
-import times
+import std/[options, times]
 
 import ndb/sqlite
 
-import ../../model, ../../types
+import ../../model
+import ../../types
 
 
 # Funcs that return an SQLite type for a given Nim type:

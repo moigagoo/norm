@@ -1,8 +1,4 @@
-import unittest
-import std/with
-import strutils
-import sugar
-import options
+import std/[unittest, with, strutils, sugar, options]
 
 import norm/[model, postgres]
 
@@ -234,6 +230,16 @@ suite "Row CRUD":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
 
     dbConn.insert(person)
-
     dbConn.delete(person)
+
+    check dbConn.getRow(sql"""SELECT * FROM "Person" WHERE name = 'Alice'""").isNone
+
+  test "Delete rows cascade":
+    var
+      cat = newPet("cat", newToy(123.45))
+      person = newPerson("Alice", some cat)
+
+    dbConn.insert(person)
+    dbConn.delete(cat)
+
     check dbConn.getRow(sql"""SELECT * FROM "Person" WHERE name = 'Alice'""").isNone

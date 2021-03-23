@@ -1,6 +1,4 @@
-import sequtils
-import options
-import times
+import std/[sequtils, options, times]
 
 import norm/[model, pragmas, types]
 
@@ -15,7 +13,7 @@ type
 
   Person* = ref object of Model
     name* {.unique.}: string
-    pet*: Option[Pet]
+    pet* {.onDelete: "CASCADE"}: Option[Pet]
 
   PetPerson* = ref object of Model
     pet*: Pet

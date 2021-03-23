@@ -1,6 +1,4 @@
-import unittest
-import os
-import strutils
+import std/[unittest, os, strutils]
 
 import norm/[model, postgres]
 

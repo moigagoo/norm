@@ -1,9 +1,4 @@
-import unittest
-import std/with
-import os
-import strutils
-import sugar
-import options
+import std/[unittest, with, os, strutils, sugar, options]
 
 import norm/[model, sqlite]
 
@@ -227,5 +222,17 @@ suite "Row CRUD":
 
     dbConn.insert(person)
     dbConn.delete(person)
+
+    check dbConn.getRow(sql"SELECT * FROM Person WHERE name = 'Alice'").isNone
+
+  test "Delete rows cascade":
+    dbConn.exec sql"PRAGMA foreign_keys = ON"
+
+    var
+      cat = newPet("cat", newToy(123.45))
+      person = newPerson("Alice", some cat)
+
+    dbConn.insert(person)
+    dbConn.delete(cat)
 
     check dbConn.getRow(sql"SELECT * FROM Person WHERE name = 'Alice'").isNone
