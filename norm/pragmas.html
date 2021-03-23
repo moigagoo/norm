@@ -102,6 +102,8 @@ function main() {
     title="unique()">unique</a></li>
   <li><a class="reference" href="#fk.t%2Ctyped"
     title="fk(val: typed)">fk</a></li>
+  <li><a class="reference" href="#onDelete.t%2Cstring"
+    title="onDelete(val: string)">onDelete</a></li>
 
   </ul>
 </li>
@@ -150,6 +152,13 @@ Mark field as unique.
 Mark <tt class="docutils literal"><span class="pre">int</span></tt> field as foreign key. Foreign keys always references the field <tt class="docutils literal"><span class="pre">id</span></tt> of <tt class="docutils literal"><span class="pre">val</span></tt>. <tt class="docutils literal"><span class="pre">val</span></tt> should be a Model.
 
 </dd>
+<a id="onDelete.t,string"></a>
+<dt><pre><span class="Keyword">template</span> <a href="#onDelete.t%2Cstring"><span class="Identifier">onDelete</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
+<dd>
+
+Add <tt class="docutils literal"><span class="pre">ON DELETE {val}</span></tt> constraint to the column.
+
+</dd>
 
 </dl></div>
 
@@ -160,7 +169,7 @@ Mark <tt class="docutils literal"><span class="pre">int</span></tt> field as for
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-03-20 20:15:38 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-03-23 19:23:56 UTC</small>
       </div>
     </div>
   </div>
