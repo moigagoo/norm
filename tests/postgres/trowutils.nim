@@ -1,6 +1,4 @@
-import unittest
-import options
-import times
+import std/[unittest, options, times]
 
 import ndb/postgres
 

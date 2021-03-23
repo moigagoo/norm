@@ -1,7 +1,4 @@
-import unittest
-import os
-import strutils
-import options
+import std/[unittest, os, strutils, options]
 
 import norm/[model, sqlite]
 

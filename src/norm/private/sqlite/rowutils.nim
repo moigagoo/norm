@@ -1,7 +1,6 @@
 ## Procs to convert `Model <../../model.html#Model>`_ instances to ``ndb.sqlite.Row`` instances and back.
 
-import macros
-import options
+import std/[macros, options]
 
 import ndb/sqlite
 

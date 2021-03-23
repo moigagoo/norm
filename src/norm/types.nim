@@ -1,6 +1,6 @@
 ## Custom Nim types to give granular control over DB types.
 
-import strutils
+import std/strutils
 
 
 type
