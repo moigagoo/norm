@@ -10,6 +10,9 @@ Norm: A Nim ORM
     :alt: Nimble
     :target: https://nimble.directory/pkg/norm
 
+.. image:: https://img.shields.io/github/stars/moigagoo/norm
+    :alt: GitHub Stars
+    :target: https://github.com/moigagoo/norm
 
 **Norm** is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
