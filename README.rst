@@ -26,8 +26,6 @@ Norm: A Nim ORM
 *   `Test results <https://norm.nim.town/testresults.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
 
-Norm works best with `Norman <https://norman.nim.town>`__.
-
 
 Installation
 ============
