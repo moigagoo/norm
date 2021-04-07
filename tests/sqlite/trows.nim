@@ -1,4 +1,4 @@
-import std/[unittest, with, os, strutils, sugar, options]
+import std/[unittest, with, os, sugar, options]
 
 import norm/[model, sqlite]
 
@@ -27,7 +27,7 @@ suite "Row CRUD":
 
     check toy.id > 0
 
-    let rows = dbconn.getallrows(sql"select price, id from toy")
+    let rows = dbconn.getAllRows(sql"SELECT price, id FROM Toy")
 
     check rows.len == 1
     check rows[0] == @[?123.45, ?toy.id]
@@ -36,11 +36,11 @@ suite "Row CRUD":
     var toy = newtoy(123.45)
 
     dbconn.insert(toy)
-    dbconn.insert(toy)
+    dbconn.insert(toy, force = true)
 
     check toy.id > 1
 
-    let rows = dbconn.getallrows(sql"select price, id from toy")
+    let rows = dbconn.getAllRows(sql"SELECT price, id FROM Toy")
 
     check rows.len == 2
     check rows[^1] == @[?123.45, ?toy.id]
