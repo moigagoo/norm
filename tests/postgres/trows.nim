@@ -45,7 +45,7 @@ suite "Row CRUD":
     var toy = newToy(123.45)
 
     dbConn.insert(toy)
-    dbConn.insert(toy)
+    dbConn.insert(toy, force = true)
 
     check toy.id > 1
 
