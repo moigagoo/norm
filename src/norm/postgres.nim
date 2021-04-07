@@ -121,8 +121,17 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
 # Row manupulation
 
-proc insert*[T: Model](dbConn; obj: var T) =
-  ## Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
+proc insert*[T: Model](dbConn; obj: var T, force = false) =
+  ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
+
+  By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
+  ]##
+
+  if obj.id != 0 and not force:
+    when defined(normDebug):
+      debug "Object ID is not 0, skipping insertion. Type: $#, ID: $#" % [$T, $obj.id]
+
+    return
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
@@ -138,11 +147,11 @@ proc insert*[T: Model](dbConn; obj: var T) =
     debug "$# <- $#" % [qry, $row]
   obj.id = dbConn.insertID(sql qry, row)
 
-proc insert*[T: Model](dbConn; objs: var openArray[T]) =
+proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
   ## Insert rows for each `Model`_ instance in open array.
 
   for obj in objs.mitems:
-    dbConn.insert(obj)
+    dbConn.insert(obj, force)
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
@@ -207,6 +216,23 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
   ]##
 
   dbConn.select(objs, "TRUE")
+
+proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", params: varargs[DbValue, dbValue]): int64 =
+  ##[ Count rows matching condition without fetching them.
+
+  To count rows with non-NULL values in a particular column, pass the column name in ``col`` param.
+
+  To count only unique column values, use ``dist = true`` (stands for “distinct.”)
+  ]##
+
+  let qry = "SELECT COUNT($# $#) FROM $# WHERE $#" % [if dist: "DISTINCT" else: "", col, T.table, cond]
+
+  when defined(normDebug):
+    debug "$# <- $#" % [qry, $params]
+
+  let row = get dbConn.getRow(sql qry, params)
+
+  row[0].i
 
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.

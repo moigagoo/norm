@@ -6,10 +6,13 @@ Norm: A Nim ORM
     :alt: Build Status
     :target: https://travis-ci.com/moigagoo/norm
 
-.. image:: https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png
+.. image:: https://img.shields.io/badge/Nimble-2.2.5-yellow?logo=nim
     :alt: Nimble
     :target: https://nimble.directory/pkg/norm
 
+.. image:: https://img.shields.io/github/stars/moigagoo/norm
+    :alt: GitHub Stars
+    :target: https://github.com/moigagoo/norm
 
 **Norm** is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
@@ -22,8 +25,6 @@ Norm: A Nim ORM
 *   `API index <https://norm.nim.town/theindex.html>`__
 *   `Test results <https://norm.nim.town/testresults.html>`__
 *   `Changelog <https://github.com/moigagoo/norm/blob/develop/changelog.rst>`__
-
-Norm works best with `Norman <https://norman.nim.town>`__.
 
 
 Installation
@@ -298,6 +299,33 @@ The generated query is similar to the previous one, but the result is populated 
     (email: "foo@foo.foo", id: 1)
     (name: Some("Bob"), user: ..., id: 2)
     (email: "foo@foo.foo", id: 1)
+
+
+Count Rows
+----------
+
+Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.
+
+To count the rows without fetching them, use ``count``:
+
+.. code-block:: nim
+
+    nim> dbConn.count(Customer)
+    3
+
+To count only unique records, use ``dist = true`` in conjunction with the column name you want to check for uniqueness:
+
+.. code-block:: nim
+
+    nim> dbConn.count(Customer, "user", dist = true)
+    2
+
+You can also count rows matching condition:
+
+.. code-block:: nim
+
+    nim> dbConn.count(Customer, "*", dist = false, "name LIKE ?", "alice")
+    1
 
 
 Update Rows
