@@ -301,6 +301,33 @@ The generated query is similar to the previous one, but the result is populated 
     (email: "foo@foo.foo", id: 1)
 
 
+Count Rows
+----------
+
+Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.
+
+To count the rows without fetching them, use ``count``:
+
+.. code-block:: nim
+
+    nim> dbConn.count(Customer)
+    3
+
+To count only unique records, use ``dist = true`` in conjunction with the column name you want to check for uniqueness:
+
+.. code-block:: nim
+
+    nim> dbConn.count(Customer, "user", dist = true)
+    2
+
+You can also count rows matching condition:
+
+.. code-block:: nim
+
+    nim> dbConn.count(Customer, "*", dist = false, "name LIKE ?", "alice")
+    1
+
+
 Update Rows
 -----------
 
