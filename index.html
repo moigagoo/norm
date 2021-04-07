@@ -190,6 +190,14 @@ function main() {
 <span class="Punctuation">(</span><span class="Identifier">email</span><span class="Punctuation">:</span> <span class="StringLit">&quot;foo@foo.foo&quot;</span><span class="Punctuation">,</span> <span class="Identifier">id</span><span class="Punctuation">:</span> <span class="DecNumber">1</span><span class="Punctuation">)</span>
 <span class="Punctuation">(</span><span class="Identifier">name</span><span class="Punctuation">:</span> <span class="Identifier">Some</span><span class="Punctuation">(</span><span class="StringLit">&quot;Bob&quot;</span><span class="Punctuation">)</span><span class="Punctuation">,</span> <span class="Identifier">user</span><span class="Punctuation">:</span> <span class="Operator">...</span><span class="Punctuation">,</span> <span class="Identifier">id</span><span class="Punctuation">:</span> <span class="DecNumber">2</span><span class="Punctuation">)</span>
 <span class="Punctuation">(</span><span class="Identifier">email</span><span class="Punctuation">:</span> <span class="StringLit">&quot;foo@foo.foo&quot;</span><span class="Punctuation">,</span> <span class="Identifier">id</span><span class="Punctuation">:</span> <span class="DecNumber">1</span><span class="Punctuation">)</span></pre>
+<h2 id="count-rows">Count Rows</h2><p>Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.</p>
+<p>To count the rows without fetching them, use <tt class="docutils literal"><span class="pre">count</span></tt>:</p>
+<pre class="listing"><span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">dbConn</span><span class="Operator">.</span><span class="Identifier">count</span><span class="Punctuation">(</span><span class="Identifier">Customer</span><span class="Punctuation">)</span>
+<span class="DecNumber">3</span></pre><p>To count only unique records, use <tt class="docutils literal"><span class="pre">dist = true</span></tt> in conjunction with the column name you want to check for uniqueness:</p>
+<pre class="listing"><span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">dbConn</span><span class="Operator">.</span><span class="Identifier">count</span><span class="Punctuation">(</span><span class="Identifier">Customer</span><span class="Punctuation">,</span> <span class="StringLit">&quot;user&quot;</span><span class="Punctuation">,</span> <span class="Identifier">dist</span> <span class="Operator">=</span> <span class="Identifier">true</span><span class="Punctuation">)</span>
+<span class="DecNumber">2</span></pre><p>You can also count rows matching condition:</p>
+<pre class="listing"><span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">dbConn</span><span class="Operator">.</span><span class="Identifier">count</span><span class="Punctuation">(</span><span class="Identifier">Customer</span><span class="Punctuation">,</span> <span class="StringLit">&quot;*&quot;</span><span class="Punctuation">,</span> <span class="Identifier">dist</span> <span class="Operator">=</span> <span class="Identifier">false</span><span class="Punctuation">,</span> <span class="StringLit">&quot;name LIKE ?&quot;</span><span class="Punctuation">,</span> <span class="StringLit">&quot;alice&quot;</span><span class="Punctuation">)</span>
+<span class="DecNumber">1</span></pre>
 <h2 id="update-rows">Update Rows</h2><p>To update a row, you just update the object and call <tt class="docutils literal"><span class="pre">update</span></tt> on it:</p>
 <pre class="listing"><span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">customerBar</span><span class="Operator">.</span><span class="Identifier">name</span> <span class="Operator">=</span> <span class="Identifier">some</span> <span class="StringLit">&quot;Saaam&quot;</span>
 <span class="Identifier">nim</span><span class="Operator">&gt;</span> <span class="Identifier">dbConn</span><span class="Operator">.</span><span class="Identifier">update</span><span class="Punctuation">(</span><span class="Identifier">customerBar</span><span class="Punctuation">)</span></pre><p>Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries:</p>
@@ -312,7 +320,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-03-28 08:54:47 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-04-07 20:57:17 UTC</small>
       </div>
     </div>
   </div>

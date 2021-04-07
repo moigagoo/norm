@@ -123,6 +123,12 @@ function main() {
     title="selectAll[T: Model](dbConn; objs: var seq[T])">selectAll,<wbr>,<wbr>seq[T]</a></li>
 
   </ul>
+  <ul class="simple nested-toc-section">count
+      <li><a class="reference" href="#count%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
+    title="count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;1&quot;;
+      params: varargs[DbValue, dbValue]): int64">count,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
+
+  </ul>
   <ul class="simple nested-toc-section">dropDb
       <li><a class="reference" href="#dropDb"
     title="dropDb()">dropDb</a></li>
@@ -135,9 +141,9 @@ function main() {
   </ul>
   <ul class="simple nested-toc-section">insert
       <li><a class="reference" href="#insert%2C%2CT"
-    title="insert[T: Model](dbConn; obj: var T)">insert,<wbr>,<wbr>T</a></li>
+    title="insert[T: Model](dbConn; obj: var T; force = false)">insert,<wbr>,<wbr>T</a></li>
   <li><a class="reference" href="#insert%2C%2CopenArray%5BT%5D"
-    title="insert[T: Model](dbConn; objs: var openArray[T])">insert,<wbr>,<wbr>openArray[T]</a></li>
+    title="insert[T: Model](dbConn; objs: var openArray[T]; force = false)">insert,<wbr>,<wbr>openArray[T]</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">rollback
@@ -264,14 +270,16 @@ Create tables for <a class="reference external" href="#model">Model</a> and its 
 
 </dd>
 <a id="insert,,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CT"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CT"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Insert rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.
+<p>Insert rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.</p>
+<p>By default, if the inserted object's <tt class="docutils literal"><span class="pre">id</span></tt> is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with <tt class="docutils literal"><span class="pre">force = true</span></tt>. </p>
+
 
 </dd>
 <a id="insert,,openArray[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CopenArray%5BT%5D"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CopenArray%5BT%5D"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
 <dd>
 
 Insert rows for each <a class="reference external" href="#model">Model</a> instance in open array.
@@ -309,6 +317,17 @@ instead of hardcoded table and column names</li>
 <p>Populate a sequence of <a class="reference external" href="#model">Model</a> instances from DB, fetching all rows in the matching table.</p>
 <p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item.</p>
 <p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
+
+
+</dd>
+<a id="count,,typedesc[Model],string,string,varargs[DbValue,dbValue]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#count%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">count</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span> <span class="Other">=</span> <span class="StringLit">&quot;*&quot;</span><span class="Other">;</span> <span class="Identifier">dist</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;1&quot;</span><span class="Other">;</span>
+           <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span></pre></dt>
+<dd>
+
+<p>Count rows matching condition without fetching them.</p>
+<p>To count rows with non-NULL values in a particular column, pass the column name in <tt class="docutils literal"><span class="pre">col</span></tt> param.</p>
+<p>To count only unique column values, use <tt class="docutils literal"><span class="pre">dist = true</span></tt> (stands for “distinct.”) </p>
 
 
 </dd>
@@ -386,7 +405,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-03-28 08:54:47 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-04-07 20:57:17 UTC</small>
       </div>
     </div>
   </div>
