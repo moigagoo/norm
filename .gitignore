@@ -17,6 +17,7 @@ tests/megatest
 
 tests/common/tmodel
 
+tests/sqlite/tcount
 tests/sqlite/tdb
 tests/sqlite/tdbtypes
 tests/sqlite/tenv
@@ -33,6 +34,7 @@ tests/sqlite/ttransactions
 tests/sqlite/ttriangle
 tests/sqlite/tunique
 
+tests/postgres/tcount
 tests/postgres/tdb
 tests/postgres/tdbtypes
 tests/postgres/tenv
