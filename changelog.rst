@@ -10,11 +10,12 @@ Changelog
 -   [d]—docs improvement
 
 
-2.3.0 (WIP)
-===========
+2.3.0 (April 8, 2021)
+=====================
 
 -   [!][+] Objects with ``id`` != 0 are now not inserted multiple times by default. To force insertion, use explicit ``force == true`` param.
--   [+] Add ``count`` proc to count rows without fetching them.
+-   [+] Add ``count`` procs to count rows without fetching them.
+-   [t] Remove unused import from ``sqlite/trows.nim``.
 
 
 2.2.5 (March 23, 2021)
