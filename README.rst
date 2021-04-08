@@ -6,7 +6,7 @@ Norm: A Nim ORM
     :alt: Build Status
     :target: https://travis-ci.com/moigagoo/norm
 
-.. image:: https://img.shields.io/badge/Nimble-2.2.5-yellow?logo=nim
+.. image:: https://img.shields.io/badge/Nimble-2.3.0-yellow?logo=nim
     :alt: Nimble
     :target: https://nimble.directory/pkg/norm
 
