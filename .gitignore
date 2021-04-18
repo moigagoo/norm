@@ -1,6 +1,7 @@
 .vscode
 *.sublime-project
 *.sublime-workspace
+.idea
 
 *.exe
 *.html
