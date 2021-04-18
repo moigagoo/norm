@@ -128,7 +128,7 @@ suite "Row CRUD":
 
     dbConn.select(outToys, "price > ?", 100.00)
 
-    check outToys === inpToys[..1]
+    check outToys === inpToys[0..1]
 
   test "Get all rows":
     var
@@ -152,7 +152,7 @@ suite "Row CRUD":
       outToys = @[newToy()].dup:
         dbConn.select("price > ?", 100.00)
 
-    check outToys === inpToys[..1]
+    check outToys === inpToys[0..1]
 
   test "Get rows, nested models":
     var
