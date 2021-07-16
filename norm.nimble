@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "ndb >= 0.19.9"
+requires "nim >= 1.4.0", "ndb >= 0.19.9", "nimibook >= 0.1.0"
 
 task test, "Run tests":
   exec "testament all"
@@ -22,3 +22,6 @@ task docs, "Generate docs":
   exec "testament html"
   mvFile("testresults.html", "htmldocs/testresults.html")
   cpFile("CNAME", "htmldocs/CNAME")
+
+task book, "Build book":
+  exec "nim r -d:release nbook.nim build"
