@@ -1,4 +1,4 @@
-import std/[options, sugar]
+import std/sugar
 
 import nimib, nimibook
 import norm/sqlite

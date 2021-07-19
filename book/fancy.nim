@@ -1,5 +1,3 @@
-import std/options
-
 import nimib, nimibook
 import norm/sqlite
 
