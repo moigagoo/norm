@@ -7,11 +7,11 @@ services:
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker-compose run tests
-  - docker-compose run docs
+  - docker-compose run book
 
 deploy:
   provider: pages
-  local_dir: htmldocs
+  local_dir: docs
   cleanup: false
   token: $GITHUB_TOKEN
   keep_history: true
