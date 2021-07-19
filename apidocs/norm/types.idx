@@ -1,0 +1,8 @@
+StringOfCap	norm/types.html#StringOfCap	types: StringOfCap	
+PaddedStringOfCap	norm/types.html#PaddedStringOfCap	types: PaddedStringOfCap	
+newStringOfCap	norm/types.html#newStringOfCap,string	types: newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]	
+newPaddedStringOfCap	norm/types.html#newPaddedStringOfCap,string	types: newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]	
+`==`	norm/types.html#==,StringOfCap[_],StringOfCap[_]	types: `==`[_](x, y: StringOfCap[_]): bool	
+`==`	norm/types.html#==,PaddedStringOfCap[_],PaddedStringOfCap[_]	types: `==`[_](x, y: PaddedStringOfCap[_]): bool	
+`$`	norm/types.html#$,StringOfCap[_]	types: `$`[_](s: StringOfCap[_]): string	
+`$`	norm/types.html#$,PaddedStringOfCap[_]	types: `$`[_](s: PaddedStringOfCap[_]): string	

@@ -1,0 +1,573 @@
+<!DOCTYPE HTML>
+<html lang="en-us" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using nimibook -->
+        <meta charset="UTF-8">
+        <title>changelog.nim</title>
+
+        <!-- Custom HTML head -->
+        <!-- custom head content -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="a book built with nimibook">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🦾</text></svg>">
+        <link rel="stylesheet" href="./assets/css/variables.css">
+        <link rel="stylesheet" href="./assets/css/general.css">
+        <link rel="stylesheet" href="./assets/css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="./assets/FontAwesome/css/font-awesome.min.css">
+
+        <!-- Highlight.js Stylesheets - I could use nimib native highlight but let's keep it for styling... -->
+        <link rel="stylesheet" href="./assets/css/highlight.css">
+        <link rel="stylesheet" href="./assets/css/tomorrow-night.css">
+        <link rel="stylesheet" href="./assets/css/ayu-highlight.css">
+
+        <!-- Custom theme stylesheets - why the "../"? -->
+
+
+        <!-- plausible analytics (new in nimibook) -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = ".//assets";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "coal" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                                <ol class="chapter">
+                  <li class="chapter-item expanded ">
+                    <a href="./index.html" tabindex="0">
+                      <strong aria-hidden="true">1.</strong> Welcome to Norm!
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./models.html" tabindex="0">
+                      <strong aria-hidden="true">2.</strong> Models 101
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./tutorial.html" tabindex="0">
+                      <strong aria-hidden="true">3.</strong> Tutorial
+                    </a>
+                  </li>
+                  <li>
+                  <ol class="section">
+                  <li class="chapter-item expanded ">
+                    <a href="./tutorial/tables.html" tabindex="0">
+                      <strong aria-hidden="true">3.1.</strong> Tables
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./tutorial/rows.html" tabindex="0">
+                      <strong aria-hidden="true">3.2.</strong> Rows
+                    </a>
+                  </li>
+                  </ol>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./fancy.html" tabindex="0">
+                      <strong aria-hidden="true">4.</strong> Fancy Syntax
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./transactions.html" tabindex="0">
+                      <strong aria-hidden="true">5.</strong> Transactions
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./config.html" tabindex="0">
+                      <strong aria-hidden="true">6.</strong> Configuration from Environment
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./fk.html" tabindex="0">
+                      <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./debug.html" tabindex="0">
+                      <strong aria-hidden="true">8.</strong> Debugging SQL
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="./changelog.html" class="active" tabindex="0">
+                      <strong aria-hidden="true">9.</strong> Changelog
+                    </a>
+                  </li>
+                </ol>
+<!-- I could use also an unescaped context value -->
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <!-- custom header content -->                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Norm: a Nim ORM</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/moigagoo/norm" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1>Changelog</h1>
+<ul>
+<li>[!]—backward incompatible change</li>
+<li>[+]—new feature</li>
+<li>[f]—bugfix</li>
+<li>[r]—refactoring</li>
+<li>[t]—test suite improvement</li>
+<li>[d]—docs improvement</li>
+</ul>
+<h2>2.3.0 (April 8, 2021)</h2>
+<ul>
+<li>[!][+] Objects with <code>id</code> != 0 are now not inserted multiple times by default. To force insertion, use explicit <code>force == true</code> param.</li>
+<li>[+] Add <code>count</code> procs to count rows without fetching them.</li>
+<li>[t] Remove unused import from <code>sqlite/trows.nim</code>.</li>
+</ul>
+<h2>2.2.5 (March 23, 2021)</h2>
+<ul>
+<li>[+] Add <code>onDelete</code> pragma that lets add <code>ON DELETE</code> constraints to foreign keys.</li>
+<li>[r] Improve formatting of import statements: use <code>std/</code> notation.</li>
+</ul>
+<h2>2.2.4 (March 21, 2021)</h2>
+<ul>
+<li>[+] <code>NotFoundError</code> exception is raised instead of <code>KeyError</code> if a record is not found.</li>
+<li>[f] Fix issue with objects with <code>none Model</code> fields failing to be used as containers to select records into (see <a href="https://github.com/moigagoo/norm/issues/103">#103</a>).</li>
+<li>[f] Allow objects to be inserted multiple times. The <code>id</code> is updated with each insertion (see <a href="https://github.com/moigagoo/norm/issues/104">#104</a>).</li>
+<li>[t] Added tests for record not found case.</li>
+<li>[t] Added tests for <code>none Model</code> container fields.</li>
+</ul>
+<h2>2.2.3 (February 20, 2021)</h2>
+<ul>
+<li>[+] <code>id</code> is now <code>int64</code> instead of <code>int</code> to produce a DB type in Postgres that doesn't depend on the processor architecture of a particular computer running the code.</li>
+<li>[+] Add granular convertors for <code>int16</code>, <code>int32</code>, and <code>int64</code> in Postgres.</li>
+<li>[+] Add granular convertors for <code>float32</code> and <code>float64</code> in Postgres.</li>
+<li>[+] Add type <code>StringOfCap[static n]</code> that is converted to <code>VARCHAR(n)</code> in Postgres.</li>
+<li>[+] Add type <code>PaddedStringOfCap[static n]</code> that is converted to <code>CHAR(n)</code> in Postgres.</li>
+<li>[t] Remove redundant environment variable usage from <code>tdbtypes</code> tests.</li>
+</ul>
+<h2>2.2.2 (November 19, 2020)</h2>
+<ul>
+<li>[f] Fix <code>ProveInit</code> warning.</li>
+</ul>
+<h2>2.2.1 (November 10, 2020)</h2>
+<ul>
+<li>
+<p>[+] Added <code>fk</code> pragma that allows to manually declare a <code>SomeInteger</code> field of <code>Model</code> as a foreign key.</p>
+<p>Pragma value must be a <code>Model</code>. The foreign key will reference the referenced model's <code>id</code> field.</p>
+</li>
+<li>
+<p>[t] Reorganized tests into folders.</p>
+</li>
+<li>
+<p>[t] Switch from vanilla <code>nimble test</code> to testament.</p>
+</li>
+<li>
+<p>[t] Added missing tests for <code>NULL</code> foreign keys in Postgres.</p>
+</li>
+<li>
+<p>[t] Cleaned up redundant imports and consts.</p>
+</li>
+</ul>
+<h2>2.2.0 (October 26, 2020)</h2>
+<ul>
+<li>[!][f][t] The way <code>JOIN</code> statements are generated has been changed competely. The previous algorithm was just wrong, it didn't work with models that that multiple FKs to the same model or when the same model was referenced from the root model and any of its <code>Model</code> fields or their <code>Model</code> fields.</li>
+</ul>
+<p>Long story short, the old algorithm would rely on table names with no regard for whether the table is a foreign key. That means that, if you had the same table referenced with two different fields, the <code>JOIN</code> statement would make no difference between them, which led to invalid selections (see `<a href="https://github.com/moigagoo/norm/issues/82">#82</a>).</p>
+<p>The new algorithm adds alias for each joined table. The alias is named after the model field that points to the table. Compare <a href="https://github.com/moigagoo/norm/blob/2.2.0/tests/tmodel.nim">tests/tmodel.nim</a> before and after the change:</p>
+<pre><code># Old way:
+test &quot;Join groups&quot;:
+  let
+    toy = newToy(123.45)
+    pet = newPet(&quot;cat&quot;, toy)
+    person = newPerson(&quot;Alice&quot;, pet)
+
+  check person. joinGroups == @[
+    (&quot;&quot;&quot;&quot;Pet&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;Person&quot;.pet&quot;&quot;&quot;, &quot;&quot;&quot;&quot;Pet&quot;.id&quot;&quot;&quot;),
+    (&quot;&quot;&quot;&quot;Toy&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;Pet&quot;.favToy&quot;&quot;&quot;, &quot;&quot;&quot;&quot;Toy&quot;.id&quot;&quot;&quot;)
+  ]
+  # produces the following `JOIN` statement:
+  # `JOIN &quot;Pet&quot; ON &quot;Person&quot;.pet = &quot;Pet&quot;.id JOIN &quot;Toy&quot; ON &quot;Pet&quot;.favToy = &quot;Toy&quot;.id`
+
+# New way:
+test &quot;Join groups&quot;:
+  let
+    toy = newToy(123.45)
+    pet = newPet(&quot;cat&quot;, toy)
+    person = newPerson(&quot;Alice&quot;, pet)
+
+  check person.joinGroups == @[
+    (&quot;&quot;&quot;&quot;Pet&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;pet&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;Person&quot;.pet&quot;&quot;&quot;, &quot;&quot;&quot;&quot;pet&quot;.id&quot;&quot;&quot;),
+    (&quot;&quot;&quot;&quot;Toy&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;pet_favToy&quot;&quot;&quot;&quot;, &quot;&quot;&quot;&quot;pet&quot;.favToy&quot;&quot;&quot;, &quot;&quot;&quot;&quot;pet_favToy&quot;.id&quot;&quot;&quot;)
+  ]
+  # produces the following `JOIN` statement:
+  # `JOIN &quot;Pet&quot; AS &quot;pet&quot; ON &quot;Person&quot;.pet = &quot;pet&quot;.id JOIN &quot;Toy&quot; AS &quot;pet_favToy&quot; ON &quot;pet&quot;.favToy = &quot;pet_favToy&quot;.id`
+</code></pre>
+<p><strong>With the change in the algorithm, the way <code>select</code> conditions must be composed has changed.</strong> Here's an example from the tests to illustrate this change (<a href="https://github.com/moigagoo/norm/blob/2.2.0/tests/tpostgresrows.nim">tests/tpostgresrows.nim</a>):</p>
+<pre><code># Old way:
+test &quot;Get rows, nested models&quot;:
+  var
+    inpPersons = @[
+      newPerson(&quot;Alice&quot;, newPet(&quot;cat&quot;, newToy(123.45))),
+      newPerson(&quot;Bob&quot;, newPet(&quot;dog&quot;, newToy(456.78))),
+      newPerson(&quot;Charlie&quot;, newPet(&quot;frog&quot;, newToy(99.99))),
+    ]
+    outPersons = @[newPerson()]
+
+  for inpPerson in inpPersons.mitems:
+    dbConn.insert(inpPerson)
+
+  # We're querying by `&quot;Toy&quot;.price` as if it weren't `favToy` field of `pet` field of `Person` model:
+  dbConn.select(outPersons, &quot;&quot;&quot;&quot;Toy&quot;.price &gt; $1&quot;&quot;&quot;, 100.00)
+
+  check outPersons === inpPersons[0..^2]
+
+# New way:
+test &quot;Get rows, nested models&quot;:
+  var
+    inpPersons = @[
+      newPerson(&quot;Alice&quot;, newPet(&quot;cat&quot;, newToy(123.45))),
+      newPerson(&quot;Bob&quot;, newPet(&quot;dog&quot;, newToy(456.78))),
+      newPerson(&quot;Charlie&quot;, newPet(&quot;frog&quot;, newToy(99.99))),
+    ]
+    outPersons = @[newPerson()]
+
+  for inpPerson in inpPersons.mitems:
+    dbConn.insert(inpPerson)
+
+  # Querying by `&quot;pet_favToy&quot;.price` to indicate that we want to match specifically by `Person.pet.favToy`:
+  dbConn.select(outPersons, &quot;&quot;&quot;&quot;pet_favToy&quot;.price &gt; $1&quot;&quot;&quot;, 100.00)
+
+  check outPersons === inpPersons[0..^2]
+</code></pre>
+<ul>
+<li>
+<p>[f][t] Fix <a href="https://github.com/moigagoo/norm/issues/79">#79</a>. <code>NULL</code> foreign keys are not omitted in selects anymore if the container objects is <code>some Model</code>.</p>
+</li>
+<li>
+<p>[+] Add <code>selectAll</code> procs to select all rows without condition (see <a href="https://github.com/moigagoo/norm/issues/85">#85</a>).</p>
+</li>
+<li>
+<p>[r] Require Nim version &gt;= 1.4.0.</p>
+</li>
+<li>
+<p>[r] Update Nim version to 1.4.0 in Dockerfile.</p>
+</li>
+<li>
+<p>[+] Hide logging behind <code>normDebug</code> compilation flag to improve runtime performance.</p>
+</li>
+<li>
+<p>[+] Add <code>unique</code> pragma to add <code>UNIQUE</code> constaints to fields.</p>
+</li>
+</ul>
+<h2>2.1.5 (September 8, 2020)</h2>
+<ul>
+<li>[+] Export private <code>dbValue</code>, and <code>to</code> procs in public modules.</li>
+</ul>
+<h2>2.1.4 (August 14, 2020)</h2>
+<ul>
+<li>[+] Add <code>dropDb</code> procs.</li>
+</ul>
+<h2>2.1.3 (August 13, 2020)</h2>
+<ul>
+<li>[f] Fix relation triangle with more deeply nested relations.</li>
+</ul>
+<h2>2.1.2 (August 12, 2020)</h2>
+<ul>
+<li>[f] Fix <code>select</code> for models that relate to two models that are related with each other as well.</li>
+</ul>
+<h2>2.1.1 (July 10, 2020)</h2>
+<ul>
+<li>[r] Add missing docstrings for <code>getDb</code> and <code>withDb</code>.</li>
+</ul>
+<h2>2.1.0 (July 10, 2020)</h2>
+<ul>
+<li>[+] Add <code>getDb</code> and <code>withDb</code> sugars to get DB configuration from environment variables <code>DB_HOST</code>, <code>DB_USER</code>, <code>DB_PASS</code>, and <code>DB_NAME</code>.</li>
+</ul>
+<h2>2.0.1 (June 24, 2020)</h2>
+<ul>
+<li>[f] Replace func with proc in dbtypes since <code>to</code> can have side effects.</li>
+</ul>
+<h2>2.0.0 (June 22, 2020)</h2>
+<p>Rewritten from scratch. <strong>Backward compatibility has been completely broken.</strong></p>
+<p>Most noticeable changes are:</p>
+<ul>
+<li>DB procs work only with model instances and never with model types.</li>
+<li>DB procs mutate objects in-place. To create new instances, use <code>dup</code>.</li>
+<li>Models are ref types instead of value types.</li>
+<li>Model objects are defined by being inherited from <code>Model</code> and not by being defined under <code>db</code> block.</li>
+<li>DB procs now take database connection as the first argument.</li>
+<li>Foreign keys are created automatically.</li>
+<li>N+1 problem has been solved.</li>
+<li>Most pragmas are gone, resulting in less customizability but simpler API.</li>
+<li>Adding custom converters now means adding procs and not putting expressions in pragmas, which was very fragile.</li>
+</ul>
+<h2>1.1.3 (May 11, 2020)</h2>
+<ul>
+<li>[f] Fix <a href="https://github.com/moigagoo/norm/issues/69">#69</a>: <code>table</code> pragma is now respected as it should despite being deprecated.</li>
+</ul>
+<h2>1.1.2 (March 13, 2020)</h2>
+<ul>
+<li>[f] Fix <a href="https://github.com/moigagoo/norm/issues/63">#63</a>: foreign key boilerplate code is now correctly injected into exported type definitions.</li>
+</ul>
+<h2>1.1.1 (March 13, 2020)</h2>
+<ul>
+<li>
+<p>[+] Add <code>insertId</code> proc that takes an immutable object and inserts it as a record to the DB. The inserted record ID is returned. The object <code>id</code> field is <strong>not</strong> updated.</p>
+</li>
+<li>
+<p>[+] Automatically generate foreign key boilerplate for models defined under the same <code>type</code> section. See examples in <a href="https://github.com/moigagoo/norm/blob/1.1.1/tests/tpostgres.nim">tests/tpostgres.nim</a> and <a href="https://github.com/moigagoo/norm/blob/1.1.1/tests/tsqlite.nim">tests/tsqlite.nim</a>.</p>
+</li>
+</ul>
+<h2>1.1.0 (January 27, 2020)</h2>
+<ul>
+<li>
+<p>[!] Deprecate <code>notNull</code> pragma. <code>NOT NULL</code> is the default for all types except <code>Option</code>.</p>
+<p>To set <code>NOT NULL</code> constraint for custom DB types, add it directly to <code>dbType</code>, e.g. <code>{.dbType: &quot;INTEGER NOT NULL&quot;.}</code>.</p>
+</li>
+<li>
+<p>[!] Rename pragma <code>table</code> to <code>dbTable</code>.</p>
+</li>
+<li>
+<p>[!] Deprecate <code>default</code> pragma. Default values are added to tables by default.</p>
+</li>
+<li>
+<p>[!][+] Rewrite PostgreSQL backend to use <a href="https://github.com/xzfc/ndb.nim">ndb</a>_, which adds <code>NULL</code> support via <code>Option</code> type similarly to SQLite backend.</p>
+</li>
+<li>
+<p>[+] Add <code>transaction</code> macro to run multiple commands in a transaction and <code>rollback</code> proc to safely interrupt a transaction.</p>
+</li>
+<li>
+<p>[+] Add <code>createTable</code> and <code>dropTable</code>.</p>
+</li>
+<li>
+<p>[+] SQLite: Add means to write migrations: <code>addColumn</code>, <code>dropUnusedColumns</code>, <code>renameColumnFrom</code>, and <code>renameTableFrom</code>.</p>
+</li>
+<li>
+<p>[+] PostgreSQL: Add means to write migrations: <code>addColumn</code>, <code>dropColumns</code>, <code>dropUnusedColumns</code>, <code>renameColumnFrom</code>, and <code>renameTableFrom</code>.</p>
+</li>
+<li>
+<p>[+] Add support for <code>int64</code> field type.</p>
+</li>
+<li>
+<p>[+] Add <code>getAll</code> template to get all records without limit or offset.</p>
+</li>
+<li>
+<p>[r] Rewrite table schema generation so that schemas are generated from typed nodes rather than untyped modes.</p>
+</li>
+<li>
+<p>[f] Fix &quot;unreachable statement&quot; compile error for certain SQLite use cases.</p>
+</li>
+</ul>
+<h2>1.0.17 (September 12, 2019)</h2>
+<ul>
+<li>[f] Fixed table schema generation for <code>Positive</code> and <code>Natural</code> types: they used to be stored as <code>TEXT</code>, now they are stored as <code>INTEGER</code>. Also, fixed <a href="https://github.com/moigagoo/norm/issues/28">#28</a>.</li>
+</ul>
+<h2>1.0.16 (September 11, 2019)</h2>
+<ul>
+<li>[f] Added missing <code>strutils</code> export to eliminate <code>Error: undeclared identifier: '%'</code> and fix <a href="https://github.com/moigagoo/norm/issues/27">#27</a>.</li>
+<li>[r] <code>genTableSchema</code> now returns <code>SqlQuery</code> instead of <code>string</code> to be in line with the other <code>gen*</code> procs.</li>
+</ul>
+<h2>1.0.15 (September 06, 2019)</h2>
+<ul>
+<li>[+] Add <code>dbTypes</code> macro to mark existing type sections to be usable in DB schema generation.</li>
+<li>[+] Add <code>dbFromTypes</code> macro to define DB schema from existing types. This is an alternative to defining the entire schema under <code>db</code> macro.</li>
+<li>[f] PostgreSQL: <code>times.Datetime</code> are now explicitly stored in UTC timezone.</li>
+<li>[r] Move row-object conversion and SQL query generation into backend-specific submodules: <code>sqlite/rowutils.nim</code>, <code>sqlite/sqlgen.nim</code>, <code>postgres/rowutils.nim</code>, <code>postgres/sqlgen.nim</code>.</li>
+<li>[r] Move procs to inject <code>id</code> field in type definitions into a separate module <code>typedefutils.nim</code>.</li>
+</ul>
+<h2>1.0.14 (August 21, 2019)</h2>
+<ul>
+<li>[+] PostgreSQL: Support <code>bool</code> type.</li>
+<li>[+] SQLite, PostgreSQL: Support <code>times.DateTime</code> type.</li>
+</ul>
+<h2>1.0.13 (August 16, 2019)</h2>
+<ul>
+<li>[f] SQLite: <code>TEXT</code> type fields would be created for <code>bool</code> type object fields, whereas <code>INTEGER</code> should have been used.</li>
+</ul>
+<h2>1.0.12 (August 15, 2019)</h2>
+<ul>
+<li>[!] <code>formatIt</code> expression must evaluate to <code>DbValue</code>, implicit conversion has been removed.</li>
+<li>[+] SQLite: Added boolean type conversion. Nim bools are stored as 1 and 0 in SQLite. SQLite's 0's are converted to <code>false</code>, any other number—to <code>true</code>.</li>
+</ul>
+<h2>1.0.11 (June 15, 2019)</h2>
+<ul>
+<li>[!] SQLite: Switch to <a href="https://github.com/xzfc/ndb.nim">ndb</a>_.</li>
+<li>[!] SQLite: Non-<code>Option</code> non-custom types are <code>NOT NULL</code> by default.</li>
+<li>[+] SQLite: Support inserting and retrieving <code>NULL</code> values with <code>Option</code> types.</li>
+<li>[+] SQLite, PostgreSQL: Add <code>withCustomDb</code> to run DB procs on a non-default DB (i.e. not the one defined in <code>db</code> declaration).</li>
+<li>[r] Replace <code>type</code> with <code>typedesc</code> and <code>typeof</code> where it is not a type definition.</li>
+</ul>
+<h2>1.0.10 (June 6, 2019)</h2>
+<ul>
+<li>[r] Rename <code>getUpdateQuery</code> to <code>genUpdateQuery</code>.</li>
+<li>[f] Fix compatibility with nim 0.20.0.</li>
+</ul>
+<h2>1.0.9 (May 9, 2019)</h2>
+<ul>
+<li>[!] Change signatures for <code>getMany</code> and <code>getOne</code>: instead of <code>where</code> and <code>orderBy</code> args there's a single <code>cond</code> arg.</li>
+<li>[+] Add <code>params</code> arg to <code>getMany</code> and <code>getone</code> to allow safe value insertion in SQL queries.</li>
+<li>[+] Add <code>getOne(cond: string, params: varargs[string, `$`])</code> procs to query a single record by condition.</li>
+</ul>
+<h2>1.0.8 (April 30, 2019)</h2>
+<ul>
+<li>[+] SQLite: Add <code>onUpdate</code> and <code>onDelete</code> pragmas.</li>
+<li>[+] SQLite: Add <code>unique</code> pragma.</li>
+<li>[f] SQLite: Add support for multiple foreign keys.</li>
+<li>[f] SQLite: Enable foreign keys for all connections.</li>
+<li>[t] Add tests for multiple foreign keys.</li>
+</ul>
+<h2>1.0.7 (March 21, 2019)</h2>
+<ul>
+<li>[+] Add <code>orderBy</code> argument to <code>getMany</code> procs.</li>
+</ul>
+<h2>1.0.6 (March 21, 2019)</h2>
+<ul>
+<li>[+] Log all generated SQL statements as debug level logs.</li>
+</ul>
+<h2>1.0.5 (March 18, 2019)</h2>
+<ul>
+<li>[+] Do not require <code>chronicles</code> package.</li>
+</ul>
+<h2>1.0.4 (March 3, 2019)</h2>
+<ul>
+<li>[+] Add <code>where</code> lookup to <code>getMany</code> procs.</li>
+</ul>
+<h2>1.0.3 (March 2, 2019)</h2>
+<ul>
+<li>[r] objutils: Rename <code>[]</code> field accessor to <code>dot</code> to avoid collisions with <code>tables</code> module.</li>
+</ul>
+<h2>1.0.2 (March 1, 2019)</h2>
+<ul>
+<li>[!] Procs defined in <code>db</code> macro are now passed as is to the resulting code and are not forced inside <code>withdb</code> template.</li>
+<li>[+] Allow to override column names for fields with <code>dbCol</code> pragma.</li>
+</ul>
+<h2>1.0.1 (February 28, 2019)</h2>
+<ul>
+<li>[+] Respect custom field parsers and formatters.</li>
+<li>[+] rowutils: respect <code>ro</code> pragma in <code>toRow</code> proc.</li>
+<li>[+] objutils: respect <code>ro</code> pragma in <code>fieldnames</code> proc.</li>
+<li>[t] Type conversion: fix issue with incorrect conversion of field named <code>name</code>.</li>
+</ul>
+<h2>1.0.0 (February 27, 2019)</h2>
+<ul>
+<li>🎉 initial release.</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="./debug.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="./debug.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+
+
+
+        <script src="./assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./assets/js/highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="./assets/js/book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </body>
+</html>

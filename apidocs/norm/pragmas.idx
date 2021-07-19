@@ -1,0 +1,5 @@
+pk	norm/pragmas.html#pk.t	pragmas: pk()	
+ro	norm/pragmas.html#ro.t	pragmas: ro()	
+unique	norm/pragmas.html#unique.t	pragmas: unique()	
+fk	norm/pragmas.html#fk.t,typed	pragmas: fk(val: typed)	
+onDelete	norm/pragmas.html#onDelete.t,string	pragmas: onDelete(val: string)	
