@@ -18,7 +18,7 @@ task test, "Run tests":
 task docs, "Generate docs":
   rmDir "htmldocs"
   exec "nimble doc --outdir:htmldocs --project --index:on src/norm"
-  exec "nim rst2html -o:htmldocs/index.html README.rst"
+  exec "nim rst2html -o:htmldocs/index.html README.md"
   exec "testament html"
   mvFile("testresults.html", "htmldocs/testresults.html")
   cpFile("CNAME", "htmldocs/CNAME")
