@@ -2,13 +2,7 @@
 
 **Norm** is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
--   [Repo](https://github.com/moigagoo/norm)
-
-    -   [Issues](https://github.com/moigagoo/norm/issues)
-    -   [Pull requests](https://github.com/moigagoo/norm/pulls)
-
--   [API index](https://norm.nim.town/theindex.html)
--   [Changelog](https://github.com/moigagoo/norm/blob/develop/changelog.rst)
+-   [API index](apidocs/theindex.html)
 
 
 ## Installation
@@ -26,7 +20,7 @@ Add Norm to your .nimble file:
 
 Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.
 
--   See the [issues on GitHub](http://github.com/moigagoo/norm/issues>).
+-   See the [issues on GitHub](http://github.com/moigagoo/norm/issues).
 
 -   Run the tests before and after you change the code.
 

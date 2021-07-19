@@ -12,6 +12,7 @@ var book = newBookFromToc("Norm: a Nim ORM", "book"):
   entry("Configuration from Environment", "config.nim")
   entry("Manual Foreign Key Handling", "fk.nim")
   entry("Debugging SQL", "debug.nim")
+  entry("Changelog", "changelog.nim")
 
 
 book.git_repository_url = "https://github.com/moigagoo/norm"

@@ -1,5 +1,4 @@
 import nimib, nimibook
-import norm/sqlite
 
 
 nbInit
