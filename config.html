@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>index.nim</title>
+        <title>config.nim</title>
 
         <!-- Custom HTML head -->
         <!-- custom head content -->
@@ -81,7 +81,7 @@
             <div class="sidebar-scrollbox">
                                 <ol class="chapter">
                   <li class="chapter-item expanded ">
-                    <a href="./index.html" class="active" tabindex="0">
+                    <a href="./index.html" tabindex="0">
                       <strong aria-hidden="true">1.</strong> Welcome to Norm!
                     </a>
                   </li>
@@ -120,7 +120,7 @@
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./config.html" tabindex="0">
+                    <a href="./config.html" class="active" tabindex="0">
                       <strong aria-hidden="true">6.</strong> Configuration from Environment
                     </a>
                   </li>
@@ -183,62 +183,47 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Welcome to Norm!</h1>
-<p><strong>Norm</strong> is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.</p>
-<ul>
-<li>
-<p><a href="https://github.com/moigagoo/norm">Repo</a></p>
-<ul>
-<li><a href="https://github.com/moigagoo/norm/issues">Issues</a></li>
-<li><a href="https://github.com/moigagoo/norm/pulls">Pull requests</a></li>
-</ul>
-</li>
-<li>
-<p><a href="https://norm.nim.town/theindex.html">API index</a></p>
-</li>
-<li>
-<p><a href="https://github.com/moigagoo/norm/blob/develop/changelog.rst">Changelog</a></p>
-</li>
-</ul>
-<h2>Installation</h2>
-<p>Install Norm with <a href="https://github.com/nim-lang/nimble">Nimble</a>:</p>
-<pre><code>$ nimble install -y norm
-</code></pre>
-<p>Add Norm to your .nimble file:</p>
-<pre><code>requires &quot;norm&quot;
-</code></pre>
-<h2>Contributing</h2>
-<p>Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.</p>
-<ul>
-<li>
-<p>See the <a href="http://github.com/moigagoo/norm/issues%3E">issues on GitHub</a>.</p>
-</li>
-<li>
-<p>Run the tests before and after you change the code.</p>
-<p>The recommended way to run the tests is with Docker Compose:</p>
-<pre><code>$ docker-compose run --rm tests                     # run all test suites
-$ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
-</code></pre>
-</li>
-<li>
-<p>Use camelCase instead of snake_case.</p>
-</li>
-<li>
-<p>New procs must have a documentation comment. If you modify an existing proc, update the comment.</p>
-</li>
-<li>
-<p>Apart from the code that implements a feature or fixes a bug, PRs are required to ship necessary tests and a changelog updates.</p>
-</li>
-</ul>
-<h2>❤ Contributors ❤</h2>
-<p>Norm would not be where it is today without the efforts of these fine folks: <a href="https://github.com/moigagoo/norm/graphs/contributors%3E">https://github.com/moigagoo/norm/graphs/contributors</a>.</p>
+                        <h1>Configuration from Environment</h1>
+<p>In a real-life project, you want to keep your DB configuration separate from the code. Common pattern is to put it in environment variables, probably in a <code>.env</code> file that's processed during the app startup.</p>
+<p>Norm's <code>getDb</code> proc lets you create a DB connection using <code>DB_HOST</code>, <code>DB_USER</code>, <code>DB_PASS</code>, and <code>DB_NAME</code> environment variables:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
+  std / [os, options]
+
+<span class="hljs-keyword">import</span>
+  norm / sqlite
+
+putEnv(<span class="hljs-string">&quot;DB_HOST&quot;</span>, <span class="hljs-string">&quot;:memory:&quot;</span>)
+<span class="hljs-keyword">let</span> db = getDb()
+<span class="hljs-keyword">var</span>
+  customerFoo = newCustomer(some <span class="hljs-string">&quot;Alice&quot;</span>, newUser(<span class="hljs-string">&quot;foo@foo.foo&quot;</span>))
+  customerBar = newCustomer()
+db.createTables(customerBar)
+db.insert(customerFoo)
+db.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
+<span class="hljs-keyword">echo</span> customerBar[]</code></pre>
+<pre><samp>(name: Some(&quot;Alice&quot;), user: ..., id: 1)
+</samp></pre>
+<p><code>withDb</code> template is even handier as it lets you run code without explicitly creating or closing a DB connection:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">var</span>
+  customerSpam = newCustomer(some <span class="hljs-string">&quot;Bob&quot;</span>, newUser(<span class="hljs-string">&quot;bar@bar.bar&quot;</span>))
+  customerEggs = newCustomer()
+withDb:
+  db.createTables(customerEggs)
+  db.insert(customerSpam)
+  db.select(customerEggs, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
+<span class="hljs-keyword">echo</span> customerBar[]</code></pre>
+<pre><samp>(name: Some(&quot;Alice&quot;), user: ..., id: 1)
+</samp></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="./transactions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next" href="./models.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="./fk.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -248,8 +233,11 @@ $ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="./transactions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next" href="./models.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="./fk.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

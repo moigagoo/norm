@@ -1,2 +1,0 @@
-fromRow	norm/private/sqlite/rowutils.html#fromRow,T,Row	rowutils: fromRow[T: Model](obj: var T; row: Row)	
-toRow	norm/private/sqlite/rowutils.html#toRow,T	rowutils: toRow[T: Model](obj: T; force = false): Row	

@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<html lang="en-us" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using nimibook -->
+        <meta charset="UTF-8">
+        <title>tutorial/rows.nim</title>
+
+        <!-- Custom HTML head -->
+        <!-- custom head content -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="a book built with nimibook">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🦾</text></svg>">
+        <link rel="stylesheet" href="../assets/css/variables.css">
+        <link rel="stylesheet" href="../assets/css/general.css">
+        <link rel="stylesheet" href="../assets/css/chrome.css">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../assets/FontAwesome/css/font-awesome.min.css">
+
+        <!-- Highlight.js Stylesheets - I could use nimib native highlight but let's keep it for styling... -->
+        <link rel="stylesheet" href="../assets/css/highlight.css">
+        <link rel="stylesheet" href="../assets/css/tomorrow-night.css">
+        <link rel="stylesheet" href="../assets/css/ayu-highlight.css">
+
+        <!-- Custom theme stylesheets - why the "../"? -->
+
+
+        <!-- plausible analytics (new in nimibook) -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "..//assets";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "coal" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                                <ol class="chapter">
+                  <li class="chapter-item expanded ">
+                    <a href="../index.html" tabindex="0">
+                      <strong aria-hidden="true">1.</strong> Welcome to Norm!
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../models.html" tabindex="0">
+                      <strong aria-hidden="true">2.</strong> Models 101
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../tutorial.html" tabindex="0">
+                      <strong aria-hidden="true">3.</strong> Tutorial
+                    </a>
+                  </li>
+                  <li>
+                  <ol class="section">
+                  <li class="chapter-item expanded ">
+                    <a href="../tutorial/tables.html" tabindex="0">
+                      <strong aria-hidden="true">3.1.</strong> Tables
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../tutorial/rows.html" class="active" tabindex="0">
+                      <strong aria-hidden="true">3.2.</strong> Rows
+                    </a>
+                  </li>
+                  </ol>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../fancy.html" tabindex="0">
+                      <strong aria-hidden="true">4.</strong> Fancy Syntax
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../transactions.html" tabindex="0">
+                      <strong aria-hidden="true">5.</strong> Transactions
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../config.html" tabindex="0">
+                      <strong aria-hidden="true">6.</strong> Configuration from Environment
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../fk.html" tabindex="0">
+                      <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
+                    </a>
+                  </li>
+                  <li class="chapter-item expanded ">
+                    <a href="../debug.html" tabindex="0">
+                      <strong aria-hidden="true">8.</strong> Debugging SQL
+                    </a>
+                  </li>
+                </ol>
+<!-- I could use also an unescaped context value -->
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <!-- custom header content -->                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                    </div>
+
+                    <h1 class="menu-title">Norm: a Nim ORM</h1>
+
+                    <div class="right-buttons">
+                        <a href="https://github.com/moigagoo/norm" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1>Rows</h1>
+<h2>Insert Rows</h2>
+<p>To insert rows, use <code>insert</code> procs. There is a variant that takes a single model instance or a sequence of them.</p>
+<p>Instances passed to <code>insert</code> must be mutable for Norm to be able to update their <code>id</code> fields.</p>
+<p>In your inim session, run:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">var</span>
+  userFoo = newUser(<span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
+  userBar = newUser(<span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
+  alice = newCustomer(some <span class="hljs-string">&quot;Alice&quot;</span>, userFoo)
+  bob = newCustomer(some <span class="hljs-string">&quot;Bob&quot;</span>, userFoo)
+  sam = newCustomer(some <span class="hljs-string">&quot;Sam&quot;</span>, userBar)
+  aliceAndBob = [alice, bob]</code></pre>
+<p>Those are the objects we'll insert as rows in the database:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
+  std / with
+
+with dbConn:
+  insert aliceAndBob
+  insert userBar
+  insert sam</code></pre>
+<p>Let's examine the queries:</p>
+<pre><code>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
+INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
+INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]
+INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['bar@bar.bar']
+INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Sam', 2]
+</code></pre>
+<p>When Norm attempts to insert <code>alice</code>, it detects that <code>userFoo</code> that it referenced in it has not been inserted yet, so there's no <code>id</code> to store as foreign key. So, Norm inserts <code>userFoo</code> automatically and then uses its new <code>id</code> (in this case, 1) as the foreign key value.</p>
+<p>With <code>bob</code>, there's no need to do that since <code>userFoo</code> is already in the database.</p>
+<h2>Select Rows</h2>
+<p>To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call <code>select</code>.</p>
+<p>One curious thing about <code>select</code> is that its result depends not only on the condition you pass but also on the container. If the container has <code>Model</code> fields that are not <code>None</code>, Norm will select the related rows in a single <code>JOIN</code> query giving you a fully populated model object. However, if the container has a <code>none Model</code> field, it is just ignored.</p>
+<p>In other words, Norm will automatically handle the &quot;n+1&quot; problem.</p>
+<p>Let's see how that works:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">var</span> customerBar = newCustomer()
+dbConn.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)</code></pre>
+<p>This is the SQL query generated by this <code>select</code> call:</p>
+<pre><code>SELECT &quot;Customer&quot;.name, &quot;User&quot;.email, &quot;User&quot;.id, &quot;Customer&quot;.id
+FROM &quot;Customer&quot; JOIN &quot;User&quot; ON &quot;Customer&quot;.user = &quot;User&quot;.id
+WHERE User.email = ? &lt;- ['bar@bar.bar']
+</code></pre>
+<p>Let's examine how Norm populated <code>customerBar</code>:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar[]</code></pre>
+<pre><samp>(name: Some(&quot;Sam&quot;), user: ..., id: 3)
+</samp></pre>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre>
+<pre><samp>(email: &quot;bar@bar.bar&quot;, id: 2)
+</samp></pre>
+<p>If you pass a sequence to <code>select</code>, you'll get many rows:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">var</span> customersFoo = @[newCustomer()]
+dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)</code></pre>
+<p>The generated query is similar to the previous one, but the result is populated objects, not one:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo:
+  <span class="hljs-keyword">echo</span> customer[]
+  <span class="hljs-keyword">echo</span> customer.user[]</code></pre>
+<pre><samp>(name: Some(&quot;Alice&quot;), user: ..., id: 1)
+(email: &quot;foo@foo.foo&quot;, id: 1)
+(name: Some(&quot;Bob&quot;), user: ..., id: 2)
+(email: &quot;foo@foo.foo&quot;, id: 1)
+</samp></pre>
+<h2>Count Rows</h2>
+<p>Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.</p>
+<p>To count the rows without fetching them, use <code>count</code>:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>)</code></pre>
+<pre><samp>3
+</samp></pre>
+<p>To count only unique records, use <code>dist = true</code> in conjunction with the column name you want to check for uniqueness:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;user&quot;</span>, dist = <span class="hljs-literal">true</span>)</code></pre>
+<pre><samp>2
+</samp></pre>
+<p>You can also count rows matching condition:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;*&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;name LIKE ?&quot;</span>, <span class="hljs-string">&quot;alice&quot;</span>)</code></pre>
+<pre><samp>1
+</samp></pre>
+<h2>Update Rows</h2>
+<p>To update a row, you just update the object and call <code>update</code> on it:</p>
+<pre><code class="nim hljs">customerBar.name = some <span class="hljs-string">&quot;Saaam&quot;</span>
+dbConn.update(customerBar)</code></pre>
+<p>Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries:</p>
+<pre><code>UPDATE &quot;User&quot; SET email = ? WHERE id = 2 &lt;- @['bar@bar.bar']
+UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 3 &lt;- @['Saaam', 2]
+</code></pre>
+<p>Updating rows in bulk is also possible:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo:
+  customer.name = some (<span class="hljs-string">&quot;Mega&quot;</span> &amp; get(customer.name))
+dbConn.update(customersFoo)</code></pre>
+<p>For each object in <code>customersFoo</code>, a pair of queries are generated:</p>
+<pre><code>UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
+UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 1 &lt;- @['MegaAlice', 1]
+UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
+UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 2 &lt;- @['MegaBob', 1]
+</code></pre>
+<h2>Delete Rows</h2>
+<p>To delete a row, call <code>delete</code> on an object:</p>
+<pre><code class="nim hljs">dbConn.delete(sam)</code></pre>
+<p>That gives you, quite expectedly:</p>
+<pre><code>DELETE FROM &quot;Customer&quot; WHERE id = 3
+</code></pre>
+<p>After deletion, the object becomes <code>nil</code>:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> sam.isNil</code></pre>
+<pre><samp>true
+</samp></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../tutorial/tables.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next" href="../fancy.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../tutorial/tables.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next" href="../fancy.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+
+
+
+        <script src="../assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </body>
+</html>

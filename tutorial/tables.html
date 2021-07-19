@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>index.nim</title>
+        <title>tutorial/tables.nim</title>
 
         <!-- Custom HTML head -->
         <!-- custom head content -->
@@ -13,17 +13,17 @@
         <meta name="theme-color" content="#ffffff" />
 
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🦾</text></svg>">
-        <link rel="stylesheet" href="./assets/css/variables.css">
-        <link rel="stylesheet" href="./assets/css/general.css">
-        <link rel="stylesheet" href="./assets/css/chrome.css">
+        <link rel="stylesheet" href="../assets/css/variables.css">
+        <link rel="stylesheet" href="../assets/css/general.css">
+        <link rel="stylesheet" href="../assets/css/chrome.css">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="./assets/FontAwesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../assets/FontAwesome/css/font-awesome.min.css">
 
         <!-- Highlight.js Stylesheets - I could use nimib native highlight but let's keep it for styling... -->
-        <link rel="stylesheet" href="./assets/css/highlight.css">
-        <link rel="stylesheet" href="./assets/css/tomorrow-night.css">
-        <link rel="stylesheet" href="./assets/css/ayu-highlight.css">
+        <link rel="stylesheet" href="../assets/css/highlight.css">
+        <link rel="stylesheet" href="../assets/css/tomorrow-night.css">
+        <link rel="stylesheet" href="../assets/css/ayu-highlight.css">
 
         <!-- Custom theme stylesheets - why the "../"? -->
 
@@ -33,7 +33,7 @@
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
-            var path_to_root = ".//assets";
+            var path_to_root = "..//assets";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "coal" : "light";
         </script>
 
@@ -81,56 +81,56 @@
             <div class="sidebar-scrollbox">
                                 <ol class="chapter">
                   <li class="chapter-item expanded ">
-                    <a href="./index.html" class="active" tabindex="0">
+                    <a href="../index.html" tabindex="0">
                       <strong aria-hidden="true">1.</strong> Welcome to Norm!
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./models.html" tabindex="0">
+                    <a href="../models.html" tabindex="0">
                       <strong aria-hidden="true">2.</strong> Models 101
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./tutorial.html" tabindex="0">
+                    <a href="../tutorial.html" tabindex="0">
                       <strong aria-hidden="true">3.</strong> Tutorial
                     </a>
                   </li>
                   <li>
                   <ol class="section">
                   <li class="chapter-item expanded ">
-                    <a href="./tutorial/tables.html" tabindex="0">
+                    <a href="../tutorial/tables.html" class="active" tabindex="0">
                       <strong aria-hidden="true">3.1.</strong> Tables
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./tutorial/rows.html" tabindex="0">
+                    <a href="../tutorial/rows.html" tabindex="0">
                       <strong aria-hidden="true">3.2.</strong> Rows
                     </a>
                   </li>
                   </ol>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./fancy.html" tabindex="0">
+                    <a href="../fancy.html" tabindex="0">
                       <strong aria-hidden="true">4.</strong> Fancy Syntax
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./transactions.html" tabindex="0">
+                    <a href="../transactions.html" tabindex="0">
                       <strong aria-hidden="true">5.</strong> Transactions
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./config.html" tabindex="0">
+                    <a href="../config.html" tabindex="0">
                       <strong aria-hidden="true">6.</strong> Configuration from Environment
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./fk.html" tabindex="0">
+                    <a href="../fk.html" tabindex="0">
                       <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
                     </a>
                   </li>
                   <li class="chapter-item expanded ">
-                    <a href="./debug.html" tabindex="0">
+                    <a href="../debug.html" tabindex="0">
                       <strong aria-hidden="true">8.</strong> Debugging SQL
                     </a>
                   </li>
@@ -183,62 +183,64 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Welcome to Norm!</h1>
-<p><strong>Norm</strong> is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.</p>
-<ul>
-<li>
-<p><a href="https://github.com/moigagoo/norm">Repo</a></p>
-<ul>
-<li><a href="https://github.com/moigagoo/norm/issues">Issues</a></li>
-<li><a href="https://github.com/moigagoo/norm/pulls">Pull requests</a></li>
-</ul>
-</li>
-<li>
-<p><a href="https://norm.nim.town/theindex.html">API index</a></p>
-</li>
-<li>
-<p><a href="https://github.com/moigagoo/norm/blob/develop/changelog.rst">Changelog</a></p>
-</li>
-</ul>
-<h2>Installation</h2>
-<p>Install Norm with <a href="https://github.com/nim-lang/nimble">Nimble</a>:</p>
-<pre><code>$ nimble install -y norm
+                        <h1>Tables</h1>
+<h2>Create Tables</h2>
+<p>Let's create some tables and examine the queries generated by Norm.</p>
+<p>In the inim session, enter this code:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
+  std / [options, logging]
+
+<span class="hljs-keyword">import</span>
+  norm / [model, sqlite]
+
+addHandler newConsoleLogger(fmtStr = <span class="hljs-string">&quot;&quot;</span>)</code></pre>
+<p><code>logging</code> allows you to see the generated queries, <code>options</code> is necessary to support <code>Option</code> fields, <code>norm/model</code> provides <code>Model</code> type to inherit your models from, and <code>norm/sqlite</code> is the SQLite backend, which implements the actual SQL generation and conversion between Nim objects and SQL rows.</p>
+<p>Then, define the types:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">type</span>
+  <span class="hljs-type">User</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    email*: <span class="hljs-built_in">string</span>
+
+  <span class="hljs-type">Customer</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name*: <span class="hljs-type">Option</span>[<span class="hljs-built_in">string</span>]
+    user*: <span class="hljs-type">User</span></code></pre>
+<p>These are your models. It's a good habit to define init procs for your types, so let's do so:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">func</span> newUser*(email = <span class="hljs-string">&quot;&quot;</span>): <span class="hljs-type">User</span> =
+  <span class="hljs-type">User</span>(email: email)
+
+<span class="hljs-keyword">func</span> newCustomer*(name = none <span class="hljs-built_in">string</span>; user = newUser()): <span class="hljs-type">Customer</span> =
+  <span class="hljs-type">Customer</span>(name: name, user: user)</code></pre>
+<p>Now, we are ready to open a connection to the database:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">let</span> dbConn* = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)</code></pre>
+<p>And here is the actual table creation:</p>
+<pre><code class="nim hljs">dbConn.createTables(newCustomer())</code></pre>
+<p>After running this last line, you'll see the generated queries in stdout (formatting added to improve readability):</p>
+<pre><code>CREATE TABLE IF NOT EXISTS &quot;User&quot;(
+    email TEXT NOT NULL,
+    id INTEGER NOT NULL PRIMARY KEY
+)
+
+CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(
+    name TEXT,
+    user INTEGER NOT NULL,
+    id INTEGER NOT NULL PRIMARY KEY,
+    FOREIGN KEY(user) REFERENCES &quot;User&quot;(id)
+)
 </code></pre>
-<p>Add Norm to your .nimble file:</p>
-<pre><code>requires &quot;norm&quot;
-</code></pre>
-<h2>Contributing</h2>
-<p>Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.</p>
-<ul>
-<li>
-<p>See the <a href="http://github.com/moigagoo/norm/issues%3E">issues on GitHub</a>.</p>
-</li>
-<li>
-<p>Run the tests before and after you change the code.</p>
-<p>The recommended way to run the tests is with Docker Compose:</p>
-<pre><code>$ docker-compose run --rm tests                     # run all test suites
-$ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
-</code></pre>
-</li>
-<li>
-<p>Use camelCase instead of snake_case.</p>
-</li>
-<li>
-<p>New procs must have a documentation comment. If you modify an existing proc, update the comment.</p>
-</li>
-<li>
-<p>Apart from the code that implements a feature or fixes a bug, PRs are required to ship necessary tests and a changelog updates.</p>
-</li>
-</ul>
-<h2>❤ Contributors ❤</h2>
-<p>Norm would not be where it is today without the efforts of these fine folks: <a href="https://github.com/moigagoo/norm/graphs/contributors%3E">https://github.com/moigagoo/norm/graphs/contributors</a>.</p>
+<p><code>createTables</code> proc takes a model instance and generates a table schema for it. For each of the instance's fields, a column is generated. If a field is itself a <code>Model</code>, a foreign key is added. <code>Option</code> fields are nullable, non-<code>Option</code> ones are <code>NOT NULL</code>.</p>
+<p>Note that a single <code>createTables</code> call generated two table schemas. That's because model <code>Customer</code> refers to <code>User</code>, and therefore its table can't be created without the table for <code>User</code> existing beforehand. Norm makes sure all dependency tables are created before creating the one that <code>createTables</code> was actually called with. That's why the proc is called <code>createTables</code> and not <code>createTable</code>.</p>
+<h3>Caveats</h3>
+<p>Make sure to instantiate models with <code>Model</code> fields so that these fields are not <code>nil</code>. Otherwise, Norm won't be able to create a table schema for them.</p>
+<p>Note that <code>id</code> column is created despite not being present in <code>User</code> definition. That's because it's a special read-only field maintained automatically by Norm. It represents row id in the database. <strong>Do not define id field or manually update its value.</strong></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../tutorial.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
-                            <a rel="next" href="./models.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../tutorial/rows.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -248,8 +250,11 @@ $ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../tutorial.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-                    <a rel="next" href="./models.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../tutorial/rows.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -262,9 +267,9 @@ $ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
 
 
 
-        <script src="./assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./assets/js/highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./assets/js/book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
 
