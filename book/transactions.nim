@@ -46,6 +46,6 @@ nbCode:
           rollback()
 
   except RollbackError:
-    echo "Rollback happenned"
+    echo getCurrentExceptionMsg()
 
 nbSave
