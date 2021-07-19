@@ -24,4 +24,8 @@ task docs, "Generate docs":
   cpFile("CNAME", "htmldocs/CNAME")
 
 task book, "Build book":
+  rmDir "docs"
   exec "nim r -d:release nbook.nim build"
+  exec "testament html"
+  mvFile("testresults.html", "docs/testresults.html")
+  cpFile("CNAME", "docs/CNAME")
