@@ -26,8 +26,8 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
     The recommended way to run the tests is with Docker Compose:
 
-        $ docker-compose run --rm tests                     # run all test suites
-        $ docker-compose run --rm test tests/tmodel.nim     # run a single test suite
+        $ docker-compose run --rm tests                         # run all test suites
+        $ docker-compose run --rm test tests/common/tmodel.nim  # run a single test suite
 
 -   Use camelCase instead of snake_case.
 
@@ -38,4 +38,4 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
 ## ❤ Contributors ❤
 
-Norm would not be where it is today without the efforts of these fine folks: [https://github.com/moigagoo/norm/graphs/contributors](https://github.com/moigagoo/norm/graphs/contributors>).
+Norm would not be where it is today without the efforts of these fine folks: [https://github.com/moigagoo/norm/graphs/contributors](https://github.com/moigagoo/norm/graphs/contributors).
