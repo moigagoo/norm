@@ -7,7 +7,7 @@ nbInit
 nbUseNimibook
 
 nbText: """
-# Read Configuration from Environment Variables
+# Configuration from Environment
 
 In a real-life project, you want to keep your DB configuration separate from the code. Common pattern is to put it in environment variables, probably in a `.env` file that's processed during the app startup.
 
