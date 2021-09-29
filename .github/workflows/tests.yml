@@ -1,0 +1,8 @@
+name: Norm Test Suite
+on: [push]
+jobs:
+  Nim-Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose run tests
+
