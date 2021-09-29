@@ -1,4 +1,4 @@
-name: Norm tests, book, and docs
+name: Deploy Docs
 
 on:
     push:
@@ -6,13 +6,6 @@ on:
         - develop
 
 jobs:
-  Tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Tests
-        run: docker-compose run tests
-
   Book-and-Docs:
     runs-on: ubuntu-latest
     steps:
