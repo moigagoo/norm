@@ -22,3 +22,4 @@ task book, "Generate book":
 task docs, "Generate docs":
   rmDir "docs/apidocs"
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
+
