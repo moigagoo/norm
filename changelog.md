@@ -8,6 +8,11 @@
 -   [d]—docs improvement
 
 
+## 2.3.1 (September 29, 2021)
+
+-   [r][d] Add `{.raises.}` annotations to `select` procs to make it more explicit that they raise a `NotFoundError` if the requested row is not in the DB.   
+
+
 ## 2.3.0 (April 8, 2021)
 
 -   [!][+] Objects with `id` != 0 are now not inserted multiple times by default. To force insertion, use explicit `force == true` param.
