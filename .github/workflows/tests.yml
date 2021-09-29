@@ -5,15 +5,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker-compose run tests
-  Book:
+
+      - name: Tests
+        run: docker-compose run tests
+
+  Book & Docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: docker-compose run book
-  Docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: docker-compose run docs
+
+      - name: Book
+        run: docker-compose run book
+
+      - name: Docs
+        run: docker-compose run docs
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        on:
+          push:
+            branches:
+              - develop
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
 
