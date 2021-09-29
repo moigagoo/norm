@@ -1,9 +1,19 @@
-name: Norm Test Suite
+name: Norm tests, book, and docs
 on: [push]
 jobs:
-  Nim-Tests:
+  Tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - run: docker-compose run tests
+  Book:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose run book
+  Docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose run docs
 
