@@ -1,7 +1,9 @@
-name: Tests
+name: Norm tests, book, and docs
 
 on:
-  push
+    push:
+      branches:
+        - develop
 
 jobs:
   Tests:
@@ -11,17 +13,20 @@ jobs:
       - name: Tests
         run: docker-compose run tests
 
-  Book:
+  Book-and-Docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Book
         run: docker-compose run book
 
-  Docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
       - name: Docs
         run: docker-compose run docs
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
 
