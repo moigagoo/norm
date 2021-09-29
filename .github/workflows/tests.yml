@@ -21,11 +21,8 @@ jobs:
         run: docker-compose run docs
 
       - name: Deploy
+        if: {{ github.ref == 'ref/head/develop' }}
         uses: peaceiris/actions-gh-pages@v3
-        on:
-          push:
-            branches:
-              - develop
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
