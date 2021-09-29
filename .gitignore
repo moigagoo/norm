@@ -1,11 +1,13 @@
 .vscode
 *.sublime-project
 *.sublime-workspace
+.idea
 
 *.exe
 *.html
 *.idx
 htmldocs
+docs
 
 nimcache/
 testresults/
