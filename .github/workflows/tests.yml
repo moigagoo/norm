@@ -9,7 +9,7 @@ jobs:
       - name: Tests
         run: docker-compose run tests
 
-  Book & Docs:
+  Book-and-Docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
