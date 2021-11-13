@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.3.2 (WIP)
+
+-   [+] Add `norm.model.fCol` func variant that works with typedescs. Now `fCol` func variants are symmetrical to `col`.
+
 
 ## 2.3.1 (September 29, 2021)
 
