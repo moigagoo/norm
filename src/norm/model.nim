@@ -40,17 +40,29 @@ func col*(T: typedesc[Model], fld: string): string =
   fld
 
 func col*[T: Model](obj: T, fld: string): string =
+  ## Get column name for a `Model`_ instance field.
+
   T.col(fld)
 
-func fCol*[T: Model](obj: T, fld: string): string =
-  ## Get fully qualified column name with the table name: ``table.col``.
+func fCol*(T: typedesc[Model], fld: string): string =
+  ## Get fully qualified column name for a `Model`_ field: ``table.col``.
 
-  "$#.$#" % [T.table, obj.col(fld)]
+  "$#.$#" % [T.table, T.col(fld)]
+
+func fCol*[T: Model](obj: T, fld: string): string =
+  ## Get fully qualified column name for a `Model`_ instance field.
+
+  T.fCol(fld)
+
+func fCol*(T: typedesc[Model], fld, tAls: string): string =
+  ## Get fully qualified column name with an alias instead of the actual table name: ``alias.col``.
+
+  "$#.$#" % [tAls, T.col(fld)]
 
 func fCol*[T: Model](obj: T, fld, tAls: string): string =
-  ## Get fully qualified column name with the alias for the table name: ``alias.col``.
+  ## Get fully qualified column name with an alias instead of the actual table name for a `Model`_ instance field.
 
-  "$#.$#" % [tAls, obj.col(fld)]
+  T.fCol(fld, tAls)
 
 func cols*[T: Model](obj: T, force = false): seq[string] =
   ##[ Get columns for `Model`_ instance.
