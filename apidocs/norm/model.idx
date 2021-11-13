@@ -8,7 +8,9 @@ model	norm/model.html#model,T_2	model: model[T](val: T): Option[Model]
 table	norm/model.html#table,typedesc[Model]	model: table(T: typedesc[Model]): string	
 col	norm/model.html#col,typedesc[Model],string	model: col(T: typedesc[Model]; fld: string): string	
 col	norm/model.html#col,T,string	model: col[T: Model](obj: T; fld: string): string	
+fCol	norm/model.html#fCol,typedesc[Model],string	model: fCol(T: typedesc[Model]; fld: string): string	
 fCol	norm/model.html#fCol,T,string	model: fCol[T: Model](obj: T; fld: string): string	
+fCol	norm/model.html#fCol,typedesc[Model],string,string	model: fCol(T: typedesc[Model]; fld, tAls: string): string	
 fCol	norm/model.html#fCol,T,string,string	model: fCol[T: Model](obj: T; fld, tAls: string): string	
 cols	norm/model.html#cols,T	model: cols[T: Model](obj: T; force = false): seq[string]	
 rfCols	norm/model.html#rfCols,T,seq[string]	model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]	

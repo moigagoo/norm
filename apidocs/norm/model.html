@@ -143,8 +143,12 @@ function main() {
 
   </ul>
   <ul class="simple nested-toc-section">fCol
-      <li><a class="reference" href="#fCol%2CT%2Cstring"
+      <li><a class="reference" href="#fCol%2Ctypedesc%5BModel%5D%2Cstring"
+    title="fCol(T: typedesc[Model]; fld: string): string">fCol,<wbr>typedesc[Model],<wbr>string</a></li>
+  <li><a class="reference" href="#fCol%2CT%2Cstring"
     title="fCol[T: Model](obj: T; fld: string): string">fCol,<wbr>T,<wbr>string</a></li>
+  <li><a class="reference" href="#fCol%2Ctypedesc%5BModel%5D%2Cstring%2Cstring"
+    title="fCol(T: typedesc[Model]; fld, tAls: string): string">fCol,<wbr>typedesc[Model],<wbr>string,<wbr>string</a></li>
   <li><a class="reference" href="#fCol%2CT%2Cstring%2Cstring"
     title="fCol[T: Model](obj: T; fld, tAls: string): string">fCol,<wbr>T,<wbr>string,<wbr>string</a></li>
 
@@ -257,21 +261,35 @@ Get column name for a <a class="reference external" href="#model">Model</a> fiel
 <dt><pre><span class="Keyword">func</span> <a href="#col%2CT%2Cstring"><span class="Identifier">col</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
+Get column name for a <a class="reference external" href="#model">Model</a> instance field.
 
+</dd>
+<a id="fCol,typedesc[Model],string"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#fCol%2Ctypedesc%5BModel%5D%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+Get fully qualified column name for a <a class="reference external" href="#model">Model</a> field: <tt class="docutils literal"><span class="pre">table.col</span></tt>.
 
 </dd>
 <a id="fCol,T,string"></a>
 <dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
-Get fully qualified column name with the table name: <tt class="docutils literal"><span class="pre">table.col</span></tt>.
+Get fully qualified column name for a <a class="reference external" href="#model">Model</a> instance field.
+
+</dd>
+<a id="fCol,typedesc[Model],string,string"></a>
+<dt><pre><span class="Keyword">func</span> <a href="#fCol%2Ctypedesc%5BModel%5D%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+Get fully qualified column name with an alias instead of the actual table name: <tt class="docutils literal"><span class="pre">alias.col</span></tt>.
 
 </dd>
 <a id="fCol,T,string,string"></a>
 <dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
-Get fully qualified column name with the alias for the table name: <tt class="docutils literal"><span class="pre">alias.col</span></tt>.
+Get fully qualified column name with an alias instead of the actual table name for a <a class="reference external" href="#model">Model</a> instance field.
 
 </dd>
 <a id="cols,T"></a>
@@ -313,7 +331,7 @@ For each <a class="reference external" href="#model">Model</a> field of <a class
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-13 09:14:25 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-13 19:24:18 UTC</small>
       </div>
     </div>
   </div>
