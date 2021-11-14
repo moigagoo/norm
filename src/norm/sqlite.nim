@@ -4,7 +4,7 @@ import ndb/sqlite
 export sqlite
 
 import private/sqlite/[dbtypes, rowutils]
-import private/dot
+import private/[dot, log]
 import model
 import pragmas
 
@@ -107,8 +107,8 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
-  when defined(normDebug):
-    debug qry
+  log(qry)
+  
   dbConn.exec(sql qry)
 
 # Row manipulation
@@ -120,8 +120,7 @@ proc insert*[T: Model](dbConn; obj: var T, force = false) =
   ]##
 
   if obj.id != 0 and not force:
-    when defined(normDebug):
-      debug "Object ID is not 0, skipping insertion. Type: $#, ID: $#" % [$T, $obj.id]
+    log("Object ID is not 0, skipping insertion. Type: $#, ID: $#" % [$T, $obj.id])
 
     return
 
@@ -135,8 +134,8 @@ proc insert*[T: Model](dbConn; obj: var T, force = false) =
     phds = "?".repeat(row.len)
     qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
 
-  when defined(normDebug):
-    debug "$# <- $#" % [qry, $row]
+  log(qry, $row)
+
   obj.id = dbConn.insertID(sql qry, row)
 
 proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
@@ -145,7 +144,7 @@ proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
   for obj in objs.mitems:
     dbConn.insert(obj, force)
 
-proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: [NotFoundError, ValueError, DbError].} =
+proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
@@ -162,8 +161,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
         "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
-  when defined(normDebug):
-    debug "$# <- $#" % [qry, $params]
+  log(qry, $params)
 
   let row = dbConn.getRow(sql qry, params)
 
@@ -172,7 +170,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   obj.fromRow(get row)
 
-proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: [ValueError, DbError].} =
+proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``objs`` must have at least one item.
@@ -187,8 +185,8 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
         "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
     qry = "SELECT $# FROM $# $# WHERE $#" % [objs[0].rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
-  when defined(normDebug):
-    debug "$# <- $#" % [qry, $params]
+  log(qry, $params)
+
   let rows = dbConn.getAllRows(sql qry, params)
 
   if objs.len > rows.len:
@@ -220,8 +218,7 @@ proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "1", par
 
   let qry = "SELECT COUNT($# $#) FROM $# WHERE $#" % [if dist: "DISTINCT" else: "", col, T.table, cond]
 
-  when defined(normDebug):
-    debug "$# <- $#" % [qry, $params]
+  log(qry, $params)
 
   get dbConn.getValue(int64, sql qry, params)
 
@@ -240,8 +237,8 @@ proc update*[T: Model](dbConn; obj: var T) =
         "$# = ?" %  col
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
-  when defined(normDebug):
-    debug "$# <- $#" % [qry, $row]
+  log(qry, $row)
+
   dbConn.exec(sql qry, row)
 
 proc update*[T: Model](dbConn; objs: var openArray[T]) =
@@ -255,8 +252,8 @@ proc delete*[T: Model](dbConn; obj: var T) =
 
   let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
 
-  when defined(normDebug):
-    debug qry
+  log(qry)
+
   dbConn.exec(sql qry)
 
   obj = nil
@@ -270,7 +267,7 @@ proc delete*[T: Model](dbConn; objs: var openArray[T]) =
 
 # Transactions
 
-proc rollback* {.raises: [RollbackError].} =
+proc rollback* {.raises: RollbackError.} =
   ## Rollback transaction by raising `RollbackError <#RollbackError>`_.
 
   raise newException(RollbackError, "Rollback transaction.")
@@ -289,18 +286,17 @@ template transaction*(dbConn; body: untyped): untyped =
     rollbackQry = "ROLLBACK"
 
   try:
-    when defined(normDebug):
-      debug beginQry
+    log(beginQry)
     dbConn.exec(sql beginQry)
 
     body
 
-    when defined(normDebug):
-      debug commitQry
+    log(commitQry)
     dbConn.exec(sql commitQry)
 
   except:
-    when defined(normDebug):
-      debug rollbackQry
+    log(rollbackQry)
     dbConn.exec(sql rollbackQry)
+
     raise
+
