@@ -63,7 +63,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
@@ -262,6 +262,16 @@ function main() {
     tuple[tbl, tAls, lFld, rFld: string]]" href="norm/model.html#joinGroups%2CT%2Cseq%5Bstring%5D">model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[
     tuple[tbl, tAls, lFld, rFld: string]]</a></li>
           </ul></dd>
+<dt><a name="log" href="#log"><span>log:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="log: log(msg: string)" href="norm/private/log.html#log%2Cstring">log: log(msg: string)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="log: log(qry, paramstr: string)" href="norm/private/log.html#log%2Cstring%2Cstring">log: log(qry, paramstr: string)</a></li>
+          </ul></dd>
+<dt><a name="LoggingError" href="#LoggingError"><span>LoggingError:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="log: LoggingError" href="norm/private/log.html#LoggingError">log: LoggingError</a></li>
+          </ul></dd>
 <dt><a name="Model" href="#Model"><span>Model:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: Model" href="norm/model.html#Model">model: Model</a></li>
@@ -429,7 +439,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-13 19:24:18 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-14 19:33:42 UTC</small>
       </div>
     </div>
   </div>

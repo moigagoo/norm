@@ -209,7 +209,7 @@ function main() {
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
-<a class="reference external" href="private/sqlite/dbtypes.html">private/sqlite/dbtypes</a>, <a class="reference external" href="private/sqlite/rowutils.html">private/sqlite/rowutils</a>, <a class="reference external" href="private/dot.html">private/dot</a>, <a class="reference external" href="model.html">model</a>, <a class="reference external" href="pragmas.html">pragmas</a>
+<a class="reference external" href="private/sqlite/dbtypes.html">private/sqlite/dbtypes</a>, <a class="reference external" href="private/sqlite/rowutils.html">private/sqlite/rowutils</a>, <a class="reference external" href="private/dot.html">private/dot</a>, <a class="reference external" href="private/log.html">private/log</a>, <a class="reference external" href="model.html">model</a>, <a class="reference external" href="pragmas.html">pragmas</a>
 </dl></div>
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
@@ -288,7 +288,7 @@ Insert rows for each <a class="reference external" href="#model">Model</a> insta
 <a id="select,,T,string,varargs[DbValue,dbValue]"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                       <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><a href="sqlite.html#NotFoundError"><span class="Identifier">NotFoundError</span></a><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><a href="sqlite.html#NotFoundError"><span class="Identifier">NotFoundError</span></a><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 <p>Populate a <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields from DB.</p>
@@ -304,7 +304,7 @@ instead of hardcoded table and column names</li>
 <a id="select,,seq[T],string,varargs[DbValue,dbValue]"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
                       <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 <p>Populate a sequence of <a class="reference external" href="#model">Model</a> instances from DB.</p>
@@ -362,7 +362,7 @@ Delete rows for each <a class="reference external" href="#model">Model</a> insta
 
 </dd>
 <a id="rollback"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#rollback"><span class="Identifier">rollback</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><a href="sqlite.html#RollbackError"><span class="Identifier">RollbackError</span></a><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#rollback"><span class="Identifier">rollback</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <a href="sqlite.html#RollbackError"><span class="Identifier">RollbackError</span></a><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
 Rollback transaction by raising <a class="reference external" href="#RollbackError">RollbackError</a>.
@@ -407,7 +407,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-13 19:24:18 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-14 19:33:42 UTC</small>
       </div>
     </div>
   </div>

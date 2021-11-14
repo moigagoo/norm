@@ -1,0 +1,3 @@
+LoggingError	norm/private/log.html#LoggingError	log: LoggingError	
+log	norm/private/log.html#log,string	log: log(msg: string)	
+log	norm/private/log.html#log,string,string	log: log(qry, paramstr: string)	
