@@ -18,6 +18,10 @@ type
     Do not raise manually, use `rollback <#rollback>`_ proc.
     ]##
   NotFoundError* = object of KeyError
+  ConflictPolicy* = enum
+    cpRaise
+    cpIgnore
+    cpReplace
 
 
 const dbHostEnv* = "DB_HOST"
@@ -113,10 +117,12 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
 # Row manipulation
 
-proc insert*[T: Model](dbConn; obj: var T, force = false) =
+proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
+
+  ``conflictPolicy`` determines how the proc reacts to insertion conflicts. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one. 
   ]##
 
   if obj.id != 0 and not force:
@@ -132,17 +138,21 @@ proc insert*[T: Model](dbConn; obj: var T, force = false) =
   let
     row = obj.toRow()
     phds = "?".repeat(row.len)
-    qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
+    action = case conflictPolicy
+      of cpRaise: "INSERT"
+      of cpIgnore: "INSERT OR IGNORE"
+      of cpReplace: "INSERT OR REPLACE"
+    qry = "$# INTO $# ($#) VALUES($#)" % [action, T.table, obj.cols.join(", "), phds.join(", ")]
 
   log(qry, $row)
 
   obj.id = dbConn.insertID(sql qry, row)
 
-proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
+proc insert*[T: Model](dbConn; objs: var openArray[T], force = false, conflictPolicy = cpRaise) =
   ## Insert rows for each `Model`_ instance in open array.
 
   for obj in objs.mitems:
-    dbConn.insert(obj, force)
+    dbConn.insert(obj, force, conflictPolicy)
 
 proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
