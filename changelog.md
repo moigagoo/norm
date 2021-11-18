@@ -10,6 +10,7 @@
 ## 2.3.2 (WIP)
 
 -   [+] Add `norm.model.fCol` func variant that works with typedescs. Now `fCol` func variants are symmetrical to `col`.
+-   [+] Add `tableName` pragma to specify custom table name for model.
 -   [f] Add missing exceptions to `select` procs. (see [#116](https://github.com/moigagoo/norm/issues/116))
 
 
