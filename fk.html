@@ -213,19 +213,11 @@
 db.exec <span class="hljs-string">sql&quot;PRAGMA foreign_keys = ON&quot;</span>
 db.createTables(newProduct())
 db.createTables(newConsumer())</code></pre>
-<p>Norm will generate the following table schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;Product&quot;(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-CREATE TABLE IF NOT EXISTS &quot;Consumer&quot;(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES &quot;Product&quot;(id))
-</code></pre>
-<p><code>insert</code> statements can now be done using only <code>id</code>. This allows for more flexibility at the cost of more manual queries:</p>
+<p><code>INSERT</code> statements can now be done using only <code>id</code>. This allows for more flexibility at the cost of more manual queries:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">var</span> cheese = <span class="hljs-type">Product</span>(name: <span class="hljs-string">&quot;Cheese&quot;</span>, price: <span class="hljs-number">13.3</span>)
 db.insert(cheese)
 <span class="hljs-keyword">var</span> bob = newConsumer(<span class="hljs-string">&quot;bob@mail.org&quot;</span>, cheese.id)
 db.insert(bob)</code></pre>
-<p>On <code>insert</code>, Norm will generate the following queries :</p>
-<pre><code>INSERT INTO &quot;Product&quot; (name, price) VALUES(?, ?) &lt;- @['Cheese', 13.3]
-INSERT INTO &quot;Consumer&quot; (email, productId) VALUES(?, ?) &lt;- @['bob@mail.org', 1]
-</code></pre>
 <p>If an invalid ID is passed, Norm will raise a <code>DbError</code> exception:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">try</span>:
   <span class="hljs-keyword">let</span> badProductId = <span class="hljs-number">133</span>
@@ -243,10 +235,6 @@ doAssert(consumer.email == <span class="hljs-string">&quot;bob@mail.org&quot;</s
 db.select(product, <span class="hljs-string">&quot;id = $1&quot;</span>, consumer.productId)
 doAssert(product.name == <span class="hljs-string">&quot;Cheese&quot;</span>)
 doAssert(product.price == <span class="hljs-number">13.3</span>)</code></pre>
-<p>Norm will generate the following query:</p>
-<pre><code>SELECT &quot;Consumer&quot;.email, &quot;Consumer&quot;.productId, &quot;Consumer&quot;.id FROM &quot;Consumer&quot;  WHERE email = $1 &lt;- ['bob@mail.org']
-SELECT &quot;Product&quot;.name, &quot;Product&quot;.price, &quot;Product&quot;.id FROM &quot;Product&quot;  WHERE id = $1 &lt;- [1]
-</code></pre>
 
                     </main>
 

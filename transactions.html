@@ -194,13 +194,6 @@
   <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">11</span> .. <span class="hljs-number">13</span>:
     <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup:
       dbConn.insert</code></pre>
-<p>This produces the following SQL:</p>
-<pre><code>BEGIN
-INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['11@example.com']
-INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['12@example.com']
-INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['13@example.com']
-COMMIT
-</code></pre>
 <p>If something goes wrong inside a transaction block, i.e. an exception is raised, the transaction is rollbacked.</p>
 <p>To rollback a transaction manually, call <code>rollback</code> proc:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">try</span>:
@@ -212,7 +205,11 @@ COMMIT
         rollback()
 <span class="hljs-keyword">except</span> <span class="hljs-type">RollbackError</span>:
   <span class="hljs-keyword">echo</span> getCurrentExceptionMsg()</code></pre>
-<pre><samp>Rollback transaction.
+<pre><samp>BEGIN
+INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['14@example.com']
+INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['15@example.com']
+ROLLBACK
+Rollback transaction.
 </samp></pre>
 
                     </main>
