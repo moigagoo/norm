@@ -42,6 +42,23 @@ suite "Table creation":
       @[?"price", ?"double precision"]
     ]
 
+  test "Create table with custom name":
+    let table = newTable()
+
+    dbConn.createTables(table)
+
+    let
+      qry = sql """SELECT column_name::text, data_type::text
+        FROM information_schema.columns
+        WHERE table_name = $1
+        ORDER BY column_name"""
+      dftDbInt = if high(int) == high(int64): "bigint" else: "integer"
+
+    check dbConn.getAllRows(qry, "FurnitureTable") == @[
+      @[?"id", ?"bigint"],
+      @[?"legcount", ?dftDbInt]
+    ]
+
   test "Create tables":
     let
       toy = newToy(123.45)
@@ -73,3 +90,4 @@ suite "Table creation":
       @[?"name", ?"text"],
       @[?"pet", ?"bigint"]
     ]
+

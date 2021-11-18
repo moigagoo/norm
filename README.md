@@ -2,7 +2,7 @@
 
 **Norm** is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
--   [API index](apidocs/theindex.html)
+-   [API index](https://norm.nim.town/apidocs/theindex.html)
 
 
 ## Installation

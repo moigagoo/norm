@@ -1,0 +1,27 @@
+name: Run Tests
+
+on:
+  push
+
+jobs:
+  Tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tests
+        run: docker-compose run tests
+
+  Book:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Book
+        run: docker-compose run book
+
+  Docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docs
+        run: docker-compose run docs
+

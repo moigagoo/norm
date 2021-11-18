@@ -1,5 +1,3 @@
-import std/strformat
-
 import nimib, nimibook
 
 
@@ -46,12 +44,7 @@ nbCode:
   db.createTables(newConsumer())
 
 nbText: """
-Norm will generate the following table schema:
-
-    CREATE TABLE IF NOT EXISTS "Product"(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-    CREATE TABLE IF NOT EXISTS "Consumer"(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES "Product"(id))
-
-`insert` statements can now be done using only `id`. This allows for more flexibility at the cost of more manual queries:
+`INSERT` statements can now be done using only `id`. This allows for more flexibility at the cost of more manual queries:
 """
 
 nbCode:
@@ -61,12 +54,7 @@ nbCode:
   var bob = newConsumer("bob@mail.org", cheese.id)
   db.insert(bob)
 
-nbText: &"""
-On `insert`, Norm will generate the following queries :
-
-    INSERT INTO "Product" (name, price) VALUES(?, ?) <- @['{cheese.name}', {cheese.price}]
-    INSERT INTO "Consumer" (email, productId) VALUES(?, ?) <- @['{bob.email}', {bob.productId}]
-
+nbText: """
 If an invalid ID is passed, Norm will raise a `DbError` exception:
 """
 
@@ -93,11 +81,5 @@ nbCode:
   doAssert(product.name == "Cheese")
   doAssert(product.price == 13.30)
 
-nbText: &"""
-Norm will generate the following query:
-
-    SELECT "Consumer".email, "Consumer".productId, "Consumer".id FROM "Consumer"  WHERE email = $1 <- ['{consumer.email}']
-    SELECT "Product".name, "Product".price, "Product".id FROM "Product"  WHERE id = $1 <- [{consumer.productId}]
-"""
-
 nbSave
+

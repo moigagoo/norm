@@ -25,3 +25,7 @@ template fk*(val: typed) {.pragma.}
 
 template onDelete*(val: string) {.pragma.}
   ## Add ``ON DELETE {val}`` constraint to the column.
+
+template tableName*(val: string) {.pragma.}
+  ## Custom table name for a model.
+

@@ -1,0 +1,25 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  Book-and-Docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Book
+        run: docker-compose run book
+
+      - name: Docs
+        run: docker-compose run docs
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+

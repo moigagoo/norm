@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.3.1"
+version       = "2.3.2"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "ndb >= 0.19.9", "nimibook >= 0.1.0"
+requires "nim >= 1.4.0", "ndb >= 0.19.9", "nimibook >= 0.2.1"
 
 task test, "Run tests":
   exec "testament all"
@@ -22,3 +22,4 @@ task book, "Generate book":
 task docs, "Generate docs":
   rmDir "docs/apidocs"
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
+
