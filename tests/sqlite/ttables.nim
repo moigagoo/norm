@@ -29,6 +29,18 @@ suite "Table creation":
       @[?1, ?"id", ?"INTEGER", ?1, ?nil, ?1],
     ]
 
+  test "Create table with custom name":
+    let table = newTable()
+
+    dbConn.createTables(table)
+
+    let qry = "PRAGMA table_info($#);"
+
+    check dbConn.getAllRows(sql qry % "FurnitureTable") == @[
+      @[?0, ?"legCount", ?"INTEGER", ?1, ?nil, ?0],
+      @[?1, ?"id", ?"INTEGER", ?1, ?nil, ?1],
+    ]
+
   test "Create tables":
     let
       toy = newToy(123.45)
@@ -55,3 +67,4 @@ suite "Table creation":
       @[?1, ?"pet", ?"INTEGER", ?0, ?nil, ?0],
       @[?2, ?"id", ?"INTEGER", ?1, ?nil, ?1],
     ]
+

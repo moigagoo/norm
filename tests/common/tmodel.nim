@@ -8,6 +8,7 @@ import ../models
 suite "Getting table and columns from Model":
   test "Table":
     check Person.table == """"Person""""
+    check Table.table == """"FurnitureTable""""
 
   test "Columns":
     let
@@ -46,3 +47,4 @@ suite "Getting table and columns from Model":
       (""""Pet"""", """"pet"""", """"Person".pet""", """"pet".id"""),
       (""""Toy"""", """"pet_favToy"""", """"pet".favToy""", """"pet_favToy".id""")
     ]
+
