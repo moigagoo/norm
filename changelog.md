@@ -7,7 +7,7 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.3.2 (WIP)
+## 2.3.2 (November 19, 2021)
 
 -   [+] Add `norm.model.fCol` func variant that works with typedescs. Now `fCol` func variants are symmetrical to `col`.
 -   [+] Add `tableName` pragma to specify custom table name for model (see [#116](https://github.com/moigagoo/norm/issues/117)).
