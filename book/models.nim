@@ -69,6 +69,24 @@ nbText: """
 Norm will generate the following table schema:
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
+
+## Custom Table Name
+
+By default, a table is named after the model type, enclosed in double quotes, e.g. `User` model's table is called `"User"`.
+
+To override this behavior and set a custom name for the generated table, use `tableName` pragma:
+"""
+
+nbCode:
+  type
+    Thing {.tableName: "ThingTable".} = ref object of Model
+      attr: string
+
+nbText """
+This will result in this schema:
+
+    CREATE TABLE IF NOT EXISTS "ThingTable"(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 """
 
 nbSave
+

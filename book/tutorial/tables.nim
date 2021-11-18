@@ -60,21 +60,7 @@ And here is the actual table creation:
 nbCode:
   dbConn.createTables(newCustomer())
 
-nbText: """
-After running this last line, you'll see the generated queries in stdout (formatting added to improve readability):
-
-    CREATE TABLE IF NOT EXISTS "User"(
-        email TEXT NOT NULL,
-        id INTEGER NOT NULL PRIMARY KEY
-    )
-
-    CREATE TABLE IF NOT EXISTS "Customer"(
-        name TEXT,
-        user INTEGER NOT NULL,
-        id INTEGER NOT NULL PRIMARY KEY,
-        FOREIGN KEY(user) REFERENCES "User"(id)
-    )
-
+nbText """
 `createTables` proc takes a model instance and generates a table schema for it. For each of the instance's fields, a column is generated. If a field is itself a `Model`, a foreign key is added. `Option` fields are nullable, non-`Option` ones are `NOT NULL`.
 
 Note that a single `createTables` call generated two table schemas. That's because model `Customer` refers to `User`, and therefore its table can't be created without the table for `User` existing beforehand. Norm makes sure all dependency tables are created before creating the one that `createTables` was actually called with. That's why the proc is called `createTables` and not `createTable`.
@@ -87,3 +73,4 @@ Note that `id` column is created despite not being present in `User` definition.
 """
 
 nbSave
+
