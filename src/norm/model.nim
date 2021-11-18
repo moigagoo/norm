@@ -32,7 +32,10 @@ func model*[T](val: T): Option[Model] =
 func table*(T: typedesc[Model]): string =
   ## Get table name for `Model <#Model>`_, which is the type name in single quotes.
 
-  '"' & $T & '"'
+  when T.hasCustomPragma(tableName):
+    '"' & T.getCustomPragmaVal(tableName) & '"'
+  else:
+    '"' & $T & '"'
 
 func col*(T: typedesc[Model], fld: string): string =
   ## Get column name for a `Model`_ field, which is just the field name.
@@ -104,3 +107,4 @@ func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls
         grp = (tbl: tbl, tAls: tAls, lFld: lFld, rFld: rFld)
 
       result.add grp & subMod.joinGroups(flds & fld)
+

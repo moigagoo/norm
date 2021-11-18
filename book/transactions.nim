@@ -22,14 +22,6 @@ nbCode:
         dbConn.insert
 
 nbText: """
-This produces the following SQL:
-
-    BEGIN
-    INSERT INTO "User" (email) VALUES(?) <- @['11@example.com']
-    INSERT INTO "User" (email) VALUES(?) <- @['12@example.com']
-    INSERT INTO "User" (email) VALUES(?) <- @['13@example.com']
-    COMMIT
-
 If something goes wrong inside a transaction block, i.e. an exception is raised, the transaction is rollbacked.
 
 To rollback a transaction manually, call `rollback` proc:
@@ -49,3 +41,4 @@ nbCode:
     echo getCurrentExceptionMsg()
 
 nbSave
+

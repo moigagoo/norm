@@ -42,6 +42,9 @@ type
     sc10*: StringOfCap[10]
     psc5*: PaddedStringOfCap[5]
 
+  Table* {.tableName: "FurnitureTable".} = ref object of Model
+    legCount*: Positive
+
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -145,3 +148,7 @@ func newString*: String =
 
 func `===`*(a, b: String): bool =
   a[] == b[]
+ 
+func newTable*(legCount: Positive = 4): Table =
+  Table(legCount: legCount)
+
