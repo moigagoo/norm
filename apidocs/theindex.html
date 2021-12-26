@@ -86,6 +86,10 @@ function main() {
 <li><a class="reference external"
           data-doc-search-tag="model: cols[T: Model](obj: T; force = false): seq[string]" href="norm/model.html#cols%2CT">model: cols[T: Model](obj: T; force = false): seq[string]</a></li>
           </ul></dd>
+<dt><a name="ConflictPolicy" href="#ConflictPolicy"><span>ConflictPolicy:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sqlite: ConflictPolicy" href="norm/sqlite.html#ConflictPolicy">sqlite: ConflictPolicy</a></li>
+          </ul></dd>
 <dt><a name="count" href="#count"><span>count:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="postgres: count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;TRUE&quot;;
@@ -95,6 +99,18 @@ function main() {
           data-doc-search-tag="sqlite: count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;1&quot;;
       params: varargs[DbValue, dbValue]): int64" href="norm/sqlite.html#count%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;1&quot;;
       params: varargs[DbValue, dbValue]): int64</a></li>
+          </ul></dd>
+<dt><a name="cpIgnore" href="#cpIgnore"><span>cpIgnore:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ConflictPolicy.cpIgnore" href="norm/sqlite.html#cpIgnore">ConflictPolicy.cpIgnore</a></li>
+          </ul></dd>
+<dt><a name="cpRaise" href="#cpRaise"><span>cpRaise:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ConflictPolicy.cpRaise" href="norm/sqlite.html#cpRaise">ConflictPolicy.cpRaise</a></li>
+          </ul></dd>
+<dt><a name="cpReplace" href="#cpReplace"><span>cpReplace:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="ConflictPolicy.cpReplace" href="norm/sqlite.html#cpReplace">ConflictPolicy.cpReplace</a></li>
           </ul></dd>
 <dt><a name="createTables" href="#createTables"><span>createTables:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -244,9 +260,11 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="postgres: insert[T: Model](dbConn; obj: var T; force = false)" href="norm/postgres.html#insert%2C%2CT">postgres: insert[T: Model](dbConn; obj: var T; force = false)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false)" href="norm/sqlite.html#insert%2C%2CopenArray%5BT%5D">sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false)</a></li>
+          data-doc-search-tag="sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false;
+                 conflictPolicy = cpRaise)" href="norm/sqlite.html#insert%2C%2CopenArray%5BT%5D">sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false;
+                 conflictPolicy = cpRaise)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="sqlite: insert[T: Model](dbConn; obj: var T; force = false)" href="norm/sqlite.html#insert%2C%2CT">sqlite: insert[T: Model](dbConn; obj: var T; force = false)</a></li>
+          data-doc-search-tag="sqlite: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)" href="norm/sqlite.html#insert%2C%2CT">sqlite: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)</a></li>
           </ul></dd>
 <dt><a name="isModel" href="#isModel"><span>isModel:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -443,7 +461,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-18 20:55:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-12-26 19:01:19 UTC</small>
       </div>
     </div>
   </div>

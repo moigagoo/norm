@@ -104,6 +104,9 @@ function main() {
     title="RollbackError = object of CatchableError">RollbackError</a></li>
   <li><a class="reference" href="#NotFoundError"
     title="NotFoundError = object of KeyError">NotFoundError</a></li>
+  <li><a class="reference" href="#ConflictPolicy"
+    title="ConflictPolicy = enum
+  cpRaise, cpIgnore, cpReplace">ConflictPolicy</a></li>
 
   </ul>
 </li>
@@ -141,9 +144,10 @@ function main() {
   </ul>
   <ul class="simple nested-toc-section">insert
       <li><a class="reference" href="#insert%2C%2CT"
-    title="insert[T: Model](dbConn; obj: var T; force = false)">insert,<wbr>,<wbr>T</a></li>
+    title="insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)">insert,<wbr>,<wbr>T</a></li>
   <li><a class="reference" href="#insert%2C%2CopenArray%5BT%5D"
-    title="insert[T: Model](dbConn; objs: var openArray[T]; force = false)">insert,<wbr>,<wbr>openArray[T]</a></li>
+    title="insert[T: Model](dbConn; objs: var openArray[T]; force = false;
+                 conflictPolicy = cpRaise)">insert,<wbr>,<wbr>openArray[T]</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">rollback
@@ -231,6 +235,14 @@ function main() {
 
 
 </dd>
+<a id="ConflictPolicy"></a>
+<dt><pre><a href="sqlite.html#ConflictPolicy"><span class="Identifier">ConflictPolicy</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <span class="Identifier">cpRaise</span><span class="Other">,</span> <span class="Identifier">cpIgnore</span><span class="Other">,</span> <span class="Identifier">cpReplace</span></pre></dt>
+<dd>
+
+
+
+</dd>
 
 </dl></div>
 <div class="section" id="10">
@@ -270,16 +282,19 @@ Create tables for <a class="reference external" href="#model">Model</a> and its 
 
 </dd>
 <a id="insert,,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CT"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CT"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+                      <span class="Identifier">conflictPolicy</span> <span class="Other">=</span> <span class="Identifier">cpRaise</span><span class="Other">)</span></pre></dt>
 <dd>
 
 <p>Insert rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.</p>
-<p>By default, if the inserted object's <tt class="docutils literal"><span class="pre">id</span></tt> is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with <tt class="docutils literal"><span class="pre">force = true</span></tt>. </p>
+<p>By default, if the inserted object's <tt class="docutils literal"><span class="pre">id</span></tt> is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with <tt class="docutils literal"><span class="pre">force = true</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">conflictPolicy</span></tt> determines how the proc reacts to insertion conflicts. <tt class="docutils literal"><span class="pre">cpRaise</span></tt> means raise a <tt class="docutils literal"><span class="pre">DbError</span></tt>, <tt class="docutils literal"><span class="pre">cpIgnore</span></tt> means ignore the conflict and do not insert the conflicting row, <tt class="docutils literal"><span class="pre">cpReplace</span></tt> means overwrite the older row with the newer one. </p>
 
 
 </dd>
 <a id="insert,,openArray[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CopenArray%5BT%5D"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
+<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CopenArray%5BT%5D"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span>
+                      <span class="Identifier">conflictPolicy</span> <span class="Other">=</span> <span class="Identifier">cpRaise</span><span class="Other">)</span></pre></dt>
 <dd>
 
 Insert rows for each <a class="reference external" href="#model">Model</a> instance in open array.
@@ -407,7 +422,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-11-18 20:55:11 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2021-12-26 19:01:19 UTC</small>
       </div>
     </div>
   </div>
