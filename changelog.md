@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.3.3 (December 26, 2021)
+
+-   [+] SQLite: Add `conflictPolicy` param to `insert` procs. It determines how insertion conflicts should be handled: `cpRaise` (default) means raise an `DbError`, `cpIgnore` means keep the old row and ignore the new one, and `cpReplace` means replace the old row.
+
 ## 2.3.2 (November 19, 2021)
 
 -   [+] Add `norm.model.fCol` func variant that works with typedescs. Now `fCol` func variants are symmetrical to `col`.
