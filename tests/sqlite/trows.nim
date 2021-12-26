@@ -23,11 +23,11 @@ suite "Row CRUD":
   test "Insert row":
     var toy = newtoy(123.45)
 
-    dbconn.insert(toy)
+    dbConn.insert(toy)
 
     check toy.id > 0
 
-    let rows = dbconn.getAllRows(sql"SELECT price, id FROM Toy")
+    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
 
     check rows.len == 1
     check rows[0] == @[?123.45, ?toy.id]
@@ -35,12 +35,12 @@ suite "Row CRUD":
   test "Insert row twice":
     var toy = newtoy(123.45)
 
-    dbconn.insert(toy)
-    dbconn.insert(toy, force = true)
+    dbConn.insert(toy)
+    dbConn.insert(toy, force = true)
 
     check toy.id > 1
 
-    let rows = dbconn.getAllRows(sql"SELECT price, id FROM Toy")
+    let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
 
     check rows.len == 2
     check rows[^1] == @[?123.45, ?toy.id]
