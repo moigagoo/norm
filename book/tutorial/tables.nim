@@ -59,6 +59,7 @@ And here is the actual table creation:
 
 nbCode:
   dbConn.createTables(newCustomer())
+  echo()
 
 nbText """
 `createTables` proc takes a model instance and generates a table schema for it. For each of the instance's fields, a column is generated. If a field is itself a `Model`, a foreign key is added. `Option` fields are nullable, non-`Option` ones are `NOT NULL`.
