@@ -42,6 +42,8 @@ nbCode:
     insert userBar
     insert sam
 
+  echo()
+
 nbText: &"""
 When Norm attempts to insert `alice`, it detects that `userFoo` that it referenced in it has not been inserted yet, so there's no `id` to store as foreign key. So, Norm inserts `userFoo` automatically and then uses its new `id` (in this case, {userFoo.id}) as the foreign key value.
 
@@ -63,6 +65,8 @@ nbCode:
   var customerBar = newCustomer()
   dbConn.select(customerBar, "User.email = ?", "bar@bar.bar")
 
+  echo()
+
 nbText: """
 Let's examine how Norm populated `customerBar`:
 """
@@ -80,6 +84,8 @@ If you pass a sequence to `select`, you'll get many rows:
 nbCode:
   var customersFoo = @[newCustomer()]
   dbConn.select(customersFoo, "User.email = ?", "foo@foo.foo")
+
+  echo()
 
 nbText: """
 The generated query is similar to the previous one, but the result is populated objects, not one:
@@ -126,6 +132,8 @@ nbCode:
   customerBar.name = some "Saaam"
   dbConn.update(customerBar)
 
+  echo()
+
 nbText: """
 Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries.
 
@@ -138,6 +146,8 @@ nbCode:
 
   dbConn.update(customersFoo)
 
+  echo()
+
 nbText: """
 For each object in `customersFoo`, a pair of queries are generated.
 
@@ -148,6 +158,8 @@ To delete a row, call `delete` on an object:
 
 nbCode:
   dbConn.delete(sam)
+
+  echo()
 
 nbText: """
 After deletion, the object becomes `nil`:
