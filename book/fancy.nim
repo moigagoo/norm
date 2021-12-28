@@ -36,7 +36,7 @@ nbCode:
     dbConn.select("email LIKE ?", "_@example.com")
     dbConn.delete
   
-  echo ()
+  echo()
 
 nbSave
 
