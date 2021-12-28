@@ -212,12 +212,18 @@
 <pre><code class="nim hljs"><span class="hljs-keyword">let</span> db = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
 db.exec <span class="hljs-string">sql&quot;PRAGMA foreign_keys = ON&quot;</span>
 db.createTables(newProduct())
-db.createTables(newConsumer())</code></pre>
+db.createTables(newConsumer())
+<span class="hljs-keyword">echo</span>()</code></pre>
+<pre><samp>
+</samp></pre>
 <p><code>INSERT</code> statements can now be done using only <code>id</code>. This allows for more flexibility at the cost of more manual queries:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">var</span> cheese = <span class="hljs-type">Product</span>(name: <span class="hljs-string">&quot;Cheese&quot;</span>, price: <span class="hljs-number">13.3</span>)
 db.insert(cheese)
 <span class="hljs-keyword">var</span> bob = newConsumer(<span class="hljs-string">&quot;bob@mail.org&quot;</span>, cheese.id)
-db.insert(bob)</code></pre>
+db.insert(bob)
+<span class="hljs-keyword">echo</span>()</code></pre>
+<pre><samp>
+</samp></pre>
 <p>If an invalid ID is passed, Norm will raise a <code>DbError</code> exception:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">try</span>:
   <span class="hljs-keyword">let</span> badProductId = <span class="hljs-number">133</span>
@@ -234,7 +240,10 @@ doAssert(consumer.email == <span class="hljs-string">&quot;bob@mail.org&quot;</s
 <span class="hljs-keyword">var</span> product = newProduct()
 db.select(product, <span class="hljs-string">&quot;id = $1&quot;</span>, consumer.productId)
 doAssert(product.name == <span class="hljs-string">&quot;Cheese&quot;</span>)
-doAssert(product.price == <span class="hljs-number">13.3</span>)</code></pre>
+doAssert(product.price == <span class="hljs-number">13.3</span>)
+<span class="hljs-keyword">echo</span>()</code></pre>
+<pre><samp>
+</samp></pre>
 
                     </main>
 
