@@ -213,7 +213,7 @@ INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['10@example.com']
 <pre><code class="nim hljs"><span class="hljs-keyword">discard</span> @[newUser()].dup:
   dbConn.select(<span class="hljs-string">&quot;email LIKE ?&quot;</span>, <span class="hljs-string">&quot;_@example.com&quot;</span>)
   dbConn.delete
-<span class="hljs-keyword">echo</span> ()</code></pre>
+<span class="hljs-keyword">echo</span>()</code></pre>
 <pre><samp>SELECT &quot;User&quot;.email, &quot;User&quot;.id FROM &quot;User&quot;  WHERE email LIKE ? &lt;- ['_@example.com']
 DELETE FROM &quot;User&quot; WHERE id = 1
 DELETE FROM &quot;User&quot; WHERE id = 2
@@ -224,7 +224,7 @@ DELETE FROM &quot;User&quot; WHERE id = 6
 DELETE FROM &quot;User&quot; WHERE id = 7
 DELETE FROM &quot;User&quot; WHERE id = 8
 DELETE FROM &quot;User&quot; WHERE id = 9
-()
+
 </samp></pre>
 
                     </main>
