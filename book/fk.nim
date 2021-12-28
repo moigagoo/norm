@@ -85,4 +85,6 @@ nbCode:
   doAssert(product.name == "Cheese")
   doAssert(product.price == 13.30)
 
+  echo()
+
 nbSave
