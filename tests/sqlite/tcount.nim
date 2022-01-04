@@ -41,3 +41,4 @@ suite "Count":
   test "Conditions":
     check dbConn.count(Person, "*", dist = false, "name LIKE ?", "alice") == 1
     check dbConn.count(Person, "pet", dist = true, "pet = ?", 1) == 1
+
