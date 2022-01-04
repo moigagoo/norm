@@ -127,9 +127,6 @@ proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRai
 
   checkRo(T)
 
-  when T.hasCustomPragma(ro):
-    {.error: "mutating procs can't be used with read-only models".}
-
   if obj.id != 0 and not force:
     log("Object ID is not 0, skipping insertion. Type: $#, ID: $#" % [$T, $obj.id])
 
