@@ -108,7 +108,7 @@ func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls
 
       result.add grp & subMod.joinGroups(flds & fld)
 
-template checkRo*(T: typedesc[Model]) =
+proc checkRo*(T: typedesc[Model]) =
   ## Stop compilation if an object has `ro`_ pragma.
 
   when T.hasCustomPragma(ro):
