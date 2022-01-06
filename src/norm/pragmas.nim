@@ -8,7 +8,9 @@ template pk* {.pragma.}
   ]##
 
 template ro* {.pragma.}
-  ##[ Mark field as read-only.
+  ##[ Mark model or field as read-only.
+
+  Read-only models can't be mutated, i.e. you can't call ``insert``, ``update``, or ``delete`` on their instances.
 
   Read-only fields are ignored in ``insert`` and ``update`` procs unless ``force`` is passed.
 

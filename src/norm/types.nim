@@ -25,3 +25,4 @@ func `$`*[_](s: StringOfCap[_]): string =
 
 func `$`*[_](s: PaddedStringOfCap[_]): string =
   string(s)
+

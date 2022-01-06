@@ -108,3 +108,9 @@ func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls
 
       result.add grp & subMod.joinGroups(flds & fld)
 
+proc checkRo*(T: typedesc[Model]) =
+  ## Stop compilation if an object has `ro`_ pragma.
+
+  when T.hasCustomPragma(ro):
+    {.error: "can't use mutating procs with read-only models".}
+
