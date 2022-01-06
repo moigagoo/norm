@@ -8,7 +8,7 @@ import private/[dot, log]
 import model
 import pragmas
 
-export dbtypes
+export dbtypes, macros
 
 
 type
@@ -127,6 +127,8 @@ proc insert*[T: Model](dbConn; obj: var T, force = false) =
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
   ]##
 
+  checkRo(T)
+
   if obj.id != 0 and not force:
     log("Object ID is not 0, skipping insertion. Type: $#, ID: $#" % [$T, $obj.id])
 
@@ -235,6 +237,8 @@ proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", 
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.
 
+  checkRo(T)
+
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
       var subMod = get val.model
@@ -259,6 +263,8 @@ proc update*[T: Model](dbConn; objs: var openArray[T]) =
 
 proc delete*[T: Model](dbConn; obj: var T) =
   ## Delete rows for `Model`_ instance and its `Model`_ fields.
+
+  checkRo(T)
 
   let qry = "DELETE FROM $# WHERE id = $#" % [T.table, $obj.id]
 
