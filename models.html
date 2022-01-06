@@ -236,6 +236,14 @@
 <p>This will result in this schema:</p>
 <pre><code>CREATE TABLE IF NOT EXISTS &quot;ThingTable&quot;(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 </code></pre>
+<h2>Read-only Models</h2>
+<p>To slim down DB queries when you don't need to fetch the full model, use read-only models.</p>
+<p>A read-only model is a model that defines a subset of fields of another model. Another important property of read-only model is that you can't use it to insert, update, or delete data; just select.</p>
+<p>To define a read-only model, annotate your <code>Model</code> subtype with <code>ro</code> pragma and point it to an existing table with <code>tableName</code>:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">type</span>
+  <span class="hljs-type">ClientName</span> {.ro, tableName: <span class="hljs-string">&quot;Client&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name: <span class="hljs-built_in">string</span></code></pre>
+<p>Now you can query data from the DB into <code>ClientName</code> instances just like you do with any other model.</p>
 
                     </main>
 

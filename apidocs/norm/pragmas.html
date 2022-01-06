@@ -133,7 +133,8 @@ function main() {
 <dt><pre><span class="Keyword">template</span> <a href="#ro.t"><span class="Identifier">ro</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">pragma</span></span><span class="Other">.}</span></span></pre></dt>
 <dd>
 
-<p>Mark field as read-only.</p>
+<p>Mark model or field as read-only.</p>
+<p>Read-only models can't be mutated, i.e. you can't call <tt class="docutils literal"><span class="pre">insert</span></tt>, <tt class="docutils literal"><span class="pre">update</span></tt>, or <tt class="docutils literal"><span class="pre">delete</span></tt> on their instances.</p>
 <p>Read-only fields are ignored in <tt class="docutils literal"><span class="pre">insert</span></tt> and <tt class="docutils literal"><span class="pre">update</span></tt> procs unless <tt class="docutils literal"><span class="pre">force</span></tt> is passed.</p>
 <p>Use for fields that are populated automatically by the DB: ids, timestamps, and so on.</p>
 <p><tt class="docutils literal"><span class="pre">id</span></tt> field is <tt class="docutils literal"><span class="pre">ro</span></tt> by default. </p>
@@ -178,7 +179,7 @@ Custom table name for a model.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2021-12-28 17:52:23 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-06 08:20:43 UTC</small>
       </div>
     </div>
   </div>

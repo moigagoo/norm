@@ -15,3 +15,4 @@ fCol	norm/model.html#fCol,T,string,string	model: fCol[T: Model](obj: T; fld, tAl
 cols	norm/model.html#cols,T	model: cols[T: Model](obj: T; force = false): seq[string]	
 rfCols	norm/model.html#rfCols,T,seq[string]	model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]	
 joinGroups	norm/model.html#joinGroups,T,seq[string]	model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[\n    tuple[tbl, tAls, lFld, rFld: string]]	
+checkRo	norm/model.html#checkRo,typedesc[Model]	model: checkRo(T: typedesc[Model])	
