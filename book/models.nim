@@ -86,6 +86,24 @@ nbText """
 This will result in this schema:
 
     CREATE TABLE IF NOT EXISTS "ThingTable"(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+
+
+## Read-only Models
+
+To slim down DB queries when you don't need to fetch the full model, use read-only models.
+
+A read-only model is a model that defines a subset of fields of another model. Another important property of read-only model is that you can't use it to insert, update, or delete data; just select.
+
+To define a read-only model, annotate your `Model` subtype with `ro` pragma and point it to an existing table with `tableName`:
+"""
+
+nbCode:
+  type
+    ClientName {.ro, tableName: "Client".} = ref object of Model
+      name: string
+
+nbText """
+Now you can query data from the DB into `ClientName` instances just like you do with any other model.
 """
 
 nbSave

@@ -25,3 +25,4 @@ suite "Database manipulation":
     dropDb()
 
     check not fileExists(dbFile)
+
