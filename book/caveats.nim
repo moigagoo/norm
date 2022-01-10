@@ -6,15 +6,15 @@ nbUseNimibook
 
 nbText: """
 # Caveats
-There are some caveats when working with norm that you need to consider and strategies to work around them.
+There are some caveats when working with Norm that you need to consider and strategies to work around them.
 
-## Managing data for Many-To-Many relationships
-Support for Many-To-Many relationships has not yet been reached. You will have to set-up and manage the necessary "glue"-models yourself as if they were normal models.
+## Managing Data for Many-to-Many Relationships
+Support for Many-To-Many relationships has not yet been reached. You will have to set-up and manage the necessary "glue"-models yourself as if they were regular models.
 
-## Fetching data from Many-To-One, Many-To-Many and unidirectional One-To-One relationships
+## Fetching Data From Many-to-One, Many-to-Many and Unidirectional One-to-One Relationships
 One of the biggest caveats will be around fetching data from relationships where your model does not have a foreign key field to the other model whose data you want to query. There is no direct solution for this, but various ways to work around this.
 
-### Fetching data for simple Many-To-One/Many-To-Many relationships
+### Fetching Data for Simple Many-to-One/Many-to-Many Relationships
 Say we have a `Producer` that produces various `Products`, a classic One (Producer) to Many (Products) relationship.
 If you wanted to query the producer and all of their products in one go, you can still do that, but the other way around. Instead of querying for a producer and fetching all their products, you can query for all products of a given producer and fetch the data of the producer as shown in the Tutorial section.
 
