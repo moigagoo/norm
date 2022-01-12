@@ -34,6 +34,10 @@ type
     favToy*: Toy
     secondFavToy*: Toy
 
+  UnplayfulPet* = ref object of Model
+    species*: string
+    favToyId* {.fk: Toy}: Option[int64]
+
   Number* = ref object of Model
     n*: int
     n16*: int16
@@ -113,6 +117,9 @@ proc newCustomer*(): Customer =
 func `===`*(a, b: Customer): bool =
   a.userId == b.userId and
   a.email == b.email
+
+func newUnplayfulPet*(species: string, favToyId: Option[int64]): UnplayfulPet =
+  UnplayfulPet(species: species, favToyId: favToyId)
 
 func newPlayfulPet*(species: string, favToy, secondFavToy: Toy): PlayfulPet =
   PlayfulPet(species: species, favToy: favToy, secondFavToy: secondFavToy)
