@@ -37,9 +37,16 @@ nbCode:
 
   let dbConn = open(":memory:", "", "", "")
 
-  let producerId = 1
+  dbConn.createTables(newProducer())
+  dbConn.createTables(newProduct())
+
+  var alex = newProducer("Alex")
+  dbConn.insert(alex)
+  var firstClassSpaghetti = newProduct("The best spaghetti", alex)
+  dbConn.insert(firstClassSpaghetti)
+  
   var producerProducts: seq[Product] = @[newProduct()]
-  dbConn.select(producerProducts, "Product.producer = ?", producerId)
+  dbConn.select(producerProducts, "Product.producedBy = ?", alex.id)
 
   echo %*producerProducts
 
@@ -53,10 +60,14 @@ If you have multiple Many-To-X relationships that you want to query at once, you
 nbCode: 
   type Employee = ref object of Model
       name: string
-      company: Producer
+      employer: Producer
     
-  proc newEmployee(name = "", company = newProducer()): Employee =
-    result = Employee(name: name, company: company)
+  proc newEmployee(name = "", employer = newProducer()): Employee =
+    result = Employee(name: name, employer: employer)
+
+  dbConn.createTables(newEmployee())
+  var steff = newEmployee("Steff", alex)
+  dbConn.insert(steff)
 
   type ProducerContainer = object
     producer: Producer
@@ -67,9 +78,9 @@ nbCode:
   var products: seq[Product] = @[newProduct()]
   var employees: seq[Employee] = @[newEmployee()]
   
-  dbConn.select(producer, "Producer.id = ?", producerId)
-  dbConn.select(products, "producer = ?", producerId)
-  dbConn.select(employees, "producer = ?", producerId)
+  dbConn.select(producer, "Producer.id = ?", alex.id)
+  dbConn.select(products, "producedBy = ?", alex.id)
+  dbConn.select(employees, "employer = ?", alex.id)
 
   let producerContainer = ProducerContainer(
     producer: producer, 
