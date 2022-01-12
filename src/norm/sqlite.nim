@@ -316,3 +316,32 @@ template transaction*(dbConn; body: untyped): untyped =
 
     raise
 
+
+# One-to-Many Fetching
+
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
+  let relatedEntry = relatedEntries[0]
+  var foreignKeyFieldName: string = oneEntry.getRelatedFieldNameOn(relatedEntry)
+
+  let manyTableName: string = relatedEntry.type().table()
+  let sqlCondition: string = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]
+
+  dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
+
+
+# Many-to-Many Fetching
+
+macro unpackFromJoinModel*[T: Model](mySeq: seq[T], field: static string): untyped =
+    newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
+
+proc selectManyToMany*[M: Model, J: Model](dbConn; queryStartEntry: M, joinModelEntries: seq[J], foreignKeyField: static string): seq[untyped] =
+    let joinModelEntry: Model = joinModelEntries[0]
+    
+    let fkColumnFromJoinToManyStart: string = queryStartEntry.getRelatedFieldNameOn(joinModelEntry)
+    let joinTableName = joinModelEntry.table()
+
+    let sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
+    dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
+
+    let manyEntries = unpackFromJoinModel[joinModelEntry.type()](joinModelEntries, foreignKeyField)
+    result = manyEntries
