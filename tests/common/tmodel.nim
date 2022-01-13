@@ -49,39 +49,18 @@ suite "Getting table and columns from Model":
     ]
 
   test "When related model has field with the type of the given model, expect name of that field as a string":
-    let 
-      toy = newToy(123.45)
-      pet = newPet("cat", toy)
-
-    check toy.getRelatedFieldNameOn(pet) == "favToy"
+    check Toy.getRelatedFieldNameOn(Pet) == "favToy"
   
   test "When related model has Optional field with the type of the given model, expect name of that field as a string":
-    let
-      toy = newToy(123.45)
-      pet = newPet("cat", toy)
-      person = newPerson("Alice", pet)
-
-    check pet.getRelatedFieldNameOn(person) == "pet"
+    check Pet.getRelatedFieldNameOn(Person) == "pet"
 
   test "When related model has field with fk pragma pointing to the given model, expect name of that field as a string":
-    let 
-      user = newUser()
-      customer = newCustomer(user.id, "some@mail.com")
-
-    check user.getRelatedFieldNameOn(customer) == "userId"
+    check User.getRelatedFieldNameOn(Customer) == "userId"
 
   test "When related model as Optional field with fk pragma pointing to the given model, expect name of that field as a string":
-    let 
-      toy = newToy(123.45)
-      pet = newUnplayfulPet("dog", none(int64))
-
-    check toy.getRelatedFieldNameOn(pet) == "favToyId"
+    check Toy.getRelatedFieldNameOn(UnplayfulPet) == "favToyId"
 
   test "When related model does not have FK-field pointing to the given model, expect FieldDefect Exception":
-    let 
-      toy = newToy(123.45)
-      pet = newPet("cat", toy)
-
     expect FieldDefect:
-      discard pet.getRelatedFieldNameOn(toy)
+      discard Pet.getRelatedFieldNameOn(Toy)
 

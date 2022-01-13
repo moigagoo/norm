@@ -38,6 +38,20 @@ type
     species*: string
     favToyId* {.fk: Toy}: Option[int64]
 
+  Doctor* = ref object of Model
+    name*: string
+
+  Specialty* = ref object of Model
+    name*: string
+
+  DoctorSpecialties* = ref object of Model
+    doctor*: Doctor
+    specialty*: Specialty
+
+  DoctorSpecialtiesFKPragma* = ref object of Model
+    doctor* {.fk: Doctor}: int64
+    specialty* {.fk: Specialty}: int64    
+
   Number* = ref object of Model
     n*: int
     n16*: int16
@@ -118,8 +132,12 @@ func `===`*(a, b: Customer): bool =
   a.userId == b.userId and
   a.email == b.email
 
-func newUnplayfulPet*(species: string, favToyId: Option[int64]): UnplayfulPet =
+func newUnplayfulPet*(species: string = "", favToyId: Option[int64] = none(int64)): UnplayfulPet =
   UnplayfulPet(species: species, favToyId: favToyId)
+
+func `===`*(a, b: UnplayfulPet): bool = 
+  a.species == b.species and
+  a.favToyId == b.favToyId
 
 func newPlayfulPet*(species: string, favToy, secondFavToy: Toy): PlayfulPet =
   PlayfulPet(species: species, favToy: favToy, secondFavToy: secondFavToy)
@@ -164,3 +182,20 @@ func newTable*(legCount: Positive = 4): Table =
 
 func newPersonName*: PersonName = PersonName(name: "")
 
+func newDoctor*(name: string = ""): Doctor = Doctor(name: name)
+func `===`* (a, b: Doctor): bool = 
+  a.name == b.name and a.id == b.id
+
+func newSpecialty*(name: string = ""): Specialty = Specialty(name: name)
+func `===`* (a, b: Specialty): bool =
+  a.name == b.name and a.id == b.id
+
+func newDoctorSpecialties*(doctor: Doctor = newDoctor(), specialty: Specialty = newSpecialty()): DoctorSpecialties =
+  DoctorSpecialties(doctor: doctor, specialty: specialty)
+func `===`* (a,b: DoctorSpecialties): bool = 
+  a.doctor === b.doctor and a.specialty === b.specialty
+
+func newDoctorSpecialtiesFKPragma*(doctorId: int64, specialtyId: int64): DoctorSpecialtiesFKPragma = 
+  DoctorSpecialtiesFKPragma(doctor: doctorId, specialty: specialtyId)
+func `===`*(a, b: DoctorSpecialtiesFKPragma): bool = 
+  a.doctor == b.doctor and a.specialty == b.specialty 

@@ -320,11 +320,9 @@ template transaction*(dbConn; body: untyped): untyped =
 # One-to-Many Fetching
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
-  let relatedEntry = relatedEntries[0]
-
   const foreignKeyFieldName: string = O.getRelatedFieldNameOn(M)
-  const manyTableName: string = relatedEntry.type().table()
-  let sqlCondition: string = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]
+  const manyTableName: string = M.table()
+  const sqlCondition: string = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]
 
   dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
 
@@ -332,17 +330,15 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
 # Many-to-Many Fetching
 
 macro unpackFromJoinModel*[T: Model](mySeq: seq[T], field: static string): untyped =
-    newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
+  newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
 
-proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: seq[J], secondManyModel: M2): seq[untyped] =
-    let joinModelEntry: Model = joinModelEntries[0]
-    
-    const fkColumnFromJoinToManyStart: string = M1.getRelatedFieldNameOn(J)
-    const joinTableName = joinModelEntry.type().table()
-    const sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    
+  const fkColumnFromJoinToManyStart: string = M1.getRelatedFieldNameOn(J)
+  const joinTableName = J.table()
+  const sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
+  dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
 
-    dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
+  const fkColumnFromJoinToManyEnd: string = M2.getRelatedFieldNameOn(J)
+  let unpackedEntries: seq[M2] = unpackFromJoinModel(joinModelEntries, fkColumnFromJoinToManyEnd)
 
-    const fkColumnFromJoinToManyEnd: string = M2.getRelatedFieldNameOn(J)
-    let manyEntries = unpackFromJoinModel(joinModelEntries, fkColumnFromJoinToManyEnd)
-    result = manyEntries
+  queryEndEntries = unpackedEntries
