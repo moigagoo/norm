@@ -321,9 +321,9 @@ template transaction*(dbConn; body: untyped): untyped =
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
   let relatedEntry = relatedEntries[0]
-  var foreignKeyFieldName: string = oneEntry.getRelatedFieldNameOn(relatedEntry)
 
-  let manyTableName: string = relatedEntry.type().table()
+  const foreignKeyFieldName: string = O.getRelatedFieldNameOn(M)
+  const manyTableName: string = relatedEntry.type().table()
   let sqlCondition: string = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]
 
   dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
@@ -334,14 +334,15 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
 macro unpackFromJoinModel*[T: Model](mySeq: seq[T], field: static string): untyped =
     newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
 
-proc selectManyToMany*[M: Model, J: Model](dbConn; queryStartEntry: M, joinModelEntries: seq[J], foreignKeyField: static string): seq[untyped] =
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: seq[J], secondManyModel: M2): seq[untyped] =
     let joinModelEntry: Model = joinModelEntries[0]
     
-    let fkColumnFromJoinToManyStart: string = queryStartEntry.getRelatedFieldNameOn(joinModelEntry)
-    let joinTableName = joinModelEntry.table()
+    const fkColumnFromJoinToManyStart: string = M1.getRelatedFieldNameOn(J)
+    const joinTableName = joinModelEntry.type().table()
+    const sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
 
-    let sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
     dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
 
-    let manyEntries = unpackFromJoinModel[joinModelEntry.type()](joinModelEntries, foreignKeyField)
+    const fkColumnFromJoinToManyEnd: string = M2.getRelatedFieldNameOn(J)
+    let manyEntries = unpackFromJoinModel(joinModelEntries, fkColumnFromJoinToManyEnd)
     result = manyEntries
