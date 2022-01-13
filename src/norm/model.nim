@@ -114,7 +114,7 @@ proc checkRo*(T: typedesc[Model]) =
   when T.hasCustomPragma(ro):
     {.error: "can't use mutating procs with read-only models".}
 
-proc getRelatedFieldNameOn*[T: Model, M: Model](targetModel: typedesc[T], sourceModel: typedesc[M]): static string  {.raises: [FieldDefect].} =
+proc getRelatedFieldNameOn*[T: Model, M: Model](targetModel: typedesc[T], sourceModel: typedesc[M]): string  {.raises: [FieldDefect].} =
   for sourceFieldName, sourceFieldValue in sourceModel()[].fieldPairs:
     #Handles case where field is an int64 with fk pragma
     when sourceFieldValue.hasCustomPragma(fk):

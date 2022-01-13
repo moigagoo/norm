@@ -40,6 +40,7 @@ type
 
   Doctor* = ref object of Model
     name*: string
+    age*: DateTime
 
   Specialty* = ref object of Model
     name*: string
@@ -182,7 +183,7 @@ func newTable*(legCount: Positive = 4): Table =
 
 func newPersonName*: PersonName = PersonName(name: "")
 
-func newDoctor*(name: string = ""): Doctor = Doctor(name: name)
+func newDoctor*(name: string = "", age: DateTime = now()): Doctor = Doctor(name: name, age: age)
 func `===`* (a, b: Doctor): bool = 
   a.name == b.name and a.id == b.id
 
