@@ -328,8 +328,7 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
 
 
 # Many-to-Many Fetching
-
-macro unpackFromJoinModel*[T: Model](mySeq: seq[T], field: static string): untyped =
+macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
   newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
 
 proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    

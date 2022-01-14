@@ -1,6 +1,6 @@
 import std/[unittest, os, sugar, options, with]
 
-import norm/[sqlite]
+import norm/sqlite
 
 import ../models
 
@@ -8,7 +8,52 @@ import ../models
 const dbFile = "test.db"
 
 
-suite "Testing Fetching Many-To-Many interactions":
+suite "Testing selectOneToMany":
+  setup:
+    removeFile dbFile
+
+    let dbConn = open(dbFile, "", "", "")
+
+    var
+      spot = newPet("dog", newToy())
+      stan = newPet("dog", newToy())
+
+      alice = newPerson("Alice", spot)
+      bob = newPerson("Bob", none Pet)
+      jeff = newPerson("Jeff", spot)
+
+    dbConn.createTables(newPerson())
+
+    discard @[alice, bob, jeff].dup:
+      dbConn.insert
+
+  teardown:
+    close dbConn
+    removeFile dbFile
+
+  test "When there is a many-to-one relationship, fetch its members":
+    var spotsPeople: seq[Person] = @[newPerson()]
+
+    dbConn.selectOneToMany(spot, spotsPeople)
+
+    check spotsPeople.len() == 2
+    check spotsPeople[0].name == alice.name
+    check spotsPeople[1].name == jeff.name
+
+  test "When there is no many-to-one relationship, the code does not compile":
+    var alicesPets: seq[Pet] = @[newPet()]
+    check compiles(dbConn.selectOneToMany(alice, alicesPets)) == false
+      
+
+  test "When there is a many-to-one relationship without any attached entries, fetch an empty seq[]":
+    var stansPeople: seq[Person] = @[newPerson()]
+
+    dbConn.selectOneToMany(stan, stansPeople)
+
+    check stansPeople.len() == 0
+
+
+suite "Testing selectManyToMany":
   setup:
     removeFile dbFile
 
