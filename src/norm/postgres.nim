@@ -316,3 +316,28 @@ template transaction*(dbConn; body: untyped): untyped =
 
     raise
 
+
+# One-to-Many Fetching
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
+  const foreignKeyFieldName: string = O.getRelatedFieldNameOn(M)
+  const manyTableName: string = M.table()
+  const sqlCondition: string = manyTableName & '.' & foreignKeyFieldName & " = $1"
+
+  dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
+
+
+# Many-to-Many Fetching
+macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
+  newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
+
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    
+  const fkColumnFromJoinToManyStart: string = M1.getRelatedFieldNameOn(J)
+  const joinTableName = J.table()
+  const sqlCondition: string = joinTableName & '.' & fkColumnFromJoinToManyStart & " = $1"
+
+  dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
+
+  const fkColumnFromJoinToManyEnd: string = M2.getRelatedFieldNameOn(J)
+  let unpackedEntries: seq[M2] = unpackFromJoinModel(joinModelEntries, fkColumnFromJoinToManyEnd)
+
+  queryEndEntries = unpackedEntries
