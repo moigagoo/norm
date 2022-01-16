@@ -123,6 +123,16 @@ nbCode:
 
 
 nbText: """
+## Check If Row Exists
+
+If you need to check if a row selected by a given condition exists, use `exists` proc:
+"""
+
+nbCode:
+  echo dbConn.exists(Customer, "name = ?", "Alice")
+
+
+nbText"""
 ## Update Rows
 
 To update a row, you just update the object and call `update` on it:

@@ -234,6 +234,17 @@ proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", 
 
   row[0].i
 
+proc exists*(dbConn; T: typedesc[Model], cond: string, params: varargs[DbValue, dbValue]): bool =
+  ## Check if a row exists in the table.
+
+  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond] 
+
+  log(qry, $params)
+
+  let row = get dbConn.getRow(sql qry, params)
+
+  row[0].b
+
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.
 

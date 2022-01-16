@@ -23,6 +23,7 @@ tests/sqlite/tcount
 tests/sqlite/tdb
 tests/sqlite/tdbtypes
 tests/sqlite/tenv
+tests/sqlite/texists
 tests/sqlite/tfkpragma
 tests/sqlite/tfkpragmanotint
 tests/sqlite/tfkpragmanotmodel
@@ -41,6 +42,7 @@ tests/postgres/tcount
 tests/postgres/tdb
 tests/postgres/tdbtypes
 tests/postgres/tenv
+tests/postgres/texists
 tests/postgres/tfkpragma
 tests/postgres/tfkpragmanotint
 tests/postgres/tfkpragmanotmodel

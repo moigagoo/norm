@@ -10,6 +10,8 @@
 ## 2.3.4 (WIP)
 
 -   [+] Add the ability to define read-only models (see [#125](https://github.com/moigagoo/norm/issues/125)).
+-   [+] Add `exists` proc to check if a row exists (see [#115](https://github.com/moigagoo/norm/issues/115)).
+-   [r] Remove `nimibook` from dependencies to speed up package builds.
 
 
 ## 2.3.3 (December 26, 2021)
