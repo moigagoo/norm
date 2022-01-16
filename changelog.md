@@ -7,9 +7,17 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+
+## 2.3.4 (January 16, 2022)
+
+-   [+] Add the ability to define read-only models (see [#125](https://github.com/moigagoo/norm/issues/125)).
+-   [+] Add `exists` proc to check if a row exists (see [#115](https://github.com/moigagoo/norm/issues/115)).
+-   [r] Remove `nimibook` from dependencies to speed up package builds.
+
+
 ## 2.3.3 (December 26, 2021)
 
--   [+] SQLite: Add `conflictPolicy` param to `insert` procs. It determines how insertion conflicts should be handled: `cpRaise` (default) means raise an `DbError`, `cpIgnore` means keep the old row and ignore the new one, and `cpReplace` means replace the old row.
+-   [+] SQLite: Add `conflictPolicy` param to `insert` procs. It determines how insertion conflicts should be handled: `cpRaise` (default) means raise an `DbError`, `cpIgnore` means keep the old row and ignore the new one, and `cpReplace` means replace the old row (see [#120](https://github.com/moigagoo/norm/issues/120)).
 
 ## 2.3.2 (November 19, 2021)
 

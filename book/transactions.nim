@@ -21,6 +21,8 @@ nbCode:
       discard newUser($i & "@example.com").dup:
         dbConn.insert
 
+  echo()
+
 nbText: """
 If something goes wrong inside a transaction block, i.e. an exception is raised, the transaction is rollbacked.
 

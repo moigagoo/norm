@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.3.3"
+version       = "2.3.4"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -10,12 +10,13 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "ndb >= 0.19.9", "nimibook >= 0.2.1"
+requires "nim >= 1.4.0", "ndb >= 0.19.9"
 
 task test, "Run tests":
   exec "testament all"
 
 task book, "Generate book":
+  exec "nimble install -y nimibook"
   exec "nim r -d:release nbook.nim build"
   cpFile("CNAME", "docs/CNAME")
 

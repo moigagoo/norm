@@ -43,6 +43,8 @@ nbCode:
   db.createTables(newProduct())
   db.createTables(newConsumer())
 
+  echo()
+  
 nbText: """
 `INSERT` statements can now be done using only `id`. This allows for more flexibility at the cost of more manual queries:
 """
@@ -53,6 +55,8 @@ nbCode:
 
   var bob = newConsumer("bob@mail.org", cheese.id)
   db.insert(bob)
+
+  echo()
 
 nbText: """
 If an invalid ID is passed, Norm will raise a `DbError` exception:
@@ -81,5 +85,6 @@ nbCode:
   doAssert(product.name == "Cheese")
   doAssert(product.price == 13.30)
 
-nbSave
+  echo()
 
+nbSave

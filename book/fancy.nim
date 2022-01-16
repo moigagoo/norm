@@ -24,6 +24,8 @@ nbCode:
   for i in 1..10:
     discard newUser($i & "@example.com").dup:
       dbConn.insert
+  
+  echo()
 
 nbText: """
 `dup` lets you call multiple procs, which gives a pleasant interface for row filter and bulk manipulation:
@@ -33,6 +35,8 @@ nbCode:
   discard @[newUser()].dup:
     dbConn.select("email LIKE ?", "_@example.com")
     dbConn.delete
+  
+  echo()
 
 nbSave
 
