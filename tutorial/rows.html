@@ -271,6 +271,12 @@ dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;
 <pre><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE name LIKE ? &lt;- ['alice']
 1
 </samp></pre>
+<h2>Check If Row Exists</h2>
+<p>If you need to check if a row selected by a given condition exists, use <code>exists</code> proc:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.exists(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;Alice&quot;</span>)</code></pre>
+<pre><samp>SELECT EXISTS(SELECT NULL FROM &quot;Customer&quot; WHERE name = ?) &lt;- ['Alice']
+true
+</samp></pre>
 <h2>Update Rows</h2>
 <p>To update a row, you just update the object and call <code>update</code> on it:</p>
 <pre><code class="nim hljs">customerBar.name = some <span class="hljs-string">&quot;Saaam&quot;</span>

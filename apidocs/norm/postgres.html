@@ -124,7 +124,13 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">selectAll
+      <ul class="simple nested-toc-section">exists
+      <li><a class="reference" href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
+    title="exists(dbConn; T: typedesc[Model]; cond: string;
+       params: varargs[DbValue, dbValue]): bool">exists,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">selectAll
       <li><a class="reference" href="#selectAll%2C%2Cseq%5BT%5D"
     title="selectAll[T: Model](dbConn; objs: var seq[T])">selectAll,<wbr>,<wbr>seq[T]</a></li>
 
@@ -361,6 +367,14 @@ instead of hardcoded table and column names</li>
 
 
 </dd>
+<a id="exists,,typedesc[Model],string,varargs[DbValue,dbValue]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">exists</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+            <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+Check if a row exists in the table.
+
+</dd>
 <a id="update,,T"></a>
 <dt><pre><span class="Keyword">proc</span> <a href="#update%2C%2CT"><span class="Identifier">update</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
 <dd>
@@ -435,7 +449,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-11 19:02:29 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-16 19:22:23 UTC</small>
       </div>
     </div>
   </div>
