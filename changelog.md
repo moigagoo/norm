@@ -7,7 +7,8 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.3.4 (WIP)
+
+## 2.3.4 (January 16, 2022)
 
 -   [+] Add the ability to define read-only models (see [#125](https://github.com/moigagoo/norm/issues/125)).
 -   [+] Add `exists` proc to check if a row exists (see [#115](https://github.com/moigagoo/norm/issues/115)).
