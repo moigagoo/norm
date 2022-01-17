@@ -12,7 +12,7 @@ const
   dbDatabase = "postgres"
 
 
-suite "Row CRUD":
+suite "Count rows":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
