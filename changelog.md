@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.3.5 (WIP)
+
+-   [+] Add `sum` proc to calculate column value sum.
+
 
 ## 2.3.4 (January 16, 2022)
 

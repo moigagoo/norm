@@ -234,7 +234,21 @@ proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", 
 
   row[0].i
 
-proc exists*(dbConn; T: typedesc[Model], cond: string, params: varargs[DbValue, dbValue]): bool =
+proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "TRUE", params: varargs[DbValue, dbValue]): float =
+  ##[ Sum column values matching condition without fetching them.
+
+  To sum only unique column values, use ``dist = true`` (stands for “distinct.”)
+  ]##
+
+  let qry = "SELECT SUM($# $#) FROM $# WHERE $#" % [if dist: "DISTINCT" else: "", col, T.table, cond]
+
+  log(qry, $params)
+
+  let row = get dbConn.getRow(sql qry, params)
+
+  row[0].f
+
+proc exists*(dbConn; T: typedesc[Model], cond = "TRUE", params: varargs[DbValue, dbValue]): bool =
   ## Check if a row exists in the table.
 
   let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond] 

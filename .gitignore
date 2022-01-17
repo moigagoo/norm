@@ -32,6 +32,7 @@ tests/sqlite/trepeatfks
 tests/sqlite/trows
 tests/sqlite/trowutils
 tests/sqlite/tsugar
+tests/sqlite/tsum
 tests/sqlite/ttables
 tests/sqlite/ttransactions
 tests/sqlite/ttriangle
@@ -51,6 +52,7 @@ tests/postgres/trepeatfks
 tests/postgres/trows
 tests/postgres/trowutils
 tests/postgres/tsugar
+tests/postgres/tsum
 tests/postgres/ttables
 tests/postgres/ttransactions
 tests/postgres/ttriangle
