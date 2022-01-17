@@ -271,6 +271,40 @@ dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;
 <pre><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE name LIKE ? &lt;- ['alice']
 1
 </samp></pre>
+<h2>Sum Column Values</h2>
+<p>To get a sum of column values, use <code>sum</code> proc:</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
+  norm / model
+
+<span class="hljs-keyword">type</span>
+  <span class="hljs-type">Chair</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    legCount: <span class="hljs-type">Natural</span>
+
+<span class="hljs-keyword">func</span> newChair(legCount = <span class="hljs-number">0</span>): <span class="hljs-type">Chair</span> =
+  <span class="hljs-type">Chair</span>(legCount: legCount)
+
+dbConn.createTables(newChair())
+<span class="hljs-keyword">var</span>
+  threeLeggedChair = newChair(<span class="hljs-number">3</span>)
+  fourLeggedChair = newChair(<span class="hljs-number">4</span>)
+  anotherFourLeggedChair = newChair(<span class="hljs-number">4</span>)
+dbConn.insert(threeLeggedChair)
+dbConn.insert(fourLeggedChair)
+dbConn.insert(anotherFourLeggedChair)
+<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>)
+<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">true</span>)
+<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;legCount &gt; ?&quot;</span>, <span class="hljs-number">3</span>)</code></pre>
+<pre><samp>CREATE TABLE IF NOT EXISTS &quot;Chair&quot;(legCount INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[3]
+INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[4]
+INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[4]
+SELECT SUM( legCount) FROM &quot;Chair&quot; WHERE 1 &lt;- []
+11.0
+SELECT SUM(DISTINCT legCount) FROM &quot;Chair&quot; WHERE 1 &lt;- []
+7.0
+SELECT SUM( legCount) FROM &quot;Chair&quot; WHERE legCount &gt; ? &lt;- [3]
+8.0
+</samp></pre>
 <h2>Check If Row Exists</h2>
 <p>If you need to check if a row selected by a given condition exists, use <code>exists</code> proc:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.exists(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;Alice&quot;</span>)</code></pre>

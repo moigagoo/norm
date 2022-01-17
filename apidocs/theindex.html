@@ -234,13 +234,11 @@ function main() {
           </ul></dd>
 <dt><a name="exists" href="#exists"><span>exists:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="postgres: exists(dbConn; T: typedesc[Model]; cond: string;
-       params: varargs[DbValue, dbValue]): bool" href="norm/postgres.html#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: exists(dbConn; T: typedesc[Model]; cond: string;
+          data-doc-search-tag="postgres: exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
+       params: varargs[DbValue, dbValue]): bool" href="norm/postgres.html#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
        params: varargs[DbValue, dbValue]): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="sqlite: exists(dbConn; T: typedesc[Model]; cond: string;
-       params: varargs[DbValue, dbValue]): bool" href="norm/sqlite.html#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: exists(dbConn; T: typedesc[Model]; cond: string;
-       params: varargs[DbValue, dbValue]): bool</a></li>
+          data-doc-search-tag="sqlite: exists(dbConn; T: typedesc[Model]; cond = &quot;1&quot;; params: varargs[DbValue, dbValue]): bool" href="norm/sqlite.html#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: exists(dbConn; T: typedesc[Model]; cond = &quot;1&quot;; params: varargs[DbValue, dbValue]): bool</a></li>
           </ul></dd>
 <dt><a name="fCol" href="#fCol"><span>fCol:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -390,6 +388,16 @@ function main() {
 <li><a class="reference external"
           data-doc-search-tag="types: StringOfCap" href="norm/types.html#StringOfCap">types: StringOfCap</a></li>
           </ul></dd>
+<dt><a name="sum" href="#sum"><span>sum:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;
+    params: varargs[DbValue, dbValue]): float" href="norm/postgres.html#sum%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;
+    params: varargs[DbValue, dbValue]): float</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;1&quot;;
+    params: varargs[DbValue, dbValue]): float" href="norm/sqlite.html#sum%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;1&quot;;
+    params: varargs[DbValue, dbValue]): float</a></li>
+          </ul></dd>
 <dt><a name="table" href="#table"><span>table:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: table(T: typedesc[Model]): string" href="norm/model.html#table%2Ctypedesc%5BModel%5D">model: table(T: typedesc[Model]): string</a></li>
@@ -475,7 +483,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-16 19:30:41 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-17 13:10:51 UTC</small>
       </div>
     </div>
   </div>

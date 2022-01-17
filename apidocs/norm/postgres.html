@@ -126,7 +126,7 @@ function main() {
   <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">exists
       <li><a class="reference" href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
-    title="exists(dbConn; T: typedesc[Model]; cond: string;
+    title="exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
        params: varargs[DbValue, dbValue]): bool">exists,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
 
   </ul>
@@ -189,6 +189,12 @@ function main() {
     title="update[T: Model](dbConn; obj: var T)">update,<wbr>,<wbr>T</a></li>
   <li><a class="reference" href="#update%2C%2CopenArray%5BT%5D"
     title="update[T: Model](dbConn; objs: var openArray[T])">update,<wbr>,<wbr>openArray[T]</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">sum
+      <li><a class="reference" href="#sum%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
+    title="sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;
+    params: varargs[DbValue, dbValue]): float">sum,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
 
   </ul>
 
@@ -367,8 +373,18 @@ instead of hardcoded table and column names</li>
 
 
 </dd>
+<a id="sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]"></a>
+<dt><pre><span class="Keyword">proc</span> <a href="#sum%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">sum</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dist</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;TRUE&quot;</span><span class="Other">;</span>
+         <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
+<dd>
+
+<p>Sum column values matching condition without fetching them.</p>
+<p>To sum only unique column values, use <tt class="docutils literal"><span class="pre">dist = true</span></tt> (stands for “distinct.”) </p>
+
+
+</dd>
 <a id="exists,,typedesc[Model],string,varargs[DbValue,dbValue]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">exists</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+<dt><pre><span class="Keyword">proc</span> <a href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">exists</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;TRUE&quot;</span><span class="Other">;</span>
             <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
 <dd>
 
@@ -449,7 +465,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-16 19:30:41 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-17 13:10:51 UTC</small>
       </div>
     </div>
   </div>

@@ -14,7 +14,8 @@ select	norm/postgres.html#select,,T,string,varargs[DbValue,dbValue]	postgres: se
 select	norm/postgres.html#select,,seq[T],string,varargs[DbValue,dbValue]	postgres: select[T: Model](dbConn; objs: var seq[T]; cond: string;\n                 params: varargs[DbValue, dbValue])	
 selectAll	norm/postgres.html#selectAll,,seq[T]	postgres: selectAll[T: Model](dbConn; objs: var seq[T])	
 count	norm/postgres.html#count,,typedesc[Model],string,string,varargs[DbValue,dbValue]	postgres: count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;TRUE&quot;;\n      params: varargs[DbValue, dbValue]): int64	
-exists	norm/postgres.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	postgres: exists(dbConn; T: typedesc[Model]; cond: string;\n       params: varargs[DbValue, dbValue]): bool	
+sum	norm/postgres.html#sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]	postgres: sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;\n    params: varargs[DbValue, dbValue]): float	
+exists	norm/postgres.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	postgres: exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;\n       params: varargs[DbValue, dbValue]): bool	
 update	norm/postgres.html#update,,T	postgres: update[T: Model](dbConn; obj: var T)	
 update	norm/postgres.html#update,,openArray[T]	postgres: update[T: Model](dbConn; objs: var openArray[T])	
 delete	norm/postgres.html#delete,,T	postgres: delete[T: Model](dbConn; obj: var T)	
