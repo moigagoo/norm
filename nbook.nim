@@ -7,6 +7,7 @@ var book = newBookFromToc("Norm: a Nim ORM", "book"):
   section("Tutorial", "tutorial.nim"):
     entry("Tables", "tutorial/tables.nim")
     entry("Rows", "tutorial/rows.nim")
+    entry("Row Caveats", "tutorial/rowCaveats.nim")
   entry("Fancy Syntax", "fancy.nim")
   entry("Transactions", "transactions.nim")
   entry("Configuration from Environment", "config.nim")
