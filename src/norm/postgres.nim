@@ -1,4 +1,4 @@
-import std/[os, logging, strutils, sequtils, options, macros, sugar]
+import std/[os, logging, strutils, sequtils, options, sugar]
 
 import ndb/postgres
 export postgres
@@ -8,7 +8,7 @@ import private/[dot, log]
 import model
 import pragmas
 
-export dbtypes, macros
+export dbtypes
 
 
 type
@@ -251,7 +251,7 @@ proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "TRUE", 
 proc exists*(dbConn; T: typedesc[Model], cond = "TRUE", params: varargs[DbValue, dbValue]): bool =
   ## Check if a row exists in the table.
 
-  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond] 
+  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond]
 
   log(qry, $params)
 

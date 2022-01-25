@@ -19,6 +19,7 @@ tests/megatest
 
 tests/common/tmodel
 
+tests/tpragmas_fix
 tests/sqlite/tcount
 tests/sqlite/tdb
 tests/sqlite/tdbtypes

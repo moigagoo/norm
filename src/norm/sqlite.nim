@@ -1,4 +1,4 @@
-import std/[os, logging, strutils, sequtils, options, macros, sugar]
+import std/[os, logging, strutils, sequtils, options, sugar]
 
 import ndb/sqlite
 export sqlite
@@ -8,7 +8,7 @@ import private/[dot, log]
 import model
 import pragmas
 
-export dbtypes, macros
+export dbtypes, pragmas
 
 
 type
@@ -112,7 +112,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
   log(qry)
-  
+
   dbConn.exec(sql qry)
 
 # Row manipulation
@@ -122,7 +122,7 @@ proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRai
 
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
 
-  ``conflictPolicy`` determines how the proc reacts to insertion conflicts. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one. 
+  ``conflictPolicy`` determines how the proc reacts to insertion conflicts. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one.
   ]##
 
   checkRo(T)
@@ -249,7 +249,7 @@ proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "1", par
 proc exists*(dbConn; T: typedesc[Model], cond = "1", params: varargs[DbValue, dbValue]): bool =
   ## Check if a row exists in the table.
 
-  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond] 
+  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond]
 
   log(qry, $params)
 

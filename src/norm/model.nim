@@ -1,4 +1,4 @@
-import std/[macros, options, strutils]
+import std/[options, strutils]
 
 import private/dot
 import pragmas
