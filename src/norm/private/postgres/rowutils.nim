@@ -1,6 +1,6 @@
 ## Procs to convert `Model <../../model.html#Model>`_ instances to ``ndb.postgres.Row`` instances and back.
 
-import std/[options]
+import std/options
 
 import ndb/postgres
 

@@ -1,7 +1,3 @@
-#[
-# Test
-]#
-
 import norm/pragmasutils
 template p() {.pragma.}
 
@@ -27,8 +23,3 @@ proc main() =
     # doAssert not b.b.hasCustomPragma(C)
 
 main()
-#[
-# End Test
-]#
-
-
