@@ -1,4 +1,4 @@
-# Pragmas to customize `Model <model.html#Model>`_ field representation in generated table schemas.
+## Pragmas to customize `Model <model.html#Model>`_ field representation in generated table schemas.
 
 
 template pk* {.pragma.}
