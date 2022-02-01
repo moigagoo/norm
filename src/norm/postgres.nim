@@ -2,8 +2,10 @@ import std/[os, logging, strutils, sequtils, options, sugar]
 
 when (NimMajor, NimMinor) <= (1, 6):
   import pragmasutils
+  export pragmasutils
 else:
   import std/macros
+  export macros
 
 import ndb/postgres
 export postgres
