@@ -7,6 +7,7 @@ import ndb/sqlite
 import dbtypes
 import ../dot
 import ../../model
+import ../../pragmas
 
 when (NimMajor, NimMinor) <= (1, 6):
   import ../../pragmasutils

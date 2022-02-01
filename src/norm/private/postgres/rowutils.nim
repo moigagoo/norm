@@ -7,6 +7,7 @@ import ndb/postgres
 import dbtypes
 import ../dot
 import ../../model
+import ../../pragmas
 
 when (NimMajor, NimMinor) <= (1, 6):
   import ../../pragmasutils
