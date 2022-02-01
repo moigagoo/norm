@@ -1,5 +1,10 @@
 import std/[os, logging, strutils, sequtils, options, sugar]
 
+when (NimMajor, NimMinor) <= (1, 6):
+  import pragmasutils
+else:
+  import std/macros
+
 import ndb/sqlite
 export sqlite
 

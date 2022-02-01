@@ -7,8 +7,11 @@ import ndb/postgres
 import dbtypes
 import ../dot
 import ../../model
-import ../../pragmas
 
+when (NimMajor, NimMinor) <= (1, 6):
+  import ../../pragmasutils
+else:
+  import std/macros
 
 proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) =
   ##[ Convert ``ndb.sqlite.Row`` instance into `Model`_ instance, from a given position.
