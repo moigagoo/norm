@@ -8,7 +8,7 @@ type
   B = object
     b {.p.}: int
   # Currently does not work : see PR https://github.com/nim-lang/Nim/pull/19451
-  # C[T] = B
+  C[T] = B
 
 proc main() =
   var a: A[int]
@@ -20,6 +20,6 @@ proc main() =
   static:
     doAssert b.b.hasCustomPragma(p)
     doAssert not b.b.hasCustomPragma(B)
-    # doAssert not b.b.hasCustomPragma(C)
+    doAssert not b.b.hasCustomPragma(C)
 
 main()
