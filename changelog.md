@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+2.3.6 (WIP)
+
+-   [f] Fix generic models for Nim <= 1.6.4. The same fix has been merged in ``std/macros``, in the devel branch of the compiler but will not be backported to 1.6 (see [#132](https://github.com/moigagoo/norm/issues/132)).
+
 ## 2.3.5 (January 17, 2022)
 
 -   [+] Add `sum` proc to calculate column value sum.

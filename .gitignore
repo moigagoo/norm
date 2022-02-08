@@ -18,6 +18,7 @@ tests/megatest.nim
 tests/megatest
 
 tests/common/tmodel
+tests/common/tpragmas_fix
 
 tests/sqlite/tcount
 tests/sqlite/tdb
