@@ -1,0 +1,2 @@
+hasCustomPragma	norm/pragmasutils.html#hasCustomPragma.m,typed,	pragmasutils: hasCustomPragma(n: typed; cp: typed{nkSym}): untyped	
+getCustomPragmaVal	norm/pragmasutils.html#getCustomPragmaVal.m,typed,	pragmasutils: getCustomPragmaVal(n: typed; cp: typed{nkSym}): untyped	

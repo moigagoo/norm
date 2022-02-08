@@ -63,7 +63,7 @@ function main() {
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
@@ -260,11 +260,19 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="rowutils: fromRow[T: Model](obj: var T; row: Row)" href="norm/private/sqlite/rowutils.html#fromRow%2CT%2CRow">rowutils: fromRow[T: Model](obj: var T; row: Row)</a></li>
           </ul></dd>
+<dt><a name="getCustomPragmaVal" href="#getCustomPragmaVal"><span>getCustomPragmaVal:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmasutils: getCustomPragmaVal(n: typed; cp: typed{nkSym}): untyped" href="norm/pragmasutils.html#getCustomPragmaVal.m%2Ctyped%2C">pragmasutils: getCustomPragmaVal(n: typed; cp: typed{nkSym}): untyped</a></li>
+          </ul></dd>
 <dt><a name="getDb" href="#getDb"><span>getDb:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="postgres: getDb(): DbConn" href="norm/postgres.html#getDb">postgres: getDb(): DbConn</a></li>
           <li><a class="reference external"
           data-doc-search-tag="sqlite: getDb(): DbConn" href="norm/sqlite.html#getDb">sqlite: getDb(): DbConn</a></li>
+          </ul></dd>
+<dt><a name="hasCustomPragma" href="#hasCustomPragma"><span>hasCustomPragma:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pragmasutils: hasCustomPragma(n: typed; cp: typed{nkSym}): untyped" href="norm/pragmasutils.html#hasCustomPragma.m%2Ctyped%2C">pragmasutils: hasCustomPragma(n: typed; cp: typed{nkSym}): untyped</a></li>
           </ul></dd>
 <dt><a name="insert" href="#insert"><span>insert:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -483,7 +491,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-01-21 20:08:08 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-02-08 13:25:05 UTC</small>
       </div>
     </div>
   </div>
