@@ -324,8 +324,8 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
   ## field on oneEntry pointing to the table of the `relatedEntries`-model.
   const _ = validateFkField(foreignKeyFieldName, M, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly at compileTime
 
-  const manyTableName: string = M.table()
-  const sqlCondition: string = fmt "{manyTableName}.{foreignKeyFieldName} = $1"
+  const manyTableName = M.table()
+  const sqlCondition = fmt "{manyTableName}.{foreignKeyFieldName} = $1"
 
   dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
 
