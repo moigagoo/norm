@@ -120,7 +120,7 @@ proc getRelatedFieldNameTo*[M: Model](targetTableName: static string, normModel:
   ## a table with the name of `targetTableName`. Raises a FieldDefect at compile time if the model does not
   ## have exactly one foreign key field to that table 
   var fieldNames: seq[string] = @[]
-  const name = typetraits.name
+  const name = typetraits.name #Allows this generic proc to always have typetraits.name proc available even when the context it is called from doesn't import typetraits
   
   for sourceFieldName, sourceFieldValue in M()[].fieldPairs:
       #Handles case where field is an int64 with fk pragma
