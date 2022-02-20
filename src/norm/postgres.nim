@@ -317,7 +317,6 @@ template transaction*(dbConn; body: untyped): untyped =
     raise
 
 
-# One-to-Many Fetching
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M], foreignKeyFieldName: static string) =
   ## Fetches all entries of a "many" side from a one-to-many relationship 
   ## between the model of `oneEntry` and the model of `relatedEntries`. It is
@@ -341,9 +340,6 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
   const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
   selectOneToMany(dbConn, oneEntry, relatedEntries, foreignKeyFieldName)
 
-
-
-# Many-to-Many Fetching
 macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
   ## A macro to "extract" a field of name `field` out of the model in `mySeq`, creating
   ## a new seq of whatever type the field has.
