@@ -140,17 +140,11 @@ proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typ
               fieldNames.add(sourceFieldName)
 
   const sourceModelName = name(S)
+  assert(not (fieldNames.len() < 1), fmt "Tried getting foreign key field from model '{sourceModelName}' to model '{targetTableName}' but there is no such field!")
+  assert(not (fieldNames.len() > 1), fmt "Can't infer foreign key field from model '{sourceModelName}' to model '{targetTableName}'! There is more than one foreign key field to that table! {fieldNames.len}")
 
-  if fieldNames.len() == 1:
-    return fieldNames[0]
+  return fieldNames[0]
   
-  elif fieldnames.len() < 1:
-    let errorMsg = fmt "Tried getting foreign key field from model '{sourceModelName}' to model '{targetTableName}' but there is no such field!"
-    raise newException(FieldDefect, errorMsg)
-  
-  elif fieldnames.len() > 1:
-    let errorMsg = fmt "Can't infer foreign key field from model '{sourceModelName}' to model '{targetTableName}'! There is more than one foreign key field to that table!"
-    raise newException(FieldDefect, errorMsg)
 
 macro getField(t: typed, fieldName: static string): untyped =
   ## Creates an expression "t.fieldName" at compile time, effectively handing 
@@ -171,7 +165,7 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
   ## If any of these conditions are false, this proc will intentionally fail to compile
   const sourceName = name(S)
   const targetTableName = table(T)
-  static: assert(S.hasField(fkFieldName), fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but there was no such field")
+  assert(S.hasField(fkFieldName), fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but there was no such field")
 
   for sourceFieldName, sourceFieldValue in source()[].fieldPairs:
     when sourceFieldName == fkFieldName:
@@ -188,13 +182,13 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
         when sourceFieldValue.get() is Model:
           const fkFieldTable: string = sourceFieldValue.get().type.table()
         else:
-          static: assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it was an option of a type that wasn't a model")
+          assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it was an option of a type that wasn't a model")
 
       #Fail at compile time if any other case occurs
       else:
-        static: assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it didn't have an fk pragma and was neither a model type, nor an option of a model type")
+        assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it didn't have an fk pragma and was neither a model type, nor an option of a model type")
 
-      static: assert((targetTableName == fkFieldTable),  fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but the pragma pointed to a different table '{fkFieldTable}'")
+      assert((targetTableName == fkFieldTable),  fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but the pragma pointed to a different table '{fkFieldTable}'")
       return true
 
   return false
