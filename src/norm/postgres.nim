@@ -318,14 +318,29 @@ template transaction*(dbConn; body: untyped): untyped =
 
 
 # One-to-Many Fetching
-proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
-  ## A convenience proc. Fetches all entries of a "many" side from a one-to-many relationship 
-  ## between the model of `oneEntry` and the model of `relatedEntries`.
-  const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M], foreignKeyFieldName: static string) =
+  ## Fetches all entries of a "many" side from a one-to-many relationship 
+  ## between the model of `oneEntry` and the model of `relatedEntries`. It is
+  ## ensured at compile time that the field specified here is a valid foreign key
+  ## field on oneEntry pointing to the table of the `relatedEntries`-model.
+  const _ = validateFkField(foreignKeyFieldName, M, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly
+
   const manyTableName: string = M.table()
-  const sqlCondition: string = manyTableName & '.' & foreignKeyFieldName & " = $1"
+  const sqlCondition: string = fmt "{manyTableName}.{foreignKeyFieldName} = $1"
 
   dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
+
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
+  ## A convenience proc. Fetches all entries of a "many" side from a one-to-many 
+  ## relationship between the model of `oneEntry` and the model of `relatedEntries`.
+  ## The field used to fetch the `relatedEntries` is automatically inferred as long
+  ## as the `relatedEntries` model has only one field pointing to the model of 
+  ## `oneEntry`. Will not compile if `relatedEntries` has multiple fields that 
+  ## point to the model of `oneEntry`. Specify the `foreignKeyFieldName` parameter 
+  ## in such a case.
+  const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
+  selectOneToMany(dbConn, oneEntry, relatedEntries, foreignKeyFieldName)
+
 
 
 # Many-to-Many Fetching
@@ -340,7 +355,7 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: 
   ## the model connecting the many-to-many relationship via `joinModelEntries`in order to fetch the relationship.
   const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
   const joinTableName = J.table()
-  const sqlCondition: string = joinTableName & '.' & fkColumnFromJoinToManyStart & " = $1"
+  const sqlCondition: string = fmt "{joinTableName}.{fkColumnFromJoinToManyStart} = $1"
 
   dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
 
