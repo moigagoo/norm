@@ -49,7 +49,7 @@ suite "Testing selectOneToMany":
     check spotsPeople[1].name == jeff.name
 
   test "When there is no many-to-one relationship, the code does not compile":
-    var alicesPets: seq[Pet] = @[newPet()]
+    var alicesPets: seq[Pet] = @[newPet()] #Pets have no foreign key field pointing to person, only the other way around
     check compiles(dbConn.selectOneToMany(alice, alicesPets)) == false
       
 
