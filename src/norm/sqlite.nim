@@ -323,7 +323,7 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
   ## between the model of `oneEntry` and the model of `relatedEntries`. It is
   ## ensured at compile time that the field specified here is a valid foreign key
   ## field on oneEntry pointing to the table of the `relatedEntries`-model.
-  const _ = validateFkField(M, foreignKeyFieldName, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly
+  const _ = validateFkField(foreignKeyFieldName, M, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly
 
   const manyTableName: string = M.table()
   const sqlCondition: string = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]

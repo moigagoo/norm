@@ -8,49 +8,91 @@ import ../models
 const dbFile = "test.db"
 
 
-suite "Testing selectOneToMany":
+suite "Testing selectOneToMany convenience proc":
   setup:
     removeFile dbFile
 
     let dbConn = open(dbFile, "", "", "")
 
     var
-      spot = newPet("dog", newToy())
-      stan = newPet("dog", newToy())
-
-      alice = newPerson("Alice", spot)
+      alice = newPerson("Alice", none Pet)
       bob = newPerson("Bob", none Pet)
-      jeff = newPerson("Jeff", spot)
+      jeff = newPerson("Jeff", none Pet)
+
+      someDoctor = newDoctor("Vet1")
+
+      visit1 = newDoctorVisit(alice, someDoctor)
+      visit2 = newDoctorVisit(bob, someDoctor)
+
+      boneToy = newToy()
+      ballToy = newToy()
+
+      spot = newPlayfulPet("spot", boneToy, ballToy)
 
     dbConn.createTables(newPerson())
-
+    dbConn.createTables(newDoctor())
+    dbConn.createTables(newDoctorVisit())
+    dbConn.createTables(newToy())
+    dbConn.createTables(newPlayfulPet())
     discard @[alice, bob, jeff].dup:
       dbConn.insert
-
+    
+    discard @[someDoctor].dup:
+      dbConn.insert
+    
+    discard @[visit1, visit2].dup:
+      dbConn.insert
+      
+    discard @[boneToy, ballToy].dup:
+      dbConn.insert
+      
+    discard @[spot].dup:
+      dbConn.insert
+  
+    
   teardown:
     close dbConn
     removeFile dbFile
 
-  test "When there is a many-to-one relationship, fetch its members":
-    var spotsPeople: seq[Person] = @[newPerson()]
+  test "When there is a many-to-one relationship between two models and the entry has related entries, fetch those related entries":
+    var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
 
-    dbConn.selectOneToMany(spot, spotsPeople)
+    dbConn.selectOneToMany(alice, doctorVisits)
 
-    check spotsPeople.len() == 2
-    check spotsPeople[0].name == alice.name
-    check spotsPeople[1].name == jeff.name
+    check doctorVisits.len() == 1
+    check doctorVisits[0].doctor === someDoctor
 
-  test "When there is no many-to-one relationship, the code does not compile":
+  test "When there is multiple many-to-one relationships between two models and the type field for fetching the desired relationship is specified, then fetch the entries of that relationship":
+    var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
+
+    dbConn.selectOneToMany(alice, doctorVisits, "patient")
+
+    check doctorVisits.len() == 1
+    check doctorVisits[0].doctor === someDoctor
+
+  
+  test "When there is a many-to-one relationship between two models and the entry has no related entries, fetch an empty seq[]":
+    var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
+
+    dbConn.selectOneToMany(jeff, doctorVisits)
+
+    check doctorVisits.len() == 0
+
+  test "When there is multiple many-to-one relationships between two models and the type field for fetching the desired relationship is not specified, then do not compile":
+    var dogsFavoringBallToy = @[newPlayfulPet()]
+    check compiles(dbConn.selectOneToMany(ballToy, dogsFavoringBallToy)) == false
+
+  test "When there is no many-to-one relationship between two models, do not compile":
     var alicesPets: seq[Pet] = @[newPet()]
     check compiles(dbConn.selectOneToMany(alice, alicesPets)) == false
-      
 
-  test "When there is a many-to-one relationship without any attached entries, fetch an empty seq[]":
-    var stansPeople: seq[Person] = @[newPerson()]
+  test "When there is a many-to-one relationships between two models and a field that does not point to the table of the related model is specified, then do not compile":
+    var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
 
-    dbConn.selectOneToMany(stan, stansPeople)
-
-    check stansPeople.len() == 0
+    check compiles(dbConn.selectOneToMany(alice, doctorVisits, "incorrectFieldName")) == false #Field name given that does not exist
+    check compiles(dbConn.selectOneToMany(alice, doctorVisits, "")) == false #No field name given
+    check compiles(dbConn.selectOneToMany(alice, doctorVisits, "visitTime")) == false #Valid field name given that contains neither a model type, nor has an fk pragma
+    check compiles(dbConn.selectOneToMany(alice, doctorVisits, "doctor")) == false #Valid field name given that does not point a model with the table name "Person"
 
 
 suite "Testing selectManyToMany":

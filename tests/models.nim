@@ -22,6 +22,11 @@ type
     pet*: Pet
     person*: Person
 
+  DoctorVisit* = ref object of Model
+    patient*: Person
+    doctor*: Doctor
+    visitTime*: DateTime
+
   User* = ref object of Model
     lastLogin*: DateTime
 
@@ -157,7 +162,29 @@ func `===`*(a, b: Option[PlayfulPet]): bool =
   get(a).favToy === get(b).favToy and
   get(a).secondFavToy === get(b).secondFavToy)
 
-func `===`*[T: Toy | Pet | Person | PetPerson | User | Customer](a, b: openArray[T]): bool =
+
+func newDoctor*(name: string = "", age: DateTime = now()): Doctor = Doctor(name: name, age: age)
+func `===`* (a, b: Doctor): bool = 
+  a.name == b.name and a.id == b.id
+
+func newSpecialty*(name: string = ""): Specialty = Specialty(name: name)
+func `===`* (a, b: Specialty): bool =
+  a.name == b.name and a.id == b.id
+
+func newDoctorSpecialties*(doctor: Doctor = newDoctor(), specialty: Specialty = newSpecialty()): DoctorSpecialties =
+  DoctorSpecialties(doctor: doctor, specialty: specialty)
+func `===`* (a,b: DoctorSpecialties): bool = 
+  a.doctor === b.doctor and a.specialty === b.specialty
+
+func newDoctorSpecialtiesFKPragma*(doctorId: int64, specialtyId: int64): DoctorSpecialtiesFKPragma = 
+  DoctorSpecialtiesFKPragma(doctor: doctorId, specialty: specialtyId)
+func `===`*(a, b: DoctorSpecialtiesFKPragma): bool = 
+  a.doctor == b.doctor and a.specialty == b.specialty 
+
+func newDoctorVisit*(patient: Person = newPerson(), doctor: Doctor = newDoctor(), visitTime: DateTime = now()): DoctorVisit =
+  DoctorVisit(patient: patient, doctor: doctor, visitTime: visitTime)
+
+func `===`*[T: Toy | Pet | Person | PetPerson | User | Customer | DoctorVisit](a, b: openArray[T]): bool =
   len(a) == len(b) and zip(a, b).allIt(it[0] === it[1])
 
 func newNumber*(n: int, n16: int16, n32: int32, n64: int64): Number =
@@ -182,21 +209,3 @@ func newTable*(legCount: Positive = 4): Table =
   Table(legCount: legCount)
 
 func newPersonName*: PersonName = PersonName(name: "")
-
-func newDoctor*(name: string = "", age: DateTime = now()): Doctor = Doctor(name: name, age: age)
-func `===`* (a, b: Doctor): bool = 
-  a.name == b.name and a.id == b.id
-
-func newSpecialty*(name: string = ""): Specialty = Specialty(name: name)
-func `===`* (a, b: Specialty): bool =
-  a.name == b.name and a.id == b.id
-
-func newDoctorSpecialties*(doctor: Doctor = newDoctor(), specialty: Specialty = newSpecialty()): DoctorSpecialties =
-  DoctorSpecialties(doctor: doctor, specialty: specialty)
-func `===`* (a,b: DoctorSpecialties): bool = 
-  a.doctor === b.doctor and a.specialty === b.specialty
-
-func newDoctorSpecialtiesFKPragma*(doctorId: int64, specialtyId: int64): DoctorSpecialtiesFKPragma = 
-  DoctorSpecialtiesFKPragma(doctor: doctorId, specialty: specialtyId)
-func `===`*(a, b: DoctorSpecialtiesFKPragma): bool = 
-  a.doctor == b.doctor and a.specialty == b.specialty 
