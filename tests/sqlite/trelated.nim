@@ -8,7 +8,7 @@ import ../models
 const dbFile = "test.db"
 
 
-suite "Testing selectOneToMany convenience proc":
+suite "Testing selectOneToMany proc":
   setup:
     removeFile dbFile
 
