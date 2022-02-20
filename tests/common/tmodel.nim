@@ -49,18 +49,21 @@ suite "Getting table and columns from Model":
     ]
 
   test "When related model has field with the type of the given model, expect name of that field as a string":
-    check Toy.getRelatedFieldNameOn(Pet) == "favToy"
+    const fieldNameFromModel = Pet.getRelatedFieldNameTo(Toy)
+    check fieldNameFromModel == "favToy"
   
   test "When related model has Optional field with the type of the given model, expect name of that field as a string":
-    check Pet.getRelatedFieldNameOn(Person) == "pet"
+    const fieldNameFromModel = Person.getRelatedFieldNameTo(Pet)
+    check fieldNameFromModel == "pet"
 
   test "When related model has field with fk pragma pointing to the given model, expect name of that field as a string":
-    check User.getRelatedFieldNameOn(Customer) == "userId"
+    const fieldNameFromModel = Customer.getRelatedFieldNameTo(User)
+    check fieldNameFromModel == "userId"
 
   test "When related model as Optional field with fk pragma pointing to the given model, expect name of that field as a string":
-    check Toy.getRelatedFieldNameOn(UnplayfulPet) == "favToyId"
+    const fieldNameFromModel = UnplayfulPet.getRelatedFieldNameTo(Toy)
+    check fieldNameFromModel == "favToyId"
 
   test "When related model does not have FK-field pointing to the given model, expect FieldDefect Exception":
-    expect FieldDefect:
-      discard Pet.getRelatedFieldNameOn(Toy)
+    check compiles(tmp = Toy.getRelatedFieldNameTo(Pet)) == false
 

@@ -1,4 +1,4 @@
-import std/[os, logging, strutils, sequtils, options, macros, sugar]
+import std/[os, logging, strutils, sequtils, options, macros, sugar, strformat]
 
 import ndb/postgres
 export postgres
@@ -319,7 +319,9 @@ template transaction*(dbConn; body: untyped): untyped =
 
 # One-to-Many Fetching
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
-  const foreignKeyFieldName: string = O.getRelatedFieldNameOn(M)
+  ## A convenience proc. Fetches all entries of a "many" side from a one-to-many relationship 
+  ## between the model of `oneEntry` and the model of `relatedEntries`.
+  const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
   const manyTableName: string = M.table()
   const sqlCondition: string = manyTableName & '.' & foreignKeyFieldName & " = $1"
 
@@ -328,16 +330,21 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
 
 # Many-to-Many Fetching
 macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
+  ## A macro to "extract" a field of name `field` out of the model in `mySeq`, creating
+  ## a new seq of whatever type the field has.
   newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
 
 proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    
-  const fkColumnFromJoinToManyStart: string = M1.getRelatedFieldNameOn(J)
+  ## A convenience proc. Fetches the many-to-many relationship for the entry `queryStartEntry` and returns
+  ## a seq of all entries connected to `queryStartEntry` in `queryEndEntries`. Requires to also be passed
+  ## the model connecting the many-to-many relationship via `joinModelEntries`in order to fetch the relationship.
+  const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
   const joinTableName = J.table()
   const sqlCondition: string = joinTableName & '.' & fkColumnFromJoinToManyStart & " = $1"
 
   dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
 
-  const fkColumnFromJoinToManyEnd: string = M2.getRelatedFieldNameOn(J)
+  const fkColumnFromJoinToManyEnd: string = J.getRelatedFieldNameTo(M2)
   let unpackedEntries: seq[M2] = unpackFromJoinModel(joinModelEntries, fkColumnFromJoinToManyEnd)
 
   queryEndEntries = unpackedEntries
