@@ -114,15 +114,15 @@ proc checkRo*(T: typedesc[Model]) =
   when T.hasCustomPragma(ro):
     {.error: "can't use mutating procs with read-only models".}
 
-proc getRelatedFieldNameTo*[M: Model](targetTableName: static string, normModel: typedesc[M]): string {.compileTime.} =
+proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
   ## A compile time proc that searches the given `normModel` type for any 
   ## foreign key field that points to a table with the given name `targetTableName`. 
   ## Raises a FieldDefect at compile time if the model does not have exactly 
   ## one foreign key field to that table.
   var fieldNames: seq[string] = @[]
-  const name = typetraits.name #Allows this generic proc to always have typetraits.name proc available even when the context it is called from doesn't import typetraits
   
-  for sourceFieldName, sourceFieldValue in M()[].fieldPairs:
+  const targetTableName = T.table()
+  for sourceFieldName, sourceFieldValue in S()[].fieldPairs:
       #Handles case where field is an int64 with fk pragma
       when sourceFieldValue.hasCustomPragma(fk):
         when targetTableName == sourceFieldValue.getCustomPragmaVal(fk).table():
@@ -139,22 +139,18 @@ proc getRelatedFieldNameTo*[M: Model](targetTableName: static string, normModel:
           when targetTableName == genericParams(sourceFieldValue.type()).get(0).table():
               fieldNames.add(sourceFieldName)
 
+  const sourceModelName = name(S)
+
   if fieldNames.len() == 1:
     return fieldNames[0]
   
   elif fieldnames.len() < 1:
-    let errorMsg = fmt "Tried getting foreign key field from model '{name(M)}' to model '{targetTableName}' but there is no such field!"
+    let errorMsg = fmt "Tried getting foreign key field from model '{sourceModelName}' to model '{targetTableName}' but there is no such field!"
     raise newException(FieldDefect, errorMsg)
   
   elif fieldnames.len() > 1:
-    let errorMsg = fmt "Can't infer foreign key field from model '{name(M)}' to model '{targetTableName}'! There is more than one foreign key field to that table!"
+    let errorMsg = fmt "Can't infer foreign key field from model '{sourceModelName}' to model '{targetTableName}'! There is more than one foreign key field to that table!"
     raise newException(FieldDefect, errorMsg)
-
-proc getRelatedFieldNameTo*[S: Model, T:Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
-  ## A compile time proc that analyzes the given `source` model for any foreign key field that points to
-  ## the table of the `target` model. Raises a FieldDefect at compile time if the model does not
-  ## have exactly one foreign key field to that table 
-  result = getRelatedFieldNameTo(T.table(), source)
 
 macro getField(t: typed, fieldName: static string): untyped =
   ## Creates an expression "t.fieldName" at compile time, effectively handing 
