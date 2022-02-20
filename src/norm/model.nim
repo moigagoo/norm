@@ -165,7 +165,7 @@ template hasField(t: typed, fieldName: static string): bool =
   ## Checks if the given type `t` has a field with the name provided in `fieldName`
   compiles(getField(t, fieldName))
 
-proc validateFkField*[S, T: Model](source: typedesc[S], fkFieldName: static string, target: typedesc[T]): bool {.compileTime.} =
+proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
   ## Checks at compile time whether the field with the name `fkFieldName` is a 
   ## valid foreign key field on the given `source` model to the table of the given 
   ## `target` model. 
@@ -188,9 +188,12 @@ proc validateFkField*[S, T: Model](source: typedesc[S], fkFieldName: static stri
         const fkFieldTable: string = sourceFieldValue.type.table()
       
       #Handles case where field is a Option[Model] type
-      elif sourceFieldValue is Option and sourceFieldValue.get() is Model:
+      elif sourceFieldValue is Option:
+        when sourceFieldValue.get() is Model:
           const fkFieldTable: string = sourceFieldValue.get().type.table()
-      
+        else:
+          static: assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it was an option of a type that wasn't a model")
+
       #Fail at compile time if any other case occurs
       else:
         static: assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it didn't have an fk pragma and was neither a model type, nor an option of a model type")
