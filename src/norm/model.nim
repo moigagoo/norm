@@ -1,4 +1,4 @@
-import std/[macros, options, strutils, typetraits]
+import std/[macros, options, strutils, typetraits, strformat]
 
 import private/dot
 import pragmas
@@ -114,25 +114,45 @@ proc checkRo*(T: typedesc[Model]) =
   when T.hasCustomPragma(ro):
     {.error: "can't use mutating procs with read-only models".}
 
-proc getRelatedFieldNameOn*[T: Model, M: Model](targetModel: typedesc[T], sourceModel: typedesc[M]): string  {.raises: [FieldDefect].} =
-  for sourceFieldName, sourceFieldValue in sourceModel()[].fieldPairs:
-    #Handles case where field is an int64 with fk pragma
-    when sourceFieldValue.hasCustomPragma(fk):
-      when T.table() == sourceFieldValue.getCustomPragmaVal(fk).table():
-        return sourceFieldName
-    
-    #Handles case where field is a Model type
-    elif sourceFieldValue is Model:
-      when T.table() == sourceFieldValue.type().table():
-        return sourceFieldName
-    
-    #Handles case where field is a Option[Model] type
-    elif sourceFieldValue is Option:
-      when sourceFieldValue.get() is Model:
-        when T.table() == genericParams(sourceFieldValue.type()).get(0).table():
-          return sourceFieldName
 
-  raise newException(
-    FieldDefect, 
-    "Tried getting foreign key field from model '" & name(sourceModel.type()) & "' to model '" & name(targetModel.type()) & "' but there is no such field!"
-  )
+proc getRelatedFieldNameTo*[M: Model](targetTableName: static string, normModel: typedesc[M]): string {.compileTime.} =
+  ## A compile time proc that analyzes the given `normModel` type for any foreign key field that points to
+  ## a table with the name of `targetTableName`. Raises a FieldDefect at compile time if the model does not
+  ## have exactly one foreign key field to that table 
+  var fieldNames: seq[string] = @[]
+  const name = typetraits.name
+  
+  for sourceFieldName, sourceFieldValue in M()[].fieldPairs:
+      #Handles case where field is an int64 with fk pragma
+      when sourceFieldValue.hasCustomPragma(fk):
+        when targetTableName == sourceFieldValue.getCustomPragmaVal(fk).table():
+          fieldNames.add(sourceFieldName)
+      
+      #Handles case where field is a Model type
+      elif sourceFieldValue is Model:
+        when targetTableName == sourceFieldValue.type().table():
+          fieldNames.add(sourceFieldName)
+      
+      #Handles case where field is a Option[Model] type
+      elif sourceFieldValue is Option:
+        when sourceFieldValue.get() is Model:
+          when targetTableName == genericParams(sourceFieldValue.type()).get(0).table():
+              fieldNames.add(sourceFieldName)
+
+  if fieldNames.len() == 1:
+    return fieldNames[0]
+  
+  elif fieldnames.len() < 1:
+    let errorMsg = fmt "Tried getting foreign key field from model '{name(M)}' to model '{targetTableName}' but there is no such field!"
+    raise newException(FieldDefect, errorMsg)
+  
+  elif fieldnames.len() > 1:
+    let errorMsg = fmt "Can't infer foreign key field from model '{name(M)}' to model '{targetTableName}'! There is more than one foreign key field to that table!"
+    raise newException(FieldDefect, errorMsg)
+
+
+proc getRelatedFieldNameTo*[S: Model, T:Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
+  ## A compile time proc that analyzes the given `source` model for any foreign key field that points to
+  ## the table of the `target` model. Raises a FieldDefect at compile time if the model does not
+  ## have exactly one foreign key field to that table 
+  result = getRelatedFieldNameTo(T.table(), source)
