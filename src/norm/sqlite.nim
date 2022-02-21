@@ -76,7 +76,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
-        dbConn.createTables(get val.model)
+      dbConn.createTables(get val.model)
 
   var colGroups, fkGroups: seq[string]
 
@@ -106,11 +106,17 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add fkGroup
 
     when obj.dot(fld).hasCustomPragma(fk):
-      when val isnot SomeInteger:
-        {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger." .}
-      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
+      when val isnot SomeInteger and val isnot Option[SomeInteger]:
+        {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger.".}
+      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model and obj isnot obj.dot(fld).getCustomPragmaVal(fk):
         const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
-        {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
+        {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName & " is not a Model.".}
+      elif obj is obj.dot(fld).getCustomPragmaVal(fk):
+        when T.hasCustomPragma(tableName):
+          const selfTableName = '"' & T.getCustomPragmaVal(tableName) & '"'
+        else:
+          const selfTableName = '"' & $T & '"'
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, selfTableName]
       else:
         fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
@@ -124,7 +130,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
 # Row manipulation
 
-proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
+proc insert*[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
@@ -157,13 +163,13 @@ proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRai
 
   obj.id = dbConn.insertID(sql qry, row)
 
-proc insert*[T: Model](dbConn; objs: var openArray[T], force = false, conflictPolicy = cpRaise) =
+proc insert*[T: Model](dbConn; objs: var openArray[T]; force = false; conflictPolicy = cpRaise) =
   ## Insert rows for each `Model`_ instance in open array.
 
   for obj in objs.mitems:
     dbConn.insert(obj, force, conflictPolicy)
 
-proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
+proc select*[T: Model](dbConn; obj: var T; cond: string; params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
@@ -189,7 +195,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   obj.fromRow(get row)
 
-proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
+proc select*[T: Model](dbConn; objs: var seq[T]; cond: string; params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``objs`` must have at least one item.
@@ -227,7 +233,7 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
 
   dbConn.select(objs, "1")
 
-proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "1", params: varargs[DbValue, dbValue]): int64 =
+proc count*(dbConn; T: typedesc[Model]; col = "*"; dist = false; cond = "1"; params: varargs[DbValue, dbValue]): int64 =
   ##[ Count rows matching condition without fetching them.
 
   To count rows with non-NULL values in a particular column, pass the column name in ``col`` param.
@@ -241,7 +247,7 @@ proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "1", par
 
   get dbConn.getValue(int64, sql qry, params)
 
-proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "1", params: varargs[DbValue, dbValue]): float =
+proc sum*(dbConn; T: typedesc[Model]; col: string; dist = false; cond = "1"; params: varargs[DbValue, dbValue]): float =
   ##[ Sum column values matching condition without fetching them.
 
   To sum only unique column values, use ``dist = true`` (stands for “distinct.”)
@@ -253,7 +259,7 @@ proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "1", par
 
   get dbConn.getValue(float, sql qry, params)
 
-proc exists*(dbConn; T: typedesc[Model], cond = "1", params: varargs[DbValue, dbValue]): bool =
+proc exists*(dbConn; T: typedesc[Model]; cond = "1"; params: varargs[DbValue, dbValue]): bool =
   ## Check if a row exists in the table.
 
   let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond]
@@ -276,7 +282,7 @@ proc update*[T: Model](dbConn; obj: var T) =
     row = obj.toRow()
     phds = collect(newSeq):
       for col in obj.cols:
-        "$# = ?" %  col
+        "$# = ?" % col
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
   log(qry, $row)
