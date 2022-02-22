@@ -109,11 +109,17 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add fkGroup
 
     when obj.dot(fld).hasCustomPragma(fk):
-      when val isnot SomeInteger:
+      when val isnot SomeInteger and val isnot Option[SomeInteger]:
         {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger." .}
-      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
+      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model and obj isnot obj.dot(fld).getCustomPragmaVal(fk):
         const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
         {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
+      elif obj is obj.dot(fld).getCustomPragmaVal(fk):
+        when T.hasCustomPragma(tableName):
+          const selfTableName = '"' & T.getCustomPragmaVal(tableName) & '"'
+        else:
+          const selfTableName = '"' & $T & '"'
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, selfTableName]
       else:
         fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
