@@ -8,6 +8,12 @@
 -   [d]—docs improvement
 
 
+## 2.3.7 (February 22, 2022)
+
+-   [f] Fix tests for self-ref foreign keys.
+-   [t] Run tests of PRs.
+
+
 ## 2.3.6 (February 22, 2022)
 
 -   [f] Fix generic models for Nim <= 1.6.4. The same fix has been merged in ``std/macros``, in the devel branch of the compiler but will not be backported to 1.6 (see [#132](https://github.com/moigagoo/norm/issues/132)).

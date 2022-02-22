@@ -1,6 +1,6 @@
-import std/[unittest, os, strutils, options]
+import std/[unittest, strutils, options]
 
-import norm/[model, sqlite]
+import norm/[model, postgres]
 
 import ../models
 
@@ -23,8 +23,7 @@ suite "``fk`` pragma":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newUser())
-    dbConn.createTables(newCustomer())
+    dbConn.createTables(newSelfRef())
 
   teardown:
     close dbConn
@@ -49,11 +48,11 @@ suite "``fk`` pragma":
       parentid = child.parent.get()
 
     var child = newSelfRef()
-    dbConn.select(child, "parent=$1", parentid)
+    dbConn.select(child, "parent = $1", parentid)
     check child.parent == some(parentid)
 
     var parent = newSelfRef()
-    dbConn.select(parent, "id=$1", child.parent.get())
+    dbConn.select(parent, "id = $1", child.parent.get())
     check parent.id > 0
     check parent.parent == none(int64)
 
