@@ -1,4 +1,11 @@
-import std/[os, logging, strutils, sequtils, options, macros, sugar]
+import std/[os, logging, strutils, sequtils, options, sugar]
+
+when (NimMajor, NimMinor) <= (1, 6):
+  import pragmasutils
+  export pragmasutils
+else:
+  import std/macros
+  export macros
 
 import ndb/sqlite
 export sqlite
@@ -8,7 +15,7 @@ import private/[dot, log]
 import model
 import pragmas
 
-export dbtypes, macros
+export dbtypes
 
 
 type
@@ -69,7 +76,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
-        dbConn.createTables(get val.model)
+      dbConn.createTables(get val.model)
 
   var colGroups, fkGroups: seq[string]
 
@@ -99,11 +106,17 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add fkGroup
 
     when obj.dot(fld).hasCustomPragma(fk):
-      when val isnot SomeInteger:
-        {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger." .}
-      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
+      when val isnot SomeInteger and val isnot Option[SomeInteger]:
+        {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger.".}
+      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model and obj isnot obj.dot(fld).getCustomPragmaVal(fk):
         const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
-        {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
+        {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName & " is not a Model.".}
+      elif obj is obj.dot(fld).getCustomPragmaVal(fk):
+        when T.hasCustomPragma(tableName):
+          const selfTableName = '"' & T.getCustomPragmaVal(tableName) & '"'
+        else:
+          const selfTableName = '"' & $T & '"'
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, selfTableName]
       else:
         fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
@@ -112,7 +125,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
   let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
 
   log(qry)
-  
+
   dbConn.exec(sql qry)
 
 # Row manipulation
@@ -122,7 +135,7 @@ proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRai
 
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
 
-  ``conflictPolicy`` determines how the proc reacts to insertion conflicts. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one. 
+  ``conflictPolicy`` determines how the proc reacts to insertion conflicts. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one.
   ]##
 
   checkRo(T)
@@ -249,7 +262,7 @@ proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "1", par
 proc exists*(dbConn; T: typedesc[Model], cond = "1", params: varargs[DbValue, dbValue]): bool =
   ## Check if a row exists in the table.
 
-  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond] 
+  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond]
 
   log(qry, $params)
 
@@ -269,7 +282,7 @@ proc update*[T: Model](dbConn; obj: var T) =
     row = obj.toRow()
     phds = collect(newSeq):
       for col in obj.cols:
-        "$# = ?" %  col
+        "$# = ?" % col
     qry = "UPDATE $# SET $# WHERE id = $#" % [T.table, phds.join(", "), $obj.id]
 
   log(qry, $row)

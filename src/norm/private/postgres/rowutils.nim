@@ -1,6 +1,6 @@
 ## Procs to convert `Model <../../model.html#Model>`_ instances to ``ndb.postgres.Row`` instances and back.
 
-import std/[macros, options]
+import std/options
 
 import ndb/postgres
 
@@ -9,6 +9,10 @@ import ../dot
 import ../../model
 import ../../pragmas
 
+when (NimMajor, NimMinor) <= (1, 6):
+  import ../../pragmasutils
+else:
+  import std/macros
 
 proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) =
   ##[ Convert ``ndb.sqlite.Row`` instance into `Model`_ instance, from a given position.
