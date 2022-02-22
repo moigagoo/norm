@@ -23,8 +23,7 @@ suite "``fk`` pragma":
     resetDb()
     let dbConn = open(dbHost, dbUser, dbPassword, dbDatabase)
 
-    dbConn.createTables(newUser())
-    dbConn.createTables(newCustomer())
+    dbConn.createTables(newSelfRef())
 
   teardown:
     close dbConn
