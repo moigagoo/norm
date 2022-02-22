@@ -39,11 +39,11 @@ suite "``fk`` pragma on self referencing":
       parentid = child.parent.get()
 
     var child = newSelfRef()
-    dbConn.select(child, "parent=$1", parentid)
+    dbConn.select(child, "parent = ?", parentid)
     check child.parent == some(parentid)
 
     var parent = newSelfRef()
-    dbConn.select(parent, "id=$1", child.parent.get())
+    dbConn.select(parent, "id = ?", child.parent.get())
     check parent.id > 0
     check parent.parent == none(int64)
 
