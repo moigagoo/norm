@@ -51,6 +51,7 @@ type
     name*: string
 
   DoctorSpecialties* = ref object of Model
+    specialtyAcquiredDate*: DateTime
     doctor*: Doctor
     specialty*: Specialty
 
@@ -171,10 +172,11 @@ func newSpecialty*(name: string = ""): Specialty = Specialty(name: name)
 func `===`* (a, b: Specialty): bool =
   a.name == b.name and a.id == b.id
 
-func newDoctorSpecialties*(doctor: Doctor = newDoctor(), specialty: Specialty = newSpecialty()): DoctorSpecialties =
-  DoctorSpecialties(doctor: doctor, specialty: specialty)
+func newDoctorSpecialties*(doctor: Doctor = newDoctor(), specialty: Specialty = newSpecialty(), specialtyAcquiredDate: DateTime = now()): DoctorSpecialties =
+  DoctorSpecialties(doctor: doctor, specialty: specialty, specialtyAcquiredDate: specialtyAcquiredDate)
+
 func `===`* (a,b: DoctorSpecialties): bool = 
-  a.doctor === b.doctor and a.specialty === b.specialty
+  a.doctor === b.doctor and a.specialty === b.specialty and a.specialtyAcquiredDate == b.specialtyAcquiredDate
 
 func newDoctorSpecialtiesFKPragma*(doctorId: int64, specialtyId: int64): DoctorSpecialtiesFKPragma = 
   DoctorSpecialtiesFKPragma(doctor: doctorId, specialty: specialtyId)
