@@ -341,14 +341,15 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
   selectOneToMany(dbConn, oneEntry, relatedEntries, foreignKeyFieldName)
 
 macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
-  ## A macro to "extract" a field of name `field` out of the model in `mySeq`, creating
-  ## a new seq of whatever type the field has.
+  ## A macro to "extract" a field of name `field` out of the model in `mySeq`, 
+  ## creating a new seq of whatever type the field has.
   newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
 
 proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    
-  ## A convenience proc. Fetches the many-to-many relationship for the entry `queryStartEntry` and returns
-  ## a seq of all entries connected to `queryStartEntry` in `queryEndEntries`. Requires to also be passed
-  ## the model connecting the many-to-many relationship via `joinModelEntries`in order to fetch the relationship.
+  ## Fetches the many-to-many relationship for the entry `queryStartEntry` and
+  ## returns a seq of all entries connected to `queryStartEntry` in `queryEndEntries`. 
+  ## Requires to also be passed the model connecting the many-to-many relationship
+  ## via `joinModelEntries`in order to fetch the relationship.
   const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
   const joinTableName = J.table()
   const sqlCondition: string = fmt "{joinTableName}.{fkColumnFromJoinToManyStart} = $1"

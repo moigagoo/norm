@@ -115,10 +115,11 @@ proc checkRo*(T: typedesc[Model]) =
     {.error: "can't use mutating procs with read-only models".}
 
 proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
-  ## A compile time proc that searches the given `normModel` type for any 
-  ## foreign key field that points to a table with the given name `targetTableName`. 
-  ## Raises a FieldDefect at compile time if the model does not have exactly 
-  ## one foreign key field to that table.
+  ## A compile time proc that searches the given `source` Model type for any 
+  ## foreign key field that points to the table of the `target`model type. 
+  ## Breaks at compile time if `source`does not have exactly one foreign key 
+  ## field to that table, as otherwise the desired field name to use can't
+  ## be inferred.
   var fieldNames: seq[string] = @[]
   
   const targetTableName = T.table()
@@ -161,7 +162,7 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
   ## `target` model. 
   ## Specifically checks 1) if the field exists, 2) if it has either an fk pragma, 
   ## or is a model type or an option of a model type, and 3) if the table associated
-  ## with that field is equivalent to that of the table of the `target`model.
+  ## with that field is equivalent to that of the table of the `target` model.
   ## If any of these conditions are false, this proc will intentionally fail to compile
   const sourceName = name(S)
   const targetTableName = table(T)
