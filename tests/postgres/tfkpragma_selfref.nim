@@ -1,6 +1,6 @@
 import std/[unittest, os, strutils, options]
 
-import norm/[model, sqlite]
+import norm/[model, postgres]
 
 import ../models
 
