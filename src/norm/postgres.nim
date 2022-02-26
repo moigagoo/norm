@@ -1,5 +1,12 @@
 import std/[os, logging, strutils, sequtils, options, macros, sugar, strformat]
 
+when (NimMajor, NimMinor) <= (1, 6):
+  import pragmasutils
+  export pragmasutils
+else:
+  import std/macros
+  export macros
+
 import ndb/postgres
 export postgres
 
@@ -8,7 +15,7 @@ import private/[dot, log]
 import model
 import pragmas
 
-export dbtypes, macros
+export dbtypes
 
 
 type
@@ -102,11 +109,17 @@ proc createTables*[T: Model](dbConn; obj: T) =
       fkGroups.add fkGroup
 
     when obj.dot(fld).hasCustomPragma(fk):
-      when val isnot SomeInteger:
+      when val isnot SomeInteger and val isnot Option[SomeInteger]:
         {.fatal: "Pragma fk: field must be SomeInteger. " & fld & " is not SomeInteger." .}
-      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model:
+      elif obj.dot(fld).getCustomPragmaVal(fk) isnot Model and obj isnot obj.dot(fld).getCustomPragmaVal(fk):
         const pragmaValTypeName = $(obj.dot(fld).getCustomPragmaVal(fk))
         {.fatal: "Pragma fk: value must be a Model. " & pragmaValTypeName  & " is not a Model.".}
+      elif obj is obj.dot(fld).getCustomPragmaVal(fk):
+        when T.hasCustomPragma(tableName):
+          const selfTableName = '"' & T.getCustomPragmaVal(tableName) & '"'
+        else:
+          const selfTableName = '"' & $T & '"'
+        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, selfTableName]
       else:
         fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
@@ -233,6 +246,31 @@ proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", 
   let row = get dbConn.getRow(sql qry, params)
 
   row[0].i
+
+proc sum*(dbConn; T: typedesc[Model], col: string, dist = false, cond = "TRUE", params: varargs[DbValue, dbValue]): float =
+  ##[ Sum column values matching condition without fetching them.
+
+  To sum only unique column values, use ``dist = true`` (stands for “distinct.”)
+  ]##
+
+  let qry = "SELECT SUM($# $#) FROM $# WHERE $#" % [if dist: "DISTINCT" else: "", col, T.table, cond]
+
+  log(qry, $params)
+
+  let row = get dbConn.getRow(sql qry, params)
+
+  row[0].f
+
+proc exists*(dbConn; T: typedesc[Model], cond = "TRUE", params: varargs[DbValue, dbValue]): bool =
+  ## Check if a row exists in the table.
+
+  let qry = "SELECT EXISTS(SELECT NULL FROM $# WHERE $#)" % [T.table, cond]
+
+  log(qry, $params)
+
+  let row = get dbConn.getRow(sql qry, params)
+
+  row[0].b
 
 proc update*[T: Model](dbConn; obj: var T) =
   ## Update rows for `Model`_ instance and its `Model`_ fields.

@@ -18,12 +18,15 @@ tests/megatest.nim
 tests/megatest
 
 tests/common/tmodel
+tests/common/tpragmas_fix
 
 tests/sqlite/tcount
 tests/sqlite/tdb
 tests/sqlite/tdbtypes
 tests/sqlite/tenv
+tests/sqlite/texists
 tests/sqlite/tfkpragma
+tests/sqlite/tfkpragma_selfref
 tests/sqlite/tfkpragmanotint
 tests/sqlite/tfkpragmanotmodel
 tests/sqlite/tnull
@@ -31,16 +34,20 @@ tests/sqlite/trepeatfks
 tests/sqlite/trows
 tests/sqlite/trowutils
 tests/sqlite/tsugar
+tests/sqlite/tsum
 tests/sqlite/ttables
 tests/sqlite/ttransactions
 tests/sqlite/ttriangle
 tests/sqlite/tunique
+tests/sqlite/tro
 
 tests/postgres/tcount
 tests/postgres/tdb
 tests/postgres/tdbtypes
 tests/postgres/tenv
+tests/postgres/texists
 tests/postgres/tfkpragma
+tests/postgres/tfkpragma_selfref
 tests/postgres/tfkpragmanotint
 tests/postgres/tfkpragmanotmodel
 tests/postgres/tnull
@@ -48,7 +55,10 @@ tests/postgres/trepeatfks
 tests/postgres/trows
 tests/postgres/trowutils
 tests/postgres/tsugar
+tests/postgres/tsum
 tests/postgres/ttables
 tests/postgres/ttransactions
 tests/postgres/ttriangle
 tests/postgres/tunique
+tests/postgres/tro
+

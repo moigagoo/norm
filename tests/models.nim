@@ -13,10 +13,10 @@ type
 
   Person* = ref object of Model
     name* {.unique.}: string
-    pet* {.onDelete: "CASCADE"}: Option[Pet]
+    pet* {.onDelete: "CASCADE".}: Option[Pet]
 
   PersonName* {.ro, tableName: "Person".} = ref object of Model
-    name*: string 
+    name*: string
 
   PetPerson* = ref object of Model
     pet*: Pet
@@ -73,6 +73,8 @@ type
   Table* {.tableName: "FurnitureTable".} = ref object of Model
     legCount*: Positive
 
+  SelfRef* = ref object of Model
+    parent* {.fk: SelfRef.}: Option[int64]
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -199,15 +201,22 @@ func `===`*(a, b: Number): bool =
   a[] == b[]
 
 func newString*(s: string, sc10: StringOfCap[10], psc5: PaddedStringOfCap[5]): String =
-  String(s: s,  sc10: sc10, psc5: psc5)
+  String(s: s, sc10: sc10, psc5: psc5)
 
 func newString*: String =
   newString("", StringOfCap[10]"", PaddedStringOfCap[5]"")
 
 func `===`*(a, b: String): bool =
   a[] == b[]
- 
+
 func newTable*(legCount: Positive = 4): Table =
   Table(legCount: legCount)
 
 func newPersonName*: PersonName = PersonName(name: "")
+
+func newSelfRef*(): SelfRef =
+  SelfRef(parent: none(int64))
+
+func newSelfRef*(parentid: int64): SelfRef =
+  SelfRef(parent: some(parentid))
+

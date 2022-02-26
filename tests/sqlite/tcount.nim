@@ -8,7 +8,7 @@ import ../models
 const dbFile = "test.db"
 
 
-suite "Count":
+suite "Count rows":
   setup:
     removeFile dbFile
 

@@ -123,6 +123,45 @@ nbCode:
 
 
 nbText: """
+## Sum Column Values
+
+To get a sum of column values, use `sum` proc:
+"""
+
+nbCode:
+  import norm/model
+
+  type Chair = ref object of Model
+    legCount: Natural
+
+  func newChair(legCount = 0): Chair = Chair(legCount: legCount)
+
+  dbConn.createTables(newChair())
+
+  var
+    threeLeggedChair = newChair(3)
+    fourLeggedChair = newChair(4)
+    anotherFourLeggedChair = newChair(4)
+
+  dbConn.insert(threeLeggedChair)
+  dbConn.insert(fourLeggedChair)
+  dbConn.insert(anotherFourLeggedChair)
+
+  echo dbConn.sum(Chair, "legCount")
+  echo dbConn.sum(Chair, "legCount", dist = true)
+  echo dbConn.sum(Chair, "legCount", dist = false, "legCount > ?", 3)
+
+nbText: """
+## Check If Row Exists
+
+If you need to check if a row selected by a given condition exists, use `exists` proc:
+"""
+
+nbCode:
+  echo dbConn.exists(Customer, "name = ?", "Alice")
+
+
+nbText"""
 ## Update Rows
 
 To update a row, you just update the object and call `update` on it:

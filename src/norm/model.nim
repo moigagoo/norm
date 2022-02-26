@@ -3,6 +3,10 @@ import std/[macros, options, strutils, typetraits, strformat]
 import private/dot
 import pragmas
 
+when (NimMajor, NimMinor) <= (1, 6):
+  import pragmasutils
+else:
+  import std/macros
 
 type
   Model* = ref object of RootObj
