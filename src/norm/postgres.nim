@@ -1,7 +1,8 @@
-import std/[os, logging, strutils, sequtils, options, macros, sugar, strformat]
+import std/[os, logging, strutils, sequtils, options, sugar, strformat]
 
 when (NimMajor, NimMinor) <= (1, 6):
   import pragmasutils
+  from std/macros import newCall, bindSym, nnkDotExpr, newTree, ident
   export pragmasutils
 else:
   import std/macros
