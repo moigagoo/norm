@@ -149,16 +149,6 @@ proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typ
   assert(not (fieldNames.len() > 1), fmt "Can't infer foreign key field from model '{sourceModelName}' to model '{targetTableName}'! There is more than one foreign key field to that table! {fieldNames.len}")
 
   return fieldNames[0]
-  
-
-macro getField(t: typed, fieldName: static string): untyped =
-  ## Creates an expression "t.fieldName" at compile time, effectively handing 
-  ## you back the actual field through the given string name
-  newDotExpr(t, ident(fieldName))
-
-template hasField(t: typed, fieldName: static string): bool =
-  ## Checks if the given type `t` has a field with the name provided in `fieldName`
-  compiles(getField(t, fieldName))
 
 proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
   ## Checks at compile time whether the field with the name `fkFieldName` is a 
