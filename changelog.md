@@ -7,7 +7,7 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.4.0 (March 07, 2022)
+## 2.4.0 (March 7, 2022)
 
 -   [+] Added `selectOneToMany` proc to query many-to-one relationships (see [#127](https://github.com/moigagoo/norm/issues/127))
 -   [+] Added `selectManyToMany` proc to query many-to-many relationships (see [#127](https://github.com/moigagoo/norm/issues/127))
