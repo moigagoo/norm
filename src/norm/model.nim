@@ -1,5 +1,5 @@
-import std/[options, strutils]
-
+import std/[options, strutils, typetraits, strformat]
+from std/macros import newDotExpr, ident
 import private/dot
 import pragmas
 
@@ -118,3 +118,72 @@ proc checkRo*(T: typedesc[Model]) =
   when T.hasCustomPragma(ro):
     {.error: "can't use mutating procs with read-only models".}
 
+proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
+  ## A compile time proc that searches the given `source` Model type for any 
+  ## foreign key field that points to the table of the `target`model type. 
+  ## Breaks at compile time if `source`does not have exactly one foreign key 
+  ## field to that table, as otherwise the desired field name to use can't
+  ## be inferred.
+  var fieldNames: seq[string] = @[]
+  
+  const targetTableName = T.table()
+  for sourceFieldName, sourceFieldValue in S()[].fieldPairs:
+      #Handles case where field is an int64 with fk pragma
+      when sourceFieldValue.hasCustomPragma(fk):
+        when targetTableName == sourceFieldValue.getCustomPragmaVal(fk).table():
+          fieldNames.add(sourceFieldName)
+      
+      #Handles case where field is a Model type
+      elif sourceFieldValue is Model:
+        when targetTableName == sourceFieldValue.type().table():
+          fieldNames.add(sourceFieldName)
+      
+      #Handles case where field is a Option[Model] type
+      elif sourceFieldValue is Option:
+        when sourceFieldValue.get() is Model:
+          when targetTableName == genericParams(sourceFieldValue.type()).get(0).table():
+              fieldNames.add(sourceFieldName)
+
+  const sourceModelName = name(S)
+  assert(not (fieldNames.len() < 1), fmt "Tried getting foreign key field from model '{sourceModelName}' to model '{targetTableName}' but there is no such field!")
+  assert(not (fieldNames.len() > 1), fmt "Can't infer foreign key field from model '{sourceModelName}' to model '{targetTableName}'! There is more than one foreign key field to that table! {fieldNames.len}")
+
+  return fieldNames[0]
+
+proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
+  ## Checks at compile time whether the field with the name `fkFieldName` is a 
+  ## valid foreign key field on the given `source` model to the table of the given 
+  ## `target` model. 
+  ## Specifically checks 1) if the field exists, 2) if it has either an fk pragma, 
+  ## or is a model type or an option of a model type, and 3) if the table associated
+  ## with that field is equivalent to that of the table of the `target` model.
+  ## If any of these conditions are false, this proc will intentionally fail to compile
+  const sourceName = name(S)
+  const targetTableName = table(T)
+  assert(S.hasField(fkFieldName), fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but there was no such field")
+
+  for sourceFieldName, sourceFieldValue in source()[].fieldPairs:
+    when sourceFieldName == fkFieldName:
+      #Handles case where field is an int with fk pragma
+      when sourceFieldValue.hasCustomPragma(fk):
+        const fkFieldTable: string = sourceFieldValue.getCustomPragmaVal(fk).table()
+
+      #Handles case where field is a Model type
+      elif sourceFieldValue is Model:
+        const fkFieldTable: string = sourceFieldValue.type.table()
+      
+      #Handles case where field is a Option[Model] type
+      elif sourceFieldValue is Option:
+        when sourceFieldValue.get() is Model:
+          const fkFieldTable: string = sourceFieldValue.get().type.table()
+        else:
+          assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it was an option of a type that wasn't a model")
+
+      #Fail at compile time if any other case occurs
+      else:
+        assert(false, fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but it didn't have an fk pragma and was neither a model type, nor an option of a model type")
+
+      assert((targetTableName == fkFieldTable),  fmt "Tried using '{fkFieldName}' as FK field from Model '{sourceName}' to table '{targetTableName}' but the pragma pointed to a different table '{fkFieldTable}'")
+      return true
+
+  return false

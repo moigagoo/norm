@@ -2,6 +2,7 @@ import std/[os, logging, strutils, sequtils, options, sugar]
 
 when (NimMajor, NimMinor) <= (1, 6):
   import pragmasutils
+  from std/macros import newCall, bindSym, nnkDotExpr, newTree, ident
   export pragmasutils
 else:
   import std/macros
@@ -350,3 +351,66 @@ template transaction*(dbConn; body: untyped): untyped =
 
     raise
 
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M], foreignKeyFieldName: static string) =
+  ## Fetches all entries of a "many" side from a one-to-many relationship 
+  ## between the model of `oneEntry` and the model of `relatedEntries`. It is
+  ## ensured at compile time that the field specified here is a valid foreign key
+  ## field on oneEntry pointing to the table of the `relatedEntries`-model.
+  const _ = validateFkField(foreignKeyFieldName, M, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly
+
+  const manyTableName = M.table()
+  const sqlCondition = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]
+
+  dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
+
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
+  ## A convenience proc. Fetches all entries of a "many" side from a one-to-many 
+  ## relationship between the model of `oneEntry` and the model of `relatedEntries`.
+  ## The field used to fetch the `relatedEntries` is automatically inferred as long
+  ## as the `relatedEntries` model has only one field pointing to the model of 
+  ## `oneEntry`. Will not compile if `relatedEntries` has multiple fields that 
+  ## point to the model of `oneEntry`. Specify the `foreignKeyFieldName` parameter 
+  ## in such a case.
+  const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
+  selectOneToMany(dbConn, oneEntry, relatedEntries, foreignKeyFieldName)
+
+macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
+  ## A macro to "extract" a field of name `field` out of the model in `mySeq`, 
+  ## creating a new seq of whatever type the field called `field` has.
+  newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
+
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2], fkColumnFromJoinToManyStart: static string, fkColumnFromJoinToManyEnd: static string) =    
+  ## Fetches the many-to-many relationship for the entry `queryStartEntry` and
+  ## returns a seq of all entries connected to `queryStartEntry` in `queryEndEntries`. 
+  ## Requires to also be passed the model connecting the many-to-many relationship
+  ## via `joinModelEntries`in order to fetch the relationship. Also requires the
+  ## field on the joinModel that points to the table of `queryStartEntry`
+  ## via the parameter `fkColumnFromJoinToManyStart`. Also requires the field field on
+  ## the joinModel that points to the table of `queryEndEntries` via the parameter
+  ## `fkColumnFromJoinToManyEnd`.
+  ## Will not compile if the specified fields on the joinModel do not properly point
+  ## to the tables of `queryStartEntry` and `queryEndEntries`.
+  const tmp1 = validateFkField(fkColumnFromJoinToManyStart, J, M1) # 'tmp1' is irrelevant, but the assignment is required for 'validateFkField' to run properly
+  const tmp2 = validateFkField(fkColumnFromJoinToManyEnd, J, M2) # 'tmp2' is irrelevant, but the assignment is required for 'validateFkField' to run properly 
+  
+  const joinTableName = J.table()
+  const sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
+  dbConn.select(joinModelEntries, sqlCondition, queryStartEntry.id)
+
+  let unpackedEntries: seq[M2] = unpackFromJoinModel(joinModelEntries, fkColumnFromJoinToManyEnd)
+
+  queryEndEntries = unpackedEntries
+
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    
+  ## A convenience proc. Fetches the many-to-many relationship for the entry 
+  ## `queryStartEntry` and returns a seq of all entries connected to `queryStartEntry` 
+  ## in `queryEndEntries`. Requires to also be passed the model connecting the 
+  ## many-to-many relationship via `joinModelEntries`in order to fetch the relationship.
+  ## The fields on `joinModelEntries` to use for these queries are inferred. 
+  ## Will only compile if the joinModel has exactly one field pointing to 
+  ## the table of `queryStartEntry` as well as exactly one field pointing to 
+  ## the table of `queryEndEntries`. Specify the parameters `fkColumnFromJoinToManyStart`
+  ## and `fkColumnFromJoinToManyEnd` if that is not the case.
+  const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
+  const fkColumnFromJoinToManyEnd: string = J.getRelatedFieldNameTo(M2)
+  selectManyToMany(dbConn, queryStartEntry, joinModelEntries, queryEndEntries, fkColumnFromJoinToManyStart, fkColumnFromJoinToManyEnd)

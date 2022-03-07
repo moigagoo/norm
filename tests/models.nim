@@ -22,6 +22,11 @@ type
     pet*: Pet
     person*: Person
 
+  DoctorVisit* = ref object of Model
+    patient*: Person
+    doctor*: Doctor
+    visitTime*: DateTime
+
   User* = ref object of Model
     lastLogin*: DateTime
 
@@ -33,6 +38,26 @@ type
     species*: string
     favToy*: Toy
     secondFavToy*: Toy
+
+  UnplayfulPet* = ref object of Model
+    species*: string
+    favToyId* {.fk: Toy}: Option[int64]
+
+  Doctor* = ref object of Model
+    name*: string
+    age*: DateTime
+
+  Specialty* = ref object of Model
+    name*: string
+
+  DoctorSpecialties* = ref object of Model
+    specialtyAcquiredDate*: DateTime
+    doctor*: Doctor
+    specialty*: Specialty
+
+  DoctorSpecialtiesFKPragma* = ref object of Model
+    doctor* {.fk: Doctor}: int64
+    specialty* {.fk: Specialty}: int64    
 
   Number* = ref object of Model
     n*: int
@@ -116,6 +141,13 @@ func `===`*(a, b: Customer): bool =
   a.userId == b.userId and
   a.email == b.email
 
+func newUnplayfulPet*(species: string = "", favToyId: Option[int64] = none(int64)): UnplayfulPet =
+  UnplayfulPet(species: species, favToyId: favToyId)
+
+func `===`*(a, b: UnplayfulPet): bool = 
+  a.species == b.species and
+  a.favToyId == b.favToyId
+
 func newPlayfulPet*(species: string, favToy, secondFavToy: Toy): PlayfulPet =
   PlayfulPet(species: species, favToy: favToy, secondFavToy: secondFavToy)
 
@@ -133,7 +165,30 @@ func `===`*(a, b: Option[PlayfulPet]): bool =
   get(a).favToy === get(b).favToy and
   get(a).secondFavToy === get(b).secondFavToy)
 
-func `===`*[T: Toy | Pet | Person | PetPerson | User | Customer](a, b: openArray[T]): bool =
+
+func newDoctor*(name: string = "", age: DateTime = now()): Doctor = Doctor(name: name, age: age)
+func `===`* (a, b: Doctor): bool = 
+  a.name == b.name and a.id == b.id
+
+func newSpecialty*(name: string = ""): Specialty = Specialty(name: name)
+func `===`* (a, b: Specialty): bool =
+  a.name == b.name and a.id == b.id
+
+func newDoctorSpecialties*(doctor: Doctor = newDoctor(), specialty: Specialty = newSpecialty(), specialtyAcquiredDate: DateTime = now()): DoctorSpecialties =
+  DoctorSpecialties(doctor: doctor, specialty: specialty, specialtyAcquiredDate: specialtyAcquiredDate)
+
+func `===`* (a,b: DoctorSpecialties): bool = 
+  a.doctor === b.doctor and a.specialty === b.specialty and a.specialtyAcquiredDate == b.specialtyAcquiredDate
+
+func newDoctorSpecialtiesFKPragma*(doctorId: int64, specialtyId: int64): DoctorSpecialtiesFKPragma = 
+  DoctorSpecialtiesFKPragma(doctor: doctorId, specialty: specialtyId)
+func `===`*(a, b: DoctorSpecialtiesFKPragma): bool = 
+  a.doctor == b.doctor and a.specialty == b.specialty 
+
+func newDoctorVisit*(patient: Person = newPerson(), doctor: Doctor = newDoctor(), visitTime: DateTime = now()): DoctorVisit =
+  DoctorVisit(patient: patient, doctor: doctor, visitTime: visitTime)
+
+func `===`*[T: Toy | Pet | Person | PetPerson | User | Customer | DoctorVisit](a, b: openArray[T]): bool =
   len(a) == len(b) and zip(a, b).allIt(it[0] === it[1])
 
 func newNumber*(n: int, n16: int16, n32: int32, n64: int64): Number =
