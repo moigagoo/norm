@@ -23,3 +23,7 @@ delete	norm/sqlite.html#delete,,T	sqlite: delete[T: Model](dbConn; obj: var T)
 delete	norm/sqlite.html#delete,,openArray[T]	sqlite: delete[T: Model](dbConn; objs: var openArray[T])	
 rollback	norm/sqlite.html#rollback	sqlite: rollback()	
 transaction	norm/sqlite.html#transaction.t,,untyped	sqlite: transaction(dbConn; body: untyped): untyped	
+selectOneToMany	norm/sqlite.html#selectOneToMany,,O,seq[M],staticstring	sqlite: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;\n                                    relatedEntries: var seq[M];\n                                    foreignKeyFieldName: static string)	
+selectOneToMany	norm/sqlite.html#selectOneToMany,,O,seq[M]	sqlite: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;\n                                    relatedEntries: var seq[M])	
+selectManyToMany	norm/sqlite.html#selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring	sqlite: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;\n    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];\n    fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)	
+selectManyToMany	norm/sqlite.html#selectManyToMany,,M1,seq[J],seq[M2]	sqlite: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;\n    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])	

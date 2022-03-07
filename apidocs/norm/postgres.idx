@@ -22,3 +22,7 @@ delete	norm/postgres.html#delete,,T	postgres: delete[T: Model](dbConn; obj: var 
 delete	norm/postgres.html#delete,,openArray[T]	postgres: delete[T: Model](dbConn; objs: var openArray[T])	
 rollback	norm/postgres.html#rollback	postgres: rollback()	
 transaction	norm/postgres.html#transaction.t,,untyped	postgres: transaction(dbConn; body: untyped): untyped	
+selectOneToMany	norm/postgres.html#selectOneToMany,,O,seq[M],staticstring	postgres: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;\n                                    relatedEntries: var seq[M];\n                                    foreignKeyFieldName: static string)	
+selectOneToMany	norm/postgres.html#selectOneToMany,,O,seq[M]	postgres: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;\n                                    relatedEntries: var seq[M])	
+selectManyToMany	norm/postgres.html#selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring	postgres: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;\n    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];\n    fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)	
+selectManyToMany	norm/postgres.html#selectManyToMany,,M1,seq[J],seq[M2]	postgres: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;\n    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])	

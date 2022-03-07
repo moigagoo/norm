@@ -34,7 +34,6 @@ function main() {
     }
   }
 
-  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
   function switchTheme(e) {
       if (e.target.checked) {
           document.documentElement.setAttribute('data-theme', 'dark');
@@ -45,21 +44,29 @@ function main() {
       }
   }
 
-  toggleSwitch.addEventListener('change', switchTheme, false);
+  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+  if (toggleSwitch !== null) {
+    toggleSwitch.addEventListener('change', switchTheme, false);
+  }
 
-  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  var currentTheme = localStorage.getItem('theme');
+  if (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    currentTheme = 'dark';
+  }
   if (currentTheme) {
     document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme === 'dark') {
+    if (currentTheme === 'dark' && toggleSwitch !== null) {
       toggleSwitch.checked = true;
     }
   }
 }
+
+window.addEventListener('DOMContentLoaded', main);
 </script>
 
 </head>
-<body onload="main()">
+<body>
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
@@ -224,7 +231,7 @@ function main() {
           </ul></dd>
 <dt><a name="dot" href="#dot"><span>dot:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="dot: dot(obj: ref object; fld: string): untyped" href="norm/private/dot.html#dot.m%2Cref.%2Cstring">dot: dot(obj: ref object; fld: string): untyped</a></li>
+          data-doc-search-tag="dot: dot(obj: typed; fld: string): untyped" href="norm/private/dot.html#dot.m%2Ctyped%2Cstring">dot: dot(obj: typed; fld: string): untyped</a></li>
           </ul></dd>
 <dt><a name="dropDb" href="#dropDb"><span>dropDb:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -270,9 +277,19 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="sqlite: getDb(): DbConn" href="norm/sqlite.html#getDb">sqlite: getDb(): DbConn</a></li>
           </ul></dd>
+<dt><a name="getRelatedFieldNameTo" href="#getRelatedFieldNameTo"><span>getRelatedFieldNameTo:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="model: getRelatedFieldNameTo[S: Model; T: Model](source: typedesc[S];
+    target: typedesc[T]): string" href="norm/model.html#getRelatedFieldNameTo%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D">model: getRelatedFieldNameTo[S: Model; T: Model](source: typedesc[S];
+    target: typedesc[T]): string</a></li>
+          </ul></dd>
 <dt><a name="hasCustomPragma" href="#hasCustomPragma"><span>hasCustomPragma:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="pragmasutils: hasCustomPragma(n: typed; cp: typed{nkSym}): untyped" href="norm/pragmasutils.html#hasCustomPragma.m%2Ctyped%2C">pragmasutils: hasCustomPragma(n: typed; cp: typed{nkSym}): untyped</a></li>
+          </ul></dd>
+<dt><a name="hasField" href="#hasField"><span>hasField:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="dot: hasField(t: typed; fieldName: static string): bool" href="norm/private/dot.html#hasField.t%2Ctyped%2Cstaticstring">dot: hasField(t: typed; fieldName: static string): bool</a></li>
           </ul></dd>
 <dt><a name="insert" href="#insert"><span>insert:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -392,6 +409,54 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="sqlite: selectAll[T: Model](dbConn; objs: var seq[T])" href="norm/sqlite.html#selectAll%2C%2Cseq%5BT%5D">sqlite: selectAll[T: Model](dbConn; objs: var seq[T])</a></li>
           </ul></dd>
+<dt><a name="selectManyToMany" href="#selectManyToMany"><span>selectManyToMany:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])" href="norm/postgres.html#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D">postgres: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="postgres: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)" href="norm/postgres.html#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D%2Cstaticstring%2Cstaticstring">postgres: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])" href="norm/sqlite.html#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D">sqlite: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)" href="norm/sqlite.html#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D%2Cstaticstring%2Cstaticstring">sqlite: selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)</a></li>
+          </ul></dd>
+<dt><a name="selectOneToMany" href="#selectOneToMany"><span>selectOneToMany:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M])" href="norm/postgres.html#selectOneToMany%2C%2CO%2Cseq%5BM%5D">postgres: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="postgres: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M];
+                                    foreignKeyFieldName: static string)" href="norm/postgres.html#selectOneToMany%2C%2CO%2Cseq%5BM%5D%2Cstaticstring">postgres: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M];
+                                    foreignKeyFieldName: static string)</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M])" href="norm/sqlite.html#selectOneToMany%2C%2CO%2Cseq%5BM%5D">sqlite: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M];
+                                    foreignKeyFieldName: static string)" href="norm/sqlite.html#selectOneToMany%2C%2CO%2Cseq%5BM%5D%2Cstaticstring">sqlite: selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M];
+                                    foreignKeyFieldName: static string)</a></li>
+          </ul></dd>
 <dt><a name="StringOfCap" href="#StringOfCap"><span>StringOfCap:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: StringOfCap" href="norm/types.html#StringOfCap">types: StringOfCap</a></li>
@@ -480,6 +545,12 @@ function main() {
           <li><a class="reference external"
           data-doc-search-tag="sqlite: update[T: Model](dbConn; obj: var T)" href="norm/sqlite.html#update%2C%2CT">sqlite: update[T: Model](dbConn; obj: var T)</a></li>
           </ul></dd>
+<dt><a name="validateFkField" href="#validateFkField"><span>validateFkField:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="model: validateFkField[S, T: Model](fkFieldName: static string; source: typedesc[S];
+                             target: typedesc[T]): bool" href="norm/model.html#validateFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D">model: validateFkField[S, T: Model](fkFieldName: static string; source: typedesc[S];
+                             target: typedesc[T]): bool</a></li>
+          </ul></dd>
 <dt><a name="withDb" href="#withDb"><span>withDb:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="postgres: withDb(body: untyped): untyped" href="norm/postgres.html#withDb.t%2Cuntyped">postgres: withDb(body: untyped): untyped</a></li>
@@ -491,7 +562,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-02-22 11:41:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-03-07 21:15:25 UTC</small>
       </div>
     </div>
   </div>

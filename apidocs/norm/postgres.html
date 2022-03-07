@@ -17,7 +17,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>norm/postgres</title>
+<title>src/norm/postgres</title>
 <link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
 
 <script type="text/javascript" src="../dochack.js"></script>
@@ -34,7 +34,6 @@ function main() {
     }
   }
 
-  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
   function switchTheme(e) {
       if (e.target.checked) {
           document.documentElement.setAttribute('data-theme', 'dark');
@@ -45,24 +44,32 @@ function main() {
       }
   }
 
-  toggleSwitch.addEventListener('change', switchTheme, false);
+  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+  if (toggleSwitch !== null) {
+    toggleSwitch.addEventListener('change', switchTheme, false);
+  }
 
-  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  var currentTheme = localStorage.getItem('theme');
+  if (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    currentTheme = 'dark';
+  }
   if (currentTheme) {
     document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme === 'dark') {
+    if (currentTheme === 'dark' && toggleSwitch !== null) {
       toggleSwitch.checked = true;
     }
   }
 }
+
+window.addEventListener('DOMContentLoaded', main);
 </script>
 
 </head>
-<body onload="main()">
+<body>
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">norm/postgres</h1>
+    <h1 class="title">src/norm/postgres</h1>
     <div class="row">
   <div class="three columns">
   <div class="theme-switch-wrapper">
@@ -100,10 +107,10 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#RollbackError"
-    title="RollbackError = object of CatchableError">RollbackError</a></li>
-  <li><a class="reference" href="#NotFoundError"
+      <li><a class="reference" href="#NotFoundError"
     title="NotFoundError = object of KeyError">NotFoundError</a></li>
+  <li><a class="reference" href="#RollbackError"
+    title="RollbackError = object of CatchableError">RollbackError</a></li>
 
   </ul>
 </li>
@@ -112,89 +119,122 @@ function main() {
   <ul class="simple simple-toc-section">
       <li><a class="reference" href="#dbHostEnv"
     title="dbHostEnv = &quot;DB_HOST&quot;">dbHostEnv</a></li>
-  <li><a class="reference" href="#dbUserEnv"
-    title="dbUserEnv = &quot;DB_USER&quot;">dbUserEnv</a></li>
-  <li><a class="reference" href="#dbPassEnv"
-    title="dbPassEnv = &quot;DB_PASS&quot;">dbPassEnv</a></li>
   <li><a class="reference" href="#dbNameEnv"
     title="dbNameEnv = &quot;DB_NAME&quot;">dbNameEnv</a></li>
+  <li><a class="reference" href="#dbPassEnv"
+    title="dbPassEnv = &quot;DB_PASS&quot;">dbPassEnv</a></li>
+  <li><a class="reference" href="#dbUserEnv"
+    title="dbUserEnv = &quot;DB_USER&quot;">dbUserEnv</a></li>
 
   </ul>
 </li>
 <li>
   <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
-      <ul class="simple nested-toc-section">exists
-      <li><a class="reference" href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
-    title="exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
-       params: varargs[DbValue, dbValue]): bool">exists,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">selectAll
-      <li><a class="reference" href="#selectAll%2C%2Cseq%5BT%5D"
-    title="selectAll[T: Model](dbConn; objs: var seq[T])">selectAll,<wbr>,<wbr>seq[T]</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">count
+      <ul class="simple nested-toc-section">count
       <li><a class="reference" href="#count%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
     title="count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;TRUE&quot;;
-      params: varargs[DbValue, dbValue]): int64">count,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">dropDb
-      <li><a class="reference" href="#dropDb"
-    title="dropDb()">dropDb</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">getDb
-      <li><a class="reference" href="#getDb"
-    title="getDb(): DbConn">getDb</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">insert
-      <li><a class="reference" href="#insert%2C%2CT"
-    title="insert[T: Model](dbConn; obj: var T; force = false)">insert,<wbr>,<wbr>T</a></li>
-  <li><a class="reference" href="#insert%2C%2CopenArray%5BT%5D"
-    title="insert[T: Model](dbConn; objs: var openArray[T]; force = false)">insert,<wbr>,<wbr>openArray[T]</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">rollback
-      <li><a class="reference" href="#rollback"
-    title="rollback()">rollback</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">delete
-      <li><a class="reference" href="#delete%2C%2CT"
-    title="delete[T: Model](dbConn; obj: var T)">delete,<wbr>,<wbr>T</a></li>
-  <li><a class="reference" href="#delete%2C%2CopenArray%5BT%5D"
-    title="delete[T: Model](dbConn; objs: var openArray[T])">delete,<wbr>,<wbr>openArray[T]</a></li>
+      params: varargs[DbValue, dbValue]): int64">count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;TRUE&quot;;
+      params: varargs[DbValue, dbValue]): int64</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">createTables
       <li><a class="reference" href="#createTables%2C%2CT"
-    title="createTables[T: Model](dbConn; obj: T)">createTables,<wbr>,<wbr>T</a></li>
+    title="createTables[T: Model](dbConn; obj: T)">createTables[T: Model](dbConn; obj: T)</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">delete
+      <li><a class="reference" href="#delete%2C%2CT"
+    title="delete[T: Model](dbConn; obj: var T)">delete[T: Model](dbConn; obj: var T)</a></li>
+  <li><a class="reference" href="#delete%2C%2CopenArray%5BT%5D"
+    title="delete[T: Model](dbConn; objs: var openArray[T])">delete[T: Model](dbConn; objs: var openArray[T])</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">dropDb
+      <li><a class="reference" href="#dropDb"
+    title="dropDb()">dropDb()</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">exists
+      <li><a class="reference" href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
+    title="exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
+       params: varargs[DbValue, dbValue]): bool">exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
+       params: varargs[DbValue, dbValue]): bool</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">getDb
+      <li><a class="reference" href="#getDb"
+    title="getDb(): DbConn">getDb(): DbConn</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">insert
+      <li><a class="reference" href="#insert%2C%2CT"
+    title="insert[T: Model](dbConn; obj: var T; force = false)">insert[T: Model](dbConn; obj: var T; force = false)</a></li>
+  <li><a class="reference" href="#insert%2C%2CopenArray%5BT%5D"
+    title="insert[T: Model](dbConn; objs: var openArray[T]; force = false)">insert[T: Model](dbConn; objs: var openArray[T]; force = false)</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">rollback
+      <li><a class="reference" href="#rollback"
+    title="rollback()">rollback()</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">select
       <li><a class="reference" href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
     title="select[T: Model](dbConn; obj: var T; cond: string;
-                 params: varargs[DbValue, dbValue])">select,<wbr>,<wbr>T,<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
+                 params: varargs[DbValue, dbValue])">select[T: Model](dbConn; obj: var T; cond: string;
+                 params: varargs[DbValue, dbValue])</a></li>
   <li><a class="reference" href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
     title="select[T: Model](dbConn; objs: var seq[T]; cond: string;
-                 params: varargs[DbValue, dbValue])">select,<wbr>,<wbr>seq[T],<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
+                 params: varargs[DbValue, dbValue])">select[T: Model](dbConn; objs: var seq[T]; cond: string;
+                 params: varargs[DbValue, dbValue])</a></li>
 
   </ul>
-  <ul class="simple nested-toc-section">update
-      <li><a class="reference" href="#update%2C%2CT"
-    title="update[T: Model](dbConn; obj: var T)">update,<wbr>,<wbr>T</a></li>
-  <li><a class="reference" href="#update%2C%2CopenArray%5BT%5D"
-    title="update[T: Model](dbConn; objs: var openArray[T])">update,<wbr>,<wbr>openArray[T]</a></li>
+  <ul class="simple nested-toc-section">selectAll
+      <li><a class="reference" href="#selectAll%2C%2Cseq%5BT%5D"
+    title="selectAll[T: Model](dbConn; objs: var seq[T])">selectAll[T: Model](dbConn; objs: var seq[T])</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">selectManyToMany
+      <li><a class="reference" href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D"
+    title="selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])">selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])</a></li>
+  <li><a class="reference" href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D%2Cstaticstring%2Cstaticstring"
+    title="selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)">selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
+    joinModelEntries: var seq[J]; queryEndEntries: var seq[M2];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">selectOneToMany
+      <li><a class="reference" href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D"
+    title="selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M])">selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M])</a></li>
+  <li><a class="reference" href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D%2Cstaticstring"
+    title="selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M];
+                                    foreignKeyFieldName: static string)">selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
+                                    relatedEntries: var seq[M];
+                                    foreignKeyFieldName: static string)</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">sum
       <li><a class="reference" href="#sum%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"
     title="sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;
-    params: varargs[DbValue, dbValue]): float">sum,<wbr>,<wbr>typedesc[Model],<wbr>string,<wbr>string,<wbr>varargs[DbValue,<wbr>dbValue]</a></li>
+    params: varargs[DbValue, dbValue]): float">sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;
+    params: varargs[DbValue, dbValue]): float</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">update
+      <li><a class="reference" href="#update%2C%2CT"
+    title="update[T: Model](dbConn; obj: var T)">update[T: Model](dbConn; obj: var T)</a></li>
+  <li><a class="reference" href="#update%2C%2CopenArray%5BT%5D"
+    title="update[T: Model](dbConn; objs: var openArray[T])">update[T: Model](dbConn; objs: var openArray[T])</a></li>
 
   </ul>
 
@@ -203,10 +243,16 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#18" id="68">Templates</a>
   <ul class="simple simple-toc-section">
+      <ul class="simple nested-toc-section">transaction
+      <li><a class="reference" href="#transaction.t%2C%2Cuntyped"
+    title="transaction(dbConn; body: untyped): untyped">transaction(dbConn; body: untyped): untyped</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">withDb
       <li><a class="reference" href="#withDb.t%2Cuntyped"
-    title="withDb(body: untyped): untyped">withDb</a></li>
-  <li><a class="reference" href="#transaction.t%2C%2Cuntyped"
-    title="transaction(dbConn; body: untyped): untyped">transaction</a></li>
+    title="withDb(body: untyped): untyped">withDb(body: untyped): untyped</a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -220,6 +266,7 @@ function main() {
 </ul>
 
   </div>
+  
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
@@ -232,7 +279,15 @@ function main() {
 <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<a id="RollbackError"></a>
+<div id="NotFoundError">
+<dt><pre><a href="postgres.html#NotFoundError"><span class="Identifier">NotFoundError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">KeyError</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="RollbackError">
 <dt><pre><a href="postgres.html#RollbackError"><span class="Identifier">RollbackError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">CatchableError</span>
   </pre></dt>
 <dd>
@@ -242,127 +297,50 @@ function main() {
 
 
 </dd>
-<a id="NotFoundError"></a>
-<dt><pre><a href="postgres.html#NotFoundError"><span class="Identifier">NotFoundError</span></a> <span class="Other">=</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">KeyError</span></pre></dt>
-<dd>
-
-
-
-</dd>
+</div>
 
 </dl></div>
 <div class="section" id="10">
 <h1><a class="toc-backref" href="#10">Consts</a></h1>
 <dl class="item">
-<a id="dbHostEnv"></a>
+<div id="dbHostEnv">
 <dt><pre><a href="postgres.html#dbHostEnv"><span class="Identifier">dbHostEnv</span></a> <span class="Other">=</span> <span class="StringLit">&quot;DB_HOST&quot;</span></pre></dt>
 <dd>
 
 
 
 </dd>
-<a id="dbUserEnv"></a>
-<dt><pre><a href="postgres.html#dbUserEnv"><span class="Identifier">dbUserEnv</span></a> <span class="Other">=</span> <span class="StringLit">&quot;DB_USER&quot;</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="dbPassEnv"></a>
-<dt><pre><a href="postgres.html#dbPassEnv"><span class="Identifier">dbPassEnv</span></a> <span class="Other">=</span> <span class="StringLit">&quot;DB_PASS&quot;</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="dbNameEnv"></a>
+</div>
+<div id="dbNameEnv">
 <dt><pre><a href="postgres.html#dbNameEnv"><span class="Identifier">dbNameEnv</span></a> <span class="Other">=</span> <span class="StringLit">&quot;DB_NAME&quot;</span></pre></dt>
 <dd>
 
 
 
 </dd>
+</div>
+<div id="dbPassEnv">
+<dt><pre><a href="postgres.html#dbPassEnv"><span class="Identifier">dbPassEnv</span></a> <span class="Other">=</span> <span class="StringLit">&quot;DB_PASS&quot;</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="dbUserEnv">
+<dt><pre><a href="postgres.html#dbUserEnv"><span class="Identifier">dbUserEnv</span></a> <span class="Other">=</span> <span class="StringLit">&quot;DB_USER&quot;</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
 
 </dl></div>
 <div class="section" id="12">
 <h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="getDb"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#getDb"><span class="Identifier">getDb</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbConn</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from <tt class="docutils literal"><span class="pre">DB_HOST</span></tt>, <tt class="docutils literal"><span class="pre">DB_USER</span></tt>, <tt class="docutils literal"><span class="pre">DB_PASS</span></tt>, and <tt class="docutils literal"><span class="pre">DB_NAME</span></tt> environment variables.
-
-</dd>
-<a id="dropDb"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#dropDb"><span class="Identifier">dropDb</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
-                <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">,</span> <span class="Identifier">ReadDbEffect</span><span class="Other">,</span> <span class="Identifier">WriteDbEffect</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Drop the database defined in environment variables.
-
-</dd>
-<a id="createTables,,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#createTables%2C%2CT"><span class="Identifier">createTables</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
-<dd>
-
-Create tables for <a class="reference external" href="#model">Model</a> and its <a class="reference external" href="#model">Model</a> fields.
-
-</dd>
-<a id="insert,,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CT"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
-<dd>
-
-<p>Insert rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.</p>
-<p>By default, if the inserted object's <tt class="docutils literal"><span class="pre">id</span></tt> is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with <tt class="docutils literal"><span class="pre">force = true</span></tt>. </p>
-
-
-</dd>
-<a id="insert,,openArray[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CopenArray%5BT%5D"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
-<dd>
-
-Insert rows for each <a class="reference external" href="#model">Model</a> instance in open array.
-
-</dd>
-<a id="select,,T,string,varargs[DbValue,dbValue]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><a href="postgres.html#NotFoundError"><span class="Identifier">NotFoundError</span></a><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-<p>Populate a <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields from DB.</p>
-<p><tt class="docutils literal"><span class="pre">cond</span></tt> is condition for <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause but with extra features:</p>
-<ul class="simple"><li>use <tt class="docutils literal"><span class="pre">?</span></tt> placeholders and put the actual values in <tt class="docutils literal"><span class="pre">params</span></tt></li>
-<li>use <a class="reference external" href="model.html#table,typedesc[Model]">table</a>, 
-<a class="reference external" href="model.html#col,T,string">col</a>, and <a class="reference external" href="model.html#fCol,T,string">fCol</a> procs 
-instead of hardcoded table and column names</li>
-</ul>
-
-
-</dd>
-<a id="select,,seq[T],string,varargs[DbValue,dbValue]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
-                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma">
-    <span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-<p>Populate a sequence of <a class="reference external" href="#model">Model</a> instances from DB.</p>
-<p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item. </p>
-
-
-</dd>
-<a id="selectAll,,seq[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#selectAll%2C%2Cseq%5BT%5D"><span class="Identifier">selectAll</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-<dd>
-
-<p>Populate a sequence of <a class="reference external" href="#model">Model</a> instances from DB, fetching all rows in the matching table.</p>
-<p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item.</p>
-<p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
-
-
-</dd>
-<a id="count,,typedesc[Model],string,string,varargs[DbValue,dbValue]"></a>
+<div id="count,,typedesc[Model],string,string,varargs[DbValue,dbValue]">
 <dt><pre><span class="Keyword">proc</span> <a href="#count%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">count</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span> <span class="Other">=</span> <span class="StringLit">&quot;*&quot;</span><span class="Other">;</span> <span class="Identifier">dist</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;TRUE&quot;</span><span class="Other">;</span>
            <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">int64</span></pre></dt>
 <dd>
@@ -373,7 +351,163 @@ instead of hardcoded table and column names</li>
 
 
 </dd>
-<a id="sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]"></a>
+</div>
+<div id="createTables,,T">
+<dt><pre><span class="Keyword">proc</span> <a href="#createTables%2C%2CT"><span class="Identifier">createTables</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Create tables for <a class="reference internal" href="#Model">Model</a> and its <a class="reference internal" href="#Model">Model</a> fields.
+
+</dd>
+</div>
+<div id="delete,,T">
+<dt><pre><span class="Keyword">proc</span> <a href="#delete%2C%2CT"><span class="Identifier">delete</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Delete rows for <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields.
+
+</dd>
+</div>
+<div id="delete,,openArray[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#delete%2C%2CopenArray%5BT%5D"><span class="Identifier">delete</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Delete rows for each <a class="reference internal" href="#Model">Model</a> instance in open array.
+
+</dd>
+</div>
+<div id="dropDb">
+<dt><pre><span class="Keyword">proc</span> <a href="#dropDb"><span class="Identifier">dropDb</span></a><span class="Other">(</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbError</span><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">]</span><span class="Other">,</span>
+                <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">,</span> <span class="Identifier">ReadDbEffect</span><span class="Other">,</span> <span class="Identifier">WriteDbEffect</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Drop the database defined in environment variables.
+
+</dd>
+</div>
+<div id="exists,,typedesc[Model],string,varargs[DbValue,dbValue]">
+<dt><pre><span class="Keyword">proc</span> <a href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">exists</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;TRUE&quot;</span><span class="Other">;</span>
+            <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+Check if a row exists in the table.
+
+</dd>
+</div>
+<div id="getDb">
+<dt><pre><span class="Keyword">proc</span> <a href="#getDb"><span class="Identifier">getDb</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbConn</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from <tt class="docutils literal"><span class="pre">DB_HOST</span></tt>, <tt class="docutils literal"><span class="pre">DB_USER</span></tt>, <tt class="docutils literal"><span class="pre">DB_PASS</span></tt>, and <tt class="docutils literal"><span class="pre">DB_NAME</span></tt> environment variables.
+
+</dd>
+</div>
+<div id="insert,,T">
+<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CT"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
+<dd>
+
+<p>Insert rows for <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.</p>
+<p>By default, if the inserted object's <tt class="docutils literal"><span class="pre">id</span></tt> is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with <tt class="docutils literal"><span class="pre">force = true</span></tt>. </p>
+
+
+</dd>
+</div>
+<div id="insert,,openArray[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#insert%2C%2CopenArray%5BT%5D"><span class="Identifier">insert</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Insert rows for each <a class="reference internal" href="#Model">Model</a> instance in open array.
+
+</dd>
+</div>
+<div id="rollback">
+<dt><pre><span class="Keyword">proc</span> <a href="#rollback"><span class="Identifier">rollback</span></a><span class="Other">(</span><span class="Other">)</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <a href="postgres.html#RollbackError"><span class="Identifier">RollbackError</span></a><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+Rollback transaction by raising <a class="reference external" href="#RollbackError">RollbackError</a>.
+
+</dd>
+</div>
+<div id="select,,T,string,varargs[DbValue,dbValue]">
+<dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><a href="postgres.html#NotFoundError"><span class="Identifier">NotFoundError</span></a><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span>.}</pre></dt>
+<dd>
+
+<p>Populate a <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields from DB.</p>
+<p><tt class="docutils literal"><span class="pre">cond</span></tt> is condition for <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause but with extra features:</p>
+<ul class="simple"><li>use <tt class="docutils literal"><span class="pre">?</span></tt> placeholders and put the actual values in <tt class="docutils literal"><span class="pre">params</span></tt></li>
+<li>use <a class="reference external" href="model.html#table,typedesc[Model]">table</a>, 
+<a class="reference external" href="model.html#col,T,string">col</a>, and <a class="reference external" href="model.html#fCol,T,string">fCol</a> procs 
+instead of hardcoded table and column names</li>
+</ul>
+
+
+</dd>
+</div>
+<div id="select,,seq[T],string,varargs[DbValue,dbValue]">
+<dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span>.}</pre></dt>
+<dd>
+
+<p>Populate a sequence of <a class="reference internal" href="#Model">Model</a> instances from DB.</p>
+<p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item. </p>
+
+
+</dd>
+</div>
+<div id="selectAll,,seq[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectAll%2C%2Cseq%5BT%5D"><span class="Identifier">selectAll</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+<p>Populate a sequence of <a class="reference internal" href="#Model">Model</a> instances from DB, fetching all rows in the matching table.</p>
+<p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item.</p>
+<p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
+
+
+</dd>
+</div>
+<div id="selectManyToMany,,M1,seq[J],seq[M2]">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D"><span class="Identifier">selectManyToMany</span></a><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">J</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M2</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span>
+    <span class="Identifier">queryStartEntry</span><span class="Other">:</span> <span class="Identifier">M1</span><span class="Other">;</span> <span class="Identifier">joinModelEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">J</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">queryEndEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M2</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+A convenience proc. Fetches the many-to-many relationship for the entry <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> and returns a seq of all entries connected to <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> in <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>. Requires to also be passed the model connecting the many-to-many relationship via <tt class="docutils literal"><span class="pre"><span class="Identifier">joinModelEntries</span></span></tt>in order to fetch the relationship. The fields on <tt class="docutils literal"><span class="pre"><span class="Identifier">joinModelEntries</span></span></tt> to use for these queries are inferred. Will only compile if the joinModel has exactly one field pointing to the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> as well as exactly one field pointing to the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>. Specify the parameters <tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyStart</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyEnd</span></span></tt> if that is not the case.
+
+</dd>
+</div>
+<div id="selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D%2Cstaticstring%2Cstaticstring"><span class="Identifier">selectManyToMany</span></a><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">J</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M2</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span>
+    <span class="Identifier">queryStartEntry</span><span class="Other">:</span> <span class="Identifier">M1</span><span class="Other">;</span> <span class="Identifier">joinModelEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">J</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">queryEndEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M2</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fkColumnFromJoinToManyStart</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span>
+    <span class="Identifier">fkColumnFromJoinToManyEnd</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Fetches the many-to-many relationship for the entry <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> and returns a seq of all entries connected to <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> in <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>. Requires to also be passed the model connecting the many-to-many relationship via <tt class="docutils literal"><span class="pre"><span class="Identifier">joinModelEntries</span></span></tt>in order to fetch the relationship. Also requires the field on the joinModel that points to the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> via the parameter <tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyStart</span></span></tt>. Also requires the field field on the joinModel that points to the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt> via the parameter <tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyEnd</span></span></tt>. Will not compile if the specified fields on the joinModel do not properly point to the tables of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>.
+
+</dd>
+</div>
+<div id="selectOneToMany,,O,seq[M]">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D"><span class="Identifier">selectOneToMany</span></a><span class="Other">[</span><span class="Identifier">O</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">oneEntry</span><span class="Other">:</span> <span class="Identifier">O</span><span class="Other">;</span>
+    <span class="Identifier">relatedEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+A convenience proc. Fetches all entries of a &quot;many&quot; side from a one-to-many relationship between the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. The field used to fetch the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> is automatically inferred as long as the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> model has only one field pointing to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Will not compile if <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> has multiple fields that point to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Specify the <tt class="docutils literal"><span class="pre"><span class="Identifier">foreignKeyFieldName</span></span></tt> parameter in such a case.
+
+</dd>
+</div>
+<div id="selectOneToMany,,O,seq[M],staticstring">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D%2Cstaticstring"><span class="Identifier">selectOneToMany</span></a><span class="Other">[</span><span class="Identifier">O</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">oneEntry</span><span class="Other">:</span> <span class="Identifier">O</span><span class="Other">;</span>
+    <span class="Identifier">relatedEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">foreignKeyFieldName</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Fetches all entries of a &quot;many&quot; side from a one-to-many relationship between the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. It is ensured at compile time that the field specified here is a valid foreign key field on oneEntry pointing to the table of the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>-model.
+
+</dd>
+</div>
+<div id="sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]">
 <dt><pre><span class="Keyword">proc</span> <a href="#sum%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">sum</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">col</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span> <span class="Identifier">dist</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;TRUE&quot;</span><span class="Other">;</span>
          <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">float</span></pre></dt>
 <dd>
@@ -383,64 +517,29 @@ instead of hardcoded table and column names</li>
 
 
 </dd>
-<a id="exists,,typedesc[Model],string,varargs[DbValue,dbValue]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">exists</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span> <span class="Other">=</span> <span class="StringLit">&quot;TRUE&quot;</span><span class="Other">;</span>
-            <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-Check if a row exists in the table.
-
-</dd>
-<a id="update,,T"></a>
+</div>
+<div id="update,,T">
 <dt><pre><span class="Keyword">proc</span> <a href="#update%2C%2CT"><span class="Identifier">update</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Update rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
+Update rows for <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields.
 
 </dd>
-<a id="update,,openArray[T]"></a>
+</div>
+<div id="update,,openArray[T]">
 <dt><pre><span class="Keyword">proc</span> <a href="#update%2C%2CopenArray%5BT%5D"><span class="Identifier">update</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Update rows for each <a class="reference external" href="#model">Model</a> instance in open array.
+Update rows for each <a class="reference internal" href="#Model">Model</a> instance in open array.
 
 </dd>
-<a id="delete,,T"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#delete%2C%2CT"><span class="Identifier">delete</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
-<dd>
-
-Delete rows for <a class="reference external" href="#model">Model</a> instance and its <a class="reference external" href="#model">Model</a> fields.
-
-</dd>
-<a id="delete,,openArray[T]"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#delete%2C%2CopenArray%5BT%5D"><span class="Identifier">delete</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-<dd>
-
-Delete rows for each <a class="reference external" href="#model">Model</a> instance in open array.
-
-</dd>
-<a id="rollback"></a>
-<dt><pre><span class="Keyword">proc</span> <a href="#rollback"><span class="Identifier">rollback</span></a><span class="Other">(</span><span class="Other">)</span> <span><span class="Other">{</span><span class="Other pragmadots">...</span><span class="Other">}</span></span><span class="pragmawrap"><span class="Other">{.</span><span class="pragma"><span class="Identifier">raises</span><span class="Other">:</span> <a href="postgres.html#RollbackError"><span class="Identifier">RollbackError</span></a><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span><span class="Other">.}</span></span></pre></dt>
-<dd>
-
-Rollback transaction by raising <a class="reference external" href="#RollbackError">RollbackError</a>.
-
-</dd>
+</div>
 
 </dl></div>
 <div class="section" id="18">
 <h1><a class="toc-backref" href="#18">Templates</a></h1>
 <dl class="item">
-<a id="withDb.t,untyped"></a>
-<dt><pre><span class="Keyword">template</span> <a href="#withDb.t%2Cuntyped"><span class="Identifier">withDb</span></a><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
-<dd>
-
-<p>Wrapper for DB operations.</p>
-<p>Creates a <tt class="docutils literal"><span class="pre">DbConn</span></tt> with <a class="reference external" href="#getDb">getDb</a> as <tt class="docutils literal"><span class="pre">db</span></tt> variable, runs your code in a <tt class="docutils literal"><span class="pre">try</span></tt> block, and closes <tt class="docutils literal"><span class="pre">db</span></tt> afterward. </p>
-
-
-</dd>
-<a id="transaction.t,,untyped"></a>
+<div id="transaction.t,,untyped">
 <dt><pre><span class="Keyword">template</span> <a href="#transaction.t%2C%2Cuntyped"><span class="Identifier">transaction</span></a><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
 <dd>
 
@@ -450,12 +549,23 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
 
 
 </dd>
+</div>
+<div id="withDb.t,untyped">
+<dt><pre><span class="Keyword">template</span> <a href="#withDb.t%2Cuntyped"><span class="Identifier">withDb</span></a><span class="Other">(</span><span class="Identifier">body</span><span class="Other">:</span> <span class="Identifier">untyped</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">untyped</span></pre></dt>
+<dd>
+
+<p>Wrapper for DB operations.</p>
+<p>Creates a <tt class="docutils literal"><span class="pre">DbConn</span></tt> with <a class="reference external" href="#getDb">getDb</a> as <tt class="docutils literal"><span class="pre">db</span></tt> variable, runs your code in a <tt class="docutils literal"><span class="pre">try</span></tt> block, and closes <tt class="docutils literal"><span class="pre">db</span></tt> afterward. </p>
+
+
+</dd>
+</div>
 
 </dl></div>
 <div class="section" id="19">
 <h1><a class="toc-backref" href="#19">Exports</a></h1>
 <dl class="item">
-<a href="pragmasutils.html#hasCustomPragma.m,typed,"><span class="Identifier">hasCustomPragma</span></a>, <a href="pragmasutils.html#getCustomPragmaVal.m,typed,"><span class="Identifier">getCustomPragmaVal</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[DateTime]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Model]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbValue,T"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbValue,StringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Option[T]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[StringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeFloat]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float64]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[bool]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[string]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Option[T]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,Option[T: Model]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[StringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Model]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[DateTime]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[PaddedStringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[string]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int16]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[bool]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeInteger]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int64]"><span class="Identifier">dbType</span></a>
+<a href="pragmasutils.html#hasCustomPragma.m,typed,"><span class="Identifier">hasCustomPragma</span></a>, <a href="pragmasutils.html#getCustomPragmaVal.m,typed,"><span class="Identifier">getCustomPragmaVal</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Model]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[Option[T]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbValue,T"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbValue,StringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeInteger]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[PaddedStringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[string]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[string]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[DateTime]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[StringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Option[T]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,Option[T: Model]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float64]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[Model]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[bool]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[StringOfCap[_]]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[float32]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[_]"><span class="Identifier">dbValue</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[bool]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[DateTime]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int16]"><span class="Identifier">dbType</span></a>, <a href="private/postgres/dbtypes.html#to,,typedesc[SomeFloat]"><span class="Identifier">to</span></a>, <a href="private/postgres/dbtypes.html#dbType,typedesc[int64]"><span class="Identifier">dbType</span></a>
 </dl></div>
 
   </div>
@@ -465,7 +575,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-02-22 11:41:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-03-07 21:15:25 UTC</small>
       </div>
     </div>
   </div>

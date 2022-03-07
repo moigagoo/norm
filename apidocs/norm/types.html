@@ -17,7 +17,7 @@
 <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600' rel='stylesheet' type='text/css'/>
 
 <!-- CSS -->
-<title>norm/types</title>
+<title>src/norm/types</title>
 <link rel="stylesheet" type="text/css" href="../nimdoc.out.css">
 
 <script type="text/javascript" src="../dochack.js"></script>
@@ -34,7 +34,6 @@ function main() {
     }
   }
 
-  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
   function switchTheme(e) {
       if (e.target.checked) {
           document.documentElement.setAttribute('data-theme', 'dark');
@@ -45,24 +44,32 @@ function main() {
       }
   }
 
-  toggleSwitch.addEventListener('change', switchTheme, false);
+  const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+  if (toggleSwitch !== null) {
+    toggleSwitch.addEventListener('change', switchTheme, false);
+  }
 
-  const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+  var currentTheme = localStorage.getItem('theme');
+  if (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    currentTheme = 'dark';
+  }
   if (currentTheme) {
     document.documentElement.setAttribute('data-theme', currentTheme);
 
-    if (currentTheme === 'dark') {
+    if (currentTheme === 'dark' && toggleSwitch !== null) {
       toggleSwitch.checked = true;
     }
   }
 }
+
+window.addEventListener('DOMContentLoaded', main);
 </script>
 
 </head>
-<body onload="main()">
+<body>
 <div class="document" id="documentId">
   <div class="container">
-    <h1 class="title">norm/types</h1>
+    <h1 class="title">src/norm/types</h1>
     <div class="row">
   <div class="three columns">
   <div class="theme-switch-wrapper">
@@ -94,38 +101,38 @@ function main() {
 <li>
   <a class="reference reference-toplevel" href="#7" id="57">Types</a>
   <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#StringOfCap"
-    title="StringOfCap[C] = distinct string">StringOfCap</a></li>
-  <li><a class="reference" href="#PaddedStringOfCap"
+      <li><a class="reference" href="#PaddedStringOfCap"
     title="PaddedStringOfCap[C] = distinct string">PaddedStringOfCap</a></li>
+  <li><a class="reference" href="#StringOfCap"
+    title="StringOfCap[C] = distinct string">StringOfCap</a></li>
 
   </ul>
 </li>
 <li>
-  <a class="reference reference-toplevel" href="#13" id="63">Funcs</a>
+  <a class="reference reference-toplevel" href="#12" id="62">Procs</a>
   <ul class="simple simple-toc-section">
       <ul class="simple nested-toc-section">$
-      <li><a class="reference" href="#%24%2CStringOfCap%5B_%5D"
-    title="`$`[_](s: StringOfCap[_]): string">$,<wbr>StringOfCap[_]</a></li>
-  <li><a class="reference" href="#%24%2CPaddedStringOfCap%5B_%5D"
-    title="`$`[_](s: PaddedStringOfCap[_]): string">$,<wbr>PaddedStringOfCap[_]</a></li>
+      <li><a class="reference" href="#%24%2CPaddedStringOfCap%5B_%5D"
+    title="`$`[_](s: PaddedStringOfCap[_]): string">`$`[_](s: PaddedStringOfCap[_]): string</a></li>
+  <li><a class="reference" href="#%24%2CStringOfCap%5B_%5D"
+    title="`$`[_](s: StringOfCap[_]): string">`$`[_](s: StringOfCap[_]): string</a></li>
+
+  </ul>
+  <ul class="simple nested-toc-section">==
+      <li><a class="reference" href="#%3D%3D%2CPaddedStringOfCap%5B_%5D%2CPaddedStringOfCap%5B_%5D"
+    title="`==`[_](x, y: PaddedStringOfCap[_]): bool">`==`[_](x, y: PaddedStringOfCap[_]): bool</a></li>
+  <li><a class="reference" href="#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D"
+    title="`==`[_](x, y: StringOfCap[_]): bool">`==`[_](x, y: StringOfCap[_]): bool</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">newPaddedStringOfCap
       <li><a class="reference" href="#newPaddedStringOfCap%2Cstring"
-    title="newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]">newPaddedStringOfCap,<wbr>string</a></li>
+    title="newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]">newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">newStringOfCap
       <li><a class="reference" href="#newStringOfCap%2Cstring"
-    title="newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]">newStringOfCap,<wbr>string</a></li>
-
-  </ul>
-  <ul class="simple nested-toc-section">==
-      <li><a class="reference" href="#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D"
-    title="`==`[_](x, y: StringOfCap[_]): bool">==,<wbr>StringOfCap[_],<wbr>StringOfCap[_]</a></li>
-  <li><a class="reference" href="#%3D%3D%2CPaddedStringOfCap%5B_%5D%2CPaddedStringOfCap%5B_%5D"
-    title="`==`[_](x, y: PaddedStringOfCap[_]): bool">==,<wbr>PaddedStringOfCap[_],<wbr>PaddedStringOfCap[_]</a></li>
+    title="newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]">newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]</a></li>
 
   </ul>
 
@@ -135,6 +142,7 @@ function main() {
 </ul>
 
   </div>
+  
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
@@ -142,67 +150,75 @@ function main() {
   <div class="section" id="7">
 <h1><a class="toc-backref" href="#7">Types</a></h1>
 <dl class="item">
-<a id="StringOfCap"></a>
-<dt><pre><a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Identifier">string</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="PaddedStringOfCap"></a>
+<div id="PaddedStringOfCap">
 <dt><pre><a href="types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
 
 </dd>
+</div>
+<div id="StringOfCap">
+<dt><pre><a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span> <span class="Other">=</span> <span class="Keyword">distinct</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
 
 </dl></div>
-<div class="section" id="13">
-<h1><a class="toc-backref" href="#13">Funcs</a></h1>
+<div class="section" id="12">
+<h1><a class="toc-backref" href="#12">Procs</a></h1>
 <dl class="item">
-<a id="newStringOfCap,string"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#newStringOfCap%2Cstring"><span class="Identifier">newStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="newPaddedStringOfCap,string"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#newPaddedStringOfCap%2Cstring"><span class="Identifier">newPaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <a href="types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="==,StringOfCap[_],StringOfCap[_]"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="==,PaddedStringOfCap[_],PaddedStringOfCap[_]"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#%3D%3D%2CPaddedStringOfCap%5B_%5D%2CPaddedStringOfCap%5B_%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="$,StringOfCap[_]"></a>
-<dt><pre><span class="Keyword">func</span> <a href="#%24%2CStringOfCap%5B_%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
-<dd>
-
-
-
-</dd>
-<a id="$,PaddedStringOfCap[_]"></a>
+<div id="$,PaddedStringOfCap[_]">
 <dt><pre><span class="Keyword">func</span> <a href="#%24%2CPaddedStringOfCap%5B_%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
 
 </dd>
+</div>
+<div id="$,StringOfCap[_]">
+<dt><pre><span class="Keyword">func</span> <a href="#%24%2CStringOfCap%5B_%5D"><span class="Identifier">`$`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">s</span><span class="Other">:</span> <a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="==,PaddedStringOfCap[_],PaddedStringOfCap[_]">
+<dt><pre><span class="Keyword">func</span> <a href="#%3D%3D%2CPaddedStringOfCap%5B_%5D%2CPaddedStringOfCap%5B_%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="==,StringOfCap[_],StringOfCap[_]">
+<dt><pre><span class="Keyword">func</span> <a href="#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D"><span class="Identifier">`==`</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">x</span><span class="Other">,</span> <span class="Identifier">y</span><span class="Other">:</span> <a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="newPaddedStringOfCap,string">
+<dt><pre><span class="Keyword">func</span> <a href="#newPaddedStringOfCap%2Cstring"><span class="Identifier">newPaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <a href="types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="newStringOfCap,string">
+<dt><pre><span class="Keyword">func</span> <a href="#newStringOfCap%2Cstring"><span class="Identifier">newStringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">:</span> <span class="Identifier">static</span><span class="Other">[</span><span class="Identifier">int</span><span class="Other">]</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span> <span class="Other">=</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">:</span> <a href="types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Identifier">C</span><span class="Other">]</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
 
 </dl></div>
 
@@ -213,7 +229,7 @@ function main() {
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-02-22 11:41:09 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-03-07 21:15:25 UTC</small>
       </div>
     </div>
   </div>

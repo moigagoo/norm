@@ -199,7 +199,7 @@
   sugar</code></pre>
 <p>For example, here's how you insert ten rows without having to create ten stale objects:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span> .. <span class="hljs-number">10</span>:
-  <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup:
+  <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup <span class="hljs-keyword">do</span>:
     dbConn.insert
 <span class="hljs-keyword">echo</span>()</code></pre>
 <pre><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['1@example.com']
@@ -215,7 +215,7 @@ INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['10@example.com']
 
 </samp></pre>
 <p><code>dup</code> lets you call multiple procs, which gives a pleasant interface for row filter and bulk manipulation:</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">discard</span> @[newUser()].dup:
+<pre><code class="nim hljs"><span class="hljs-keyword">discard</span> @[newUser()].dup <span class="hljs-keyword">do</span>:
   dbConn.select(<span class="hljs-string">&quot;email LIKE ?&quot;</span>, <span class="hljs-string">&quot;_@example.com&quot;</span>)
   dbConn.delete
 <span class="hljs-keyword">echo</span>()</code></pre>

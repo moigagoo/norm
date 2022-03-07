@@ -1,1 +1,2 @@
-dot	norm/private/dot.html#dot.m,ref.,string	dot: dot(obj: ref object; fld: string): untyped	
+dot	norm/private/dot.html#dot.m,typed,string	dot: dot(obj: typed; fld: string): untyped	
+hasField	norm/private/dot.html#hasField.t,typed,staticstring	dot: hasField(t: typed; fieldName: static string): bool	

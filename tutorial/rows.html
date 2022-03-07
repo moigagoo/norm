@@ -238,7 +238,7 @@ dbConn.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;<
 </samp></pre>
 <p>Let's examine how Norm populated <code>customerBar</code>:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar[]</code></pre>
-<pre><samp>(name: Some(&quot;Sam&quot;), user: ..., id: 3)
+<pre><samp>(name: some(&quot;Sam&quot;), user: ..., id: 3)
 </samp></pre>
 <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre>
 <pre><samp>(email: &quot;bar@bar.bar&quot;, id: 2)
@@ -254,9 +254,9 @@ dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;
 <pre><code class="nim hljs"><span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo:
   <span class="hljs-keyword">echo</span> customer[]
   <span class="hljs-keyword">echo</span> customer.user[]</code></pre>
-<pre><samp>(name: Some(&quot;Alice&quot;), user: ..., id: 1)
+<pre><samp>(name: some(&quot;Alice&quot;), user: ..., id: 1)
 (email: &quot;foo@foo.foo&quot;, id: 1)
-(name: Some(&quot;Bob&quot;), user: ..., id: 2)
+(name: some(&quot;Bob&quot;), user: ..., id: 2)
 (email: &quot;foo@foo.foo&quot;, id: 1)
 </samp></pre>
 <h2>Count Rows</h2>

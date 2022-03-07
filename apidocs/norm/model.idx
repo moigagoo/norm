@@ -16,3 +16,5 @@ cols	norm/model.html#cols,T	model: cols[T: Model](obj: T; force = false): seq[st
 rfCols	norm/model.html#rfCols,T,seq[string]	model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]	
 joinGroups	norm/model.html#joinGroups,T,seq[string]	model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[\n    tuple[tbl, tAls, lFld, rFld: string]]	
 checkRo	norm/model.html#checkRo,typedesc[Model]	model: checkRo(T: typedesc[Model])	
+getRelatedFieldNameTo	norm/model.html#getRelatedFieldNameTo,typedesc[S],typedesc[T]	model: getRelatedFieldNameTo[S: Model; T: Model](source: typedesc[S];\n    target: typedesc[T]): string	
+validateFkField	norm/model.html#validateFkField,staticstring,typedesc[S],typedesc[T]	model: validateFkField[S, T: Model](fkFieldName: static string; source: typedesc[S];\n                             target: typedesc[T]): bool	

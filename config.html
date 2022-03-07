@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
 SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['foo@foo.foo']
-(name: Some(&quot;Alice&quot;), user: ..., id: 1)
+(name: some(&quot;Alice&quot;), user: ..., id: 1)
 </samp></pre>
 <p><code>withDb</code> template is even handier as it lets you run code without explicitly creating or closing a DB connection:</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">var</span>
@@ -232,7 +232,7 @@ CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['bar@bar.bar']
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]
 SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['bar@bar.bar']
-(name: Some(&quot;Alice&quot;), user: ..., id: 1)
+(name: some(&quot;Alice&quot;), user: ..., id: 1)
 </samp></pre>
 
                     </main>
