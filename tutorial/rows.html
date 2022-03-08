@@ -225,7 +225,8 @@ INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Sam', 2]
 </samp></pre>
 <p>When Norm attempts to insert <code>alice</code>, it detects that <code>userFoo</code> that it referenced in it has not been inserted yet, so there's no <code>id</code> to store as foreign key. So, Norm inserts <code>userFoo</code> automatically and then uses its new <code>id</code> (in this case, 1) as the foreign key value.</p>
 <p>With <code>bob</code>, there's no need to do that since <code>userFoo</code> is already in the database.</p>
-<h2>Select Rows</h2>
+<h2>Select Row</h2>
+<h3>Select in general</h3>
 <p>To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call <code>select</code>.</p>
 <p>One curious thing about <code>select</code> is that its result depends not only on the condition you pass but also on the container. If the container has <code>Model</code> fields that are not <code>None</code>, Norm will select the related rows in a single <code>JOIN</code> query giving you a fully populated model object. However, if the container has a <code>none Model</code> field, it is just ignored.</p>
 <p>In other words, Norm will automatically handle the &quot;n+1&quot; problem.</p>
@@ -258,6 +259,103 @@ dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;
 (email: &quot;foo@foo.foo&quot;, id: 1)
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
 (email: &quot;foo@foo.foo&quot;, id: 1)
+</samp></pre>
+<h3>Selecting Many-To-One/One-To-Many relationships</h3>
+<p>Imagine you had a Many-To-One relationship between two models, like we have with <code>Customer</code> being the many-model and <code>User</code> being the one-model, where one user can have many customers.</p>
+<p>If you have a user and wanted to query all of their customers, you couldn't do so by just making a query for the user, as that model doesn't have a &quot;seq[Customer]&quot; field that norm could resolve.</p>
+<p>You could query the users for a given customer separately using the mechanisms of a general select statement.</p>
+<p>However, you can also query them separately using a convenience proc <code>selectOneToMany</code> to do all of that work for you.</p>
+<p>Just provide the &quot;one&quot;-side of the relationship (user), a seq of the &quot;many-model&quot; (seq[Customer]) to populate as before and the name of the field on the &quot;many-model&quot; (&quot;user&quot; as that's the name of field on Customer pointing to User) that points to the &quot;one-model&quot; (User).</p>
+<p>If your &quot;many-model&quot; (Customer) only has a single field pointing to the one model (User) you can even forego providing the field-name, norm will infer it for you!</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">var</span> customersFoo2 = @[newCustomer()]
+dbConn.selectOneToMany(userFoo, customersFoo2, <span class="hljs-string">&quot;user&quot;</span>)
+<span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo2:
+  <span class="hljs-keyword">echo</span> customer[]
+<span class="hljs-keyword">var</span> customersFoo3 = @[newCustomer()]
+dbConn.selectOneToMany(userFoo, customersFoo3)
+<span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo3:
+  <span class="hljs-keyword">echo</span> customer[]</code></pre>
+<pre><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
+(name: some(&quot;Alice&quot;), user: ..., id: 1)
+(name: some(&quot;Bob&quot;), user: ..., id: 2)
+SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
+(name: some(&quot;Alice&quot;), user: ..., id: 1)
+(name: some(&quot;Bob&quot;), user: ..., id: 2)
+</samp></pre>
+<p>An additional benefit of using this <code>selectOneToMany</code> is that with it, norm will validate whether this query is correct at compile time!</p>
+<p>In the first approach, if Customer doesn't have a field called &quot;user&quot; or if that field does not have any model-type that points to the &quot;User&quot;-table, nor an fk-pragma to any such type, then the code will throw an error with a helpful message at compile-time.</p>
+<p>In the second approach, if Customer doesn't have any field of type &quot;User&quot; or any other model-type that points to the same table as &quot;User&quot;, it will also not compile while throwing a helpful error message.</p>
+<h3>Selecting Many-To-Many relationships</h3>
+<p>Imagine if you had a Many-To-Many relationship between two models (e.g. Users and Groups) that is recorded on an &quot;join-model&quot; (e.g. UserGroup), where one user can be in many groups and a group can have many users.</p>
+<p>If you have a user and want to query all of its groups, you can do so via the general select statement mechanism.</p>
+<p>Similarly to <code>selectOneToMany</code> there is a helper proc <code>selectManyToMany</code> here for convenience.</p>
+<p>Just provide the side whose model entry you have (e.g. User or Group), a seq of the join-model (e.g. UserGroup), a seq of the entries your trying to query (e.g. seq[Group] or seq[User]), the field name on the join-model pointing to the model entry you have (e.g. &quot;user&quot; or &quot;group&quot;) and the field name on the join-model pointing to the model of the entries you're trying to query (e.g. &quot;group&quot; or &quot;user&quot;).</p>
+<p>As before, if your join-model (e.g. UserGroup) only has a single field pointing to each of the two many models (e.g. User and Group), you can forego the field names and let norm infer them for you.</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
+  norm / model
+
+<span class="hljs-keyword">type</span>
+  <span class="hljs-type">Group</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name*: <span class="hljs-built_in">string</span>
+
+  <span class="hljs-type">UserGroup</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    user*: <span class="hljs-type">User</span>
+    membershipGroup*: <span class="hljs-type">Group</span>
+
+<span class="hljs-keyword">func</span> newGroup*(name = <span class="hljs-string">&quot;&quot;</span>): <span class="hljs-type">Group</span> =
+  <span class="hljs-type">Group</span>(name: name)
+
+<span class="hljs-keyword">func</span> newUserGroup*(user = newUser(); group = newGroup()): <span class="hljs-type">UserGroup</span> =
+  <span class="hljs-type">UserGroup</span>(user: user, membershipGroup: group)
+
+dbConn.createTables(newGroup())
+dbConn.createTables(newUser())
+dbConn.createTables(newUserGroup())
+<span class="hljs-keyword">var</span>
+  groupFoo = newGroup(<span class="hljs-string">&quot;groupFoo&quot;</span>)
+  groupBar = newGroup(<span class="hljs-string">&quot;groupBar&quot;</span>)
+  userFooGroupFooMembership = newUserGroup(userFoo, groupFoo)
+  userBarGroupFooMembership = newUserGroup(userBar, groupFoo)
+  userFooGroupBarMembership = newUserGroup(userFoo, groupBar)
+with dbConn:
+  insert groupFoo
+  insert groupBar
+  insert userFooGroupFooMembership
+  insert userBarGroupFooMembership
+  insert userFooGroupBarMembership
+<span class="hljs-keyword">var</span> userFooGroupMemberships: <span class="hljs-built_in">seq</span>[<span class="hljs-type">UserGroup</span>] = @[newUserGroup()]
+<span class="hljs-keyword">var</span> userFooGroups: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Group</span>] = @[newGroup()]
+dbConn.selectManyToMany(userFoo, userFooGroupMemberships, userFooGroups, <span class="hljs-string">&quot;user&quot;</span>,
+                        <span class="hljs-string">&quot;membershipGroup&quot;</span>)
+<span class="hljs-keyword">for</span> group <span class="hljs-keyword">in</span> userFooGroups:
+  <span class="hljs-keyword">echo</span> group[]
+<span class="hljs-keyword">var</span> userFooGroupMemberships2: <span class="hljs-built_in">seq</span>[<span class="hljs-type">UserGroup</span>] = @[newUserGroup()]
+<span class="hljs-keyword">var</span> userFooGroups2: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Group</span>] = @[newGroup()]
+dbConn.selectManyToMany(userFoo, userFooGroupMemberships2, userFooGroups2)
+<span class="hljs-keyword">for</span> group <span class="hljs-keyword">in</span> userFooGroups2:
+  <span class="hljs-keyword">echo</span> group[]</code></pre>
+<pre><samp>CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+CREATE TABLE IF NOT EXISTS &quot;UserGroup&quot;(user INTEGER NOT NULL, membershipGroup INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id), FOREIGN KEY(membershipGroup) REFERENCES &quot;Group&quot;(id))
+INSERT INTO &quot;Group&quot; (name) VALUES(?) &lt;- @['groupFoo']
+INSERT INTO &quot;Group&quot; (name) VALUES(?) &lt;- @['groupBar']
+Object ID is not 0, skipping insertion. Type: User, ID: 1
+Object ID is not 0, skipping insertion. Type: Group, ID: 1
+INSERT INTO &quot;UserGroup&quot; (user, membershipGroup) VALUES(?, ?) &lt;- @[1, 1]
+Object ID is not 0, skipping insertion. Type: User, ID: 2
+Object ID is not 0, skipping insertion. Type: Group, ID: 1
+INSERT INTO &quot;UserGroup&quot; (user, membershipGroup) VALUES(?, ?) &lt;- @[2, 1]
+Object ID is not 0, skipping insertion. Type: User, ID: 1
+Object ID is not 0, skipping insertion. Type: Group, ID: 2
+INSERT INTO &quot;UserGroup&quot; (user, membershipGroup) VALUES(?, ?) &lt;- @[1, 2]
+SELECT &quot;UserGroup&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;UserGroup&quot;.membershipGroup, &quot;membershipGroup&quot;.name, &quot;membershipGroup&quot;.id, &quot;UserGroup&quot;.id FROM &quot;UserGroup&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;UserGroup&quot;.user = &quot;user&quot;.id LEFT JOIN &quot;Group&quot; AS &quot;membershipGroup&quot; ON &quot;UserGroup&quot;.membershipGroup = &quot;membershipGroup&quot;.id WHERE &quot;UserGroup&quot;.user = ? &lt;- [1]
+(name: &quot;groupFoo&quot;, id: 1)
+(name: &quot;groupBar&quot;, id: 2)
+SELECT &quot;UserGroup&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;UserGroup&quot;.membershipGroup, &quot;membershipGroup&quot;.name, &quot;membershipGroup&quot;.id, &quot;UserGroup&quot;.id FROM &quot;UserGroup&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;UserGroup&quot;.user = &quot;user&quot;.id LEFT JOIN &quot;Group&quot; AS &quot;membershipGroup&quot; ON &quot;UserGroup&quot;.membershipGroup = &quot;membershipGroup&quot;.id WHERE &quot;UserGroup&quot;.user = ? &lt;- [1]
+(name: &quot;groupFoo&quot;, id: 1)
+(name: &quot;groupBar&quot;, id: 2)
 </samp></pre>
 <h2>Count Rows</h2>
 <p>Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.</p>

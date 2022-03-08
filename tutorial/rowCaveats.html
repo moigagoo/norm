@@ -196,12 +196,9 @@
                         <h1>Caveats</h1>
 <p>There are some caveats when working with Norm that you need to consider and strategies to work around them.</p>
 <h2>Managing Data for Many-to-Many Relationships</h2>
-<p>Support for Many-To-Many relationships has not yet been reached. You will have to set-up and manage the necessary &quot;glue&quot;-models yourself as if they were regular models.</p>
-<h2>Fetching Data From Many-to-One, Many-to-Many and Unidirectional One-to-One Relationships</h2>
-<p>One of the biggest caveats will be around fetching data from relationships where your model does not have a foreign key field to the other model whose data you want to query. There is no direct solution for this, but various ways to work around this.</p>
-<h3>Fetching Data for Simple Many-to-One/Many-to-Many Relationships</h3>
-<p>Say we have a <code>Producer</code> that produces various <code>Products</code>, a classic One (Producer) to Many (Products) relationship.
-If you wanted to query the producer and all of their products in one go, you can still do that, but the other way around. Instead of querying for a producer and fetching all their products, you can query for all products of a given producer and fetch the data of the producer as shown in the Tutorial section.</p>
+<p>Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary &quot;glue&quot;-models yourself as if they were regular models.</p>
+<h2>Fetching data for more complex Many-To-One/Many-To-Many relationships</h2>
+<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
 <pre><code class="nim hljs"><span class="hljs-keyword">import</span>
   std / json
 
@@ -230,15 +227,7 @@ dbConn.createTables(newProduct())
 dbConn.insert(alex)
 <span class="hljs-keyword">var</span> firstClassSpaghetti = newProduct(<span class="hljs-string">&quot;The best spaghetti&quot;</span>, alex)
 dbConn.insert(firstClassSpaghetti)
-<span class="hljs-keyword">var</span> producerProducts: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Product</span>] = @[newProduct()]
-dbConn.select(producerProducts, <span class="hljs-string">&quot;Product.producedBy = ?&quot;</span>, alex.id)
-<span class="hljs-keyword">echo</span> %*producerProducts</code></pre>
-<pre><samp>[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]
-</samp></pre>
-<p>Keep in mind though, that every <code>Producer</code> in a <code>Product</code> type will be its own object. Thus, if you were to manipulate the <code>Producer</code> object in the first entry in the <code>producerProducts</code> seq, that change will not be reflected in any of the other instances within that seq.</p>
-<h3>Fetching data for more complex Many-To-One/Many-To-Many relationships</h3>
-<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">type</span>
+<span class="hljs-keyword">type</span>
   <span class="hljs-type">Employee</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
     name: <span class="hljs-built_in">string</span>
     employer: <span class="hljs-type">Producer</span>
