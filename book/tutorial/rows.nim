@@ -97,6 +97,34 @@ nbCode:
     echo customer.user[]
 
 nbText: """
+
+If you query relationships that are nested, such as when customers can have pets and you want to query all pets of all customers of users with a specific email address, you will need  to concatenate the foreign-key fields, separeted by a `_` in your query.
+"""
+
+nbCode:
+  import norm/model
+
+  type Pet* = ref object of Model
+    name*: string
+    owner*: Customer
+
+  func newPet*(name = "", owner = newCustomer()): Pet =
+    Pet(name: name, owner: owner)
+  
+  dbConn.createTables(newPet())
+  
+  var fluffi: Pet = newPet("Fluffi", bob)
+  dbConn.insert(fluffi)
+
+
+  var petsFoo = @[newPet()]
+  dbConn.select(petsFoo, "owner_user.email LIKE ?", "foo%")
+
+  for pet in petsFoo:
+    echo pet[]
+
+nbText: """
+
 ### Selecting Many-To-One/One-To-Many relationships
 Imagine you had a Many-To-One relationship between two models, like we have with `Customer` being the many-model and `User` being the one-model, where one user can have many customers. 
 
@@ -147,8 +175,6 @@ As before, if your join-model (e.g. UserGroup) only has a single field pointing 
 """
 
 nbCode:
-  import norm/model
-
   type
     Group* = ref object of Model
       name*: string
