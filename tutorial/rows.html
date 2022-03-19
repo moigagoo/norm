@@ -260,6 +260,33 @@ dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
 (email: &quot;foo@foo.foo&quot;, id: 1)
 </samp></pre>
+<p>If you query relationships that are nested, such as when customers can have pets and you want to query all pets of all customers of users with a specific email address, you will need  to concatenate the foreign-key fields, separeted by a <code>_</code> in your query.</p>
+<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
+  norm / model
+
+<span class="hljs-keyword">type</span>
+  <span class="hljs-type">Pet</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name*: <span class="hljs-built_in">string</span>
+    owner*: <span class="hljs-type">Customer</span>
+
+<span class="hljs-keyword">func</span> newPet*(name = <span class="hljs-string">&quot;&quot;</span>; owner = newCustomer()): <span class="hljs-type">Pet</span> =
+  <span class="hljs-type">Pet</span>(name: name, owner: owner)
+
+dbConn.createTables(newPet())
+<span class="hljs-keyword">var</span> fluffi: <span class="hljs-type">Pet</span> = newPet(<span class="hljs-string">&quot;Fluffi&quot;</span>, bob)
+dbConn.insert(fluffi)
+<span class="hljs-keyword">var</span> petsFoo = @[newPet()]
+dbConn.select(petsFoo, <span class="hljs-string">&quot;owner_user.email LIKE ?&quot;</span>, <span class="hljs-string">&quot;foo%&quot;</span>)
+<span class="hljs-keyword">for</span> pet <span class="hljs-keyword">in</span> petsFoo:
+  <span class="hljs-keyword">echo</span> pet[]</code></pre>
+<pre><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
+CREATE TABLE IF NOT EXISTS &quot;Pet&quot;(name TEXT NOT NULL, owner INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(owner) REFERENCES &quot;Customer&quot;(id))
+Object ID is not 0, skipping insertion. Type: Customer, ID: 2
+INSERT INTO &quot;Pet&quot; (name, owner) VALUES(?, ?) &lt;- @['Fluffi', 2]
+SELECT &quot;Pet&quot;.name, &quot;Pet&quot;.owner, &quot;owner&quot;.name, &quot;owner&quot;.user, &quot;owner_user&quot;.email, &quot;owner_user&quot;.id, &quot;owner&quot;.id, &quot;Pet&quot;.id FROM &quot;Pet&quot; LEFT JOIN &quot;Customer&quot; AS &quot;owner&quot; ON &quot;Pet&quot;.owner = &quot;owner&quot;.id LEFT JOIN &quot;User&quot; AS &quot;owner_user&quot; ON &quot;owner&quot;.user = &quot;owner_user&quot;.id WHERE owner_user.email LIKE ? &lt;- ['foo%']
+(name: &quot;Fluffi&quot;, owner: ..., id: 1)
+</samp></pre>
 <h3>Selecting Many-To-One/One-To-Many relationships</h3>
 <p>Imagine you had a Many-To-One relationship between two models, like we have with <code>Customer</code> being the many-model and <code>User</code> being the one-model, where one user can have many customers.</p>
 <p>If you have a user and wanted to query all of their customers, you couldn't do so by just making a query for the user, as that model doesn't have a &quot;seq[Customer]&quot; field that norm could resolve.</p>
@@ -291,10 +318,7 @@ SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.em
 <p>Similarly to <code>selectOneToMany</code> there is a helper proc <code>selectManyToMany</code> here for convenience.</p>
 <p>Just provide the side whose model entry you have (e.g. User or Group), a seq of the join-model (e.g. UserGroup), a seq of the entries your trying to query (e.g. seq[Group] or seq[User]), the field name on the join-model pointing to the model entry you have (e.g. &quot;user&quot; or &quot;group&quot;) and the field name on the join-model pointing to the model of the entries you're trying to query (e.g. &quot;group&quot; or &quot;user&quot;).</p>
 <p>As before, if your join-model (e.g. UserGroup) only has a single field pointing to each of the two many models (e.g. User and Group), you can forego the field names and let norm infer them for you.</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
-  norm / model
-
-<span class="hljs-keyword">type</span>
+<pre><code class="nim hljs"><span class="hljs-keyword">type</span>
   <span class="hljs-type">Group</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
     name*: <span class="hljs-built_in">string</span>
 
