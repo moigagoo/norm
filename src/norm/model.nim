@@ -190,9 +190,8 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
 
 proc validateJoinModelFkField*[S, T: Model](fkFieldName: static string, joinModel: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
   ## Checks at compile time whether the field with the name `fkFieldName` is a 
-  ## valid foreign key field on the given `source` model to the table of the given 
-  ## `target` model. Additionally, it also checks whether the joinModel links to
-  ## target type on its field `fkFieldName` by being a Model type of type `target`. 
+  ## valid foreign key field on the given `joinModel` model to the given 
+  ## `target` model. Ensures that the type in the field `fkFieldName` is `target` 
   ## If it isn't the code won't compile as that Model type is required for a useful
   ## Many-To-Many query.
   let tmp = validateFkField(fkFieldName, joinModel, target)
