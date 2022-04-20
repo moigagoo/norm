@@ -1,6 +1,5 @@
-import std/[unittest, os, sugar, options, with]
-
-import norm/sqlite
+import std/[unittest, os, sugar, options, with, tables, sequtils]
+import norm/[model, sqlite, pragmas]
 
 import ../models
 
@@ -61,6 +60,22 @@ suite "Testing selectOneToMany proc":
 
     check doctorVisits.len() == 1
     check doctorVisits[0].doctor === someDoctor
+
+  test "Given 2 Models with a many-to-one relationship between two models When you want to fetch the relationship for multiple entries at once, Then return a table where the id of each entry is mapped to their related entries":
+    #Given
+    let patients: seq[Person] = @[alice, bob]
+
+    #When
+    var doctorVisits: tables.Table[int64, seq[DoctorVisit]] = initTable[int64, seq[DoctorVisit]]()
+    doctorVisits[alice.id] = @[newDoctorVisit()]
+    dbConn.selectOneToMany(patients, doctorVisits, "patient")
+
+    #Then
+    check doctorVisits[alice.id].len() == 1
+    check doctorVisits[alice.id][0].doctor === someDoctor
+    check doctorVisits[bob.id].len() == 1
+    check doctorVisits[bob.id][0].doctor === someDoctor
+
 
   test "When there is multiple many-to-one relationships between two models and the type field for fetching the desired relationship is specified, then fetch the entries of that relationship":
     var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
@@ -145,6 +160,19 @@ suite "Testing selectManyToMany":
     check aculaSpecialties[0] === bloodlettingSpecialty
     check aculaSpecialties[1] === surgerySpecialty
     check aculaSpecialties[2] === hypnosisSpecialty
+
+  test "Given a many-to-many relationship, When querying multiple of them, Then return them as a table":
+    var aculaSpecialties: tables.Table[int64, seq[Specialty]] = initTable[int64, seq[Specialty]]()
+    aculaSpecialties[acula.id] = @[newSpecialty()]
+    var doctorSpecialties: seq[DoctorSpecialties] = @[newDoctorSpecialties()]
+    
+    dbConn.selectManyToMany(@[acula], doctorSpecialties, aculaSpecialties, "doctor", "specialty")
+    echo aculaSpecialties[acula.id].map(spec => spec.name)
+    check aculaSpecialties.len() == 1
+    check aculaSpecialties[acula.id].len() == 3
+    check aculaSpecialties[acula.id][0] === bloodlettingSpecialty
+    check aculaSpecialties[acula.id][1] === surgerySpecialty
+    check aculaSpecialties[acula.id][2] === hypnosisSpecialty
 
   test "Given a many-to-many relationship, When the members linked to a specific entry are queried with the fields that don't exist on the joinModel, then don't compile":
     var aculaSpecialties: seq[Specialty] = @[newSpecialty()]
