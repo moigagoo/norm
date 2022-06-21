@@ -61,7 +61,7 @@ suite "Testing selectOneToMany proc":
     check doctorVisits.len() == 1
     check doctorVisits[0].doctor === someDoctor
 
-  test "Given 2 Models with a many-to-one relationship between two models When you want to fetch the relationship for multiple entries at once, Then return a table where the id of each entry is mapped to their related entries":
+  test "Given 2 Models with a many-to-one relationship between them, When you want to fetch the relationship for 2 entries at once, Then return a table with 2 entries where the id of each entry is mapped to their related entries":
     #Given
     let patients: seq[Person] = @[alice, bob]
 
@@ -71,11 +71,27 @@ suite "Testing selectOneToMany proc":
     dbConn.selectOneToMany(patients, doctorVisits, "patient")
 
     #Then
+    check doctorVisits.len() == 2
     check doctorVisits[alice.id].len() == 1
     check doctorVisits[alice.id][0].doctor === someDoctor
     check doctorVisits[bob.id].len() == 1
     check doctorVisits[bob.id][0].doctor === someDoctor
 
+
+  test "Given 2 Models with a many-to-one relationship between them, When you want to fetch the relationship for one entry, Then return a table with 1 entry where the id is mapped to the related entries":
+    #Given
+    let patients: seq[Person] = @[alice]
+
+    #When
+    var doctorVisits: tables.Table[int64, seq[DoctorVisit]] = initTable[int64, seq[DoctorVisit]]()
+    doctorVisits[alice.id] = @[newDoctorVisit()]
+    dbConn.selectOneToMany(patients, doctorVisits, "patient")
+
+    #Then
+    check doctorVisits.len() == 1
+    check doctorVisits[alice.id].len() == 1
+    check doctorVisits[alice.id][0].doctor === someDoctor
+  
 
   test "When there is multiple many-to-one relationships between two models and the type field for fetching the desired relationship is specified, then fetch the entries of that relationship":
     var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
@@ -227,4 +243,3 @@ suite "Testing selectManyToMany":
     var petSeq: seq[Pet] = @[newPet()]
     var specialtyRelationship: seq[DoctorSpecialties] = @[newDoctorSpecialties()]
     check compiles(dbConn.selectManyToMany(acula, specialtyRelationship, petSeq)) == false
-     
