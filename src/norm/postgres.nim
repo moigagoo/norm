@@ -1,4 +1,4 @@
-import std/[os, logging, strutils, sequtils, options, sugar, strformat]
+import std/[os, logging, strutils, sequtils, options, sugar, strformat, tables]
 
 when (NimMajor, NimMinor) <= (1, 6):
   import pragmasutils
@@ -419,3 +419,56 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: 
   const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
   const fkColumnFromJoinToManyEnd: string = J.getRelatedFieldNameTo(M2)
   selectManyToMany(dbConn, queryStartEntry, joinModelEntries, queryEndEntries, fkColumnFromJoinToManyStart, fkColumnFromJoinToManyEnd)
+
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](
+    dbConn; 
+    queryStartEntries: seq[M1], 
+    joinModelEntries: var seq[J], 
+    queryEndEntries: var Table[int64, seq[M2]], 
+    fkColumnFromJoinToManyStart: static string, 
+    fkColumnFromJoinToManyEnd: static string
+) =
+  ## Fetches the many-to-many relationship for all members of `queryStartEntries` and
+  ## stores them in the table of `queryEndEntries`. There, all entries connected to a 
+  ## given member of `queryStartEntry` are mapped to that members id`. 
+  ## Requires to also be passed the model connecting the many-to-many relationship
+  ## via `joinModelEntries`in order to fetch the relationship, and the name of its fields
+  ## that point to the model of `queryStartEntries` (`fkColumnFromJoinToManyStart`) 
+  ## and `queryEndEntries` (`fkColumnFromJoinToManyEnd`).
+  ## Will not compile if the specified fields on the joinModel do not properly point
+  ## to the models of `queryStartEntry` and `queryEndEntries`.
+  let queryStartEntryIds: seq[int64] = queryStartEntries.map(entry => entry.id).deduplicate()
+
+  let idString = queryStartEntryIds.map(id => id.int.intToStr()).join(",")
+  const joinTableName = J.table()
+  let sqlCondition: string = fmt"{joinTableName}.{fkColumnFromJoinToManyStart} IN ({idString})"
+
+  dbConn.select(joinModelEntries, sqlCondition)
+
+  for entryId in queryStartEntryIds:
+    queryEndEntries[entryId] = @[]
+
+    for joinModelEntry in joinModelEntries:
+      if joinModelEntry.dot(fkColumnFromJoinToManyStart).id == entryId:
+        queryEndEntries[entryId].add(joinModelEntry.dot(fkColumnFromJoinToManyEnd))
+
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](
+    dbConn; 
+    queryStartEntries: seq[M1], 
+    joinModelEntries: var seq[J], 
+    queryEndEntries: var Table[int64, seq[M2]]
+) =
+  ## A convenience proc. Fetches the many-to-many relationship for all members of 
+  ## `queryStartEntries` and stores them in the table of `queryEndEntries`. There, 
+  ## all entries connected to a given member of `queryStartEntry` are mapped to that 
+  ## members id`.
+  ## Requires to also be passed the model connecting the many-to-many relationship via 
+  ## `joinModelEntries`in order to fetch the relationship.
+  ## The fields on `joinModelEntries` to use for these queries are inferred. 
+  ## Will only compile if the joinModel has exactly one field pointing to 
+  ## the table of `queryStartEntry` as well as exactly one field pointing to 
+  ## the table of `queryEndEntries`. Specify the parameters `fkColumnFromJoinToManyStart`
+  ## and `fkColumnFromJoinToManyEnd` if that is not the case.
+  const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
+  const fkColumnFromJoinToManyEnd: string = J.getRelatedFieldNameTo(M2)
+  selectManyToMany(dbConn, queryStartEntries, joinModelEntries, queryEndEntries, fkColumnFromJoinToManyStart, fkColumnFromJoinToManyEnd)
