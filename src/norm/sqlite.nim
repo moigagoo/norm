@@ -402,6 +402,17 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEnt
     let id = entryId
     relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName).id == id)
 
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var seq[M]) =
+  ## A convenience proc. Fetches all entries of multiple "many" side from multiple 
+  ## one-to-many relationships between the entries within `oneEntries` and the model 
+  ## of `relatedEntries`. This is done with a single query to the database. 
+  ## The field used to fetch the `relatedEntries` is automatically inferred as long as 
+  ## the `relatedEntries` model has only one field pointing to the model of `oneEntries`. 
+  ## Will not compile if `relatedEntries` has multiple fields that point to the 
+  ## model of `oneEntry`. Specify the `foreignKeyFieldName` parameter in such a
+  ## case.
+  const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
+  selectOneToMany(dbConn, oneEntries, relatedEntries, foreignKeyFieldName)
 
 macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
   ## A macro to "extract" a field of name `field` out of the model in `mySeq`, 
