@@ -379,6 +379,44 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
   const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
   selectOneToMany(dbConn, oneEntry, relatedEntries, foreignKeyFieldName)
 
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var Table[int64, seq[M]], foreignKeyFieldName: static string) =
+  ## Fetches all entries of multiple "many" side from multiple one-to-many relationships
+  ## between the entries within `oneEntries` and the model of `relatedEntries`. This is 
+  ## done with a single query to the database. The various many-to-one relationships are
+  ## split into a table, where the id of each entry in `oneEntries` is mapped to the entries
+  ## pointing to it. It is ensured at compile time that the field specified here is a 
+  ## valid foreign key field on oneEntry pointing to the table of the `relatedEntries`-model.
+  ## `relatedEntries` must contain at least 1 entry with a seq that contains a model instance.
+  let entryIds: seq[int64] = oneEntries.map(entry => entry.id)
+
+  var relatedEntriesSeq: seq[M] = @[]
+  for key in relatedEntries.keys:
+    if relatedEntries[key].len() > 0:
+      relatedEntriesSeq = relatedEntries[key]
+  assert(relatedEntriesSeq.len() > 0, "Failed to execute `selectOneToMany` for multiple entries. At least one of the seq's within `relatedEntries` must contain 1 or more model instances")
+
+  let idString = entryIds.map(id => id.int.intToStr()).join(",")
+  const manyTable = M.table()
+  let condition = fmt"{manyTable}.{foreignKeyFieldName} IN ({idString})"
+
+  dbConn.select(relatedEntriesSeq, condition)
+
+  for entryId in entryIds:
+    let id = entryId
+    relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName).id == id)
+
+proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var seq[M]) =
+  ## A convenience proc. Fetches all entries of multiple "many" side from multiple 
+  ## one-to-many relationships between the entries within `oneEntries` and the model 
+  ## of `relatedEntries`. This is done with a single query to the database. 
+  ## The field used to fetch the `relatedEntries` is automatically inferred as long as 
+  ## the `relatedEntries` model has only one field pointing to the model of `oneEntries`. 
+  ## Will not compile if `relatedEntries` has multiple fields that point to the 
+  ## model of `oneEntry`. Specify the `foreignKeyFieldName` parameter in such a
+  ## case.
+  const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
+  selectOneToMany(dbConn, oneEntries, relatedEntries, foreignKeyFieldName)
+
 macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
   ## A macro to "extract" a field of name `field` out of the model in `mySeq`, 
   ## creating a new seq of whatever type the field has.
