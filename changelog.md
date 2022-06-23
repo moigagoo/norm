@@ -7,6 +7,11 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.4.1 (Jun 23, 2022)
+
+-   [r] Replaced pointless variable assignments at compile time with `static discard`
+-   [r] Improved error message you receive when using `selectManyToMany` with an invalid joinModel
+
 ## 2.4.0 (March 7, 2022)
 
 -   [+] Added `selectOneToMany` proc to query many-to-one relationships (see [#127](https://github.com/moigagoo/norm/issues/127))
