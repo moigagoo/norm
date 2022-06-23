@@ -396,7 +396,7 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: 
   ## Will not compile if the specified fields on the joinModel do not properly point
   ## to the tables of `queryStartEntry` and `queryEndEntries`.
   static: discard validateFkField(fkColumnFromJoinToManyStart, J, M1)
-  static: discard validateFkField(fkColumnFromJoinToManyEnd, J, M2)
+  static: discard validateJoinModelFkField(fkColumnFromJoinToManyEnd, J, M2)
 
   const joinTableName = J.table()
   const sqlCondition: string = fmt "{joinTableName}.{fkColumnFromJoinToManyStart} = $1"
