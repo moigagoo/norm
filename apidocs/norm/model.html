@@ -193,6 +193,15 @@ window.addEventListener('DOMContentLoaded', main);
                              target: typedesc[T]): bool</a></li>
 
   </ul>
+  <ul class="simple nested-toc-section">validateJoinModelFkField
+      <li><a class="reference" href="#validateJoinModelFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"
+    title="validateJoinModelFkField[S, T: Model](fkFieldName: static string;
+                                      joinModel: typedesc[S];
+                                      target: typedesc[T]): bool">validateJoinModelFkField[S, T: Model](fkFieldName: static string;
+                                      joinModel: typedesc[S];
+                                      target: typedesc[T]): bool</a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -393,6 +402,15 @@ Checks at compile time whether the field with the name <tt class="docutils liter
 
 </dd>
 </div>
+<div id="validateJoinModelFkField,staticstring,typedesc[S],typedesc[T]">
+<dt><pre><span class="Keyword">proc</span> <a href="#validateJoinModelFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">validateJoinModelFkField</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">fkFieldName</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span>
+    <span class="Identifier">joinModel</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">S</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">target</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">compileTime</span>.}</pre></dt>
+<dd>
+
+Checks at compile time whether the field with the name <tt class="docutils literal"><span class="pre"><span class="Identifier">fkFieldName</span></span></tt> is a valid foreign key field on the given <tt class="docutils literal"><span class="pre"><span class="Identifier">joinModel</span></span></tt> model to the given <tt class="docutils literal"><span class="pre"><span class="Identifier">target</span></span></tt> model. Ensures that the type in the field <tt class="docutils literal"><span class="pre"><span class="Identifier">fkFieldName</span></span></tt> is <tt class="docutils literal"><span class="pre"><span class="Identifier">target</span></span></tt> If it isn't the code won't compile as that Model type is required for a useful Many-To-Many query.
+
+</dd>
+</div>
 
 </dl></div>
 
@@ -403,7 +421,7 @@ Checks at compile time whether the field with the name <tt class="docutils liter
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-06-23 18:08:13 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-06-29 19:17:34 UTC</small>
       </div>
     </div>
   </div>
