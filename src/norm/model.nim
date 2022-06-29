@@ -187,3 +187,23 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
       return true
 
   return false
+
+proc validateJoinModelFkField*[S, T: Model](fkFieldName: static string, joinModel: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
+  ## Checks at compile time whether the field with the name `fkFieldName` is a 
+  ## valid foreign key field on the given `joinModel` model to the given 
+  ## `target` model. Ensures that the type in the field `fkFieldName` is `target` 
+  ## If it isn't the code won't compile as that Model type is required for a useful
+  ## Many-To-Many query.
+  let tmp = validateFkField(fkFieldName, joinModel, target)
+  
+  for joinFieldName, joinFieldValue in joinModel()[].fieldPairs:
+    when joinFieldName == fkFieldName:
+      #Handles case where field is an int with fk pragma
+      const joinModelName = name(joinModel)
+      const targetModelName = name(target)
+      const actualType = name(joinFieldValue.type())
+      assert(joinFieldValue is target, fmt"Tried using an invalid join model. Field '{joinModelName}.{fkFieldName}' was not of the required type `{targetModelName}`, but of type `{actualType}`!")
+
+      return true
+
+  return false
