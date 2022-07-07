@@ -2,8 +2,10 @@
 
 **Norm** is an object-driven, framework-agnostic ORM for Nim that supports SQLite and PostgreSQL.
 
--   [API index](https://norm.nim.town/apidocs/theindex.html)
-
+- [Documentation](https://norm.nim.town/) (built with [nimibook](https://github.com/pietroppeter/nimibook))
+- [API index](https://norm.nim.town/apidocs/theindex.html)
+- [norman](https://github.com/moigagoo/norman): scaffolder and migration manager for Norm
+- [shopapp](https://github.com/moigagoo/shopapp): a proof-of-concept for a webapp created with Karax for frontend, Jester for API server, Norm for ORM, and Norman for migration management 
 
 ## Installation
 
