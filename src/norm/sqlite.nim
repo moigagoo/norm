@@ -357,7 +357,7 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: v
   ## puts them into `relatedEntries`. It is ensured at compile time that the 
   ## field specified here is a valid foreign key field on oneEntry pointing to 
   ## the table of the `relatedEntries`-model.
-  const _ = validateFkField(foreignKeyFieldName, M, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly
+  static: discard validateFkField(foreignKeyFieldName, M, O) # '_' is irrelevant, but the assignment is required for 'validateFkField' to run properly
 
   const manyTableName = M.table()
   const sqlCondition = "$#.$# = ?" % [manyTableName, foreignKeyFieldName]
@@ -435,8 +435,8 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: 
   ## `fkColumnFromJoinToManyEnd`.
   ## Will not compile if the specified fields on the joinModel do not properly point
   ## to the tables of `queryStartEntry` and `queryEndEntries`.
-  const tmp1 = validateFkField(fkColumnFromJoinToManyStart, J, M1) # 'tmp1' is irrelevant, but the assignment is required for 'validateFkField' to run properly
-  const tmp2 = validateFkField(fkColumnFromJoinToManyEnd, J, M2) # 'tmp2' is irrelevant, but the assignment is required for 'validateFkField' to run properly 
+  static: discard validateFkField(fkColumnFromJoinToManyStart, J, M1)
+  static: discard validateFkField(fkColumnFromJoinToManyEnd, J, M2)
   
   const joinTableName = J.table()
   const sqlCondition: string = "$#.$# = ?" % [joinTableName, fkColumnFromJoinToManyStart]
