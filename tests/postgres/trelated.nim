@@ -1,4 +1,4 @@
-import std/[unittest, os, sugar, options, with, strutils]
+import std/[unittest, os, sugar, options, with, strutils, tables]
 
 import norm/postgres
 
@@ -101,6 +101,37 @@ suite "Testing selectOneToMany":
     check compiles(dbConn.selectOneToMany(alice, doctorVisits, "visitTime")) == false #Valid field name given that contains neither a model type, nor has an fk pragma
     check compiles(dbConn.selectOneToMany(alice, doctorVisits, "doctor")) == false #Valid field name given that does not point a model with the table name "Person"
 
+  test "Given 2 Models with a many-to-one relationship between them, When you want to fetch the relationship for 2 entries at once, Then return a table with 2 entries where the id of each entry is mapped to their related entries":
+    #Given
+    let patients: seq[Person] = @[alice, bob]
+
+    #When
+    var doctorVisits: tables.Table[int64, seq[DoctorVisit]] = initTable[int64, seq[DoctorVisit]]()
+    doctorVisits[alice.id] = @[newDoctorVisit()]
+    dbConn.selectOneToMany(patients, doctorVisits, "patient")
+
+    #Then
+    check doctorVisits.len() == 2
+    check doctorVisits[alice.id].len() == 1
+    check doctorVisits[alice.id][0].doctor === someDoctor
+    check doctorVisits[bob.id].len() == 1
+    check doctorVisits[bob.id][0].doctor === someDoctor
+
+
+  test "Given 2 Models with a many-to-one relationship between them, When you want to fetch the relationship for one entry, Then return a table with 1 entry where the id is mapped to the related entries":
+    #Given
+    let patients: seq[Person] = @[alice]
+
+    #When
+    var doctorVisits: tables.Table[int64, seq[DoctorVisit]] = initTable[int64, seq[DoctorVisit]]()
+    doctorVisits[alice.id] = @[newDoctorVisit()]
+    dbConn.selectOneToMany(patients, doctorVisits, "patient")
+
+    #Then
+    check doctorVisits.len() == 1
+    check doctorVisits[alice.id].len() == 1
+    check doctorVisits[alice.id][0].doctor === someDoctor
+  
 
 suite "Testing selectManyToMany":
   setup:

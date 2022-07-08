@@ -7,6 +7,21 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+
+## 2.5.0 (July 8, 2022)
+
+- [+] Added `selectOneToMany` proc overload that is able to query multiple many-to-one relationships at once (see [#142](https://github.com/moigagoo/norm/issues/142)).
+- [+] Added `selectManyToMany` proc overload that is able to query multiple many-to-many relationships at once (see [#142](https://github.com/moigagoo/norm/issues/142)).
+- [d] Added small hint that placeholders in postgres is done via `$1`, `S2`... etc.
+- [d] Added links to norman, example app, the API index and these nimibook docs.
+
+
+## 2.4.1 (Jun 23, 2022)
+
+-   [r] Replaced pointless variable assignments at compile time with `static discard`.
+-   [r] Improved error message you receive when using `selectManyToMany` with an invalid joinModel.
+
+
 ## 2.4.0 (March 7, 2022)
 
 -   [+] Added `selectOneToMany` proc to query many-to-one relationships (see [#127](https://github.com/moigagoo/norm/issues/127))
