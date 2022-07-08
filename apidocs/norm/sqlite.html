@@ -193,7 +193,23 @@ window.addEventListener('DOMContentLoaded', main);
 
   </ul>
   <ul class="simple nested-toc-section">selectManyToMany
-      <li><a class="reference" href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D"
+      <li><a class="reference" href="#selectManyToMany%2C%2Cseq%5BM1%5D%2Cseq%5BJ%5D%2CTable%5Bint64%2Cseq%5BM2%5D%5D"
+    title="selectManyToMany[M1: Model; J: Model; M2: Model](dbConn;
+    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];
+    queryEndEntries: var Table[int64, seq[M2]])">selectManyToMany[M1: Model; J: Model; M2: Model](dbConn;
+    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];
+    queryEndEntries: var Table[int64, seq[M2]])</a></li>
+  <li><a class="reference" href="#selectManyToMany%2C%2Cseq%5BM1%5D%2Cseq%5BJ%5D%2CTable%5Bint64%2Cseq%5BM2%5D%5D%2Cstaticstring%2Cstaticstring"
+    title="selectManyToMany[M1: Model; J: Model; M2: Model](dbConn;
+    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];
+    queryEndEntries: var Table[int64, seq[M2]];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)">selectManyToMany[M1: Model; J: Model; M2: Model](dbConn;
+    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];
+    queryEndEntries: var Table[int64, seq[M2]];
+    fkColumnFromJoinToManyStart: static string;
+    fkColumnFromJoinToManyEnd: static string)</a></li>
+  <li><a class="reference" href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D"
     title="selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
     joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])">selectManyToMany[M1: Model; J: Model; M2: Model](dbConn; queryStartEntry: M1;
     joinModelEntries: var seq[J]; queryEndEntries: var seq[M2])</a></li>
@@ -208,7 +224,17 @@ window.addEventListener('DOMContentLoaded', main);
 
   </ul>
   <ul class="simple nested-toc-section">selectOneToMany
-      <li><a class="reference" href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D"
+      <li><a class="reference" href="#selectOneToMany%2C%2Cseq%5BO%5D%2Cseq%5BM%5D"
+    title="selectOneToMany[O: Model; M: Model](dbConn; oneEntries: seq[O];
+                                    relatedEntries: var seq[M])">selectOneToMany[O: Model; M: Model](dbConn; oneEntries: seq[O];
+                                    relatedEntries: var seq[M])</a></li>
+  <li><a class="reference" href="#selectOneToMany%2C%2Cseq%5BO%5D%2CTable%5Bint64%2Cseq%5BM%5D%5D%2Cstaticstring"
+    title="selectOneToMany[O: Model; M: Model](dbConn; oneEntries: seq[O];
+                                    relatedEntries: var Table[int64, seq[M]];
+                                    foreignKeyFieldName: static string)">selectOneToMany[O: Model; M: Model](dbConn; oneEntries: seq[O];
+                                    relatedEntries: var Table[int64, seq[M]];
+                                    foreignKeyFieldName: static string)</a></li>
+  <li><a class="reference" href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D"
     title="selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
                                     relatedEntries: var seq[M])">selectOneToMany[O: Model; M: Model](dbConn; oneEntry: O;
                                     relatedEntries: var seq[M])</a></li>
@@ -452,6 +478,28 @@ instead of hardcoded table and column names</li>
 
 </dd>
 </div>
+<div id="selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]]">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectManyToMany%2C%2Cseq%5BM1%5D%2Cseq%5BJ%5D%2CTable%5Bint64%2Cseq%5BM2%5D%5D"><span class="Identifier">selectManyToMany</span></a><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">J</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M2</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span>
+    <span class="Identifier">queryStartEntries</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">joinModelEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">J</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">queryEndEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">int64</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M2</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+A convenience proc. Fetches the many-to-many relationship for all members of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntries</span></span></tt> and stores them in the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>. There, all entries connected to a given member of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> are mapped to that members id<tt class="docutils literal"><span class="pre"><span class="Operator">.</span> <span class="Identifier">Requires</span> <span class="Identifier">to</span> <span class="Identifier">also</span> <span class="Identifier">be</span> <span class="Identifier">passed</span> <span class="Identifier">the</span> <span class="Identifier">model</span> <span class="Identifier">connecting</span> <span class="Identifier">the</span> <span class="Identifier">many</span><span class="Operator">-</span><span class="Identifier">to</span><span class="Operator">-</span><span class="Identifier">many</span> <span class="Identifier">relationship</span> <span class="Identifier">via</span> <span class="Punctuation">`</span><span class="Identifier">joinModelEntries</span></span></tt>in order to fetch the relationship. The fields on <tt class="docutils literal"><span class="pre"><span class="Identifier">joinModelEntries</span></span></tt> to use for these queries are inferred. Will only compile if the joinModel has exactly one field pointing to the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> as well as exactly one field pointing to the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>. Specify the parameters <tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyStart</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyEnd</span></span></tt> if that is not the case.
+
+</dd>
+</div>
+<div id="selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]],staticstring,staticstring">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectManyToMany%2C%2Cseq%5BM1%5D%2Cseq%5BJ%5D%2CTable%5Bint64%2Cseq%5BM2%5D%5D%2Cstaticstring%2Cstaticstring"><span class="Identifier">selectManyToMany</span></a><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">J</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M2</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span>
+    <span class="Identifier">queryStartEntries</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">joinModelEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">J</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">queryEndEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">int64</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M2</span><span class="Other">]</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">fkColumnFromJoinToManyStart</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span>
+    <span class="Identifier">fkColumnFromJoinToManyEnd</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Fetches the many-to-many relationship for all members of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntries</span></span></tt> and stores them in the table of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>. There, all entries connected to a given member of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> are mapped to that members id<tt class="docutils literal"><span class="pre"><span class="Operator">.</span> <span class="Identifier">Requires</span> <span class="Identifier">to</span> <span class="Identifier">also</span> <span class="Identifier">be</span> <span class="Identifier">passed</span> <span class="Identifier">the</span> <span class="Identifier">model</span> <span class="Identifier">connecting</span> <span class="Identifier">the</span> <span class="Identifier">many</span><span class="Operator">-</span><span class="Identifier">to</span><span class="Operator">-</span><span class="Identifier">many</span> <span class="Identifier">relationship</span> <span class="Identifier">via</span> <span class="Punctuation">`</span><span class="Identifier">joinModelEntries</span></span></tt>in order to fetch the relationship, and the name of its fields that point to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntries</span></span></tt> (<tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyStart</span></span></tt>) and <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt> (<tt class="docutils literal"><span class="pre"><span class="Identifier">fkColumnFromJoinToManyEnd</span></span></tt>). Will not compile if the specified fields on the joinModel do not properly point to the models of <tt class="docutils literal"><span class="pre"><span class="Identifier">queryStartEntry</span></span></tt> and <tt class="docutils literal"><span class="pre"><span class="Identifier">queryEndEntries</span></span></tt>.
+
+</dd>
+</div>
 <div id="selectManyToMany,,M1,seq[J],seq[M2]">
 <dt><pre><span class="Keyword">proc</span> <a href="#selectManyToMany%2C%2CM1%2Cseq%5BJ%5D%2Cseq%5BM2%5D"><span class="Identifier">selectManyToMany</span></a><span class="Other">[</span><span class="Identifier">M1</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">J</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M2</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span>
     <span class="Identifier">queryStartEntry</span><span class="Other">:</span> <span class="Identifier">M1</span><span class="Other">;</span> <span class="Identifier">joinModelEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">J</span><span class="Other">]</span><span class="Other">;</span>
@@ -473,12 +521,30 @@ Fetches the many-to-many relationship for the entry <tt class="docutils literal"
 
 </dd>
 </div>
+<div id="selectOneToMany,,seq[O],seq[M]">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectOneToMany%2C%2Cseq%5BO%5D%2Cseq%5BM%5D"><span class="Identifier">selectOneToMany</span></a><span class="Other">[</span><span class="Identifier">O</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">oneEntries</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">O</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">relatedEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
+<dd>
+
+A convenience proc. Fetches all entries of multiple &quot;many&quot; side from multiple one-to-many relationships between the entries within <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntries</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. This is done with a single query to the database. The field used to fetch the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> is automatically inferred as long as the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> model has only one field pointing to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntries</span></span></tt>. Will not compile if <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> has multiple fields that point to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Specify the <tt class="docutils literal"><span class="pre"><span class="Identifier">foreignKeyFieldName</span></span></tt> parameter in such a case.
+
+</dd>
+</div>
+<div id="selectOneToMany,,seq[O],Table[int64,seq[M]],staticstring">
+<dt><pre><span class="Keyword">proc</span> <a href="#selectOneToMany%2C%2Cseq%5BO%5D%2CTable%5Bint64%2Cseq%5BM%5D%5D%2Cstaticstring"><span class="Identifier">selectOneToMany</span></a><span class="Other">[</span><span class="Identifier">O</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">oneEntries</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">O</span><span class="Other">]</span><span class="Other">;</span>
+    <span class="Identifier">relatedEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">Table</span><span class="Other">[</span><span class="Identifier">int64</span><span class="Other">,</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M</span><span class="Other">]</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">foreignKeyFieldName</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
+<dd>
+
+Fetches all entries of multiple &quot;many&quot; side from multiple one-to-many relationships between the entries within <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntries</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. This is done with a single query to the database. The various many-to-one relationships are split into a table, where the id of each entry in <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntries</span></span></tt> is mapped to the entries pointing to it. It is ensured at compile time that the field specified here is a valid foreign key field on oneEntry pointing to the table of the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>-model. <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> must contain at least 1 entry with a seq that contains a model instance.
+
+</dd>
+</div>
 <div id="selectOneToMany,,O,seq[M]">
 <dt><pre><span class="Keyword">proc</span> <a href="#selectOneToMany%2C%2CO%2Cseq%5BM%5D"><span class="Identifier">selectOneToMany</span></a><span class="Other">[</span><span class="Identifier">O</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">M</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">oneEntry</span><span class="Other">:</span> <span class="Identifier">O</span><span class="Other">;</span>
     <span class="Identifier">relatedEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
-A convenience proc. Fetches all entries of a &quot;many&quot; side from a one-to-many relationship between the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. The field used to fetch the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> is automatically inferred as long as the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> model has only one field pointing to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Will not compile if <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> has multiple fields that point to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Specify the <tt class="docutils literal"><span class="pre"><span class="Identifier">foreignKeyFieldName</span></span></tt> parameter in such a case.
+A convenience proc. Fetches all entries of a &quot;many&quot; side from the single one-to-many relationship between the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> puts them into <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. The field used to fetch the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> is automatically inferred as long as the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> model has only one field pointing to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Will not compile if <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> has multiple fields that point to the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt>. Specify the <tt class="docutils literal"><span class="pre"><span class="Identifier">foreignKeyFieldName</span></span></tt> parameter in such a case.
 
 </dd>
 </div>
@@ -487,7 +553,7 @@ A convenience proc. Fetches all entries of a &quot;many&quot; side from a one-to
     <span class="Identifier">relatedEntries</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">M</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">foreignKeyFieldName</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Fetches all entries of a &quot;many&quot; side from a one-to-many relationship between the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. It is ensured at compile time that the field specified here is a valid foreign key field on oneEntry pointing to the table of the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>-model.
+Fetches all entries of a &quot;many&quot; side from the single one-to-many relationship between the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">oneEntry</span></span></tt> and the model of <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt> and puts them into <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>. It is ensured at compile time that the field specified here is a valid foreign key field on oneEntry pointing to the table of the <tt class="docutils literal"><span class="pre"><span class="Identifier">relatedEntries</span></span></tt>-model.
 
 </dd>
 </div>
@@ -559,7 +625,7 @@ Update rows for each <a class="reference internal" href="#Model">Model</a> insta
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-04 17:29:15 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-08 07:32:18 UTC</small>
       </div>
     </div>
   </div>
