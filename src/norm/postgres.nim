@@ -403,7 +403,12 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEnt
 
   for entryId in entryIds:
     let id = entryId
-    relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName).id == id)
+    when M.dot(foreignKeyFieldName) is int64:
+        relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName) == id)
+    elif M.dot(foreignKeyFieldName) is Option[int64]:
+        relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName).get() == id)
+    else:
+        relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName).id == id)
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var seq[M]) =
   ## A convenience proc. Fetches all entries of multiple "many" side from multiple 
