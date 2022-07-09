@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.5.1 (July 9, 2022)
+- [f] Fixed further points where compile-time assertions created unused variables
+- [f] Fixed `selectOneToMany` and `selectManyToMany` that were introduced in 2.5.1 being unable to deal with FK fields that were Optionals or directly ids.
+
 ## 2.5.0 (July 7, 2022)
 
 - [+] Added `selectOneToMany` proc overload that is able to query multiple many-to-one relationships at once (see [#142](https://github.com/moigagoo/norm/issues/142))
