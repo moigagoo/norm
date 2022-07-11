@@ -9,7 +9,7 @@
 
 
 ## 2.5.1 (July 9, 2022)
-- [f] Fixed further points where compile-time assertions created unused variables
+- [f] Fixed further points where compile-time assertions created unused variables.
 - [f] Fixed `selectOneToMany` and `selectManyToMany` that were introduced in 2.5.1 being unable to deal with FK fields that were Optionals or directly ids.
 
 
