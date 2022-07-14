@@ -44,7 +44,7 @@ func table*(T: typedesc[Model]): string =
 func col*(T: typedesc[Model], fld: string): string =
   ## Get column name for a `Model`_ field, which is just the field name.
 
-  fld
+  fld.escape
 
 func col*[T: Model](obj: T, fld: string): string =
   ## Get column name for a `Model`_ instance field.
