@@ -16,26 +16,26 @@ suite "Getting table and columns from Model":
       pet = newPet("cat", toy)
       person = newPerson("Alice", pet)
 
-    check person.col("name") == "name"
-    check pet.col("species") == "species"
+    check person.col("name") == "\"name\""
+    check pet.col("species") == "\"species\""
 
-    check person.cols == @["name", "pet"]
-    check person.cols(force = true) == @["name", "pet", "id"]
+    check person.cols == @["\"name\"", "\"pet\""]
+    check person.cols(force = true) == @["\"name\"", "\"pet\"", "\"id\""]
 
-    check person.fCol("name") == """"Person".name"""
-    check pet.fCol("species") == """"Pet".species"""
+    check person.fCol("name") == """"Person"."name""""
+    check pet.fCol("species") == """"Pet"."species""""
 
     check person.rfCols == @[
-      """"Person".name""",
-      """"Person".pet""",
-      """"pet".species""",
-      """"pet".favToy""",
-      """"pet_favToy".price""",
-      """"pet_favToy".id""",
-      """"pet".id""",
-      """"Person".id"""
+      """"Person"."name"""",
+      """"Person"."pet"""",
+      """"pet"."species"""",
+      """"pet"."favToy"""",
+      """"pet_favToy"."price"""",
+      """"pet_favToy"."id"""",
+      """"pet"."id"""",
+      """"Person"."id""""
     ]
-    check toy.rfCols == @[""""Toy".price""", """"Toy".id"""]
+    check toy.rfCols == @[""""Toy"."price"""", """"Toy"."id""""]
 
   test "Join groups":
     let
@@ -44,8 +44,8 @@ suite "Getting table and columns from Model":
       person = newPerson("Alice", pet)
 
     check person.joinGroups == @[
-      (""""Pet"""", """"pet"""", """"Person".pet""", """"pet".id"""),
-      (""""Toy"""", """"pet_favToy"""", """"pet".favToy""", """"pet_favToy".id""")
+      (""""Pet"""", """"pet"""", """"Person"."pet"""", """"pet"."id""""),
+      (""""Toy"""", """"pet_favToy"""", """"pet"."favToy"""", """"pet_favToy"."id"""")
     ]
 
   test "When related model has field with the type of the given model, expect name of that field as a string":
