@@ -193,7 +193,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Changelog</h1>
+                        [<h1>Changelog</h1>
 <ul>
 <li>[!]—backward incompatible change</li>
 <li>[+]—new feature</li>
@@ -201,6 +201,11 @@
 <li>[r]—refactoring</li>
 <li>[t]—test suite improvement</li>
 <li>[d]—docs improvement</li>
+</ul>
+<h2>2.5.1 (July 9, 2022)</h2>
+<ul>
+<li>[f] Fixed further points where compile-time assertions created unused variables.</li>
+<li>[f] Fixed <code>selectOneToMany</code> and <code>selectManyToMany</code> that were introduced in 2.5.1 being unable to deal with FK fields that were Optionals or directly ids.</li>
 </ul>
 <h2>2.5.0 (July 8, 2022)</h2>
 <ul>
@@ -587,8 +592,7 @@ test &quot;Get rows, nested models&quot;:
 <h2>1.0.0 (February 27, 2019)</h2>
 <ul>
 <li>🎉 initial release.</li>
-</ul>
-
+</ul>]
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

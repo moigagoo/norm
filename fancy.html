@@ -193,16 +193,12 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Fancy Syntax</h1>
-<p>To avoid creating intermediate containers here and there, use Nim's <code>dup</code> macro to create mutable objects on the fly:</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
-  sugar</code></pre>
-<p>For example, here's how you insert ten rows without having to create ten stale objects:</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1</span> .. <span class="hljs-number">10</span>:
-  <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup <span class="hljs-keyword">do</span>:
+                        [<h1>Fancy Syntax</h1>
+<p>To avoid creating intermediate containers here and there, use Nim's <code>dup</code> macro to create mutable objects on the fly:</p>,<pre><code class="nim hljs"><span class="hljs-keyword">import</span> sugar</code></pre>,<p>For example, here's how you insert ten rows without having to create ten stale objects:</p>,<pre><code class="nim hljs"><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-number">1.</span>.<span class="hljs-number">10</span>:
+  <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup:
     dbConn.insert
-<span class="hljs-keyword">echo</span>()</code></pre>
-<pre><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['1@example.com']
+
+<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['1@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['2@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['3@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['4@example.com']
@@ -211,15 +207,11 @@ INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['6@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['7@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['8@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['9@example.com']
-INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['10@example.com']
-
-</samp></pre>
-<p><code>dup</code> lets you call multiple procs, which gives a pleasant interface for row filter and bulk manipulation:</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">discard</span> @[newUser()].dup <span class="hljs-keyword">do</span>:
+INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['10@example.com']</samp></pre>,<p><code>dup</code> lets you call multiple procs, which gives a pleasant interface for row filter and bulk manipulation:</p>,<pre><code class="nim hljs"><span class="hljs-keyword">discard</span> @[newUser()].dup:
   dbConn.select(<span class="hljs-string">&quot;email LIKE ?&quot;</span>, <span class="hljs-string">&quot;_@example.com&quot;</span>)
   dbConn.delete
-<span class="hljs-keyword">echo</span>()</code></pre>
-<pre><samp>SELECT &quot;User&quot;.email, &quot;User&quot;.id FROM &quot;User&quot;  WHERE email LIKE ? &lt;- ['_@example.com']
+
+<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>SELECT &quot;User&quot;.email, &quot;User&quot;.id FROM &quot;User&quot;  WHERE email LIKE ? &lt;- ['_@example.com']
 DELETE FROM &quot;User&quot; WHERE id = 1
 DELETE FROM &quot;User&quot; WHERE id = 2
 DELETE FROM &quot;User&quot; WHERE id = 3
@@ -228,10 +220,7 @@ DELETE FROM &quot;User&quot; WHERE id = 5
 DELETE FROM &quot;User&quot; WHERE id = 6
 DELETE FROM &quot;User&quot; WHERE id = 7
 DELETE FROM &quot;User&quot; WHERE id = 8
-DELETE FROM &quot;User&quot; WHERE id = 9
-
-</samp></pre>
-
+DELETE FROM &quot;User&quot; WHERE id = 9</samp></pre>]
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

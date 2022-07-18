@@ -193,69 +193,67 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Caveats</h1>
+                        [<h1>Caveats</h1>
 <p>There are some caveats when working with Norm that you need to consider and strategies to work around them.</p>
 <h2>Managing Data for Many-to-Many Relationships</h2>
 <p>Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary &quot;glue&quot;-models yourself as if they were regular models.</p>
 <h2>Fetching data for more complex Many-To-One/Many-To-Many relationships</h2>
-<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
-<pre><code class="nim hljs"><span class="hljs-keyword">import</span>
-  std / json
+<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>,<pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
+<span class="hljs-keyword">import</span> norm/[model, sqlite]
 
-<span class="hljs-keyword">import</span>
-  norm / [model, sqlite]
-
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">Producer</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">Producer</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
     name: <span class="hljs-built_in">string</span>
 
-<span class="hljs-keyword">proc</span> newProducer(name = <span class="hljs-string">&quot;&quot;</span>): <span class="hljs-type">Producer</span> =
-  <span class="hljs-type">Producer</span>(name: name)
-
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">Product</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+<span class="hljs-keyword">proc</span> newProducer(name = <span class="hljs-string">&quot;&quot;</span>): <span class="hljs-type">Producer</span> = <span class="hljs-type">Producer</span>(name: name)
+  
+<span class="hljs-keyword">type</span> <span class="hljs-type">Product</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
     name: <span class="hljs-built_in">string</span>
     producedBy: <span class="hljs-type">Producer</span>
 
-<span class="hljs-keyword">proc</span> newProduct(name = <span class="hljs-string">&quot;&quot;</span>; producedBy = newProducer()): <span class="hljs-type">Product</span> =
+<span class="hljs-keyword">proc</span> newProduct(name = <span class="hljs-string">&quot;&quot;</span>, producedBy = newProducer()): <span class="hljs-type">Product</span> = 
   <span class="hljs-literal">result</span> = <span class="hljs-type">Product</span>(name: name, producedBy: producedBy)
 
 <span class="hljs-keyword">let</span> dbConn = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
+
 dbConn.createTables(newProducer())
 dbConn.createTables(newProduct())
+
 <span class="hljs-keyword">var</span> alex = newProducer(<span class="hljs-string">&quot;Alex&quot;</span>)
 dbConn.insert(alex)
 <span class="hljs-keyword">var</span> firstClassSpaghetti = newProduct(<span class="hljs-string">&quot;The best spaghetti&quot;</span>, alex)
 dbConn.insert(firstClassSpaghetti)
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">Employee</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+
+<span class="hljs-keyword">type</span> <span class="hljs-type">Employee</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
     name: <span class="hljs-built_in">string</span>
     employer: <span class="hljs-type">Producer</span>
-
-<span class="hljs-keyword">proc</span> newEmployee(name = <span class="hljs-string">&quot;&quot;</span>; employer = newProducer()): <span class="hljs-type">Employee</span> =
+  
+<span class="hljs-keyword">proc</span> newEmployee(name = <span class="hljs-string">&quot;&quot;</span>, employer = newProducer()): <span class="hljs-type">Employee</span> =
   <span class="hljs-literal">result</span> = <span class="hljs-type">Employee</span>(name: name, employer: employer)
 
 dbConn.createTables(newEmployee())
 <span class="hljs-keyword">var</span> steff = newEmployee(<span class="hljs-string">&quot;Steff&quot;</span>, alex)
 dbConn.insert(steff)
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">ProducerContainer</span> = <span class="hljs-keyword">object</span>
-    producer: <span class="hljs-type">Producer</span>
-    products: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Product</span>]
-    employees: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Employee</span>]
+
+<span class="hljs-keyword">type</span> <span class="hljs-type">ProducerContainer</span> = <span class="hljs-keyword">object</span>
+  producer: <span class="hljs-type">Producer</span>
+  products: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Product</span>]
+  employees: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Employee</span>]
 
 <span class="hljs-keyword">var</span> producer: <span class="hljs-type">Producer</span> = newProducer()
 <span class="hljs-keyword">var</span> products: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Product</span>] = @[newProduct()]
 <span class="hljs-keyword">var</span> employees: <span class="hljs-built_in">seq</span>[<span class="hljs-type">Employee</span>] = @[newEmployee()]
+
 dbConn.select(producer, <span class="hljs-string">&quot;Producer.id = ?&quot;</span>, alex.id)
 dbConn.select(products, <span class="hljs-string">&quot;producedBy = ?&quot;</span>, alex.id)
 dbConn.select(employees, <span class="hljs-string">&quot;employer = ?&quot;</span>, alex.id)
-<span class="hljs-keyword">let</span> producerContainer = <span class="hljs-type">ProducerContainer</span>(producer: producer,
-    products: products, employees: employees)
-<span class="hljs-keyword">echo</span> %*producerContainer</code></pre>
-<pre><samp>{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}
-</samp></pre>
 
+<span class="hljs-keyword">let</span> producerContainer = <span class="hljs-type">ProducerContainer</span>(
+  producer: producer, 
+  products: products,
+  employees: employees
+)
+
+<span class="hljs-keyword">echo</span> %*producerContainer</code></pre><pre><samp>{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}</samp></pre>]
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
