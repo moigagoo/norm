@@ -7,6 +7,9 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.5.1 (July 19, 2022)
+
+- [f] Usage of SQL keywords as field names is now possible by quoting them in the resulting query.
 
 ## 2.5.0 (July 8, 2022)
 
