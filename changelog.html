@@ -205,6 +205,7 @@
 <h2>2.5.1 (WIP)</h2>
 <ul>
 <li>[+] Added <code>uniqueGroup</code> pragma to provide UNIQUE constraint on multiple columns (see <a href="https://github.com/moigagoo/norm/issues/136">#136</a>).</li>
+<li>[+] Add <code>readOnly</code> alias for <code>ro</code> pragma (see <a href="https://github.com/moigagoo/norm/issues/128">#128</a>).</li>
 <li>[f] Fixed further points where compile-time assertions created unused variables.</li>
 <li>[f] Fixed <code>selectOneToMany</code> and <code>selectManyToMany</code> that were introduced in 2.5.1 being unable to deal with FK fields that were Optionals or directly ids.</li>
 <li>[t] Enable deepCopy for tests to prepare for the <code>--mm:arc|orc</code> switch in Nim 2.0.</li>

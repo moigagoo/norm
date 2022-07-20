@@ -364,7 +364,7 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><pre><span class="Keyword">proc</span> <a href="#createTables%2C%2CT"><span class="Identifier">createTables</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Create tables for <a class="reference internal" href="#Model">Model</a> and its <a class="reference internal" href="#Model">Model</a> fields.
+Create tables for <a class="reference external" href="model.html#Model">Model</a> and its <a class="reference external" href="model.html#Model">Model</a> fields.
 
 </dd>
 </div>
@@ -372,7 +372,7 @@ Create tables for <a class="reference internal" href="#Model">Model</a> and its 
 <dt><pre><span class="Keyword">proc</span> <a href="#delete%2C%2CT"><span class="Identifier">delete</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Delete rows for <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields.
+Delete rows for <a class="reference external" href="model.html#Model">Model</a> instance and its <a class="reference external" href="model.html#Model">Model</a> fields.
 
 </dd>
 </div>
@@ -380,7 +380,7 @@ Delete rows for <a class="reference internal" href="#Model">Model</a> instance a
 <dt><pre><span class="Keyword">proc</span> <a href="#delete%2C%2CopenArray%5BT%5D"><span class="Identifier">delete</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Delete rows for each <a class="reference internal" href="#Model">Model</a> instance in open array.
+Delete rows for each <a class="reference external" href="model.html#Model">Model</a> instance in open array.
 
 </dd>
 </div>
@@ -414,7 +414,7 @@ Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from 
                       <span class="Identifier">conflictPolicy</span> <span class="Other">=</span> <span class="Identifier">cpRaise</span><span class="Other">)</span></pre></dt>
 <dd>
 
-<p>Insert rows for <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.</p>
+<p>Insert rows for <a class="reference external" href="model.html#Model">Model</a> instance and its <a class="reference external" href="model.html#Model">Model</a> fields, updating their <tt class="docutils literal"><span class="pre">id</span></tt> fields.</p>
 <p>By default, if the inserted object's <tt class="docutils literal"><span class="pre">id</span></tt> is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with <tt class="docutils literal"><span class="pre">force = true</span></tt>.</p>
 <p><tt class="docutils literal"><span class="pre">conflictPolicy</span></tt> determines how the proc reacts to insertion conflicts. <tt class="docutils literal"><span class="pre">cpRaise</span></tt> means raise a <tt class="docutils literal"><span class="pre">DbError</span></tt>, <tt class="docutils literal"><span class="pre">cpIgnore</span></tt> means ignore the conflict and do not insert the conflicting row, <tt class="docutils literal"><span class="pre">cpReplace</span></tt> means overwrite the older row with the newer one. </p>
 
@@ -426,7 +426,7 @@ Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from 
                       <span class="Identifier">conflictPolicy</span> <span class="Other">=</span> <span class="Identifier">cpRaise</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Insert rows for each <a class="reference internal" href="#Model">Model</a> instance in open array.
+Insert rows for each <a class="reference external" href="model.html#Model">Model</a> instance in open array.
 
 </dd>
 </div>
@@ -444,7 +444,7 @@ Rollback transaction by raising <a class="reference external" href="#RollbackErr
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><a href="sqlite.html#NotFoundError"><span class="Identifier">NotFoundError</span></a><span class="Other">,</span> <span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span>.}</pre></dt>
 <dd>
 
-<p>Populate a <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields from DB.</p>
+<p>Populate a <a class="reference external" href="model.html#Model">Model</a> instance and its <a class="reference external" href="model.html#Model">Model</a> fields from DB.</p>
 <p><tt class="docutils literal"><span class="pre">cond</span></tt> is condition for <tt class="docutils literal"><span class="pre">WHERE</span></tt> clause but with extra features:</p>
 <ul class="simple"><li>use <tt class="docutils literal"><span class="pre">?</span></tt> placeholders and put the actual values in <tt class="docutils literal"><span class="pre">params</span></tt></li>
 <li>use <a class="reference external" href="model.html#table,typedesc[Model]">table</a>, 
@@ -461,7 +461,7 @@ instead of hardcoded table and column names</li>
     <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span>.}</pre></dt>
 <dd>
 
-<p>Populate a sequence of <a class="reference internal" href="#Model">Model</a> instances from DB.</p>
+<p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB.</p>
 <p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item. </p>
 
 
@@ -471,7 +471,7 @@ instead of hardcoded table and column names</li>
 <dt><pre><span class="Keyword">proc</span> <a href="#selectAll%2C%2Cseq%5BT%5D"><span class="Identifier">selectAll</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
-<p>Populate a sequence of <a class="reference internal" href="#Model">Model</a> instances from DB, fetching all rows in the matching table.</p>
+<p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB, fetching all rows in the matching table.</p>
 <p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item.</p>
 <p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
 
@@ -572,7 +572,7 @@ Fetches all entries of a &quot;many&quot; side from the single one-to-many relat
 <dt><pre><span class="Keyword">proc</span> <a href="#update%2C%2CT"><span class="Identifier">update</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Update rows for <a class="reference internal" href="#Model">Model</a> instance and its <a class="reference internal" href="#Model">Model</a> fields.
+Update rows for <a class="reference external" href="model.html#Model">Model</a> instance and its <a class="reference external" href="model.html#Model">Model</a> fields.
 
 </dd>
 </div>
@@ -580,7 +580,7 @@ Update rows for <a class="reference internal" href="#Model">Model</a> instance a
 <dt><pre><span class="Keyword">proc</span> <a href="#update%2C%2CopenArray%5BT%5D"><span class="Identifier">update</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">;</span> <span class="Identifier">objs</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">openArray</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
 <dd>
 
-Update rows for each <a class="reference internal" href="#Model">Model</a> instance in open array.
+Update rows for each <a class="reference external" href="model.html#Model">Model</a> instance in open array.
 
 </dd>
 </div>
@@ -625,7 +625,7 @@ Update rows for each <a class="reference internal" href="#Model">Model</a> insta
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-20 11:41:31 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-07-20 19:55:49 UTC</small>
       </div>
     </div>
   </div>

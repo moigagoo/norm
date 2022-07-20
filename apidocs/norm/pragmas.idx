@@ -1,5 +1,6 @@
 pk	norm/pragmas.html#pk.t	pragmas: pk()	
 ro	norm/pragmas.html#ro.t	pragmas: ro()	
+readOnly	norm/pragmas.html#readOnly.t	pragmas: readOnly()	
 unique	norm/pragmas.html#unique.t	pragmas: unique()	
 uniqueGroup	norm/pragmas.html#uniqueGroup.t	pragmas: uniqueGroup()	
 fk	norm/pragmas.html#fk.t,typed	pragmas: fk(val: typed)	
