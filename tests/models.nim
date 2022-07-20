@@ -76,6 +76,11 @@ type
   SelfRef* = ref object of Model
     parent* {.fk: SelfRef.}: Option[int64]
 
+  Account* = ref object of Model
+    status* {.uniqueGroup.}: int 
+    email* {.uniqueGroup.}: string
+
+
 func newToy*(price: float): Toy =
   Toy(price: price)
 
@@ -219,4 +224,7 @@ func newSelfRef*(): SelfRef =
 
 func newSelfRef*(parentid: int64): SelfRef =
   SelfRef(parent: some(parentid))
+
+func newAccount*(status = 0, email = ""): Account =
+  Account(status: status, email: email)
 
