@@ -1,5 +1,4 @@
 import std/[options, strutils, typetraits, strformat]
-from std/macros import newDotExpr, ident
 import private/dot
 import pragmas
 
