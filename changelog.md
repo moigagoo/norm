@@ -8,7 +8,8 @@
 -   [d]—docs improvement
 
 
-## 2.5.1 (July 9, 2022)
+## 2.5.1 (WIP)
+- [+] Added `uniqueGroup` pragma to provide UNIQUE constraint on multiple columns (see [#136](https://github.com/moigagoo/norm/issues/136)).
 - [f] Fixed further points where compile-time assertions created unused variables.
 - [f] Fixed `selectOneToMany` and `selectManyToMany` that were introduced in 2.5.1 being unable to deal with FK fields that were Optionals or directly ids.
 
