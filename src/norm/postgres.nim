@@ -81,7 +81,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
     if val.model.isSome:
       dbConn.createTables(get val.model)
 
-  var colGroups, fkGroups: seq[string]
+  var colGroups, fkGroups, uniqueGroupCols: seq[string]
 
   for fld, val in obj[].fieldPairs:
     var colShmParts: seq[string]
@@ -99,6 +99,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     when obj.dot(fld).hasCustomPragma(unique):
       colShmParts.add "UNIQUE"
+
+    when obj.dot(fld).hasCustomPragma(uniqueGroup):
+      uniqueGroupCols.add obj.col(fld)
 
     if val.isModel:
       var fkGroup = "FOREIGN KEY($#) REFERENCES $#($#)" %
@@ -126,7 +129,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     colGroups.add colShmParts.join(" ")
 
-  let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
+  let
+    uniqueGroups = if len(uniqueGroupCols) > 0: @["UNIQUE($#)" % uniqueGroupCols.join(", ")] else: @[]
+    qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups & uniqueGroups).join(", ")]
 
   log(qry)
 
