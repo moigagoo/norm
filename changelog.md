@@ -8,7 +8,7 @@
 -   [d]—docs improvement
 
 
-## 2.5.1 (WIP)
+## 2.5.1 (July 20, 2022)
 - [+] Added `uniqueGroup` pragma to provide UNIQUE constraint on multiple columns (see [#136](https://github.com/moigagoo/norm/issues/136)).
 - [+] Add `readOnly` alias for `ro` pragma (see [#128](https://github.com/moigagoo/norm/issues/128)).
 - [f] Fixed further points where compile-time assertions created unused variables.
