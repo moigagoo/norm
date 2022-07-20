@@ -11,6 +11,9 @@ type
     species*: string
     favToy*: Toy
 
+  PetSpecies* {.readOnly, tableName: "Pet".} = ref object of Model
+    species*: string
+
   Person* = ref object of Model
     name* {.unique.}: string
     pet* {.onDelete: "CASCADE".}: Option[Pet]
@@ -216,6 +219,8 @@ func `===`*(a, b: String): bool =
 
 func newTable*(legCount: Positive = 4): Table =
   Table(legCount: legCount)
+
+func newPetSpecies*: PetSpecies = PetSpecies(species: "")
 
 func newPersonName*: PersonName = PersonName(name: "")
 

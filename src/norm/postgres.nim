@@ -75,7 +75,7 @@ proc dropDb* =
 # Table manipulation
 
 proc createTables*[T: Model](dbConn; obj: T) =
-  ## Create tables for `Model`_ and its `Model`_ fields.
+  ## Create tables for `Model <model.html#Model>`_ and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:

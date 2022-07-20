@@ -19,6 +19,9 @@ template ro* {.pragma.}
   ``id`` field is ``ro`` by default.
   ]##
 
+template readOnly* {.pragma.}
+  ## Alias for `ro <#ro.t>`_ pragma.
+
 template unique* {.pragma.}
   ## Mark field as unique.
 
