@@ -30,7 +30,11 @@ tests/sqlite/tfkpragma_selfref
 tests/sqlite/tfkpragmanotint
 tests/sqlite/tfkpragmanotmodel
 tests/sqlite/tnull
+tests/sqlite/trelated
 tests/sqlite/trepeatfks
+tests/sqlite/tro
+tests/sqlite/tronocomp
+tests/sqlite/tronocomp2
 tests/sqlite/trows
 tests/sqlite/trowutils
 tests/sqlite/tsugar
@@ -39,7 +43,7 @@ tests/sqlite/ttables
 tests/sqlite/ttransactions
 tests/sqlite/ttriangle
 tests/sqlite/tunique
-tests/sqlite/tro
+tests/sqlite/tuniquegroup
 
 tests/postgres/tcount
 tests/postgres/tdb
@@ -51,7 +55,11 @@ tests/postgres/tfkpragma_selfref
 tests/postgres/tfkpragmanotint
 tests/postgres/tfkpragmanotmodel
 tests/postgres/tnull
+tests/postgres/trelated
 tests/postgres/trepeatfks
+tests/postgres/tro
+tests/postgres/tronocomp
+tests/postgres/tronocomp2
 tests/postgres/trows
 tests/postgres/trowutils
 tests/postgres/tsugar
@@ -60,5 +68,5 @@ tests/postgres/ttables
 tests/postgres/ttransactions
 tests/postgres/ttriangle
 tests/postgres/tunique
-tests/postgres/tro
+tests/postgres/tuniquegroup
 

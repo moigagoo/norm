@@ -19,8 +19,14 @@ template ro* {.pragma.}
   ``id`` field is ``ro`` by default.
   ]##
 
+template readOnly* {.pragma.}
+  ## Alias for `ro <#ro.t>`_ pragma.
+
 template unique* {.pragma.}
   ## Mark field as unique.
+
+template uniqueGroup* {.pragma.}
+  ## Mark fields as a unique group. Add pragma to every field.
 
 template fk*(val: typed) {.pragma.}
   ## Mark ``int`` field as foreign key. Foreign keys always references the field ``id`` of ``val``. ``val`` should be a Model.

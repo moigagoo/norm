@@ -63,5 +63,6 @@ proc toRow*[T: Model](obj: T, force = false): Row =
   ]##
 
   for fld, val in obj[].fieldPairs:
-    if force or not obj.dot(fld).hasCustomPragma(ro):
+    if force or not (obj.dot(fld).hasCustomPragma(ro) or obj.dot(fld).hasCustomPragma(readOnly)):
       result.add dbValue(val)
+

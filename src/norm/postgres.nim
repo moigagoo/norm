@@ -75,13 +75,13 @@ proc dropDb* =
 # Table manipulation
 
 proc createTables*[T: Model](dbConn; obj: T) =
-  ## Create tables for `Model`_ and its `Model`_ fields.
+  ## Create tables for `Model <model.html#Model>`_ and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
       dbConn.createTables(get val.model)
 
-  var colGroups, fkGroups: seq[string]
+  var colGroups, fkGroups, uniqueGroupCols: seq[string]
 
   for fld, val in obj[].fieldPairs:
     var colShmParts: seq[string]
@@ -99,6 +99,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     when obj.dot(fld).hasCustomPragma(unique):
       colShmParts.add "UNIQUE"
+
+    when obj.dot(fld).hasCustomPragma(uniqueGroup):
+      uniqueGroupCols.add obj.col(fld)
 
     if val.isModel:
       var fkGroup = "FOREIGN KEY($#) REFERENCES $#($#)" %
@@ -126,7 +129,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     colGroups.add colShmParts.join(" ")
 
-  let qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups).join(", ")]
+  let
+    uniqueGroups = if len(uniqueGroupCols) > 0: @["UNIQUE($#)" % uniqueGroupCols.join(", ")] else: @[]
+    qry = "CREATE TABLE IF NOT EXISTS $#($#)" % [T.table, (colGroups & fkGroups & uniqueGroups).join(", ")]
 
   log(qry)
 
@@ -403,7 +408,14 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEnt
 
   for entryId in entryIds:
     let id = entryId
-    relatedEntries[entryId] = relatedEntriesSeq.filter(target => target.dot(foreignKeyFieldName).id == id)
+    when M.dot(foreignKeyFieldName) is int64:
+      relatedEntries[entryId] = relatedEntriesSeq.filterIt(it.dot(foreignKeyFieldName) == id)
+    elif M.dot(foreignKeyFieldName) is Option[int64]:
+      relatedEntries[entryId] = relatedEntriesSeq.filterIt(it.dot(foreignKeyFieldName).get() == id)
+    elif M.dot(foreignKeyFieldName) is Option[O]:
+      relatedEntries[entryId] = relatedEntriesSeq.filterIt(it.dot(foreignKeyFieldName).get().id == id)
+    else:
+      relatedEntries[entryId] = relatedEntriesSeq.filterIt(it.dot(foreignKeyFieldName).id == id)
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var seq[M]) =
   ## A convenience proc. Fetches all entries of multiple "many" side from multiple 

@@ -1,5 +1,4 @@
 import std/[options, strutils, typetraits, strformat]
-from std/macros import newDotExpr, ident
 import private/dot
 import pragmas
 
@@ -78,7 +77,7 @@ func cols*[T: Model](obj: T, force = false): seq[string] =
   ]##
 
   for fld, val in obj[].fieldPairs:
-    if force or not obj.dot(fld).hasCustomPragma(ro):
+    if force or not (obj.dot(fld).hasCustomPragma(ro) or obj.dot(fld).hasCustomPragma(readOnly)):
       result.add obj.col(fld)
 
 func rfCols*[T: Model](obj: T, flds: seq[string] = @[]): seq[string] =
@@ -115,7 +114,7 @@ func joinGroups*[T: Model](obj: T, flds: seq[string] = @[]): seq[tuple[tbl, tAls
 proc checkRo*(T: typedesc[Model]) =
   ## Stop compilation if an object has `ro`_ pragma.
 
-  when T.hasCustomPragma(ro):
+  when T.hasCustomPragma(ro) or T.hasCustomPragma(readOnly):
     {.error: "can't use mutating procs with read-only models".}
 
 proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
