@@ -20,7 +20,7 @@ template ro* {.pragma.}
   ]##
 
 template readOnly* {.pragma.}
-  ## Alias for `ro <pragmas.html#ro.t>`_ pragma.
+  ## Alias for `ro <#ro.t>`_ pragma.
 
 template unique* {.pragma.}
   ## Mark field as unique.
