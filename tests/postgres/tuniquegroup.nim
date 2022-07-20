@@ -1,6 +1,6 @@
-import std/[unittest, os, options, strutils]
+import std/[unittest, options, strutils]
 
-import norm/[model, sqlite]
+import norm/[model, postgres]
 
 import ../models
 
@@ -13,7 +13,6 @@ const
 
 
 suite "Unique constraint on multiple columns":
-
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
     dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
