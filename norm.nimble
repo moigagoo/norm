@@ -16,6 +16,7 @@ task test, "Run tests":
   exec "testament all"
 
 task book, "Generate book":
+  rmDir "docs"
   exec "nimble install -y nimibook"
   exec "nim r -d:release nbook.nim build"
   cpFile("CNAME", "docs/CNAME")
