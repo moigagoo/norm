@@ -20,7 +20,7 @@ nbCode:
   import norm/model
 
   type
-    BaseUser = ref object of Model
+    BaseUser* = ref object of Model
       email: string
 
 nbText: """
@@ -35,7 +35,7 @@ Inherited models are just inherited objects:
 
 nbCode:
   type
-    NamedUser = ref object of BaseUser
+    NamedUser* = ref object of BaseUser
       name: string
 
 nbText: """
@@ -44,10 +44,10 @@ To create relations between models, define fields subtyped from `Model`:
 
 nbCode:
   type
-    User = ref object of Model
+    User* = ref object of Model
       email: string
 
-    Customer = ref object of Model
+    Customer* = ref object of Model
       name: string
       user: User
 
@@ -61,7 +61,7 @@ nbCode:
   import norm/pragmas
 
   type
-    Client = ref object of Model
+    Client* = ref object of Model
       email: string
       name {.unique.}: string
 
@@ -69,6 +69,9 @@ nbText: """
 Norm will generate the following table schema:
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
+
+To define unique combination or columns, add `{.uniqueGroup.}` pragma to each field in the group.
+
 
 ## Custom Table Name
 
@@ -79,7 +82,7 @@ To override this behavior and set a custom name for the generated table, use `ta
 
 nbCode:
   type
-    Thing {.tableName: "ThingTable".} = ref object of Model
+    Thing* {.tableName: "ThingTable".} = ref object of Model
       attr: string
 
 nbText """
@@ -94,12 +97,12 @@ To slim down DB queries when you don't need to fetch the full model, use read-on
 
 A read-only model is a model that defines a subset of fields of another model. Another important property of read-only model is that you can't use it to insert, update, or delete data; just select.
 
-To define a read-only model, annotate your `Model` subtype with `ro` pragma and point it to an existing table with `tableName`:
+To define a read-only model, annotate your `Model` subtype with `readOnly` or `ro` pragma and point it to an existing table with `tableName`:
 """
 
 nbCode:
   type
-    ClientName {.ro, tableName: "Client".} = ref object of Model
+    ClientName* {.readOnly, tableName: "Client".} = ref object of Model
       name: string
 
 nbText """
