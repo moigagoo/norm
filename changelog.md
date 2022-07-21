@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.5.2 (WIP)
+
+- [r] Logging: refactored `log` module to not trigger warnings when `normDebug` is not defined.
+
 
 ## 2.5.1 (July 20, 2022)
 - [+] Added `uniqueGroup` pragma to provide UNIQUE constraint on multiple columns (see [#136](https://github.com/moigagoo/norm/issues/136)).
