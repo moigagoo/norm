@@ -193,7 +193,7 @@ proc validateJoinModelFkField*[S, T: Model](fkFieldName: static string, joinMode
   ## `target` model. Ensures that the type in the field `fkFieldName` is `target` 
   ## If it isn't the code won't compile as that Model type is required for a useful
   ## Many-To-Many query.
-  let tmp = validateFkField(fkFieldName, joinModel, target)
+  discard validateFkField(fkFieldName, joinModel, target)
   
   for joinFieldName, joinFieldValue in joinModel()[].fieldPairs:
     when joinFieldName == fkFieldName:
