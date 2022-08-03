@@ -1,8 +1,7 @@
 import nimib, nimibook
 
 
-nbInit
-nbUseNimibook
+nbInit(theme = useNimibook)
 
 nbText: """
 # Models 101

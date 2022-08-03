@@ -6,8 +6,7 @@ import norm/sqlite
 import tables
 
 
-nbInit
-nbUseNimibook
+nbInit(theme = useNimibook)
 
 nbText: """
 # Rows
