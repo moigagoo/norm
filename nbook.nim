@@ -21,3 +21,4 @@ book.favicon_escaped = """<link rel="icon" href="data:image/svg+xml,<svg xmlns=%
 book.preferred_dark_theme = "coal"
 
 nimibookCli(book)
+
