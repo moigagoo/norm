@@ -3,10 +3,10 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>tutorial/rowCaveats.nim</title>
+        <title>Row Caveats - Norm: a Nim ORM</title>
 
         <!-- Custom HTML head -->
-        <!-- custom head content -->
+
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="a book built with nimibook">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,6 +28,8 @@
         <!-- Custom theme stylesheets - why the "../"? -->
 
 
+        
+        
         <!-- plausible analytics (new in nimibook) -->
     </head>
     <body>
@@ -80,70 +82,58 @@
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
                                 <ol class="chapter">
-                  <li class="chapter-item expanded ">
-                    <a href="../index.html" tabindex="0">
-                      <strong aria-hidden="true">1.</strong> Welcome to Norm!
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../models.html" tabindex="0">
-                      <strong aria-hidden="true">2.</strong> Models 101
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../tutorial.html" tabindex="0">
-                      <strong aria-hidden="true">3.</strong> Tutorial
-                    </a>
-                  </li>
+                <li class="chapter-item expanded ">
+                  <a href="../index.html" tabindex="0">
+                    <strong aria-hidden="true">1.</strong> Welcome to Norm!
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../models.html" tabindex="0">
+                    <strong aria-hidden="true">2.</strong> Models 101
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../tutorial.html" tabindex="0">
+                    <strong aria-hidden="true">3.</strong> Tutorial
+                  </a></li>
                   <li>
                   <ol class="section">
-                  <li class="chapter-item expanded ">
-                    <a href="../tutorial/tables.html" tabindex="0">
-                      <strong aria-hidden="true">3.1.</strong> Tables
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../tutorial/rows.html" tabindex="0">
-                      <strong aria-hidden="true">3.2.</strong> Rows
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../tutorial/rowCaveats.html" class="active" tabindex="0">
-                      <strong aria-hidden="true">3.3.</strong> Row Caveats
-                    </a>
-                  </li>
+                <li class="chapter-item expanded ">
+                  <a href="../tutorial/tables.html" tabindex="0">
+                    <strong aria-hidden="true">3.1.</strong> Tables
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../tutorial/rows.html" tabindex="0">
+                    <strong aria-hidden="true">3.2.</strong> Rows
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../tutorial/rowCaveats.html" class="active" tabindex="0">
+                    <strong aria-hidden="true">3.3.</strong> Row Caveats
+                  </a></li>
                   </ol>
                   </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../fancy.html" tabindex="0">
-                      <strong aria-hidden="true">4.</strong> Fancy Syntax
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../transactions.html" tabindex="0">
-                      <strong aria-hidden="true">5.</strong> Transactions
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../config.html" tabindex="0">
-                      <strong aria-hidden="true">6.</strong> Configuration from Environment
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../fk.html" tabindex="0">
-                      <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../debug.html" tabindex="0">
-                      <strong aria-hidden="true">8.</strong> Debugging SQL
-                    </a>
-                  </li>
-                  <li class="chapter-item expanded ">
-                    <a href="../changelog.html" tabindex="0">
-                      <strong aria-hidden="true">9.</strong> Changelog
-                    </a>
-                  </li>
+                <li class="chapter-item expanded ">
+                  <a href="../fancy.html" tabindex="0">
+                    <strong aria-hidden="true">4.</strong> Fancy Syntax
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../transactions.html" tabindex="0">
+                    <strong aria-hidden="true">5.</strong> Transactions
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../config.html" tabindex="0">
+                    <strong aria-hidden="true">6.</strong> Configuration from Environment
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../fk.html" tabindex="0">
+                    <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../debug.html" tabindex="0">
+                    <strong aria-hidden="true">8.</strong> Debugging SQL
+                  </a></li>
+                <li class="chapter-item expanded ">
+                  <a href="../changelog.html" tabindex="0">
+                    <strong aria-hidden="true">9.</strong> Changelog
+                  </a></li>
                 </ol>
 <!-- I could use also an unescaped context value -->
             </div>
@@ -153,7 +143,7 @@
         <div id="page-wrapper" class="page-wrapper">
 
             <div class="page">
-                <!-- custom header content -->                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar-hover-placeholder"></div>
                 <div id="menu-bar" class="menu-bar sticky bordered">
                     <div class="left-buttons">
                         <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
@@ -193,12 +183,13 @@
 
                 <div id="content" class="content">
                     <main>
-                        [<h1>Caveats</h1>
+                        <h1>Caveats</h1>
 <p>There are some caveats when working with Norm that you need to consider and strategies to work around them.</p>
 <h2>Managing Data for Many-to-Many Relationships</h2>
 <p>Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary &quot;glue&quot;-models yourself as if they were regular models.</p>
 <h2>Fetching data for more complex Many-To-One/Many-To-Many relationships</h2>
-<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>,<pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
+<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
 <span class="hljs-keyword">import</span> norm/[model, sqlite]
 
 <span class="hljs-keyword">type</span> <span class="hljs-type">Producer</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
@@ -253,7 +244,7 @@ dbConn.select(employees, <span class="hljs-string">&quot;employer = ?&quot;</spa
   employees: employees
 )
 
-<span class="hljs-keyword">echo</span> %*producerContainer</code></pre><pre><samp>{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}</samp></pre>]
+<span class="hljs-keyword">echo</span> %*producerContainer</code></pre><pre><samp>{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}</samp></pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
