@@ -40,7 +40,7 @@ proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) 
       else:                                         ## If the field is a ``none Model``,
         inc pos                                     ## don't bother trying to populate it at all.
 
-    elif not skip:                                  ## If we're dealing with an "orginary" field,
+    elif not skip:                                  ## If we're dealing with an "ordinary" field,
       val = row[pos].to(typeof(val))                ## just convert it.
       inc pos
 
