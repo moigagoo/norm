@@ -237,6 +237,38 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
 
   dbConn.select(objs, "TRUE")
 
+proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
+  ##[ Populate a ref object instance ``obj`` and its ref object fields from DB.
+
+  ``qry`` is the raw sql query whose contents are to be parsed into obj.
+  The columns on ``qry`` must be in the same order as the fields on ``obj``.
+  ]##
+  let row = dbConn.getAllRows(sql qry, params)
+  
+  if row.isNone:
+    raise newException(NotFoundError, "Record not found")
+
+  obj.fromRow(get row)
+
+proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
+  ##[ Populate a sequence of ref object instances from DB.
+
+  ``qry`` is the raw sql query whose contents are to be parsed into ``objs``.
+
+  The columns on ``qry`` must be in the same order as the fields on ``objs``.
+  ``objs`` must have at least one item.
+  ]##
+  let rows = dbConn.getAllRows(sql qry, params)
+
+  if objs.len > rows.len:
+    objs.setLen(rows.len)
+
+  for _ in 1..(rows.len - objs.len):
+    objs.add deepCopy(objs[0])
+
+  for i, row in rows:
+    objs[i].fromRow(row)
+
 proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", params: varargs[DbValue, dbValue]): int64 =
   ##[ Count rows matching condition without fetching them.
 
