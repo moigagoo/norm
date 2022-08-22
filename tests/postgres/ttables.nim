@@ -56,7 +56,7 @@ suite "Table creation":
 
     check dbConn.getAllRows(qry, "FurnitureTable") == @[
       @[?"id", ?"bigint"],
-      @[?"legcount", ?dftDbInt]
+      @[?"legCount", ?dftDbInt]
     ]
 
   test "Create tables":
@@ -80,7 +80,7 @@ suite "Table creation":
     ]
 
     check dbConn.getAllRows(qry, "Pet") == @[
-      @[?"favtoy", ?"bigint"],
+      @[?"favToy", ?"bigint"],
       @[?"id", ?"bigint"],
       @[?"species", ?"text"]
     ]
