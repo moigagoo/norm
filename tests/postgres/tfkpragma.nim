@@ -1,8 +1,10 @@
-import std/[unittest, times, strutils]
+import std/[unittest, times, strutils, logging]
 
 import norm/[model, postgres]
 
 import ../models
+
+addHandler(newConsoleLogger(levelThreshold = lvlDebug))
 
 
 const
@@ -41,8 +43,8 @@ suite "``fk`` pragma":
     check customer.id > 0
 
     let
-      userRows = dbConn.getAllRows(sql"""SELECT lastLogin, id FROM "User"""")
-      customerRows = dbConn.getAllRows(sql"""SELECT userId, email, id FROM "Customer"""")
+      userRows = dbConn.getAllRows(sql"""SELECT "lastLogin", "id" FROM "User" """)
+      customerRows = dbConn.getAllRows(sql"""SELECT "userId", "email", "id" FROM "Customer" """)
 
     check userRows.len == 1
     check userRows[0][1] == ?user.id
