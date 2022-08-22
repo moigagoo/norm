@@ -1,3 +1,9 @@
 [nimib]
 srcDir = "book"
 homeDir = "docs"
+
+[nimibook]
+title = "Norm"
+description = "Object-driven ORM for SQLite and Postgres"
+git_repository_url = "https://github.com/moigagoo/norm"
+

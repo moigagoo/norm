@@ -7,9 +7,19 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.5.1 (July 19, 2022)
 
-- [f] Usage of SQL keywords as field names is now possible by quoting them in the resulting query.
+## 2.5.2 (WIP)
+
+- [r] Logging: refactored `log` module to not trigger warnings when `normDebug` is not defined.
+
+
+## 2.5.1 (July 20, 2022)
+- [+] Added `uniqueGroup` pragma to provide UNIQUE constraint on multiple columns (see [#136](https://github.com/moigagoo/norm/issues/136)).
+- [+] Add `readOnly` alias for `ro` pragma (see [#128](https://github.com/moigagoo/norm/issues/128)).
+- [f] Fixed further points where compile-time assertions created unused variables.
+- [f] Fixed `selectOneToMany` and `selectManyToMany` that were introduced in 2.5.1 being unable to deal with FK fields that were Optionals or directly ids.
+- [t] Enable deepCopy for tests to prepare for the `--mm:arc|orc` switch in Nim 2.0.
+
 
 ## 2.5.0 (July 8, 2022)
 

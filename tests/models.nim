@@ -11,6 +11,9 @@ type
     species*: string
     favToy*: Toy
 
+  PetSpecies* {.readOnly, tableName: "Pet".} = ref object of Model
+    species*: string
+
   Person* = ref object of Model
     name* {.unique.}: string
     pet* {.onDelete: "CASCADE".}: Option[Pet]
@@ -75,6 +78,11 @@ type
 
   SelfRef* = ref object of Model
     parent* {.fk: SelfRef.}: Option[int64]
+
+  Account* = ref object of Model
+    status* {.uniqueGroup.}: int 
+    email* {.uniqueGroup.}: string
+
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -212,6 +220,8 @@ func `===`*(a, b: String): bool =
 func newTable*(legCount: Positive = 4): Table =
   Table(legCount: legCount)
 
+func newPetSpecies*: PetSpecies = PetSpecies(species: "")
+
 func newPersonName*: PersonName = PersonName(name: "")
 
 func newSelfRef*(): SelfRef =
@@ -219,4 +229,7 @@ func newSelfRef*(): SelfRef =
 
 func newSelfRef*(parentid: int64): SelfRef =
   SelfRef(parent: some(parentid))
+
+func newAccount*(status = 0, email = ""): Account =
+  Account(status: status, email: email)
 

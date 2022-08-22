@@ -3,8 +3,7 @@ import nimib, nimibook
 import tutorial/tables
 
 
-nbInit
-nbUseNimibook
+nbInit(theme = useNimibook)
 
 nbText: """
 # Configuration from Environment
