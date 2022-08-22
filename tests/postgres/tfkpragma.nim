@@ -70,6 +70,6 @@ suite "``fk`` pragma":
     for inpCustomer in inpCustomers.mitems:
       dbConn.insert inpCustomer
 
-    dbConn.select(outCustomers, """"userid" = $1""", userA.id)
+    dbConn.select(outCustomers, """"userId" = $1""", userA.id)
 
     check outCustomers === inpCustomers[0..^2]
