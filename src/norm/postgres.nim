@@ -101,7 +101,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
       colShmParts.add "UNIQUE"
 
     if val.isModel:
-      var fkGroup = """FOREIGN KEY("$#") REFERENCES $#($#)""" %
+      var fkGroup = """FOREIGN KEY($#) REFERENCES $#($#)""" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
       when obj.dot(fld).hasCustomPragma(onDelete):
