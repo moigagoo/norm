@@ -7,7 +7,6 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-
 ## 2.5.2 (WIP)
 
 - [r] Logging: refactored `log` module to not trigger warnings when `normDebug` is not defined.

@@ -1,11 +1,8 @@
-import std/[unittest, times, strutils, logging]
+import std/[unittest, times, strutils]
 
 import norm/[model, postgres]
 
 import ../models
-
-addHandler(newConsoleLogger(levelThreshold = lvlDebug))
-
 
 const
   dbHost = "postgres"
