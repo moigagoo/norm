@@ -6,6 +6,7 @@ import ndb/postgres
 
 import dbtypes
 import ../dot
+import ../utils
 import ../../model
 import ../../pragmas
 
@@ -14,16 +15,9 @@ when (NimMajor, NimMinor) <= (1, 6):
 else:
   import std/macros
 
-
-func isContainer*[T](val: typedesc[T]): bool {.compileTime.} = T is ref object
-func isContainer*[T](val: T): bool {.compileTime.} = T is ref object
-func isContainer*[T](val: typedesc[Option[T]]): bool {.compileTime.} = T is ref object  
-func isContainer*[T](val: Option[T]): bool {.compileTime.} = T is ref object  
-
-func toOptional*[T: ref object](val: T): Option[T] = some val
-func toOptional*[T: ref object](val: Option[T]): Option[T] = val
-func isEmptyColumn(row: Row, index: int): bool = row[index].kind == dvkNull
-
+func isEmptyColumn*(row: Row, index: int): bool =
+  ## Checks whether the column at a given index is empty
+  row[index].kind == dvkNull
 
 ## This does the actual heavy lifting for parsing
 proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: static bool = false) =
@@ -33,13 +27,13 @@ proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: sta
   ]##
 
   for fld, dummyVal in T()[].fieldPairs:
-    when isContainer(typeof(dummyVal)):                 ## If we're dealing with a ``Model`` field
+    when isRefObject(typeof(dummyVal)):                 ## If we're dealing with a ``Model`` field
       if dot(obj, fld).toOptional().isSome:             ## and it's either a ``some Model`` or ``Model``
         var subMod = dot(obj, fld).toOptional().get()   ## then we try to populate it with the next ``row`` values.
 
         if row.isEmptyColumn(pos):                      ## If we have a ``NULL`` at this point, we return an empty ``Model``:
           when typeof(dummyVal) is Option:              ## ``val`` is guaranteed to be either ``Model`` or an ``Option[Model]`` at this point,
-            when isContainer(dummyVal): 
+            when isRefObject(dummyVal):
               dot(obj, fld) = none typeof(subMod)       ## and the fact that we got a ``NULL`` tells us it's an ``Option[Model]``,
 
           inc pos
