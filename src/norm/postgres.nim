@@ -243,7 +243,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
   ``qry`` is the raw sql query whose contents are to be parsed into obj.
   The columns on ``qry`` must be in the same order as the fields on ``obj``.
   ]##
-  let row = dbConn.getAllRows(sql qry, params)
+  let row = dbConn.getRow(sql qry, params)
   
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
