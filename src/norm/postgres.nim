@@ -242,6 +242,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
 
   ``qry`` is the raw sql query whose contents are to be parsed into obj.
   The columns on ``qry`` must be in the same order as the fields on ``obj``.
+  Table names must be written surrounded by quotation marks and are case sensititve.
   ]##
   let row = dbConn.getRow(sql qry, params)
   
@@ -257,6 +258,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: va
 
   The columns on ``qry`` must be in the same order as the fields on ``objs``.
   ``objs`` must have at least one item.
+  Table names must be written surrounded by quotation marks and are case sensititve.
   ]##
   let rows = dbConn.getAllRows(sql qry, params)
 
