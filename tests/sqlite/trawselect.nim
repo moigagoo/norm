@@ -1,4 +1,4 @@
-import std/[unittest, with, os, sugar, options, logging]
+import std/[unittest, with, os, sugar, options]
 
 import norm/[model, sqlite]
 
@@ -6,8 +6,6 @@ import ../models
 
 
 const dbFile = "test.db"
-
-addHandler(newConsoleLogger(levelThreshold = lvlDebug))
 
 suite "Testing rawSelect proc":
   setup:

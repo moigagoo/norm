@@ -1,4 +1,4 @@
-import std/[unittest, with, os, sugar, options, logging, strutils]
+import std/[unittest, with, os, sugar, options, strutils]
 
 import norm/[model, postgres]
 
@@ -16,9 +16,6 @@ proc resetDb =
   dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % dbDatabase)
   dbConn.exec(sql "CREATE DATABASE $#" % dbDatabase)
   close dbConn
-
-
-addHandler(newConsoleLogger(levelThreshold = lvlDebug))
 
 suite "Testing rawSelect proc":
   setup:
