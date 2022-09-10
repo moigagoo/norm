@@ -6,6 +6,7 @@ import ndb/postgres
 
 import dbtypes
 import ../dot
+import ../utils
 import ../../model
 import ../../pragmas
 
@@ -14,40 +15,47 @@ when (NimMajor, NimMinor) <= (1, 6):
 else:
   import std/macros
 
-proc fromRowPos[T: Model](obj: var T, row: Row, pos: var Natural, skip = false) =
+func isEmptyColumn*(row: Row, index: int): bool =
+  ## Checks whether the column at a given index is empty
+  row[index].kind == dvkNull
+
+## This does the actual heavy lifting for parsing
+proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: static bool = false) =
   ##[ Convert ``ndb.sqlite.Row`` instance into `Model`_ instance, from a given position.
 
   This is a helper proc to convert to `Model`_ instances that have fields of the same type.
   ]##
 
-  for fld, val in obj[].fieldPairs:
-    if val.isModel:                                 ## If we're dealing with a ``Model`` field
-      if val.model.isSome:                          ## and it's either a ``some Model`` or ``Model``
-        var subMod = get val.model                  ## then we try to populate it with the next ``row`` values.
+  for fld, dummyVal in T()[].fieldPairs:
+    when isRefObject(typeof(dummyVal)):                 ## If we're dealing with a ``Model`` field
+      if dot(obj, fld).toOptional().isSome:             ## and it's either a ``some Model`` or ``Model``
+        var subMod = dot(obj, fld).toOptional().get()   ## then we try to populate it with the next ``row`` values.
 
-        if row[pos].kind == dvkNull:                ## If we have a ``NULL`` at this point, we return an empty ``Model``:
-          when val is Option:                       ## ``val`` is guaranteed to be either ``Model`` or an ``Option[Model]`` at this point,
-            when get(val) is Model:                 ## and the fact that we got a ``NULL`` tells us it's an ``Option[Model]``,
-              val = none typeof(subMod)             ## so we return a ``none Model``.
+        if row.isEmptyColumn(pos):                      ## If we have a ``NULL`` at this point, we return an empty ``Model``:
+          when typeof(dummyVal) is Option:              ## ``val`` is guaranteed to be either ``Model`` or an ``Option[Model]`` at this point,
+            when isRefObject(dummyVal):
+              dot(obj, fld) = none typeof(subMod)       ## and the fact that we got a ``NULL`` tells us it's an ``Option[Model]``,
 
           inc pos
-          subMod.fromRowPos(row, pos, skip = true)  ## Then we skip all the ``row`` values that should've gone into this submodel.
+          subMod.fromRowPos(row, pos, skip = true)      ## Then we skip all the ``row`` values that should've gone into this submodel.
 
-        else:                                       ## If ``row[pos]`` is not a ``NULL``,
-          inc pos                                   ##
-          subMod.fromRowPos(row, pos)               ## we actually populate the submodel.
+        else:                                           ## If ``row[pos]`` is not a ``NULL``,
+          inc pos                                       ##
+          subMod.fromRowPos(row, pos)                   ## we actually populate the submodel.
 
-      else:                                         ## If the field is a ``none Model``,
-        inc pos                                     ## don't bother trying to populate it at all.
-
-    elif not skip:                                  ## If we're dealing with an "ordinary" field,
-      val = row[pos].to(typeof(val))                ## just convert it.
-      inc pos
-
+      else:                                             ## If the field is a ``none Model``,
+        inc pos                                         ## don't bother trying to populate it at all.
+                                          
     else:
-      inc pos
+      when not skip:                                    ## If we're dealing with an "ordinary" field,
+        dot(obj, fld) = row[pos].to(typeof(dummyVal))   ## just convert it.
+        inc pos
 
-proc fromRow*[T: Model](obj: var T, row: Row) =
+      else:
+        inc pos
+  
+
+proc fromRow*[T: ref object](obj: var T, row: Row) =
   ##[ Populate `Model`_ instance from ``ndb.postgres.Row`` instance.
 
   Nested `Model`_ fields are populated from the same ``ndb.postgres.Row`` instance.
