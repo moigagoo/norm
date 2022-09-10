@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', main);
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/private/utils.html">norm/private/utils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
@@ -263,9 +263,9 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="fromRow" href="#fromRow"><span>fromRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="rowutils: fromRow[T: Model](obj: var T; row: Row)" href="norm/private/postgres/rowutils.html#fromRow%2CT%2CRow">rowutils: fromRow[T: Model](obj: var T; row: Row)</a></li>
+          data-doc-search-tag="rowutils: fromRow[T: ref object](obj: var T; row: Row)" href="norm/private/postgres/rowutils.html#fromRow%2CT%2CRow">rowutils: fromRow[T: ref object](obj: var T; row: Row)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="rowutils: fromRow[T: Model](obj: var T; row: Row)" href="norm/private/sqlite/rowutils.html#fromRow%2CT%2CRow">rowutils: fromRow[T: Model](obj: var T; row: Row)</a></li>
+          data-doc-search-tag="rowutils: fromRow[T: ref object](obj: var T; row: Row)" href="norm/private/sqlite/rowutils.html#fromRow%2CT%2CRow">rowutils: fromRow[T: ref object](obj: var T; row: Row)</a></li>
           </ul></dd>
 <dt><a name="getCustomPragmaVal" href="#getCustomPragmaVal"><span>getCustomPragmaVal:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -303,6 +303,12 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="sqlite: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)" href="norm/sqlite.html#insert%2C%2CT">sqlite: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)</a></li>
           </ul></dd>
+<dt><a name="isEmptyColumn" href="#isEmptyColumn"><span>isEmptyColumn:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="rowutils: isEmptyColumn(row: Row; index: int): bool" href="norm/private/postgres/rowutils.html#isEmptyColumn%2CRow%2Cint">rowutils: isEmptyColumn(row: Row; index: int): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="rowutils: isEmptyColumn(row: Row; index: int): bool" href="norm/private/sqlite/rowutils.html#isEmptyColumn%2CRow%2Cint">rowutils: isEmptyColumn(row: Row; index: int): bool</a></li>
+          </ul></dd>
 <dt><a name="isModel" href="#isModel"><span>isModel:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: isModel[T: Model](val: Option[T]): bool" href="norm/model.html#isModel%2COption%5BT%3A%20Model%5D">model: isModel[T: Model](val: Option[T]): bool</a></li>
@@ -310,6 +316,16 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="model: isModel[T: Model](val: T): bool" href="norm/model.html#isModel%2CT">model: isModel[T: Model](val: T): bool</a></li>
           <li><a class="reference external"
           data-doc-search-tag="model: isModel[T](val: T): bool" href="norm/model.html#isModel%2CT_2">model: isModel[T](val: T): bool</a></li>
+          </ul></dd>
+<dt><a name="isRefObject" href="#isRefObject"><span>isRefObject:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="utils: isRefObject[T](val: Option[T]): bool" href="norm/private/utils.html#isRefObject%2COption%5BT%5D">utils: isRefObject[T](val: Option[T]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="utils: isRefObject[T](val: T): bool" href="norm/private/utils.html#isRefObject%2CT">utils: isRefObject[T](val: T): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="utils: isRefObject[T](val: typedesc[Option[T]]): bool" href="norm/private/utils.html#isRefObject%2Ctypedesc%5BOption%5BT%5D%5D">utils: isRefObject[T](val: typedesc[Option[T]]): bool</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="utils: isRefObject[T](val: typedesc[T]): bool" href="norm/private/utils.html#isRefObject%2Ctypedesc%5BT%5D">utils: isRefObject[T](val: typedesc[T]): bool</a></li>
           </ul></dd>
 <dt><a name="joinGroups" href="#joinGroups"><span>joinGroups:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -364,6 +380,24 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="pk" href="#pk"><span>pk:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="pragmas: pk()" href="norm/pragmas.html#pk.t">pragmas: pk()</a></li>
+          </ul></dd>
+<dt><a name="rawSelect" href="#rawSelect"><span>rawSelect:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="postgres: rawSelect[T: ref object](dbConn; qry: string; objs: var seq[T];
+                         params: varargs[DbValue, dbValue])" href="norm/postgres.html#rawSelect%2C%2Cstring%2Cseq%5BT%5D%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: rawSelect[T: ref object](dbConn; qry: string; objs: var seq[T];
+                         params: varargs[DbValue, dbValue])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="postgres: rawSelect[T: ref object](dbConn; qry: string; obj: var T;
+                         params: varargs[DbValue, dbValue])" href="norm/postgres.html#rawSelect%2C%2Cstring%2CT%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: rawSelect[T: ref object](dbConn; qry: string; obj: var T;
+                         params: varargs[DbValue, dbValue])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: rawSelect[T: ref object](dbConn; qry: string; objs: var seq[T];
+                         params: varargs[DbValue, dbValue])" href="norm/sqlite.html#rawSelect%2C%2Cstring%2Cseq%5BT%5D%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: rawSelect[T: ref object](dbConn; qry: string; objs: var seq[T];
+                         params: varargs[DbValue, dbValue])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: rawSelect[T: ref object](dbConn; qry: string; obj: var T;
+                         params: varargs[DbValue, dbValue])" href="norm/sqlite.html#rawSelect%2C%2Cstring%2CT%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: rawSelect[T: ref object](dbConn; qry: string; obj: var T;
+                         params: varargs[DbValue, dbValue])</a></li>
           </ul></dd>
 <dt><a name="readOnly" href="#readOnly"><span>readOnly:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -575,6 +609,12 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type</a></li>
           </ul></dd>
+<dt><a name="toOptional" href="#toOptional"><span>toOptional:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="utils: toOptional[T: ref object](val: Option[T]): Option[T]" href="norm/private/utils.html#toOptional%2COption%5BT%3A%20ref%20object%5D">utils: toOptional[T: ref object](val: Option[T]): Option[T]</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="utils: toOptional[T: ref object](val: T): Option[T]" href="norm/private/utils.html#toOptional%2CT">utils: toOptional[T: ref object](val: T): Option[T]</a></li>
+          </ul></dd>
 <dt><a name="toRow" href="#toRow"><span>toRow:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="rowutils: toRow[T: Model](obj: T; force = false): Row" href="norm/private/postgres/rowutils.html#toRow%2CT">rowutils: toRow[T: Model](obj: T; force = false): Row</a></li>
@@ -630,7 +670,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-08-08 12:22:29 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-09-10 13:50:37 UTC</small>
       </div>
     </div>
   </div>

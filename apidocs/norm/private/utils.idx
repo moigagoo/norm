@@ -1,0 +1,6 @@
+isRefObject	norm/private/utils.html#isRefObject,typedesc[T]	utils: isRefObject[T](val: typedesc[T]): bool	
+isRefObject	norm/private/utils.html#isRefObject,T	utils: isRefObject[T](val: T): bool	
+isRefObject	norm/private/utils.html#isRefObject,typedesc[Option[T]]	utils: isRefObject[T](val: typedesc[Option[T]]): bool	
+isRefObject	norm/private/utils.html#isRefObject,Option[T]	utils: isRefObject[T](val: Option[T]): bool	
+toOptional	norm/private/utils.html#toOptional,T	utils: toOptional[T: ref object](val: T): Option[T]	
+toOptional	norm/private/utils.html#toOptional,Option[T: ref object]	utils: toOptional[T: ref object](val: Option[T]): Option[T]	

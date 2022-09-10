@@ -13,6 +13,8 @@ insert	norm/postgres.html#insert,,openArray[T]	postgres: insert[T: Model](dbConn
 select	norm/postgres.html#select,,T,string,varargs[DbValue,dbValue]	postgres: select[T: Model](dbConn; obj: var T; cond: string;\n                 params: varargs[DbValue, dbValue])	
 select	norm/postgres.html#select,,seq[T],string,varargs[DbValue,dbValue]	postgres: select[T: Model](dbConn; objs: var seq[T]; cond: string;\n                 params: varargs[DbValue, dbValue])	
 selectAll	norm/postgres.html#selectAll,,seq[T]	postgres: selectAll[T: Model](dbConn; objs: var seq[T])	
+rawSelect	norm/postgres.html#rawSelect,,string,T,varargs[DbValue,dbValue]	postgres: rawSelect[T: ref object](dbConn; qry: string; obj: var T;\n                         params: varargs[DbValue, dbValue])	
+rawSelect	norm/postgres.html#rawSelect,,string,seq[T],varargs[DbValue,dbValue]	postgres: rawSelect[T: ref object](dbConn; qry: string; objs: var seq[T];\n                         params: varargs[DbValue, dbValue])	
 count	norm/postgres.html#count,,typedesc[Model],string,string,varargs[DbValue,dbValue]	postgres: count(dbConn; T: typedesc[Model]; col = &quot;*&quot;; dist = false; cond = &quot;TRUE&quot;;\n      params: varargs[DbValue, dbValue]): int64	
 sum	norm/postgres.html#sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]	postgres: sum(dbConn; T: typedesc[Model]; col: string; dist = false; cond = &quot;TRUE&quot;;\n    params: varargs[DbValue, dbValue]): float	
 exists	norm/postgres.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	postgres: exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;\n       params: varargs[DbValue, dbValue]): bool	

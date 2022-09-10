@@ -1,2 +1,3 @@
-fromRow	norm/private/postgres/rowutils.html#fromRow,T,Row	rowutils: fromRow[T: Model](obj: var T; row: Row)	
+isEmptyColumn	norm/private/postgres/rowutils.html#isEmptyColumn,Row,int	rowutils: isEmptyColumn(row: Row; index: int): bool	
+fromRow	norm/private/postgres/rowutils.html#fromRow,T,Row	rowutils: fromRow[T: ref object](obj: var T; row: Row)	
 toRow	norm/private/postgres/rowutils.html#toRow,T	rowutils: toRow[T: Model](obj: T; force = false): Row	
