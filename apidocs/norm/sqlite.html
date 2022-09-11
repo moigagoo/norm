@@ -448,7 +448,7 @@ Insert rows for each <a class="reference external" href="model.html#Model">Model
 <dd>
 
 <p>Populate a ref object instance <tt class="docutils literal"><span class="pre">obj</span></tt> and its ref object fields from DB.</p>
-<p><tt class="docutils literal"><span class="pre">qry</span></tt> is the raw sql query whose contents are to be parsed into obj. The columns on <tt class="docutils literal"><span class="pre">qry</span></tt> must be in the same order as the fields on <tt class="docutils literal"><span class="pre">obj</span></tt>. </p>
+<p><tt class="docutils literal"><span class="pre">qry</span></tt> is the raw sql query whose contents are to be parsed into obj. The columns on <tt class="docutils literal"><span class="pre">qry</span></tt> must be in the same order as the fields on <tt class="docutils literal"><span class="pre">obj</span></tt>. Raises a <tt class="docutils literal"><span class="pre"><span class="Identifier">NotFoundError</span></span></tt> if the query returns nothing. </p>
 
 
 </dd>
@@ -661,7 +661,7 @@ Update rows for each <a class="reference external" href="model.html#Model">Model
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-09-11 11:11:53 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-09-11 11:14:00 UTC</small>
       </div>
     </div>
   </div>
