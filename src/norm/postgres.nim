@@ -1,3 +1,4 @@
+
 import std/[os, logging, strutils, sequtils, options, sugar, strformat, tables]
 
 when (NimMajor, NimMinor) <= (1, 6):
@@ -243,6 +244,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
   ``qry`` is the raw sql query whose contents are to be parsed into obj.
   The columns on ``qry`` must be in the same order as the fields on ``obj``.
   Table names must be written surrounded by quotation marks and are case sensititve.
+  Raises a `NotFoundError` if the query returns nothing.
   ]##
   let row = dbConn.getRow(sql qry, params)
   
