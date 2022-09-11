@@ -12,6 +12,7 @@ var book = initBookWithToc:
   entry("Transactions", "transactions.nim")
   entry("Configuration from Environment", "config.nim")
   entry("Manual Foreign Key Handling", "fk.nim")
+  entry("Custom Datatypes", "customDatatypes.nim")
   entry("Debugging SQL", "debug.nim")
   entry("Changelog", "changelog.nim")
 
