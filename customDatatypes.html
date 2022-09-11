@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>Debugging SQL - Norm</title>
+        <title>Custom Datatypes - Norm</title>
 
         <!-- Custom HTML head -->
 
@@ -127,11 +127,11 @@
                     <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./customDatatypes.html" tabindex="0">
+                  <a href="./customDatatypes.html" class="active" tabindex="0">
                     <strong aria-hidden="true">8.</strong> Custom Datatypes
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./debug.html" class="active" tabindex="0">
+                  <a href="./debug.html" tabindex="0">
                     <strong aria-hidden="true">9.</strong> Debugging SQL
                   </a></li>
                 <li class="chapter-item expanded ">
@@ -187,20 +187,78 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Debugging SQL</h1>
-<p>To enable the logging of SQL queries, define <code>normDebug</code> either by compiling with <code>-d:normDebug</code>, or by adding <code>switch(&quot;define&quot;, &quot;normDebug&quot;)</code> to config.nims.</p>
-<p>Once <code>normDebug</code> is defined, add a logger on debug level (see https://nim-lang.org/docs/logging.html for more info):</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> logging
-<span class="hljs-keyword">var</span> consoleLog = newConsoleLogger()
-addHandler(consoleLog)</code></pre>
+                        <h1>Custom Datatypes</h1>
+<p>By default, norm can deal with the nim types:</p>
+<ul>
+<li><code>bool</code></li>
+<li><code>int/int8/16/32/64</code></li>
+<li><code>uint/uint8/16/32/64</code></li>
+<li><code>string</code></li>
+<li><code>DbBlob</code></li>
+<li><code>DateTime</code></li>
+<li><code>Model</code></li>
+</ul>
+<p>It does so by interacting with the database through a package called <code>ndb</code>.
+With <code>ndb</code>, norm converts these nim types into the <code>DbValue</code> type which it then can convert to and from the various database-types.</p>
+<p>More specifically, norm does this by specifying 3 procs. These procs specify which database-type to convert <code>DbValue</code> to,
+how to convert the nim type to <code>DbValue</code> and how to convert <code>DbValue</code> to the nim type.</p>
+<p>If you want to have norm <code>Models</code> that contain your own custom types, you need to define these 3 procs for your nim type:</p>
+<ul>
+<li><code>dbType(T: typedesc[YourType]) -&gt; string</code> - This maps your nim type to a database type (e.g. <code>func dbType*(T: typedesc[string]): string = &quot;TEXT&quot;</code> for sqlite)</li>
+<li><code>dbValue(YourType) -&gt; DbValue</code> - This converts an instance of <code>YourType</code> to a <code>DbValue</code> instance.</li>
+<li><code>to(DbValue, T: typedesc[YourType]) -&gt; T</code> - This converts a <code>DbValue</code> instance to an instance of <code>YourType</code>.</li>
+</ul>
+<p>Say for example we wanted to have an enum field on a model, that is stored as a string in our database:</p>
+                        <pre><code class="nim hljs"><span class="hljs-comment"># Required Code</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily</span> = <span class="hljs-keyword">enum</span>
+  <span class="hljs-type">BEAST</span> = <span class="hljs-number">1</span>
+  <span class="hljs-type">ANGEL</span> = <span class="hljs-number">2</span>
+  <span class="hljs-type">DEMON</span> = <span class="hljs-number">3</span>
+  <span class="hljs-type">HUMANOID</span> = <span class="hljs-number">4</span>
+
+<span class="hljs-keyword">type</span> <span class="hljs-type">Creature</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name*: <span class="hljs-built_in">string</span>
+    family*: <span class="hljs-type">CreatureFamily</span>
+
+<span class="hljs-keyword">func</span> dbType*(<span class="hljs-type">T</span>: typedesc[<span class="hljs-type">CreatureFamily</span>]): <span class="hljs-built_in">string</span> = <span class="hljs-string">&quot;TEXT&quot;</span>
+<span class="hljs-keyword">func</span> dbValue*(val: <span class="hljs-type">CreatureFamily</span>): <span class="hljs-type">DbValue</span> = dbValue($val)
+<span class="hljs-keyword">proc</span> to*(dbVal: <span class="hljs-type">DbValue</span>, <span class="hljs-type">T</span>: typedesc[<span class="hljs-type">CreatureFamily</span>]): <span class="hljs-type">T</span> = parseEnum[<span class="hljs-type">CreatureFamily</span>](dbVal.s)
+
+<span class="hljs-comment"># Example Usage</span>
+putEnv(<span class="hljs-string">&quot;DB_HOST&quot;</span>, <span class="hljs-string">&quot;:memory:&quot;</span>)
+<span class="hljs-keyword">let</span> db = getDb()
+<span class="hljs-keyword">var</span> human = <span class="hljs-type">Creature</span>(name: <span class="hljs-string">&quot;Karl&quot;</span>, family: <span class="hljs-type">CreatureFamily</span>.<span class="hljs-type">HUMANOID</span>)
+
+db.createTables(human)
+db.insert(human)
+
+<span class="hljs-keyword">let</span> rows = db.getAllRows(sql <span class="hljs-string">&quot;SELECT name, family, id FROM creature&quot;</span>)
+<span class="hljs-keyword">echo</span> $rows <span class="hljs-comment"># @[@['Karl', 'HUMANOID', 1]]</span>
+
+<span class="hljs-keyword">var</span> human2 = <span class="hljs-type">Creature</span>()
+db.select(human2, <span class="hljs-string">&quot;id = ?&quot;</span>, human.id)
+
+<span class="hljs-keyword">assert</span> human2.family == <span class="hljs-type">CreatureFamily</span>.<span class="hljs-type">HUMANOID</span></code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;Creature&quot;(name TEXT NOT NULL, family TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+INSERT INTO &quot;Creature&quot; (name, family) VALUES(?, ?) &lt;- @['Karl', 'HUMANOID']
+@[@['Karl', 'HUMANOID', 1]]</samp></pre>
+                        <p>Changing the above to store the enums as integers in your database is similarly easy.
+All you'd need to do is change the 3 procs so that they store the enum in a different way.</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily2</span> = <span class="hljs-keyword">distinct</span> <span class="hljs-type">CreatureFamily</span> <span class="hljs-comment">#Necessary to allow this book to compile</span>
+
+<span class="hljs-keyword">func</span> dbType*(<span class="hljs-type">T</span>: typedesc[<span class="hljs-type">CreatureFamily2</span>]): <span class="hljs-built_in">string</span> = <span class="hljs-string">&quot;INTEGER&quot;</span>
+<span class="hljs-keyword">func</span> dbValue*(val: <span class="hljs-type">CreatureFamily2</span>): <span class="hljs-type">DbValue</span> = dbValue(val.<span class="hljs-built_in">int</span>)
+<span class="hljs-keyword">proc</span> to*(dbVal: <span class="hljs-type">DbValue</span>, <span class="hljs-type">T</span>: typedesc[<span class="hljs-type">CreatureFamily2</span>]): <span class="hljs-type">CreatureFamily2</span> = dbVal.i.<span class="hljs-type">CreatureFamily2</span></code></pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="./customDatatypes.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="./fk.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
+                            <a rel="next" href="./debug.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -208,10 +266,13 @@ addHandler(consoleLog)</code></pre>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="./customDatatypes.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="./fk.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
+                    <a rel="next" href="./debug.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
