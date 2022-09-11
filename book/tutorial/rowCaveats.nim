@@ -11,7 +11,10 @@ There are some caveats when working with Norm that you need to consider and stra
 Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary "glue"-models yourself as if they were regular models.
 
 ## Fetching data for more complex Many-To-One/Many-To-Many relationships
-If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a `Employee` to the mix. We still want the data of the Producer, but now on top of the data of all their `Product`s we also want all of their `Employee`s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain): 
+If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship.
+To keep the data together, you can make a new object-type that acts as a container for all the various queries.
+In this case, we add a `Employee` to the mix. We still want the data of the Producer, but now on top of the data of all their `Product`s we also want all of their `Employee`s.
+You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):
 """
 
 nbCode: 
@@ -72,4 +75,12 @@ nbCode:
 
   echo %*producerContainer
 
+nbText: """
+## Complex SELECT queries
+Norm handles simple database manipulations and queries well.
+However, it does not cover the entire feature-spectrum of SQL and thus does not support some more complex queries or other database features (e.g. views).
+For these scenarios you can write raw SQL, have norm execute it and parse the response in a custom ``ref object`` type you provide.
+
+See the ``Raw SQL interactions`` section for more information.
+"""
 nbSave

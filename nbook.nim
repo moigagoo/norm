@@ -7,6 +7,7 @@ var book = initBookWithToc:
   section("Tutorial", "tutorial.nim"):
     entry("Tables", "tutorial/tables.nim")
     entry("Rows", "tutorial/rows.nim")
+    entry("Raw SQL interactions", "tutorial/rawSelects.nim")
     entry("Row Caveats", "tutorial/rowCaveats.nim")
   entry("Fancy Syntax", "fancy.nim")
   entry("Transactions", "transactions.nim")
