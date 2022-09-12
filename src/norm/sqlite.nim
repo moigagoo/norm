@@ -135,7 +135,6 @@ proc createTables*[T: Model](dbConn; obj: T) =
   dbConn.exec(sql qry)
 
 # Row manipulation
-import print
 proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
@@ -252,7 +251,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
   Raises a `NotFoundError` if the query returns nothing.
   ]##
   let row = dbConn.getRow(sql qry, params)
-  
+
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
 
