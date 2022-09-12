@@ -47,12 +47,18 @@ suite "Row CRUD":
     dbConn.insert(toy)
     dbConn.insert(toy, force = true)
 
-    check toy.id > 1
+    check toy.id == 1
 
     let rows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
 
-    check rows.len == 2
+    check rows.len == 1
     check rows[^1] == @[?123.45, ?toy.id]
+
+  test "Insert with forced id":
+    var toy = newtoy(137.45)
+    toy.id = 134
+    dbConn.insert(toy, force = true)
+    check toy.id == 134
 
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
