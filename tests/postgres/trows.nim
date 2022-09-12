@@ -63,30 +63,25 @@ suite "Row CRUD":
   test "Insert row with forced id in non-incremental order":
     block:
       var toy = newtoy(123.45)
-      toy.id = 5
-      dbConn.insert(toy, force=true)
-      check toy.id == 5
-    block:
-      var toy = newtoy(123.45)
       toy.id = 3
       dbConn.insert(toy, force=true)
       check toy.id == 3
     block:
-      # Check no id conflict
       var toy = newtoy(123.45)
-      dbConn.insert(toy)
-      check toy.id == 6
+      toy.id = 2
+      dbConn.insert(toy, force=true)
+      check toy.id == 2
     block:
       # Check no id conflict
       var toy = newtoy(123.45)
       dbConn.insert(toy)
-      check toy.id == 7
-      dbConn.delete(toy)
+      # Postgres correctly increment ids
+      check toy.id == 1
     block:
-      # Id 4 was deleted so it should be fine now
       var toy = newtoy(123.45)
       dbConn.insert(toy)
-      check toy.id == 7
+      # Postgres correctly increment ids
+      check toy.id == 4
 
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
