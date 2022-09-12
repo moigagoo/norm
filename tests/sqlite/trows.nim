@@ -49,9 +49,36 @@ suite "Row CRUD":
     dbConn.insert(toy, force = true)
     check toy.id == 134
 
+  test "Insert row with forced id in non-incremental order":
+    block:
+      var toy = newtoy(123.45)
+      toy.id = 5
+      dbConn.insert(toy, force=true)
+      check toy.id == 5
+    block:
+      var toy = newtoy(123.45)
+      toy.id = 3
+      dbConn.insert(toy, force=true)
+      check toy.id == 3
+    block:
+      # Check no id conflict
+      var toy = newtoy(123.45)
+      dbConn.insert(toy)
+      check toy.id == 6
+    block:
+      # Check no id conflict
+      var toy = newtoy(123.45)
+      dbConn.insert(toy)
+      check toy.id == 7
+      dbConn.delete(toy)
+    block:
+      # Id 4 was deleted so it should be fine now
+      var toy = newtoy(123.45)
+      dbConn.insert(toy)
+      check toy.id == 7
+
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
-
     dbConn.insert(person)
 
     let pet = get person.pet
