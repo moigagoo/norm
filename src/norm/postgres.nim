@@ -12,7 +12,7 @@ else:
 import ndb/postgres
 export postgres
 
-import private/postgres/[dbtypes, rowutils]
+import private/postgres/[dbtypes, rowutils, llexec]
 import private/[dot, log]
 import model
 import pragmas
@@ -176,17 +176,18 @@ proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRai
       of cpIgnore: "ON CONFLICT (id) DO NOTHING"
       of cpReplace: "ON CONFLICT (id) DO UPDATE SET id=EXCLUDED.id"
 
-    qry = block:
-      # Handle the case where a manually inserted id conflict with the BIGSERIAL increment
-      # If id == 0 and there is no force then action has no meaning
-      if not force and obj.id == 0:
-        "INSERT INTO $# ($#) VALUES($#) ON CONFLICT(id) DO UPDATE SET id=(SELECT MAX(id) FROM $#)+1" % [T.table, cols.join(", "), phds.join(", "), T.table]
-      else:
-        "INSERT INTO $# ($#) VALUES($#) $#" % [T.table, cols.join(", "), phds.join(", "), action]
+    qry = "INSERT INTO $# ($#) VALUES($#) $#" % [T.table, cols.join(", "), phds.join(", "), action]
 
   log(qry, $row)
 
   obj.id = dbConn.insertID(sql qry, row)
+
+  if obj.id != 0 and force:
+    # When id is forced, manually, update the serial sequence to avoid conflict on future increment
+    let qry = sql "SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('$#', 'id')), (SELECT MAX(id) FROM $#)+1, FALSE)" % [T.table, T.table]
+    # This query return PGRES_TUPLES_OK and ``exec`` proc raise if result is not PGRES_COMMAND_OK.
+    # To avoid raising for no reason on this query a private proc has been defined in private/postgres/llexec
+    execExpectTuplesOk(dbConn, qry, @[])
 
 proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
   ## Insert rows for each `Model`_ instance in open array.

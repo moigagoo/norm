@@ -11,7 +11,6 @@ const
   dbPassword = "postgres"
   dbDatabase = "postgres"
 
-
 suite "Row CRUD":
   proc resetDb =
     let dbConn = open(dbHost, dbUser, dbPassword, "template1")
@@ -76,12 +75,12 @@ suite "Row CRUD":
       var toy = newtoy(123.45)
       dbConn.insert(toy)
       # Postgres correctly increment ids
-      check toy.id == 1
+      check toy.id == 4
     block:
       var toy = newtoy(123.45)
       dbConn.insert(toy)
       # Postgres correctly increment ids
-      check toy.id == 4
+      check toy.id == 5
 
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
