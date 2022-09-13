@@ -26,11 +26,6 @@ type
     Do not raise manually, use `rollback <#rollback>`_ proc.
     ]##
   NotFoundError* = object of KeyError
-  ConflictPolicy* = enum
-    cpRaise
-    cpIgnore
-    cpReplace
-
 
 const dbHostEnv* = "DB_HOST"
 

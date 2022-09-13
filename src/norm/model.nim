@@ -16,6 +16,10 @@ type
 
     id* {.pk, ro.}: int64
 
+  ConflictPolicy* = enum
+    cpRaise
+    cpIgnore
+    cpReplace
 
 func isModel*[T: Model](val: T): bool = true
 

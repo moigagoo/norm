@@ -141,10 +141,13 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
 # Row manupulation
 
-proc insert*[T: Model](dbConn; obj: var T, force = false) =
+proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
+
+  ``conflictPolicy`` determines how the proc reacts to insertion conflicts on the ``id`` column. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one.
+
   ]##
 
   checkRo(T)
@@ -168,7 +171,18 @@ proc insert*[T: Model](dbConn; obj: var T, force = false) =
 
   let
     phds = collect(newSeq, for i, _ in row: "$" & $(i + 1))
-    qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, cols.join(", "), phds.join(", ")]
+    action = case conflictPolicy
+      of cpRaise: ""
+      of cpIgnore: "ON CONFLICT (id) DO NOTHING"
+      of cpReplace: "ON CONFLICT (id) DO UPDATE SET id=EXCLUDED.id"
+
+    qry = block:
+      # Handle the case where a manually inserted id conflict with the BIGSERIAL increment
+      # If id == 0 and there is no force then action has no meaning
+      if not force and obj.id == 0:
+        "INSERT INTO $# ($#) VALUES($#) ON CONFLICT(id) DO UPDATE SET id=(SELECT MAX(id) FROM $#)+1" % [T.table, cols.join(", "), phds.join(", "), T.table]
+      else:
+        "INSERT INTO $# ($#) VALUES($#) $#" % [T.table, cols.join(", "), phds.join(", "), action]
 
   log(qry, $row)
 
@@ -253,7 +267,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
   Raises a `NotFoundError` if the query returns nothing.
   ]##
   let row = dbConn.getRow(sql qry, params)
-  
+
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
 
