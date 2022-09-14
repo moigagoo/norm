@@ -16,6 +16,10 @@ type
 
     id* {.pk, ro.}: int64
 
+  ConflictPolicy* = enum
+    cpRaise
+    cpIgnore
+    cpReplace
 
 func isModel*[T: Model](val: T): bool = true
 
@@ -118,25 +122,25 @@ proc checkRo*(T: typedesc[Model]) =
     {.error: "can't use mutating procs with read-only models".}
 
 proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
-  ## A compile time proc that searches the given `source` Model type for any 
-  ## foreign key field that points to the table of the `target`model type. 
-  ## Breaks at compile time if `source`does not have exactly one foreign key 
+  ## A compile time proc that searches the given `source` Model type for any
+  ## foreign key field that points to the table of the `target`model type.
+  ## Breaks at compile time if `source`does not have exactly one foreign key
   ## field to that table, as otherwise the desired field name to use can't
   ## be inferred.
   var fieldNames: seq[string] = @[]
-  
+
   const targetTableName = T.table()
   for sourceFieldName, sourceFieldValue in S()[].fieldPairs:
       #Handles case where field is an int64 with fk pragma
       when sourceFieldValue.hasCustomPragma(fk):
         when targetTableName == sourceFieldValue.getCustomPragmaVal(fk).table():
           fieldNames.add(sourceFieldName)
-      
+
       #Handles case where field is a Model type
       elif sourceFieldValue is Model:
         when targetTableName == sourceFieldValue.type().table():
           fieldNames.add(sourceFieldName)
-      
+
       #Handles case where field is a Option[Model] type
       elif sourceFieldValue is Option:
         when sourceFieldValue.get() is Model:
@@ -150,10 +154,10 @@ proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typ
   return fieldNames[0]
 
 proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
-  ## Checks at compile time whether the field with the name `fkFieldName` is a 
-  ## valid foreign key field on the given `source` model to the table of the given 
-  ## `target` model. 
-  ## Specifically checks 1) if the field exists, 2) if it has either an fk pragma, 
+  ## Checks at compile time whether the field with the name `fkFieldName` is a
+  ## valid foreign key field on the given `source` model to the table of the given
+  ## `target` model.
+  ## Specifically checks 1) if the field exists, 2) if it has either an fk pragma,
   ## or is a model type or an option of a model type, and 3) if the table associated
   ## with that field is equivalent to that of the table of the `target` model.
   ## If any of these conditions are false, this proc will intentionally fail to compile
@@ -170,7 +174,7 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
       #Handles case where field is a Model type
       elif sourceFieldValue is Model:
         const fkFieldTable: string = sourceFieldValue.type.table()
-      
+
       #Handles case where field is a Option[Model] type
       elif sourceFieldValue is Option:
         when sourceFieldValue.get() is Model:
@@ -188,13 +192,13 @@ proc validateFkField*[S, T: Model](fkFieldName: static string, source: typedesc[
   return false
 
 proc validateJoinModelFkField*[S, T: Model](fkFieldName: static string, joinModel: typedesc[S], target: typedesc[T]): bool {.compileTime.} =
-  ## Checks at compile time whether the field with the name `fkFieldName` is a 
-  ## valid foreign key field on the given `joinModel` model to the given 
-  ## `target` model. Ensures that the type in the field `fkFieldName` is `target` 
+  ## Checks at compile time whether the field with the name `fkFieldName` is a
+  ## valid foreign key field on the given `joinModel` model to the given
+  ## `target` model. Ensures that the type in the field `fkFieldName` is `target`
   ## If it isn't the code won't compile as that Model type is required for a useful
   ## Many-To-Many query.
   discard validateFkField(fkFieldName, joinModel, target)
-  
+
   for joinFieldName, joinFieldValue in joinModel()[].fieldPairs:
     when joinFieldName == fkFieldName:
       #Handles case where field is an int with fk pragma

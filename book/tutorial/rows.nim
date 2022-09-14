@@ -48,7 +48,19 @@ When Norm attempts to insert `alice`, it detects that `userFoo` that it referenc
 
 With `bob`, there's no need to do that since `userFoo` is already in the database.
 
+When inserting norm Model, it is possible to force the id to a given value by setting the id attribute of the Model. In order for the insertion to proceed, it is necessary to specify ``force=true`` when inserting:
+"""
 
+nbCode:
+  var userBaz = newUser("baz@baz.baz")
+  userBaz.id = 156
+  with dbConn:
+    insert(userBaz, force = true)
+  echo "userBaz.id == 156 ?", (userBaz.id == 156)
+
+  echo()
+
+nbText: &"""
 ## Select Row
 ### Select in general
 To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call `select`.
