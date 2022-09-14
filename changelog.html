@@ -200,12 +200,12 @@
 <li>[t]—test suite improvement</li>
 <li>[d]—docs improvement</li>
 </ul>
-<h2>2.5.2 (WIP)</h2>
+<h2>2.5.2 (September 14, 2022)</h2>
 <ul>
+<li>[+] Added <code>rawSelect</code> proc, which allows you execute raw SQL and have the output be parsed into a custom object-type</li>
+<li>[+] <code>insert</code> with obj.id != 0 and <code>force=true</code> now uses the id provided. For PostgreSQL, this means adding conflictPolicy with <code>ON CONFLICT DO...</code> clause.</li>
 <li>[r] Logging: refactored <code>log</code> module to not trigger warnings when <code>normDebug</code> is not defined.</li>
 <li>[r] Slightly changed how objects are being parsed, leading to a small performance increase</li>
-<li>[+] Added <code>rawSelect</code> proc, which allows you execute raw SQL and have the output be parsed into a custom object-type</li>
-<li>[r] <code>insert</code> with obj.id != 0 and <code>force=true</code> now uses the id provided. For PostgreSQL, this means adding conflictPolicy with <code>ON CONFLICT DO...</code> clause.</li>
 </ul>
 <h2>2.5.1 (July 20, 2022)</h2>
 <ul>
