@@ -105,8 +105,12 @@
                     <strong aria-hidden="true">3.2.</strong> Rows
                   </a></li>
                 <li class="chapter-item expanded ">
+                  <a href="../tutorial/rawSelects.html" tabindex="0">
+                    <strong aria-hidden="true">3.3.</strong> Raw SQL interactions
+                  </a></li>
+                <li class="chapter-item expanded ">
                   <a href="../tutorial/rowCaveats.html" class="active" tabindex="0">
-                    <strong aria-hidden="true">3.3.</strong> Row Caveats
+                    <strong aria-hidden="true">3.4.</strong> Row Caveats
                   </a></li>
                   </ol>
                   </li>
@@ -192,7 +196,10 @@
 <h2>Managing Data for Many-to-Many Relationships</h2>
 <p>Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary &quot;glue&quot;-models yourself as if they were regular models.</p>
 <h2>Fetching data for more complex Many-To-One/Many-To-Many relationships</h2>
-<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship. To keep the data together, you can make a new object-type that acts as a container for all the various queries. In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s. You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
+<p>If you have multiple Many-To-X relationships that you want to query at once, you will need to make separate queries for each relationship.
+To keep the data together, you can make a new object-type that acts as a container for all the various queries.
+In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s.
+You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
                         <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
 <span class="hljs-keyword">import</span> norm/[model, sqlite]
 
@@ -249,11 +256,16 @@ dbConn.select(employees, <span class="hljs-string">&quot;employer = ?&quot;</spa
 )
 
 <span class="hljs-keyword">echo</span> %*producerContainer</code></pre><pre><samp>{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}</samp></pre>
+                        <h2>Complex SELECT queries</h2>
+<p>Norm handles simple database manipulations and queries well.
+However, it does not cover the entire feature-spectrum of SQL and thus does not support some more complex queries or other database features (e.g. views).
+For these scenarios you can write raw SQL, have norm execute it and parse the response in a custom <code>ref object</code> type you provide.</p>
+<p>See the <code>Raw SQL interactions</code> section for more information.</p>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../tutorial/rows.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../tutorial/rawSelects.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -267,7 +279,7 @@ dbConn.select(employees, <span class="hljs-string">&quot;employer = ?&quot;</spa
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../tutorial/rows.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../tutorial/rawSelects.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 

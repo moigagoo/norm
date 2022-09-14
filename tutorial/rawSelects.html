@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>Models 101 - Norm</title>
+        <title>Raw SQL interactions - Norm</title>
 
         <!-- Custom HTML head -->
 
@@ -13,17 +13,17 @@
         <meta name="theme-color" content="#ffffff" />
 
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🐳</text></svg>">
-        <link rel="stylesheet" href="./assets/css/variables.css">
-        <link rel="stylesheet" href="./assets/css/general.css">
-        <link rel="stylesheet" href="./assets/css/chrome.css">
+        <link rel="stylesheet" href="../assets/css/variables.css">
+        <link rel="stylesheet" href="../assets/css/general.css">
+        <link rel="stylesheet" href="../assets/css/chrome.css">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="./assets/FontAwesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../assets/FontAwesome/css/font-awesome.min.css">
 
         <!-- Highlight.js Stylesheets - I could use nimib native highlight but let's keep it for styling... -->
-        <link rel="stylesheet" href="./assets/css/highlight.css">
-        <link rel="stylesheet" href="./assets/css/tomorrow-night.css">
-        <link rel="stylesheet" href="./assets/css/ayu-highlight.css">
+        <link rel="stylesheet" href="../assets/css/highlight.css">
+        <link rel="stylesheet" href="../assets/css/tomorrow-night.css">
+        <link rel="stylesheet" href="../assets/css/ayu-highlight.css">
 
         <!-- Custom theme stylesheets - why the "../"? -->
 
@@ -35,7 +35,7 @@
     <body>
         <!-- Provide site root to javascript -->
         <script type="text/javascript">
-            var path_to_root = ".//assets";
+            var path_to_root = "..//assets";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -83,63 +83,63 @@
             <div class="sidebar-scrollbox">
                                 <ol class="chapter">
                 <li class="chapter-item expanded ">
-                  <a href="./index.html" tabindex="0">
+                  <a href="../index.html" tabindex="0">
                     <strong aria-hidden="true">1.</strong> Welcome to Norm!
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./models.html" class="active" tabindex="0">
+                  <a href="../models.html" tabindex="0">
                     <strong aria-hidden="true">2.</strong> Models 101
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./tutorial.html" tabindex="0">
+                  <a href="../tutorial.html" tabindex="0">
                     <strong aria-hidden="true">3.</strong> Tutorial
                   </a></li>
                   <li>
                   <ol class="section">
                 <li class="chapter-item expanded ">
-                  <a href="./tutorial/tables.html" tabindex="0">
+                  <a href="../tutorial/tables.html" tabindex="0">
                     <strong aria-hidden="true">3.1.</strong> Tables
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./tutorial/rows.html" tabindex="0">
+                  <a href="../tutorial/rows.html" tabindex="0">
                     <strong aria-hidden="true">3.2.</strong> Rows
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./tutorial/rawSelects.html" tabindex="0">
+                  <a href="../tutorial/rawSelects.html" class="active" tabindex="0">
                     <strong aria-hidden="true">3.3.</strong> Raw SQL interactions
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./tutorial/rowCaveats.html" tabindex="0">
+                  <a href="../tutorial/rowCaveats.html" tabindex="0">
                     <strong aria-hidden="true">3.4.</strong> Row Caveats
                   </a></li>
                   </ol>
                   </li>
                 <li class="chapter-item expanded ">
-                  <a href="./fancy.html" tabindex="0">
+                  <a href="../fancy.html" tabindex="0">
                     <strong aria-hidden="true">4.</strong> Fancy Syntax
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./transactions.html" tabindex="0">
+                  <a href="../transactions.html" tabindex="0">
                     <strong aria-hidden="true">5.</strong> Transactions
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./config.html" tabindex="0">
+                  <a href="../config.html" tabindex="0">
                     <strong aria-hidden="true">6.</strong> Configuration from Environment
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./fk.html" tabindex="0">
+                  <a href="../fk.html" tabindex="0">
                     <strong aria-hidden="true">7.</strong> Manual Foreign Key Handling
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./customDatatypes.html" tabindex="0">
+                  <a href="../customDatatypes.html" tabindex="0">
                     <strong aria-hidden="true">8.</strong> Custom Datatypes
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./debug.html" tabindex="0">
+                  <a href="../debug.html" tabindex="0">
                     <strong aria-hidden="true">9.</strong> Debugging SQL
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./changelog.html" tabindex="0">
+                  <a href="../changelog.html" tabindex="0">
                     <strong aria-hidden="true">10.</strong> Changelog
                   </a></li>
                 </ol>
@@ -191,70 +191,58 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Models 101</h1>
-<p>A model is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.</p>
-<p>Models can relate to each each with one-to-one, one-to-many, many-to-many relations. For example, a CartItem can have many Discounts, whereas as a single Discount can be applied to many Products.</p>
-<p>Models can also inherit from each other. For example, Customer may inherit from User.</p>
-<p>In Norm, Models are ref objects inherited from <code>Model</code> root object:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/model
+                        <h1>Raw SQL SELECT interactions</h1>
+<p>Sometimes SQL abilities are needed that norm can not represent well.</p>
+<p>For such cases, norm provides a way to execute raw SQL SELECT queries and parse the received data into a user provided <code>ref object</code> type.
+This bypassses norm's ability to generate the SQL for you, but still allows you to use norm's ability parse <code>Row</code> instances.</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
+<span class="hljs-keyword">import</span> norm/[model, sqlite, pragmas]
 
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">BaseUser</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    email: <span class="hljs-built_in">string</span></code></pre>
-                        <p>From a model definition, Norm deduces SQL queries to create tables and insert, select, update, and delete rows. Norm converts Nim objects to rows, their fields to columns, and their types to SQL types and vice versa.</p>
-<p>For example, for a model definition like the one above, Norm generates the following table schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-</code></pre>
-<p>Inherited models are just inherited objects:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">NamedUser</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">BaseUser</span>
-    name: <span class="hljs-built_in">string</span></code></pre>
-                        <p>To create relations between models, define fields subtyped from <code>Model</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">User</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    email: <span class="hljs-built_in">string</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">Campaign</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name* {.unique.}: <span class="hljs-built_in">string</span>
 
-  <span class="hljs-type">Customer</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    name: <span class="hljs-built_in">string</span>
-    user: <span class="hljs-type">User</span></code></pre>
-                        <p>To add a <code>UNIQUE</code> constraint to a field, use <code>{.unique.}</code> pragma.</p>
-<p><code>UNIQUE</code> constraint ensures all values in a column or a group of columns are distinct from one another.</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/pragmas
+<span class="hljs-keyword">type</span> <span class="hljs-type">Creature</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name*: <span class="hljs-built_in">string</span>
+    campaign* {.fk: <span class="hljs-type">Campaign</span>.}: <span class="hljs-built_in">int64</span>
 
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">Client</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    email: <span class="hljs-built_in">string</span>
-    name {.unique.}: <span class="hljs-built_in">string</span></code></pre>
-                        <p>Norm will generate the following table schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
-</code></pre>
-<p>To define unique combination or columns, add <code>{.uniqueGroup.}</code> pragma to each field in the group.</p>
-<h2>Custom Table Name</h2>
-<p>By default, a table is named after the model type, enclosed in double quotes, e.g. <code>User</code> model's table is called <code>&quot;User&quot;</code>.</p>
-<p>To override this behavior and set a custom name for the generated table, use <code>tableName</code> pragma:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">Thing</span>* {.tableName: <span class="hljs-string">&quot;ThingTable&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    attr: <span class="hljs-built_in">string</span></code></pre>
-                        <p>This will result in this schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;ThingTable&quot;(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-</code></pre>
-<h2>Read-only Models</h2>
-<p>To slim down DB queries when you don't need to fetch the full model, use read-only models.</p>
-<p>A read-only model is a model that defines a subset of fields of another model. Another important property of read-only model is that you can't use it to insert, update, or delete data; just select.</p>
-<p>To define a read-only model, annotate your <code>Model</code> subtype with <code>readOnly</code> or <code>ro</code> pragma and point it to an existing table with <code>tableName</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">ClientName</span>* {.readOnly, tableName: <span class="hljs-string">&quot;Client&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    name: <span class="hljs-built_in">string</span></code></pre>
-                        <p>Now you can query data from the DB into <code>ClientName</code> instances just like you do with any other model.</p>
+putEnv(<span class="hljs-string">&quot;DB_HOST&quot;</span>, <span class="hljs-string">&quot;:memory:&quot;</span>)
+<span class="hljs-keyword">let</span> db = getDb()
+db.createTables(<span class="hljs-type">Campaign</span>())
+db.createTables(<span class="hljs-type">Creature</span>())
+
+<span class="hljs-comment"># Add entries to Db</span>
+<span class="hljs-keyword">var</span> campaign = <span class="hljs-type">Campaign</span>(name: <span class="hljs-string">&quot;MyCampaign&quot;</span>)
+db.insert(campaign)
+
+<span class="hljs-keyword">var</span> creature1 = <span class="hljs-type">Creature</span>(name: <span class="hljs-string">&quot;creature1&quot;</span>, campaign: campaign.id)
+<span class="hljs-keyword">var</span> creature2 = <span class="hljs-type">Creature</span>(name: <span class="hljs-string">&quot;creature2&quot;</span>, campaign: campaign.id)
+db.insert(creature1)
+db.insert(creature2)
+
+<span class="hljs-comment"># Query DB</span>
+<span class="hljs-keyword">type</span> <span class="hljs-type">CreatureCampaignCount</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span>
+  count*: <span class="hljs-built_in">int</span>
+
+<span class="hljs-keyword">let</span> countCampaignCreaturesQuery: <span class="hljs-built_in">string</span> = <span class="hljs-string">&quot;&quot;&quot;
+    SELECT COUNT(*) AS count
+    FROM creature
+    INNER JOIN campaign ON creature.campaign = campaign.id
+    WHERE campaign.name = ?
+  &quot;&quot;&quot;</span>
+
+<span class="hljs-keyword">var</span> countResult = <span class="hljs-type">CreatureCampaignCount</span>()
+db.rawSelect(countCampaignCreaturesQuery, countResult, campaign.name)
+
+<span class="hljs-keyword">echo</span> countResult.count</code></pre><pre><samp>2</samp></pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="./index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../tutorial/rows.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="./tutorial.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="../tutorial/rowCaveats.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -264,11 +252,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="./index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../tutorial/rows.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="./tutorial.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="../tutorial/rowCaveats.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -281,9 +269,9 @@
 
 
 
-        <script src="./assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./assets/js/highlight.js" type="text/javascript" charset="utf-8"></script>
-        <script src="./assets/js/book.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../assets/js/book.js" type="text/javascript" charset="utf-8"></script>
 
         <!-- Custom JS scripts -->
 
