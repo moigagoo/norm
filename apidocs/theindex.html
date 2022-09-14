@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', main);
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/private/utils.html">norm/private/utils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/llexec.html">norm/private/postgres/llexec</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/private/utils.html">norm/private/utils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
@@ -99,7 +99,7 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="ConflictPolicy" href="#ConflictPolicy"><span>ConflictPolicy:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="sqlite: ConflictPolicy" href="norm/sqlite.html#ConflictPolicy">sqlite: ConflictPolicy</a></li>
+          data-doc-search-tag="model: ConflictPolicy" href="norm/model.html#ConflictPolicy">model: ConflictPolicy</a></li>
           </ul></dd>
 <dt><a name="count" href="#count"><span>count:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -113,15 +113,15 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="cpIgnore" href="#cpIgnore"><span>cpIgnore:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="ConflictPolicy.cpIgnore" href="norm/sqlite.html#cpIgnore">ConflictPolicy.cpIgnore</a></li>
+          data-doc-search-tag="ConflictPolicy.cpIgnore" href="norm/model.html#cpIgnore">ConflictPolicy.cpIgnore</a></li>
           </ul></dd>
 <dt><a name="cpRaise" href="#cpRaise"><span>cpRaise:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="ConflictPolicy.cpRaise" href="norm/sqlite.html#cpRaise">ConflictPolicy.cpRaise</a></li>
+          data-doc-search-tag="ConflictPolicy.cpRaise" href="norm/model.html#cpRaise">ConflictPolicy.cpRaise</a></li>
           </ul></dd>
 <dt><a name="cpReplace" href="#cpReplace"><span>cpReplace:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="ConflictPolicy.cpReplace" href="norm/sqlite.html#cpReplace">ConflictPolicy.cpReplace</a></li>
+          data-doc-search-tag="ConflictPolicy.cpReplace" href="norm/model.html#cpReplace">ConflictPolicy.cpReplace</a></li>
           </ul></dd>
 <dt><a name="createTables" href="#createTables"><span>createTables:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -239,6 +239,10 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="sqlite: dropDb()" href="norm/sqlite.html#dropDb">sqlite: dropDb()</a></li>
           </ul></dd>
+<dt><a name="execExpectTuplesOk" href="#execExpectTuplesOk"><span>execExpectTuplesOk:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="llexec: execExpectTuplesOk(db: DbConn; query: SqlQuery; args: seq[DbValue])" href="norm/private/postgres/llexec.html#execExpectTuplesOk%2CDbConn%2CSqlQuery%2Cseq%5BDbValue%5D">llexec: execExpectTuplesOk(db: DbConn; query: SqlQuery; args: seq[DbValue])</a></li>
+          </ul></dd>
 <dt><a name="exists" href="#exists"><span>exists:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="postgres: exists(dbConn; T: typedesc[Model]; cond = &quot;TRUE&quot;;
@@ -295,7 +299,7 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="postgres: insert[T: Model](dbConn; objs: var openArray[T]; force = false)" href="norm/postgres.html#insert%2C%2CopenArray%5BT%5D">postgres: insert[T: Model](dbConn; objs: var openArray[T]; force = false)</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="postgres: insert[T: Model](dbConn; obj: var T; force = false)" href="norm/postgres.html#insert%2C%2CT">postgres: insert[T: Model](dbConn; obj: var T; force = false)</a></li>
+          data-doc-search-tag="postgres: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)" href="norm/postgres.html#insert%2C%2CT">postgres: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)</a></li>
           <li><a class="reference external"
           data-doc-search-tag="sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false;
                  conflictPolicy = cpRaise)" href="norm/sqlite.html#insert%2C%2CopenArray%5BT%5D">sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false;
@@ -670,7 +674,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-09-14 08:41:37 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-09-14 08:45:55 UTC</small>
       </div>
     </div>
   </div>

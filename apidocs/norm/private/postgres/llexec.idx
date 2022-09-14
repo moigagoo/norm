@@ -1,0 +1,1 @@
+execExpectTuplesOk	norm/private/postgres/llexec.html#execExpectTuplesOk,DbConn,SqlQuery,seq[DbValue]	llexec: execExpectTuplesOk(db: DbConn; query: SqlQuery; args: seq[DbValue])	

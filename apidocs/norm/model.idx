@@ -1,4 +1,8 @@
 Model	norm/model.html#Model	model: Model	
+cpRaise	norm/model.html#cpRaise	ConflictPolicy.cpRaise	
+cpIgnore	norm/model.html#cpIgnore	ConflictPolicy.cpIgnore	
+cpReplace	norm/model.html#cpReplace	ConflictPolicy.cpReplace	
+ConflictPolicy	norm/model.html#ConflictPolicy	model: ConflictPolicy	
 isModel	norm/model.html#isModel,T	model: isModel[T: Model](val: T): bool	
 isModel	norm/model.html#isModel,Option[T: Model]	model: isModel[T: Model](val: Option[T]): bool	
 isModel	norm/model.html#isModel,T_2	model: isModel[T](val: T): bool	

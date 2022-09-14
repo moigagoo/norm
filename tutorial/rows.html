@@ -220,7 +220,16 @@ Object ID is not 0, skipping insertion. Type: User, ID: 2
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Sam', 2]</samp></pre>
                         <p>When Norm attempts to insert <code>alice</code>, it detects that <code>userFoo</code> that it referenced in it has not been inserted yet, so there's no <code>id</code> to store as foreign key. So, Norm inserts <code>userFoo</code> automatically and then uses its new <code>id</code> (in this case, 1) as the foreign key value.</p>
 <p>With <code>bob</code>, there's no need to do that since <code>userFoo</code> is already in the database.</p>
-<h2>Select Row</h2>
+<p>When inserting norm Model, it is possible to force the id to a given value by setting the id attribute of the Model. In order for the insertion to proceed, it is necessary to specify <code>force=true</code> when inserting:</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">var</span> userBaz = newUser(<span class="hljs-string">&quot;baz@baz.baz&quot;</span>)
+userBaz.id = <span class="hljs-number">156</span>
+with dbConn:
+  insert(userBaz, force = <span class="hljs-literal">true</span>)
+<span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;userBaz.id == 156 ?&quot;</span>, (userBaz.id == <span class="hljs-number">156</span>)
+
+<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>INSERT INTO &quot;User&quot; (email, id) VALUES(?, ?) &lt;- @['baz@baz.baz', 156]
+userBaz.id == 156 ?true</samp></pre>
+                        <h2>Select Row</h2>
 <h3>Select in general</h3>
 <p>To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call <code>select</code>.</p>
 <p>One curious thing about <code>select</code> is that its result depends not only on the condition you pass but also on the container. If the container has <code>Model</code> fields that are not <code>None</code>, Norm will select the related rows in a single <code>JOIN</code> query giving you a fully populated model object. However, if the container has a <code>none Model</code> field, it is just ignored.</p>
