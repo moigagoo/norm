@@ -1,3 +1,4 @@
+
 import std/[os, logging, strutils, sequtils, options, sugar, strformat, tables]
 
 when (NimMajor, NimMinor) <= (1, 6):
@@ -11,7 +12,7 @@ else:
 import ndb/postgres
 export postgres
 
-import private/postgres/[dbtypes, rowutils]
+import private/postgres/[dbtypes, rowutils, llexec]
 import private/[dot, log]
 import model
 import pragmas
@@ -140,10 +141,13 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
 # Row manupulation
 
-proc insert*[T: Model](dbConn; obj: var T, force = false) =
+proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
   By default, if the inserted object's ``id`` is not 0, the object is considered already inserted and is not inserted again. You can force new insertion with ``force = true``.
+
+  ``conflictPolicy`` determines how the proc reacts to insertion conflicts on the ``id`` column. ``cpRaise`` means raise a ``DbError``, ``cpIgnore`` means ignore the conflict and do not insert the conflicting row, ``cpReplace`` means overwrite the older row with the newer one.
+
   ]##
 
   checkRo(T)
@@ -158,14 +162,32 @@ proc insert*[T: Model](dbConn; obj: var T, force = false) =
       var subMod = get val.model
       dbConn.insert(subMod)
 
+  var cols = obj.cols()
+  var row = obj.toRow()
+  # If force + id != 0 use given id in insert query
+  if obj.id != 0 and force:
+      cols.add("id")
+      row.add dbValue(obj.id)
+
   let
-    row = obj.toRow()
     phds = collect(newSeq, for i, _ in row: "$" & $(i + 1))
-    qry = "INSERT INTO $# ($#) VALUES($#)" % [T.table, obj.cols.join(", "), phds.join(", ")]
+    action = case conflictPolicy
+      of cpRaise: ""
+      of cpIgnore: "ON CONFLICT (id) DO NOTHING"
+      of cpReplace: "ON CONFLICT (id) DO UPDATE SET id=EXCLUDED.id"
+
+    qry = "INSERT INTO $# ($#) VALUES($#) $#" % [T.table, cols.join(", "), phds.join(", "), action]
 
   log(qry, $row)
 
   obj.id = dbConn.insertID(sql qry, row)
+
+  if obj.id != 0 and force:
+    # When id is forced, manually, update the serial sequence to avoid conflict on future increment
+    let qry = sql "SELECT SETVAL((SELECT PG_GET_SERIAL_SEQUENCE('$#', 'id')), (SELECT MAX(id) FROM $#)+1, FALSE)" % [T.table, T.table]
+    # This query return PGRES_TUPLES_OK and ``exec`` proc raise if result is not PGRES_COMMAND_OK.
+    # To avoid raising for no reason on this query a private proc has been defined in private/postgres/llexec
+    execExpectTuplesOk(dbConn, qry, @[])
 
 proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
   ## Insert rows for each `Model`_ instance in open array.
@@ -236,6 +258,41 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
   ]##
 
   dbConn.select(objs, "TRUE")
+
+proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
+  ##[ Populate a ref object instance ``obj`` and its ref object fields from DB.
+
+  ``qry`` is the raw sql query whose contents are to be parsed into obj.
+  The columns on ``qry`` must be in the same order as the fields on ``obj``.
+  Table names must be written surrounded by quotation marks and are case sensititve.
+  Raises a `NotFoundError` if the query returns nothing.
+  ]##
+  let row = dbConn.getRow(sql qry, params)
+
+  if row.isNone:
+    raise newException(NotFoundError, "Record not found")
+
+  obj.fromRow(get row)
+
+proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
+  ##[ Populate a sequence of ref object instances from DB.
+
+  ``qry`` is the raw sql query whose contents are to be parsed into ``objs``.
+
+  The columns on ``qry`` must be in the same order as the fields on ``objs``.
+  ``objs`` must have at least one item.
+  Table names must be written surrounded by quotation marks and are case sensititve.
+  ]##
+  let rows = dbConn.getAllRows(sql qry, params)
+
+  if objs.len > rows.len:
+    objs.setLen(rows.len)
+
+  for _ in 1..(rows.len - objs.len):
+    objs.add deepCopy(objs[0])
+
+  for i, row in rows:
+    objs[i].fromRow(row)
 
 proc count*(dbConn; T: typedesc[Model], col = "*", dist = false, cond = "TRUE", params: varargs[DbValue, dbValue]): int64 =
   ##[ Count rows matching condition without fetching them.
@@ -362,34 +419,34 @@ template transaction*(dbConn; body: untyped): untyped =
 
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M], foreignKeyFieldName: static string) =
-  ## Fetches all entries of a "many" side from a one-to-many relationship 
+  ## Fetches all entries of a "many" side from a one-to-many relationship
   ## between the model of `oneEntry` and the model of `relatedEntries`. It is
   ## ensured at compile time that the field specified here is a valid foreign key
   ## field on oneEntry pointing to the table of the `relatedEntries`-model.
   static: discard validateFkField(foreignKeyFieldName, M, O)
-  
+
   const manyTableName = M.table()
   const sqlCondition = fmt "{manyTableName}.{foreignKeyFieldName} = $1"
 
   dbConn.select(relatedEntries, sqlCondition, oneEntry.id)
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntry: O, relatedEntries: var seq[M]) =
-  ## A convenience proc. Fetches all entries of a "many" side from a one-to-many 
+  ## A convenience proc. Fetches all entries of a "many" side from a one-to-many
   ## relationship between the model of `oneEntry` and the model of `relatedEntries`.
   ## The field used to fetch the `relatedEntries` is automatically inferred as long
-  ## as the `relatedEntries` model has only one field pointing to the model of 
-  ## `oneEntry`. Will not compile if `relatedEntries` has multiple fields that 
-  ## point to the model of `oneEntry`. Specify the `foreignKeyFieldName` parameter 
+  ## as the `relatedEntries` model has only one field pointing to the model of
+  ## `oneEntry`. Will not compile if `relatedEntries` has multiple fields that
+  ## point to the model of `oneEntry`. Specify the `foreignKeyFieldName` parameter
   ## in such a case.
   const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
   selectOneToMany(dbConn, oneEntry, relatedEntries, foreignKeyFieldName)
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var Table[int64, seq[M]], foreignKeyFieldName: static string) =
   ## Fetches all entries of multiple "many" side from multiple one-to-many relationships
-  ## between the entries within `oneEntries` and the model of `relatedEntries`. This is 
+  ## between the entries within `oneEntries` and the model of `relatedEntries`. This is
   ## done with a single query to the database. The various many-to-one relationships are
   ## split into a table, where the id of each entry in `oneEntries` is mapped to the entries
-  ## pointing to it. It is ensured at compile time that the field specified here is a 
+  ## pointing to it. It is ensured at compile time that the field specified here is a
   ## valid foreign key field on oneEntry pointing to the table of the `relatedEntries`-model.
   ## `relatedEntries` must contain at least 1 entry with a seq that contains a model instance.
   let entryIds: seq[int64] = oneEntries.map(entry => entry.id)
@@ -418,25 +475,25 @@ proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEnt
       relatedEntries[entryId] = relatedEntriesSeq.filterIt(it.dot(foreignKeyFieldName).id == id)
 
 proc selectOneToMany*[O: Model, M: Model](dbConn; oneEntries: seq[O], relatedEntries: var seq[M]) =
-  ## A convenience proc. Fetches all entries of multiple "many" side from multiple 
-  ## one-to-many relationships between the entries within `oneEntries` and the model 
-  ## of `relatedEntries`. This is done with a single query to the database. 
-  ## The field used to fetch the `relatedEntries` is automatically inferred as long as 
-  ## the `relatedEntries` model has only one field pointing to the model of `oneEntries`. 
-  ## Will not compile if `relatedEntries` has multiple fields that point to the 
+  ## A convenience proc. Fetches all entries of multiple "many" side from multiple
+  ## one-to-many relationships between the entries within `oneEntries` and the model
+  ## of `relatedEntries`. This is done with a single query to the database.
+  ## The field used to fetch the `relatedEntries` is automatically inferred as long as
+  ## the `relatedEntries` model has only one field pointing to the model of `oneEntries`.
+  ## Will not compile if `relatedEntries` has multiple fields that point to the
   ## model of `oneEntry`. Specify the `foreignKeyFieldName` parameter in such a
   ## case.
   const foreignKeyFieldName: string = M.getRelatedFieldNameTo(O)
   selectOneToMany(dbConn, oneEntries, relatedEntries, foreignKeyFieldName)
 
 macro unpackFromJoinModel[T: Model](mySeq: seq[T], field: static string): untyped =
-  ## A macro to "extract" a field of name `field` out of the model in `mySeq`, 
+  ## A macro to "extract" a field of name `field` out of the model in `mySeq`,
   ## creating a new seq of whatever type the field has.
   newCall(bindSym"mapIt", mySeq, nnkDotExpr.newTree(ident"it", ident field))
 
-proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2], fkColumnFromJoinToManyStart: static string, fkColumnFromJoinToManyEnd: static string) =    
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2], fkColumnFromJoinToManyStart: static string, fkColumnFromJoinToManyEnd: static string) =
   ## Fetches the many-to-many relationship for the entry `queryStartEntry` and
-  ## returns a seq of all entries connected to `queryStartEntry` in `queryEndEntries`. 
+  ## returns a seq of all entries connected to `queryStartEntry` in `queryEndEntries`.
   ## Requires to also be passed the model connecting the many-to-many relationship
   ## via `joinModelEntries`in order to fetch the relationship. Also requires the
   ## field on the joinModel that points to the table of `queryStartEntry`
@@ -456,14 +513,14 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: 
 
   queryEndEntries = unpackedEntries
 
-proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =    
-  ## A convenience proc. Fetches the many-to-many relationship for the entry 
-  ## `queryStartEntry` and returns a seq of all entries connected to `queryStartEntry` 
-  ## in `queryEndEntries`. Requires to also be passed the model connecting the 
+proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: M1, joinModelEntries: var seq[J], queryEndEntries: var seq[M2]) =
+  ## A convenience proc. Fetches the many-to-many relationship for the entry
+  ## `queryStartEntry` and returns a seq of all entries connected to `queryStartEntry`
+  ## in `queryEndEntries`. Requires to also be passed the model connecting the
   ## many-to-many relationship via `joinModelEntries`in order to fetch the relationship.
-  ## The fields on `joinModelEntries` to use for these queries are inferred. 
-  ## Will only compile if the joinModel has exactly one field pointing to 
-  ## the table of `queryStartEntry` as well as exactly one field pointing to 
+  ## The fields on `joinModelEntries` to use for these queries are inferred.
+  ## Will only compile if the joinModel has exactly one field pointing to
+  ## the table of `queryStartEntry` as well as exactly one field pointing to
   ## the table of `queryEndEntries`. Specify the parameters `fkColumnFromJoinToManyStart`
   ## and `fkColumnFromJoinToManyEnd` if that is not the case.
   const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
@@ -471,19 +528,19 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](dbConn; queryStartEntry: 
   selectManyToMany(dbConn, queryStartEntry, joinModelEntries, queryEndEntries, fkColumnFromJoinToManyStart, fkColumnFromJoinToManyEnd)
 
 proc selectManyToMany*[M1: Model, J: Model, M2: Model](
-    dbConn; 
-    queryStartEntries: seq[M1], 
-    joinModelEntries: var seq[J], 
-    queryEndEntries: var Table[int64, seq[M2]], 
-    fkColumnFromJoinToManyStart: static string, 
+    dbConn;
+    queryStartEntries: seq[M1],
+    joinModelEntries: var seq[J],
+    queryEndEntries: var Table[int64, seq[M2]],
+    fkColumnFromJoinToManyStart: static string,
     fkColumnFromJoinToManyEnd: static string
 ) =
   ## Fetches the many-to-many relationship for all members of `queryStartEntries` and
-  ## stores them in the table of `queryEndEntries`. There, all entries connected to a 
-  ## given member of `queryStartEntry` are mapped to that members id`. 
+  ## stores them in the table of `queryEndEntries`. There, all entries connected to a
+  ## given member of `queryStartEntry` are mapped to that members id`.
   ## Requires to also be passed the model connecting the many-to-many relationship
   ## via `joinModelEntries`in order to fetch the relationship, and the name of its fields
-  ## that point to the model of `queryStartEntries` (`fkColumnFromJoinToManyStart`) 
+  ## that point to the model of `queryStartEntries` (`fkColumnFromJoinToManyStart`)
   ## and `queryEndEntries` (`fkColumnFromJoinToManyEnd`).
   ## Will not compile if the specified fields on the joinModel do not properly point
   ## to the models of `queryStartEntry` and `queryEndEntries`.
@@ -503,20 +560,20 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](
         queryEndEntries[entryId].add(joinModelEntry.dot(fkColumnFromJoinToManyEnd))
 
 proc selectManyToMany*[M1: Model, J: Model, M2: Model](
-    dbConn; 
-    queryStartEntries: seq[M1], 
-    joinModelEntries: var seq[J], 
+    dbConn;
+    queryStartEntries: seq[M1],
+    joinModelEntries: var seq[J],
     queryEndEntries: var Table[int64, seq[M2]]
 ) =
-  ## A convenience proc. Fetches the many-to-many relationship for all members of 
-  ## `queryStartEntries` and stores them in the table of `queryEndEntries`. There, 
-  ## all entries connected to a given member of `queryStartEntry` are mapped to that 
+  ## A convenience proc. Fetches the many-to-many relationship for all members of
+  ## `queryStartEntries` and stores them in the table of `queryEndEntries`. There,
+  ## all entries connected to a given member of `queryStartEntry` are mapped to that
   ## members id`.
-  ## Requires to also be passed the model connecting the many-to-many relationship via 
+  ## Requires to also be passed the model connecting the many-to-many relationship via
   ## `joinModelEntries`in order to fetch the relationship.
-  ## The fields on `joinModelEntries` to use for these queries are inferred. 
-  ## Will only compile if the joinModel has exactly one field pointing to 
-  ## the table of `queryStartEntry` as well as exactly one field pointing to 
+  ## The fields on `joinModelEntries` to use for these queries are inferred.
+  ## Will only compile if the joinModel has exactly one field pointing to
+  ## the table of `queryStartEntry` as well as exactly one field pointing to
   ## the table of `queryEndEntries`. Specify the parameters `fkColumnFromJoinToManyStart`
   ## and `fkColumnFromJoinToManyEnd` if that is not the case.
   const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)

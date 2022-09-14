@@ -4,8 +4,7 @@ import norm/sqlite
 import tutorial/tables
 
 
-nbInit
-nbUseNimibook
+nbInit(theme = useNimibook)
 
 nbText: """
 # Fancy Syntax

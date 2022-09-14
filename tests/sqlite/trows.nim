@@ -4,9 +4,7 @@ import norm/[model, sqlite]
 
 import ../models
 
-
 const dbFile = "test.db"
-
 
 suite "Row CRUD":
   setup:
@@ -36,18 +34,47 @@ suite "Row CRUD":
     var toy = newtoy(123.45)
 
     dbConn.insert(toy)
-    dbConn.insert(toy, force = true)
+    dbConn.insert(toy, force = true, conflictPolicy = cpReplace)
 
-    check toy.id > 1
+    check toy.id == 1
 
     let rows = dbConn.getAllRows(sql"SELECT price, id FROM Toy")
 
-    check rows.len == 2
+    check rows.len == 1
     check rows[^1] == @[?123.45, ?toy.id]
+
+  test "Insert with forced id":
+    var toy = newtoy(137.45)
+    toy.id = 134
+    dbConn.insert(toy, force = true)
+    check toy.id == 134
+
+  test "Insert row with forced id in non-incremental order":
+    block:
+      var toy = newtoy(123.45)
+      toy.id = 3
+      dbConn.insert(toy, force=true)
+      check toy.id == 3
+    block:
+      var toy = newtoy(123.45)
+      toy.id = 2
+      dbConn.insert(toy, force=true)
+      check toy.id == 2
+    block:
+      # Check no id conflict
+      var toy = newtoy(123.45)
+      dbConn.insert(toy)
+      # SQLite ids starts from the highest ?
+      check toy.id == 4
+    block:
+      # Check no id conflict
+      var toy = newtoy(123.45)
+      dbConn.insert(toy)
+      # SQLite ids starts from the highest ?
+      check toy.id == 5
 
   test "Insert rows":
     var person = newPerson("Alice", newPet("cat", newToy(123.45)))
-
     dbConn.insert(person)
 
     let pet = get person.pet
