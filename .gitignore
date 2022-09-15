@@ -44,6 +44,7 @@ tests/sqlite/ttransactions
 tests/sqlite/ttriangle
 tests/sqlite/tunique
 tests/sqlite/tuniquegroup
+tests/sqlite/trawselect
 
 tests/postgres/tcount
 tests/postgres/tdb
@@ -69,4 +70,6 @@ tests/postgres/ttransactions
 tests/postgres/ttriangle
 tests/postgres/tunique
 tests/postgres/tuniquegroup
+tests/postgres/trawselect
 
+nbook
