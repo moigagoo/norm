@@ -12,12 +12,13 @@ else:
 import ndb/postgres
 export postgres
 
-import private/postgres/[dbtypes, rowutils, llexec]
+import private/postgres/[dbtypes, rowutils, llexec, pool]
 import private/[dot, log]
 import model
 import pragmas
 
 export dbtypes
+export pool
 
 
 type
@@ -29,49 +30,7 @@ type
   NotFoundError* = object of KeyError
 
 
-const
-  dbHostEnv* = "DB_HOST"
-  dbUserEnv* = "DB_USER"
-  dbPassEnv* = "DB_PASS"
-  dbNameEnv* = "DB_NAME"
-
-
-# Sugar to get DB config from environment variables
-
-proc getDb*(): DbConn =
-  ## Create a ``DbConn`` from ``DB_HOST``, ``DB_USER``, ``DB_PASS``, and ``DB_NAME`` environment variables.
-
-  open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), getEnv(dbNameEnv))
-
-template withDb*(body: untyped): untyped =
-  ##[ Wrapper for DB operations.
-
-  Creates a ``DbConn`` with `getDb <#getDb>`_ as ``db`` variable,
-  runs your code in a ``try`` block, and closes ``db`` afterward.
-  ]##
-
-  block:
-    let db {.inject.} = getDb()
-
-    try:
-      body
-
-    finally:
-      close db
-
-
 using dbConn: DbConn
-
-
-# DB manipulation
-
-proc dropDb* =
-  ## Drop the database defined in environment variables.
-
-  let dbConn = open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), "template1")
-  dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % getEnv(dbNameEnv))
-  close dbConn
-
 
 # Table manipulation
 

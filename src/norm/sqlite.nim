@@ -11,12 +11,13 @@ else:
 import ndb/sqlite
 export sqlite
 
-import private/sqlite/[dbtypes, rowutils]
+import private/sqlite/[dbtypes, rowutils, pool]
 import private/[dot, log]
 import model
 import pragmas
 
 export dbtypes
+export pool
 
 
 type
@@ -27,43 +28,10 @@ type
     ]##
   NotFoundError* = object of KeyError
 
-const dbHostEnv* = "DB_HOST"
-
-
 # Sugar to get DB config from environment variables
-
-proc getDb*(): DbConn =
-  ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
-
-  open(getEnv(dbHostEnv), "", "", "")
-
-template withDb*(body: untyped): untyped =
-  ##[ Wrapper for DB operations.
-
-  Creates a ``DbConn`` with `getDb <#getDb>`_ as ``db`` variable,
-  runs your code in a ``try`` block, and closes ``db`` afterward.
-  ]##
-
-  block:
-    let db {.inject.} = getDb()
-
-    try:
-      body
-
-    finally:
-      close db
 
 
 using dbConn: DbConn
-
-
-# DB manipulation
-
-proc dropDb* =
-  ## Remove the DB file defined in environment variable.
-
-  removeFile(getEnv(dbHostEnv))
-
 
 # Table manipulation
 
