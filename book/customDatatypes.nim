@@ -10,7 +10,7 @@ nbInit(theme = useNimibook)
 nbText: """
 # Custom Datatypes
 
-By default, norm can deal with the nim types:
+By default, Norm can deal with the following Nim types:
   - ``bool``
   - ``int/int8/16/32/64``
   - ``uint/uint8/16/32/64``
