@@ -35,12 +35,12 @@ proc refillConnections(pool: var ConnectionPool) =
   ## Creates a number of database connections equal to the size of the connection pool
   ## and adds them to said pool. ONLY use this if you have acquired the lock on the pool!
   if not pool.isInitialized():
-    raise newException(PoolDefect, "TINYPOOL: Tried to use uninitialized database connection pool. Did you forget to call 'initConnectionPool' on startup? ")
+    raise newException(PoolDefect, "Tried to use uninitialized database connection pool. Did you forget to call 'initConnectionPool' on startup? ")
 
   for i in 1..pool.defaultPoolSize:
     pool.connections.add(pool.createConnectionProc())
 
-  log fmt "TINYPOOL: Refilled Pool to {pool.connections.len()} connections"
+  log fmt "Refilled database connection pool to {pool.connections.len()} connections"
 
 
 proc initConnectionPool*[Connection](pool: var ConnectionPool[Connection], createConnectionProc: CreateConnectionProc[Connection], poolSize: int, burstModeDuration: Duration = initDuration(minutes = 30)) =
@@ -51,7 +51,7 @@ proc initConnectionPool*[Connection](pool: var ConnectionPool[Connection], creat
   ## once it is triggered. burstModeDuration defaults to 30 minutes.
 
   if pool.isInitialized():
-    raise newException(PoolDefect, """TINYPOOL: Tried to initialize database connection pool a second time""")
+    raise newException(PoolDefect, """Tried to initialize database connection pool a second time""")
   
   pool = ConnectionPool[Connection](
     connections: @[],
@@ -66,7 +66,7 @@ proc initConnectionPool*[Connection](pool: var ConnectionPool[Connection], creat
 
   pool.refillConnections()
 
-  log fmt "TINYPOOL: Initialized pool with {pool.connections.len()} connections"
+  log fmt "Initialized database connection pool with {pool.connections.len()} connections"
 
 
 proc activateBurstMode(pool: var ConnectionPool) =
@@ -91,7 +91,7 @@ proc updateBurstModeState*[Connection](pool: var ConnectionPool[Connection]) =
   if getMonoTime() > pool.burstEndTime:
     pool.isInBurstMode = false
 
-    log "TINYPOOL: Deactivated Burst Mode"
+    log "Deactivated Burst Mode on database connection pool"
 
 
 proc extendBurstModeLifetime*[Connection](pool: var ConnectionPool[Connection]) =
@@ -100,7 +100,7 @@ proc extendBurstModeLifetime*[Connection](pool: var ConnectionPool[Connection]) 
   ## then the time is not extended. Throws a DbError if burst mode lifetime is
   ## attempted to be extended while pool is not in burst mode.
   if pool.isInBurstMode == false:
-    log "TINYPOOL: Tried to extend pool's burst mode while pool wasn't in burst mode. You have a logic issue!"
+    log "Tried to extend  database connection pool's burst mode while pool wasn't in burst mode. You have a logic issue!"
 
   let hasAlreadyMaxBurstModeDuration: bool = pool.burstEndTime - getMonoTime() > pool.burstModeDuration
   if hasAlreadyMaxBurstModeDuration:
@@ -117,7 +117,7 @@ proc borrowConnection*[Connection](pool: var ConnectionPool[Connection]): Connec
   ## Extends the pools burst mode if it is in burst mode and need for
   ## the same level of connections is still present.
   if not pool.isInitialized():
-    raise newException(PoolDefect, """TINYPOOL: Tried to borrow a connection from an uninitialized/destroyed database connection pool!""")
+    raise newException(PoolDefect, """Tried to borrow a connection from an uninitialized/destroyed database connection pool!""")
   
   withLock pool.lock:
     if pool.isEmpty():
@@ -128,7 +128,7 @@ proc borrowConnection*[Connection](pool: var ConnectionPool[Connection]): Connec
       
     result = pool.connections.pop()
 
-    log fmt "TINYPOOL: AFTER BORROW - Number of connections in pool: {pool.connections.len()}"
+    log fmt "Number of connections in database connection pool: {pool.connections.len()}"
 
 proc recycleConnection*[Connection](pool: var ConnectionPool[Connection], connection: Connection) {.gcsafe.} =
   ## Recycles a connection and tries to return it to the pool.
@@ -139,7 +139,7 @@ proc recycleConnection*[Connection](pool: var ConnectionPool[Connection], connec
   ## If the pool is in burst mode, it will allow an unlimited number of 
   ## connections into the pool.
   if not pool.isInitialized():
-    raise newException(PoolDefect, """TINYPOOL: Tried to recycle a connection back into an uninitialized/destroyed pool!""")
+    raise newException(PoolDefect, """Tried to recycle a connection back into an uninitialized/destroyed database connection pool!""")
   
   withLock pool.lock:
     pool.updateBurstModeState()
@@ -149,7 +149,7 @@ proc recycleConnection*[Connection](pool: var ConnectionPool[Connection], connec
     else:
       pool.connections.add(connection)
 
-    log fmt "TINYPOOL: AFTER RECYCLE - Number of connections in pool: {pool.connections.len()}"
+    log fmt "Number of connections in database connection pool: {pool.connections.len()}"
 
 
 proc destroyConnectionPool*[Connection](pool: var ConnectionPool[Connection]) =
@@ -163,7 +163,7 @@ proc destroyConnectionPool*[Connection](pool: var ConnectionPool[Connection]) =
   
   pool = nil
 
-  log fmt "TINYPOOL: Destroyed pool"
+  log fmt "Destroyed database connection pool"
 
 
 template withDb*(body: untyped): untyped =
