@@ -22,14 +22,7 @@ proc getDb*(): DbConn =
   open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), getEnv(dbNameEnv))
 
 
-# DB manipulation
 
-proc dropDb* =
-  ## Drop the database defined in environment variables.
-  #TODO: Figure out if this proc should exist, and if so, if the "template1" is actually needed. If this must look like this, it might be necessary to set env when starting things up just to make sure that you can grab things via env variables
-  let dbConn = open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), "template1")
-  dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % getEnv(dbNameEnv))
-  close dbConn
 
 
 

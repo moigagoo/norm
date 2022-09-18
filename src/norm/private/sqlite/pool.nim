@@ -16,12 +16,6 @@ proc getDb*(): DbConn =
   ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
   open(getEnv(dbHostEnv), "", "", "")
 
-proc dropDb* =
-  ## Remove the DB file defined in environment variable.
-  #TODO: Figure out if this proc should exist, and if so, if the "template1" is actually needed. If this must look like this, it might be necessary to set env when starting things up just to make sure that you can grab things via env variables
-  removeFile(getEnv(dbHostEnv))
-
-
 # Handling DB connections
 
 proc borrowConnection*(): DbConn {.gcsafe.} =
