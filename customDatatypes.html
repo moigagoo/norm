@@ -202,19 +202,16 @@
 <li><code>DateTime</code></li>
 <li><code>Model</code></li>
 </ul>
-<p>It does so by interacting with the database through a package called <code>ndb</code>.
-With <code>ndb</code>, norm converts these nim types into the <code>DbValue</code> type which it then can convert to and from the various database-types.</p>
-<p>More specifically, norm does this by specifying 3 procs. These procs specify which database-type to convert <code>DbValue</code> to,
-how to convert the nim type to <code>DbValue</code> and how to convert <code>DbValue</code> to the nim type.</p>
-<p>If you want to have norm <code>Models</code> that contain your own custom types, you need to define these 3 procs for your nim type:</p>
+<p>It does so by interacting with the database through a package called <code>ndb</code>. With <code>ndb</code>, Norm converts these Nim types into the <code>DbValue</code> type which it then can convert to and from the various database-types.</p>
+<p>More specifically, Norm does this by specifying 3 procs. These procs specify which database-type to convert <code>DbValue</code> to, how to convert the Nim type to <code>DbValue</code> and how to convert <code>DbValue</code> to the Nim type.</p>
+<p>If you want to have Norm <code>Models</code> that contain your own custom types, you need to define these 3 procs for your Nim type:</p>
 <ul>
-<li><code>dbType(T: typedesc[YourType]) -&gt; string</code> - This maps your nim type to a database type (e.g. <code>func dbType*(T: typedesc[string]): string = &quot;TEXT&quot;</code> for sqlite)</li>
-<li><code>dbValue(YourType) -&gt; DbValue</code> - This converts an instance of <code>YourType</code> to a <code>DbValue</code> instance.</li>
-<li><code>to(DbValue, T: typedesc[YourType]) -&gt; T</code> - This converts a <code>DbValue</code> instance to an instance of <code>YourType</code>.</li>
+<li><code>dbType(T: typedesc[YourType]) -&gt; string</code> maps your Nim type to a database type (e.g. <code>func dbType*(T: typedesc[string]): string = &quot;TEXT&quot;</code> for SQLite)</li>
+<li><code>dbValue(YourType) -&gt; DbValue</code> converts an instance of <code>YourType</code> to a <code>DbValue</code> instance.</li>
+<li><code>to(DbValue, T: typedesc[YourType]) -&gt; T</code> converts a <code>DbValue</code> instance to an instance of <code>YourType</code>.</li>
 </ul>
 <p>Say for example we wanted to have an enum field on a model, that is stored as a string in our database:</p>
-                        <pre><code class="nim hljs"><span class="hljs-comment"># Required Code</span>
-<span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily</span> = <span class="hljs-keyword">enum</span>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily</span> = <span class="hljs-keyword">enum</span>
   <span class="hljs-type">BEAST</span> = <span class="hljs-number">1</span>
   <span class="hljs-type">ANGEL</span> = <span class="hljs-number">2</span>
   <span class="hljs-type">DEMON</span> = <span class="hljs-number">3</span>
@@ -228,7 +225,6 @@ how to convert the nim type to <code>DbValue</code> and how to convert <code>DbV
 <span class="hljs-keyword">func</span> dbValue*(val: <span class="hljs-type">CreatureFamily</span>): <span class="hljs-type">DbValue</span> = dbValue($val)
 <span class="hljs-keyword">proc</span> to*(dbVal: <span class="hljs-type">DbValue</span>, <span class="hljs-type">T</span>: typedesc[<span class="hljs-type">CreatureFamily</span>]): <span class="hljs-type">T</span> = parseEnum[<span class="hljs-type">CreatureFamily</span>](dbVal.s)
 
-<span class="hljs-comment"># Example Usage</span>
 putEnv(<span class="hljs-string">&quot;DB_HOST&quot;</span>, <span class="hljs-string">&quot;:memory:&quot;</span>)
 <span class="hljs-keyword">let</span> db = getDb()
 <span class="hljs-keyword">var</span> human = <span class="hljs-type">Creature</span>(name: <span class="hljs-string">&quot;Karl&quot;</span>, family: <span class="hljs-type">CreatureFamily</span>.<span class="hljs-type">HUMANOID</span>)
@@ -245,9 +241,8 @@ db.select(human2, <span class="hljs-string">&quot;id = ?&quot;</span>, human.id)
 <span class="hljs-keyword">assert</span> human2.family == <span class="hljs-type">CreatureFamily</span>.<span class="hljs-type">HUMANOID</span></code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;Creature&quot;(name TEXT NOT NULL, family TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 INSERT INTO &quot;Creature&quot; (name, family) VALUES(?, ?) &lt;- @['Karl', 'HUMANOID']
 @[@['Karl', 'HUMANOID', 1]]</samp></pre>
-                        <p>Changing the above to store the enums as integers in your database is similarly easy.
-All you'd need to do is change the 3 procs so that they store the enum in a different way.</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily2</span> = <span class="hljs-keyword">distinct</span> <span class="hljs-type">CreatureFamily</span> <span class="hljs-comment">#Necessary to allow this book to compile</span>
+                        <p>Changing the above to store the enums as integers in your database is similarly easy. All you'd need to do is change the 3 procs so that they store the enum in a different way.</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily2</span> = <span class="hljs-keyword">distinct</span> <span class="hljs-type">CreatureFamily</span>
 
 <span class="hljs-keyword">func</span> dbType*(<span class="hljs-type">T</span>: typedesc[<span class="hljs-type">CreatureFamily2</span>]): <span class="hljs-built_in">string</span> = <span class="hljs-string">&quot;INTEGER&quot;</span>
 <span class="hljs-keyword">func</span> dbValue*(val: <span class="hljs-type">CreatureFamily2</span>): <span class="hljs-type">DbValue</span> = dbValue(val.<span class="hljs-built_in">int</span>)
