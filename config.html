@@ -211,7 +211,7 @@ db.createTables(customerBar)
 db.insert(customerFoo)
 db.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
 
-<span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+<span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
@@ -227,7 +227,7 @@ withDb:
   db.insert(customerSpam)
   db.select(customerEggs, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
 
-<span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+<span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['bar@bar.bar']
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]

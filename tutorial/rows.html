@@ -211,7 +211,7 @@ with dbConn:
   insert userBar
   insert sam
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
 Object ID is not 0, skipping insertion. Type: User, ID: 1
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]
@@ -227,7 +227,7 @@ with dbConn:
   insert(userBaz, force = <span class="hljs-literal">true</span>)
 <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;userBaz.id == 156 ?&quot;</span>, (userBaz.id == <span class="hljs-number">156</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>INSERT INTO &quot;User&quot; (email, id) VALUES(?, ?) &lt;- @['baz@baz.baz', 156]
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;User&quot; (email, id) VALUES(?, ?) &lt;- @['baz@baz.baz', 156]
 userBaz.id == 156 ?true</samp></pre>
                         <h2>Select Row</h2>
 <h3>Select in general</h3>
@@ -238,19 +238,19 @@ userBaz.id == 156 ?true</samp></pre>
                         <pre><code class="nim hljs"><span class="hljs-keyword">var</span> customerBar = newCustomer()
 dbConn.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['bar@bar.bar']</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['bar@bar.bar']</samp></pre>
                         <p>Let's examine how Norm populated <code>customerBar</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre><samp>(name: some(&quot;Sam&quot;), user: ..., id: 3)</samp></pre>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre><pre><samp>(email: &quot;bar@bar.bar&quot;, id: 2)</samp></pre>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>(name: some(&quot;Sam&quot;), user: ..., id: 3)</samp></pre>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre><pre class="nb-output"><samp>(email: &quot;bar@bar.bar&quot;, id: 2)</samp></pre>
                         <p>If you pass a sequence to <code>select</code>, you'll get many rows:</p>
                         <pre><code class="nim hljs"><span class="hljs-keyword">var</span> customersFoo = @[newCustomer()]
 dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['foo@foo.foo']</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['foo@foo.foo']</samp></pre>
                         <p>The generated query is similar to the previous one, but the result is populated objects, not one:</p>
                         <pre><code class="nim hljs"><span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo:
   <span class="hljs-keyword">echo</span> customer[]
-  <span class="hljs-keyword">echo</span> customer.user[]</code></pre><pre><samp>(name: some(&quot;Alice&quot;), user: ..., id: 1)
+  <span class="hljs-keyword">echo</span> customer.user[]</code></pre><pre class="nb-output"><samp>(name: some(&quot;Alice&quot;), user: ..., id: 1)
 (email: &quot;foo@foo.foo&quot;, id: 1)
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
 (email: &quot;foo@foo.foo&quot;, id: 1)</samp></pre>
@@ -274,7 +274,7 @@ dbConn.insert(fluffi)
 dbConn.select(petsFoo, <span class="hljs-string">&quot;owner_user.email LIKE ?&quot;</span>, <span class="hljs-string">&quot;foo%&quot;</span>)
 
 <span class="hljs-keyword">for</span> pet <span class="hljs-keyword">in</span> petsFoo:
-  <span class="hljs-keyword">echo</span> pet[]</code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+  <span class="hljs-keyword">echo</span> pet[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
 CREATE TABLE IF NOT EXISTS &quot;Pet&quot;(name TEXT NOT NULL, owner INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(owner) REFERENCES &quot;Customer&quot;(id))
 Object ID is not 0, skipping insertion. Type: Customer, ID: 2
@@ -300,7 +300,7 @@ dbConn.selectOneToMany(userFoo, customersFoo2, <span class="hljs-string">&quot;u
 dbConn.selectOneToMany(userFoo, customersFoo3)
   
 <span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo3:
-  <span class="hljs-keyword">echo</span> customer[]</code></pre><pre><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
+  <span class="hljs-keyword">echo</span> customer[]</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
 (name: some(&quot;Alice&quot;), user: ..., id: 1)
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
 SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
@@ -360,7 +360,7 @@ dbConn.selectManyToMany(userFoo, userFooGroupMemberships, userFooGroups, <span c
 dbConn.selectManyToMany(userFoo, userFooGroupMemberships2, userFooGroups2)
 
 <span class="hljs-keyword">for</span> group <span class="hljs-keyword">in</span> userFooGroups2:
-  <span class="hljs-keyword">echo</span> group[]</code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+  <span class="hljs-keyword">echo</span> group[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
@@ -385,13 +385,13 @@ SELECT &quot;UserGroup&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, 
                         <h2>Count Rows</h2>
 <p>Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.</p>
 <p>To count the rows without fetching them, use <code>count</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>)</code></pre><pre><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE 1 &lt;- []
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>)</code></pre><pre class="nb-output"><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE 1 &lt;- []
 3</samp></pre>
                         <p>To count only unique records, use <code>dist = true</code> in conjunction with the column name you want to check for uniqueness:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;user&quot;</span>, dist = <span class="hljs-literal">true</span>)</code></pre><pre><samp>SELECT COUNT(DISTINCT user) FROM &quot;Customer&quot; WHERE 1 &lt;- []
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;user&quot;</span>, dist = <span class="hljs-literal">true</span>)</code></pre><pre class="nb-output"><samp>SELECT COUNT(DISTINCT user) FROM &quot;Customer&quot; WHERE 1 &lt;- []
 2</samp></pre>
                         <p>You can also count rows matching condition:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;*&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;name LIKE ?&quot;</span>, <span class="hljs-string">&quot;alice&quot;</span>)</code></pre><pre><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE name LIKE ? &lt;- ['alice']
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;*&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;name LIKE ?&quot;</span>, <span class="hljs-string">&quot;alice&quot;</span>)</code></pre><pre class="nb-output"><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE name LIKE ? &lt;- ['alice']
 1</samp></pre>
                         <h2>Sum Column Values</h2>
 <p>To get a sum of column values, use <code>sum</code> proc:</p>
@@ -415,7 +415,7 @@ dbConn.insert(anotherFourLeggedChair)
 
 <span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>)
 <span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">true</span>)
-<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;legCount &gt; ?&quot;</span>, <span class="hljs-number">3</span>)</code></pre><pre><samp>CREATE TABLE IF NOT EXISTS &quot;Chair&quot;(legCount INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;legCount &gt; ?&quot;</span>, <span class="hljs-number">3</span>)</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Chair&quot;(legCount INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[3]
 INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[4]
 INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[4]
@@ -427,14 +427,14 @@ SELECT SUM( legCount) FROM &quot;Chair&quot; WHERE legCount &gt; ? &lt;- [3]
 8.0</samp></pre>
                         <h2>Check If Row Exists</h2>
 <p>If you need to check if a row selected by a given condition exists, use <code>exists</code> proc:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.exists(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;Alice&quot;</span>)</code></pre><pre><samp>SELECT EXISTS(SELECT NULL FROM &quot;Customer&quot; WHERE name = ?) &lt;- ['Alice']
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> dbConn.exists(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;Alice&quot;</span>)</code></pre><pre class="nb-output"><samp>SELECT EXISTS(SELECT NULL FROM &quot;Customer&quot; WHERE name = ?) &lt;- ['Alice']
 true</samp></pre>
                         <h2>Update Rows</h2>
 <p>To update a row, you just update the object and call <code>update</code> on it:</p>
                         <pre><code class="nim hljs">customerBar.name = some <span class="hljs-string">&quot;Saaam&quot;</span>
 dbConn.update(customerBar)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>UPDATE &quot;User&quot; SET email = ? WHERE id = 2 &lt;- @['bar@bar.bar']
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>UPDATE &quot;User&quot; SET email = ? WHERE id = 2 &lt;- @['bar@bar.bar']
 UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 3 &lt;- @['Saaam', 2]</samp></pre>
                         <p>Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries.</p>
 <p>Updating rows in bulk is also possible:</p>
@@ -443,7 +443,7 @@ UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 3 &lt;- @['Saaam',
 
 dbConn.update(customersFoo)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
 UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 1 &lt;- @['MegaAlice', 1]
 UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
 UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 2 &lt;- @['MegaBob', 1]</samp></pre>
@@ -452,9 +452,9 @@ UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 2 &lt;- @['MegaBob
 <p>To delete a row, call <code>delete</code> on an object:</p>
                         <pre><code class="nim hljs">dbConn.delete(sam)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>DELETE FROM &quot;Customer&quot; WHERE id = 3</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>DELETE FROM &quot;Customer&quot; WHERE id = 3</samp></pre>
                         <p>After deletion, the object becomes <code>nil</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> sam.isNil</code></pre><pre><samp>true</samp></pre>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> sam.isNil</code></pre><pre class="nb-output"><samp>true</samp></pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

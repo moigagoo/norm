@@ -199,7 +199,7 @@
   <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup:
     dbConn.insert
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['1@example.com']
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['1@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['2@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['3@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['4@example.com']
@@ -214,7 +214,7 @@ INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['10@example.com']</samp><
   dbConn.select(<span class="hljs-string">&quot;email LIKE ?&quot;</span>, <span class="hljs-string">&quot;_@example.com&quot;</span>)
   dbConn.delete
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>SELECT &quot;User&quot;.email, &quot;User&quot;.id FROM &quot;User&quot;  WHERE email LIKE ? &lt;- ['_@example.com']
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;User&quot;.email, &quot;User&quot;.id FROM &quot;User&quot;  WHERE email LIKE ? &lt;- ['_@example.com']
 DELETE FROM &quot;User&quot; WHERE id = 1
 DELETE FROM &quot;User&quot; WHERE id = 2
 DELETE FROM &quot;User&quot; WHERE id = 3

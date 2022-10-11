@@ -198,7 +198,7 @@
     <span class="hljs-keyword">discard</span> newUser($i &amp; <span class="hljs-string">&quot;@example.com&quot;</span>).dup:
       dbConn.insert
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre><samp>BEGIN
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>BEGIN
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['11@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['12@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['13@example.com']
@@ -215,7 +215,7 @@ COMMIT</samp></pre>
         rollback()
 
 <span class="hljs-keyword">except</span> <span class="hljs-type">RollbackError</span>:
-  <span class="hljs-keyword">echo</span> getCurrentExceptionMsg()</code></pre><pre><samp>BEGIN
+  <span class="hljs-keyword">echo</span> getCurrentExceptionMsg()</code></pre><pre class="nb-output"><samp>BEGIN
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['14@example.com']
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['15@example.com']
 ROLLBACK

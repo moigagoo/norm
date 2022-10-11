@@ -235,7 +235,7 @@ db.insert(bob)
   db.insert(paul)
 
 <span class="hljs-keyword">except</span> <span class="hljs-type">DbError</span>:
-  <span class="hljs-keyword">echo</span> getCurrentExceptionMsg()</code></pre><pre><samp>FOREIGN KEY constraint failed</samp></pre>
+  <span class="hljs-keyword">echo</span> getCurrentExceptionMsg()</code></pre><pre class="nb-output"><samp>FOREIGN KEY constraint failed</samp></pre>
                         <p><code>select</code> queries will only return the <code>id</code> referenced and not the associated fields:</p>
                         <pre><code class="nim hljs"><span class="hljs-keyword">var</span> consumer = newConsumer()
 db.select(consumer, <span class="hljs-string">&quot;email = $1&quot;</span>, <span class="hljs-string">&quot;bob@mail.org&quot;</span>)
