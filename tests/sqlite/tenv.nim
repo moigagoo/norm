@@ -42,3 +42,4 @@ suite "DB config from environment variables":
         @[?0, ?"price", ?"FLOAT", ?1, ?nil, ?0],
         @[?1, ?"id", ?"INTEGER", ?1, ?nil, ?1],
       ]
+

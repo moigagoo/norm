@@ -19,7 +19,7 @@ suite "Row CRUD":
     removeFile dbFile
 
   test "Insert row":
-    var toy = newtoy(123.45)
+    var toy = newToy(123.45)
 
     dbConn.insert(toy)
 
@@ -31,7 +31,7 @@ suite "Row CRUD":
     check rows[0] == @[?123.45, ?toy.id]
 
   test "Insert row twice":
-    var toy = newtoy(123.45)
+    var toy = newToy(123.45)
 
     dbConn.insert(toy)
     dbConn.insert(toy, force = true, conflictPolicy = cpReplace)
@@ -44,31 +44,31 @@ suite "Row CRUD":
     check rows[^1] == @[?123.45, ?toy.id]
 
   test "Insert with forced id":
-    var toy = newtoy(137.45)
+    var toy = newToy(137.45)
     toy.id = 134
     dbConn.insert(toy, force = true)
     check toy.id == 134
 
   test "Insert row with forced id in non-incremental order":
     block:
-      var toy = newtoy(123.45)
+      var toy = newToy(123.45)
       toy.id = 3
       dbConn.insert(toy, force=true)
       check toy.id == 3
     block:
-      var toy = newtoy(123.45)
+      var toy = newToy(123.45)
       toy.id = 2
       dbConn.insert(toy, force=true)
       check toy.id == 2
     block:
       # Check no id conflict
-      var toy = newtoy(123.45)
+      var toy = newToy(123.45)
       dbConn.insert(toy)
       # SQLite ids starts from the highest ?
       check toy.id == 4
     block:
       # Check no id conflict
-      var toy = newtoy(123.45)
+      var toy = newToy(123.45)
       dbConn.insert(toy)
       # SQLite ids starts from the highest ?
       check toy.id == 5
