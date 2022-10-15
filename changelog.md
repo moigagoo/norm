@@ -8,12 +8,18 @@
 -   [d]—docs improvement
 
 
+## 2.5.3 (WIP)
+
+- [+] App connection pool (see [#50](https://github.com/moigagoo/norm/issues/50)).
+
+
 ## 2.5.2 (September 14, 2022)
 
 - [+] Added `rawSelect` proc, which allows you execute raw SQL and have the output be parsed into a custom object-type.
 - [+] `insert` with `obj.id != 0` and `force=true` now uses the id provided. For PostgreSQL, this means adding conflictPolicy with `ON CONFLICT DO...` clause.
 - [r] Logging: refactored `log` module to not trigger warnings when `normDebug` is not defined.
 - [r] Slightly changed how objects are being parsed, leading to a small performance increase.
+
 
 ## 2.5.1 (July 20, 2022)
 - [+] Added `uniqueGroup` pragma to provide UNIQUE constraint on multiple columns (see [#136](https://github.com/moigagoo/norm/issues/136)).
