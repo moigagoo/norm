@@ -57,6 +57,7 @@ tests/postgres/tfkpragma_selfref
 tests/postgres/tfkpragmanotint
 tests/postgres/tfkpragmanotmodel
 tests/postgres/tnull
+tests/postgres/tpool
 tests/postgres/trelated
 tests/postgres/trepeatfks
 tests/postgres/trawselect
