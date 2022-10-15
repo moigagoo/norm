@@ -27,6 +27,7 @@ type
     ]##
   NotFoundError* = object of KeyError
 
+
 const dbHostEnv* = "DB_HOST"
 
 
