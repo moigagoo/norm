@@ -1,12 +1,13 @@
 import std/locks
 
-import sqlite
+import sqlite, postgres
 
 
 type 
-  Pool* = ref object 
+  Conn = sqlite.DbConn | postgres.DbConn
+  Pool*[T: Conn] = ref object 
     defaultSize: Natural
-    conns: seq[DbConn]
+    conns: seq[T]
     poolExhaustedPolicy: PoolExhaustedPolicy
     lock: Lock
   PoolExhaustedError* = object of CatchableError
@@ -15,7 +16,7 @@ type
     pepExtend
 
 
-func newPool*(defaultSize: Positive, poolExhaustedPolicy = pepRaise): Pool =
+func newPool*[T: Conn](defaultSize: Positive, poolExhaustedPolicy = pepRaise): Pool[T] =
   ##[ Create a connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
@@ -23,12 +24,17 @@ func newPool*(defaultSize: Positive, poolExhaustedPolicy = pepRaise): Pool =
     - ``pepRaise`` (default) means throw ``PoolExhaustedError``
     - ``pepExtend`` means throw “add another connection to the pool.”
   ]##
-  result = Pool(defaultSize: defaultSize, conns: newSeq[DbConn](defaultSize), poolExhaustedPolicy: poolExhaustedPolicy)
+
+  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), poolExhaustedPolicy: poolExhaustedPolicy)
 
   initLock(result.lock)
 
   for conn in result.conns.mitems:
-    conn = getDb()
+    conn =
+      when T is sqlite.DbConn:
+        sqlite.getDb()
+      elif T is postgres.DbConn:
+        postgres.getDb()
 
 func defaultSize*(pool: Pool): Natural =
   pool.defaultSize
@@ -36,10 +42,10 @@ func defaultSize*(pool: Pool): Natural =
 func size*(pool: Pool): Natural =
   len(pool.conns)
 
-func pop*(pool: var Pool): DbConn =
+func pop*[T: Conn](pool: var Pool[T]): T =
   ##[ Take a connection from the pool.
 
-  If you're calling this manually, don't forget to `add <#add>`_ it back!
+  If you're calling this manually, don't forget to `add <#add,Pool,DbConn>`_ it back!
   ]##
 
   withLock(pool.lock):
@@ -50,9 +56,13 @@ func pop*(pool: var Pool): DbConn =
       of pepRaise:
         raise newException(PoolExhaustedError, "Pool exhausted")
       of pepExtend:
-        result = getDb()
+        result =
+          when T is sqlite.DbConn:
+            sqlite.getDb()
+          elif T is postgres.DbConn:
+            postgres.getDb()
 
-func add*(pool: var Pool, dbConn: DbConn) =
+func add*[T: Conn](pool: var Pool, dbConn: T) =
   ##[ Add a connection to the pool.
 
   Use to return a borrowed connection to the pool.
