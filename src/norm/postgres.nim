@@ -1,4 +1,3 @@
-
 import std/[os, logging, strutils, sequtils, options, sugar, strformat, tables]
 
 when (NimMajor, NimMinor) <= (1, 6):
@@ -38,7 +37,7 @@ const
 
 # Sugar to get DB config from environment variables
 
-proc getDb*(): DbConn =
+proc getDb*: DbConn =
   ## Create a ``DbConn`` from ``DB_HOST``, ``DB_USER``, ``DB_PASS``, and ``DB_NAME`` environment variables.
 
   open(getEnv(dbHostEnv), getEnv(dbUserEnv), getEnv(dbPassEnv), getEnv(dbNameEnv))
