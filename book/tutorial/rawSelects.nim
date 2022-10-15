@@ -5,6 +5,7 @@ nbInit(theme = useNimibook)
 
 nbText: """
 # Raw SQL SELECT interactions
+
 Sometimes SQL abilities are needed that norm can not represent well.
 
 For such cases, norm provides a way to execute raw SQL SELECT queries and parse the received data into a user provided ``ref object`` type.
