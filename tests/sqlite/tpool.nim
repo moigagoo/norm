@@ -4,7 +4,9 @@ import norm/[sqlite, pool]
 
 import ../models
 
+
 const dbFile = "test.db"
+
 
 suite "Connection pool":
   setup:
@@ -16,7 +18,7 @@ suite "Connection pool":
     removeFile dbFile
 
   test "Create and close pool":
-    var pool = newPool(1)
+    var pool = newPool[DbConn](1)
 
     check pool.defaultSize == 1
     check pool.size == 1
@@ -26,7 +28,7 @@ suite "Connection pool":
     check pool.size == 0
 
   test "Explicit pool connection":
-    var pool = newPool(1)
+    var pool = newPool[DbConn](1)
     let db = pool.pop()
 
     db.createTables(newToy())
@@ -42,7 +44,7 @@ suite "Connection pool":
     close pool
 
   test "Implicit pool connection":
-    var pool = newPool(1)
+    var pool = newPool[DbConn](1)
 
     withDb(pool):
       db.createTables(newToy())
@@ -58,7 +60,7 @@ suite "Connection pool":
 
   test "Concurrent pool connections":
     var
-      pool = newPool(2)
+      pool = newPool[DbConn](2)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]
@@ -89,7 +91,7 @@ suite "Connection pool":
 
   test "Pool exhausted, raise exception":
     var
-      pool = newPool(1, pepRaise)
+      pool = newPool[DbConn](1, pepRaise)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]
@@ -123,7 +125,7 @@ suite "Connection pool":
 
   test "Pool exhausted, extend and reset pool":
     var
-      pool = newPool(1, pepExtend)
+      pool = newPool[DbConn](1, pepExtend)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]
