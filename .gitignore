@@ -30,6 +30,7 @@ tests/sqlite/tfkpragma_selfref
 tests/sqlite/tfkpragmanotint
 tests/sqlite/tfkpragmanotmodel
 tests/sqlite/tnull
+tests/sqlite/tpool
 tests/sqlite/trelated
 tests/sqlite/trepeatfks
 tests/sqlite/trawselect
