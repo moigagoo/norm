@@ -248,7 +248,7 @@ connPool.add(dbConn)</code></pre>
                         <h2>Closing the Pool</h2>
 <p>When you no longer need the pool, for example, when your app exits or crashes, to avoid leaving hanging connections, close the pool by calling <a href="/apidocs/norm/pool.html#close,Pool"><code>close</code></a>. This proc closes all connections in the pool and sets its size to 0.</p>
                         <pre><code class="nim hljs">close connPool</code></pre>
-                        <h2>Custom Connection Source</h2>
+                        <h2>Custom Connection Provider</h2>
 <p>By default, new connections are added to the pool by calling <code>getDB</code>, which takes the DB params from the environment.</p>
 <p>But you can override that. For example, to get one pool connected to one DB and another one connected to another one.</p>
 <p>To do that, pass a function that returns <code>DbConn</code> to the Pool constructor:</p>
