@@ -1,0 +1,13 @@
+Pool	norm/pool.html#Pool	pool: Pool	
+PoolExhaustedError	norm/pool.html#PoolExhaustedError	pool: PoolExhaustedError	
+pepRaise	norm/pool.html#pepRaise	PoolExhaustedPolicy.pepRaise	
+pepExtend	norm/pool.html#pepExtend	PoolExhaustedPolicy.pepExtend	
+PoolExhaustedPolicy	norm/pool.html#PoolExhaustedPolicy	pool: PoolExhaustedPolicy	
+newPool	norm/pool.html#newPool,Positive,proc)	pool: newPool[T: DbConn](defaultSize: Positive; getDbProc: proc (): T = getDb;\n                   poolExhaustedPolicy = pepRaise): Pool[T]	
+defaultSize	norm/pool.html#defaultSize,Pool	pool: defaultSize(pool: Pool): Natural	
+size	norm/pool.html#size,Pool	pool: size(pool: Pool): Natural	
+pop	norm/pool.html#pop,Pool[T: DbConn]	pool: pop[T: DbConn](pool: var Pool[T]): T	
+add	norm/pool.html#add,Pool,T	pool: add[T: DbConn](pool: var Pool; dbConn: T)	
+reset	norm/pool.html#reset,Pool	pool: reset(pool: var Pool)	
+close	norm/pool.html#close,Pool	pool: close(pool: var Pool)	
+withDb	norm/pool.html#withDb.t,Pool,untyped	pool: withDb(pool: var Pool; body: untyped): untyped	

@@ -70,7 +70,7 @@ window.addEventListener('DOMContentLoaded', main);
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/llexec.html">norm/private/postgres/llexec</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/private/utils.html">norm/private/utils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/pool.html">norm/pool</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/llexec.html">norm/private/postgres/llexec</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/private/utils.html">norm/private/utils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
@@ -83,9 +83,17 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="types: `==`[_](x, y: StringOfCap[_]): bool" href="norm/types.html#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D">types: `==`[_](x, y: StringOfCap[_]): bool</a></li>
           </ul></dd>
+<dt><a name="add" href="#add"><span>add:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: add[T: DbConn](pool: var Pool; dbConn: T)" href="norm/pool.html#add%2CPool%2CT">pool: add[T: DbConn](pool: var Pool; dbConn: T)</a></li>
+          </ul></dd>
 <dt><a name="checkRo" href="#checkRo"><span>checkRo:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="model: checkRo(T: typedesc[Model])" href="norm/model.html#checkRo%2Ctypedesc%5BModel%5D">model: checkRo(T: typedesc[Model])</a></li>
+          </ul></dd>
+<dt><a name="close" href="#close"><span>close:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: close(pool: var Pool)" href="norm/pool.html#close%2CPool">pool: close(pool: var Pool)</a></li>
           </ul></dd>
 <dt><a name="col" href="#col"><span>col:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -218,6 +226,10 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="dbtypes: dbValue[_](val: StringOfCap[_]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CStringOfCap%5B_%5D">dbtypes: dbValue[_](val: StringOfCap[_]): DbValue</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: T): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CT">dbtypes: dbValue[T: Model](val: T): DbValue</a></li>
+          </ul></dd>
+<dt><a name="defaultSize" href="#defaultSize"><span>defaultSize:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: defaultSize(pool: Pool): Natural" href="norm/pool.html#defaultSize%2CPool">pool: defaultSize(pool: Pool): Natural</a></li>
           </ul></dd>
 <dt><a name="delete" href="#delete"><span>delete:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -363,6 +375,12 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="types: newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]" href="norm/types.html#newPaddedStringOfCap%2Cstring">types: newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]</a></li>
           </ul></dd>
+<dt><a name="newPool" href="#newPool"><span>newPool:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: newPool[T: DbConn](defaultSize: Positive; getDbProc: proc (): T = getDb;
+                   poolExhaustedPolicy = pepRaise): Pool[T]" href="norm/pool.html#newPool%2CPositive%2Cproc%29">pool: newPool[T: DbConn](defaultSize: Positive; getDbProc: proc (): T = getDb;
+                   poolExhaustedPolicy = pepRaise): Pool[T]</a></li>
+          </ul></dd>
 <dt><a name="newStringOfCap" href="#newStringOfCap"><span>newStringOfCap:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]" href="norm/types.html#newStringOfCap%2Cstring">types: newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]</a></li>
@@ -381,9 +399,33 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="types: PaddedStringOfCap" href="norm/types.html#PaddedStringOfCap">types: PaddedStringOfCap</a></li>
           </ul></dd>
+<dt><a name="pepExtend" href="#pepExtend"><span>pepExtend:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="PoolExhaustedPolicy.pepExtend" href="norm/pool.html#pepExtend">PoolExhaustedPolicy.pepExtend</a></li>
+          </ul></dd>
+<dt><a name="pepRaise" href="#pepRaise"><span>pepRaise:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="PoolExhaustedPolicy.pepRaise" href="norm/pool.html#pepRaise">PoolExhaustedPolicy.pepRaise</a></li>
+          </ul></dd>
 <dt><a name="pk" href="#pk"><span>pk:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="pragmas: pk()" href="norm/pragmas.html#pk.t">pragmas: pk()</a></li>
+          </ul></dd>
+<dt><a name="Pool" href="#Pool"><span>Pool:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: Pool" href="norm/pool.html#Pool">pool: Pool</a></li>
+          </ul></dd>
+<dt><a name="PoolExhaustedError" href="#PoolExhaustedError"><span>PoolExhaustedError:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: PoolExhaustedError" href="norm/pool.html#PoolExhaustedError">pool: PoolExhaustedError</a></li>
+          </ul></dd>
+<dt><a name="PoolExhaustedPolicy" href="#PoolExhaustedPolicy"><span>PoolExhaustedPolicy:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: PoolExhaustedPolicy" href="norm/pool.html#PoolExhaustedPolicy">pool: PoolExhaustedPolicy</a></li>
+          </ul></dd>
+<dt><a name="pop" href="#pop"><span>pop:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: pop[T: DbConn](pool: var Pool[T]): T" href="norm/pool.html#pop%2CPool%5BT%3A%20DbConn%5D">pool: pop[T: DbConn](pool: var Pool[T]): T</a></li>
           </ul></dd>
 <dt><a name="rawSelect" href="#rawSelect"><span>rawSelect:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -406,6 +448,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="readOnly" href="#readOnly"><span>readOnly:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="pragmas: readOnly()" href="norm/pragmas.html#readOnly.t">pragmas: readOnly()</a></li>
+          </ul></dd>
+<dt><a name="reset" href="#reset"><span>reset:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: reset(pool: var Pool)" href="norm/pool.html#reset%2CPool">pool: reset(pool: var Pool)</a></li>
           </ul></dd>
 <dt><a name="rfCols" href="#rfCols"><span>rfCols:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -551,6 +597,10 @@ window.addEventListener('DOMContentLoaded', main);
                                     relatedEntries: var Table[int64, seq[M]];
                                     foreignKeyFieldName: static string)</a></li>
           </ul></dd>
+<dt><a name="size" href="#size"><span>size:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="pool: size(pool: Pool): Natural" href="norm/pool.html#size%2CPool">pool: size(pool: Pool): Natural</a></li>
+          </ul></dd>
 <dt><a name="StringOfCap" href="#StringOfCap"><span>StringOfCap:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="types: StringOfCap" href="norm/types.html#StringOfCap">types: StringOfCap</a></li>
@@ -665,6 +715,8 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="withDb" href="#withDb"><span>withDb:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="pool: withDb(pool: var Pool; body: untyped): untyped" href="norm/pool.html#withDb.t%2CPool%2Cuntyped">pool: withDb(pool: var Pool; body: untyped): untyped</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="postgres: withDb(body: untyped): untyped" href="norm/postgres.html#withDb.t%2Cuntyped">postgres: withDb(body: untyped): untyped</a></li>
           <li><a class="reference external"
           data-doc-search-tag="sqlite: withDb(body: untyped): untyped" href="norm/sqlite.html#withDb.t%2Cuntyped">sqlite: withDb(body: untyped): untyped</a></li>
@@ -674,7 +726,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-11 10:43:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-16 15:04:17 UTC</small>
       </div>
     </div>
   </div>

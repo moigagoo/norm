@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>Configuration from Environment - Norm</title>
+        <title>Connection Pool - Norm</title>
 
         <!-- Custom HTML head -->
 
@@ -123,11 +123,11 @@
                     <strong aria-hidden="true">5.</strong> Transactions
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./config.html" class="active" tabindex="0">
+                  <a href="./config.html" tabindex="0">
                     <strong aria-hidden="true">6.</strong> Configuration from Environment
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./pool.html" tabindex="0">
+                  <a href="./pool.html" class="active" tabindex="0">
                     <strong aria-hidden="true">7.</strong> Connection Pool
                   </a></li>
                 <li class="chapter-item expanded ">
@@ -195,57 +195,81 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Configuration from Environment</h1>
-<p>In a real-life project, you want to keep your DB configuration separate from the code. Common pattern is to put it in environment variables, probably in a <code>.env</code> file that's processed during the app startup.</p>
-<p>Norm's <code>getDb</code> proc lets you create a DB connection using <code>DB_HOST</code>, <code>DB_USER</code>, <code>DB_PASS</code>, and <code>DB_NAME</code> environment variables:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/[os, options]
+                        <h1>Connection Pool</h1>
+<p>Connection pooling is a technique that involves precreating and reusing a number of ever-open DB connections instead of opening connections on demand. Since opening and closing connections takes more time than passing open connections around, this technique is used to improve performance of web application under high load.</p>
+<p>Norm offers a simple thread-safe connection pool implementation. It can be used with both Postgres and SQLite, and you even can create multiple pools if you need to.</p>
+<p><strong>Important</strong> Connection pooling requires <code>--mm:orc</code>.</p>
+<p>To use connection pool:</p>
+<ol>
+<li>create a <a href="/apidocs/norm/pool.html#Pool"><code>Pool</code></a> instance by calling <a href="/apidocs/norm/pool.html#newPool,Positive"><code>newPool</code></a></li>
+<li>wrap your DB calls in a <a href="/apidocs/norm/pool.html#withDb.t,Pool,untyped"><code>withDb</code></a></li>
+</ol>
+<p><code>newPool</code> creates a pool of a given size with connections of type <code>DbConn</code> (either from <a href="/apidocs/norm/sqlite.html"><code>sqlite</code></a> or <a href="/apidocs/norm/postgres.html"><code>postgres</code></a>). The params for the connections are taken from the environment, similar to how <code>withDb</code> works (see <a href="/config.html">Configuration from Environment</a>).</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/[model, sqlite, pool]
 
-<span class="hljs-keyword">import</span> norm/sqlite
 
+<span class="hljs-keyword">type</span>
+  <span class="hljs-type">Product</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name: <span class="hljs-built_in">string</span>
+    price: <span class="hljs-built_in">float</span>
+
+<span class="hljs-keyword">proc</span> newProduct(): <span class="hljs-type">Product</span> =
+  <span class="hljs-type">Product</span>(name: <span class="hljs-string">&quot;&quot;</span>, price: <span class="hljs-number">0.0</span>)
 
 putEnv(<span class="hljs-string">&quot;DB_HOST&quot;</span>, <span class="hljs-string">&quot;:memory:&quot;</span>)
 
-<span class="hljs-keyword">let</span> db = getDb()
+<span class="hljs-keyword">var</span> connPool = newPool[<span class="hljs-type">DbConn</span>](<span class="hljs-number">10</span>)
 
-<span class="hljs-keyword">var</span>
-  customerFoo = newCustomer(some <span class="hljs-string">&quot;Alice&quot;</span>, newUser(<span class="hljs-string">&quot;foo@foo.foo&quot;</span>))
-  customerBar = newCustomer()
+withDb(connPool):
+  db.exec <span class="hljs-string">sql&quot;PRAGMA foreign_keys = ON&quot;</span>
+  db.createTables(newProduct())</code></pre>
+                        <h2>Pool Exhausted Policy</h2>
+<p>If the app requests more connections from the pool than it can give, we say the pool is exhausted.</p>
+<p>There are two ways a pool can react to that:</p>
+<ol>
+<li>raise a <a href="/apidocs/norm/pool.html#PoolExhaustedError"><code>PoolExhaustedError</code></a>; this is the default policy</li>
+<li>open an additional connection and extend the pool size</li>
+</ol>
+<p>The policy is set during the pool creation by setting <code>poolExhaustedPolicy</code> param to either <code>pepRaise</code> or <code>pepExtend</code>.</p>
+<p>To reset the pool back to its default size after it has been extended, call <a href="/apidocs/norm/pool.html#reset,Pool"><code>reset</code></a> proc on it.</p>
+<h2>Manual Pool Manipulation</h2>
+<p>You can borrow connections from the pool manually by calling <a href="/apidocs/norm/pool.html#add%2CPool%2CT"><code>pop</code></a> proc.</p>
+<p><strong>Important</strong> If you choose to get connections from the pool manually, you must care about putting the borrowed connections back byb calling <a href="/apidocs/norm/pool.html#add,Pool,T"><code>add</code></a>.</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">let</span> dbConn = connPool.pop()
 
-db.createTables(customerBar)
-db.insert(customerFoo)
-db.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
+<span class="hljs-keyword">var</span> product = newProduct()
 
-<span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
-INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
-INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
-SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['foo@foo.foo']
-(name: some(&quot;Alice&quot;), user: ..., id: 1)</samp></pre>
-                        <p><code>withDb</code> template is even handier as it lets you run code without explicitly creating or closing a DB connection:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">var</span>
-  customerSpam = newCustomer(some <span class="hljs-string">&quot;Bob&quot;</span>, newUser(<span class="hljs-string">&quot;bar@bar.bar&quot;</span>))
-  customerEggs = newCustomer()
+product.name = <span class="hljs-string">&quot;Table&quot;</span>
+product.price = <span class="hljs-number">123.45</span>
 
-withDb:
-  db.createTables(customerEggs)
-  db.insert(customerSpam)
-  db.select(customerEggs, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
+dbConn.insert(product)
 
-<span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
-INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['bar@bar.bar']
-INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]
-SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['bar@bar.bar']
-(name: some(&quot;Alice&quot;), user: ..., id: 1)</samp></pre>
+connPool.add(dbConn)</code></pre>
+                        <h2>Closing the Pool</h2>
+<p>When you no longer need the pool, for example, when your app exits or crashes, to avoid leaving hanging connections, close the pool by calling <a href="/apidocs/norm/pool.html#close,Pool"><code>close</code></a>. This proc closes all connections in the pool and sets its size to 0.</p>
+                        <pre><code class="nim hljs">close connPool</code></pre>
+                        <h2>Custom Connection Source</h2>
+<p>By default, new connections are added to the pool by calling <code>getDB</code>, which takes the DB params from the environment.</p>
+<p>But you can override that. For example, to get one pool connected to one DB and another one connected to another one.</p>
+<p>To do that, pass a function that returns <code>DbConn</code> to the Pool constructor:</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">func</span> myDb: <span class="hljs-type">DbConn</span> = open(<span class="hljs-string">&quot;mydb.db&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
+
+<span class="hljs-keyword">var</span> anotherPool = newPool[<span class="hljs-type">DbConn</span>](<span class="hljs-number">10</span>, myDb)
+
+<span class="hljs-keyword">assert</span> anotherPool.size == <span class="hljs-number">10</span>
+<span class="hljs-keyword">assert</span> fileExists(<span class="hljs-string">&quot;mydb.db&quot;</span>)
+
+close anotherPool
+removeFile(<span class="hljs-string">&quot;mydb.db&quot;</span>)</code></pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="./transactions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="./config.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="./pool.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="./fk.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -255,11 +279,11 @@ SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.em
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="./transactions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="./config.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="./pool.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="./fk.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
