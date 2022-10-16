@@ -60,5 +60,26 @@ You can borrow connections from the pool manually by calling [`pop`](/apidocs/no
 **Important** If you choose to get connections from the pool manually, you must care about putting the borrowed connections back byb calling [`add`](/apidocs/norm/pool.html#add,Pool,T).
 """
 
+nbCode:
+  let dbConn = connPool.pop()
+
+  var product = newProduct()
+
+  product.name = "Table"
+  product.price = 123.45
+
+  dbConn.insert(product)
+
+  connPool.add(dbConn)
+
+nbText: """
+## Closing the Pool
+
+When you no longer need the pool, for example, when your app exits or crashes, to avoid leaving hanging connections, close the pool by calling [`close`](/apidocs/norm/pool.html#close,Pool). This proc closes all connections in the pool and sets its size to 0.
+"""
+
+nbCode:
+  close connPool
+
 nbSave
 
