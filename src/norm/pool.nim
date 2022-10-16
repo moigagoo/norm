@@ -4,8 +4,8 @@ import sqlite, postgres
 
 
 type 
-  Conn = sqlite.DbConn | postgres.DbConn
-  Pool*[T: Conn] = ref object 
+  DbConn = sqlite.DbConn | postgres.DbConn
+  Pool*[T: DbConn] = ref object 
     defaultSize: Natural
     conns: seq[T]
     poolExhaustedPolicy: PoolExhaustedPolicy
@@ -16,7 +16,7 @@ type
     pepExtend
 
 
-func newPool*[T: Conn](defaultSize: Positive, poolExhaustedPolicy = pepRaise): Pool[T] =
+func newPool*[T: DbConn](defaultSize: Positive, poolExhaustedPolicy = pepRaise): Pool[T] =
   ##[ Create a connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
@@ -42,7 +42,7 @@ func defaultSize*(pool: Pool): Natural =
 func size*(pool: Pool): Natural =
   len(pool.conns)
 
-func pop*[T: Conn](pool: var Pool[T]): T =
+func pop*[T: DbConn](pool: var Pool[T]): T =
   ##[ Take a connection from the pool.
 
   If you're calling this manually, don't forget to `add <#add,Pool,DbConn>`_ it back!
@@ -62,7 +62,7 @@ func pop*[T: Conn](pool: var Pool[T]): T =
           elif T is postgres.DbConn:
             postgres.getDb()
 
-func add*[T: Conn](pool: var Pool, dbConn: T) =
+func add*[T: DbConn](pool: var Pool, dbConn: T) =
   ##[ Add a connection to the pool.
 
   Use to return a borrowed connection to the pool.
