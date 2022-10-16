@@ -9,6 +9,7 @@ type
     defaultSize: Natural
     conns: seq[T]
     poolExhaustedPolicy: PoolExhaustedPolicy
+    getDbProc: proc: T
     lock: Lock
   PoolExhaustedError* = object of CatchableError
   PoolExhaustedPolicy* = enum
@@ -16,7 +17,7 @@ type
     pepExtend
 
 
-func newPool*[T: DbConn](defaultSize: Positive, poolExhaustedPolicy = pepRaise): Pool[T] =
+proc newPool*[T: DbConn](defaultSize: Positive, poolExhaustedPolicy = pepRaise, getDbProc: proc: T = getDb): Pool[T] =
   ##[ Create a connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
@@ -25,16 +26,12 @@ func newPool*[T: DbConn](defaultSize: Positive, poolExhaustedPolicy = pepRaise):
     - ``pepExtend`` means throw “add another connection to the pool.”
   ]##
 
-  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), poolExhaustedPolicy: poolExhaustedPolicy)
+  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), poolExhaustedPolicy: poolExhaustedPolicy, getDbProc: getDbProc)
 
   initLock(result.lock)
 
   for conn in result.conns.mitems:
-    conn =
-      when T is sqlite.DbConn:
-        sqlite.getDb()
-      elif T is postgres.DbConn:
-        postgres.getDb()
+    conn = result.getDbProc()
 
 func defaultSize*(pool: Pool): Natural =
   pool.defaultSize
@@ -42,7 +39,7 @@ func defaultSize*(pool: Pool): Natural =
 func size*(pool: Pool): Natural =
   len(pool.conns)
 
-func pop*[T: DbConn](pool: var Pool[T]): T =
+proc pop*[T: DbConn](pool: var Pool[T]): T =
   ##[ Take a connection from the pool.
 
   If you're calling this manually, don't forget to `add <#add,Pool,DbConn>`_ it back!
@@ -56,11 +53,7 @@ func pop*[T: DbConn](pool: var Pool[T]): T =
       of pepRaise:
         raise newException(PoolExhaustedError, "Pool exhausted")
       of pepExtend:
-        result =
-          when T is sqlite.DbConn:
-            sqlite.getDb()
-          elif T is postgres.DbConn:
-            postgres.getDb()
+        result = pool.getDbProc()
 
 func add*[T: DbConn](pool: var Pool, dbConn: T) =
   ##[ Add a connection to the pool.
