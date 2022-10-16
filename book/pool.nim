@@ -82,7 +82,7 @@ nbCode:
   close connPool
 
 nbText: """
-## Custom Connection Source
+## Custom Connection Provider
 
 By default, new connections are added to the pool by calling ``getDB``, which takes the DB params from the environment.
 
