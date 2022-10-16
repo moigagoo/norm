@@ -67,8 +67,6 @@ suite "Table creation":
 
     dbConn.createTables(person)
 
-    check true
-
     let qry = sql """SELECT column_name::text, data_type::text
       FROM information_schema.columns
       WHERE table_name = $1
