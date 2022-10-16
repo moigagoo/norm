@@ -81,5 +81,26 @@ When you no longer need the pool, for example, when your app exits or crashes, t
 nbCode:
   close connPool
 
+nbText: """
+## Custom Connection Source
+
+By default, new connections are added to the pool by calling ``getDB``, which takes the DB params from the environment.
+
+But you can override that. For example, to get one pool connected to one DB and another one connected to another one.
+
+To do that, pass a function that returns ``DbConn`` to the Pool constructor:
+"""
+
+nbCode:
+  func myDb: DbConn = open("mydb.db", "", "", "")
+
+  var anotherPool = newPool[DbConn](10, myDb)
+
+  assert anotherPool.size == 10
+  assert fileExists("mydb.db")
+
+  close anotherPool
+  removeFile("mydb.db")
+
 nbSave
 

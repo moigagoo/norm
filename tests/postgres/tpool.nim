@@ -45,6 +45,27 @@ suite "Connection pool":
 
     check pool.size == 0
 
+  test "Create and close pool with custom connection provider":
+    var dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % "postgres2")
+    dbConn.exec(sql "CREATE DATABASE $#" % "postgres2")
+    close dbConn
+
+    func myDb: DbConn = open(dbHost, dbUser, dbPassword, "postgres2")
+
+    var pool = newPool[DbConn](1, myDb)
+
+    check pool.defaultSize == 1
+    check pool.size == 1
+
+    close pool
+
+    check pool.size == 0
+
+    dbConn = open(dbHost, dbUser, dbPassword, "template1")
+    dbConn.exec(sql "DROP DATABASE IF EXISTS $#" % "postgres2")
+    close dbConn
+
   test "Explicit pool connection":
     var pool = newPool[DbConn](1)
     let db = pool.pop()
@@ -115,7 +136,7 @@ suite "Connection pool":
 
   test "Pool exhausted, raise exception":
     var
-      pool = newPool[DbConn](1, pepRaise)
+      pool = newPool[DbConn](1, poolExhaustedPolicy = pepRaise)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]
@@ -149,7 +170,7 @@ suite "Connection pool":
 
   test "Pool exhausted, extend and reset pool":
     var
-      pool = newPool[DbConn](1, pepExtend)
+      pool = newPool[DbConn](1, poolExhaustedPolicy = pepExtend)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]

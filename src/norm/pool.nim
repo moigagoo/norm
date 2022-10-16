@@ -8,8 +8,8 @@ type
   Pool*[T: DbConn] = ref object 
     defaultSize: Natural
     conns: seq[T]
-    poolExhaustedPolicy: PoolExhaustedPolicy
     getDbProc: proc: T
+    poolExhaustedPolicy: PoolExhaustedPolicy
     lock: Lock
   PoolExhaustedError* = object of CatchableError
   PoolExhaustedPolicy* = enum
@@ -17,7 +17,7 @@ type
     pepExtend
 
 
-proc newPool*[T: DbConn](defaultSize: Positive, poolExhaustedPolicy = pepRaise, getDbProc: proc: T = getDb): Pool[T] =
+proc newPool*[T: DbConn](defaultSize: Positive, getDbProc: proc: T = getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
   ##[ Create a connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
@@ -26,7 +26,7 @@ proc newPool*[T: DbConn](defaultSize: Positive, poolExhaustedPolicy = pepRaise, 
     - ``pepExtend`` means throw “add another connection to the pool.”
   ]##
 
-  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), poolExhaustedPolicy: poolExhaustedPolicy, getDbProc: getDbProc)
+  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), getDbProc: getDbProc, poolExhaustedPolicy: poolExhaustedPolicy)
 
   initLock(result.lock)
 

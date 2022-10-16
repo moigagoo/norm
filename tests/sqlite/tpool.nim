@@ -27,6 +27,21 @@ suite "Connection pool":
 
     check pool.size == 0
 
+  test "Create and close pool with custom connection provider":
+    func myDb: DbConn = open("test2.db", "", "", "")
+
+    var pool = newPool[DbConn](1, myDb)
+
+    check pool.defaultSize == 1
+    check pool.size == 1
+    check fileExists("test2.db")
+
+    close pool
+
+    check pool.size == 0
+
+    removeFile("test2.db")
+
   test "Explicit pool connection":
     var pool = newPool[DbConn](1)
     let db = pool.pop()
@@ -91,7 +106,7 @@ suite "Connection pool":
 
   test "Pool exhausted, raise exception":
     var
-      pool = newPool[DbConn](1, pepRaise)
+      pool = newPool[DbConn](1, poolExhaustedPolicy = pepRaise)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]
@@ -125,7 +140,7 @@ suite "Connection pool":
 
   test "Pool exhausted, extend and reset pool":
     var
-      pool = newPool[DbConn](1, pepExtend)
+      pool = newPool[DbConn](1, poolExhaustedPolicy = pepExtend)
       toy1 = newToy(123.45)
       toy2 = newToy(456.78)
       threads: array[2, Thread[float]]
