@@ -8,7 +8,7 @@
 -   [d]—docs improvement
 
 
-## 2.5.3 (WIP)
+## 2.6.0 (WIP)
 
 - [+] App connection pool (see [#50](https://github.com/moigagoo/norm/issues/50)).
 
