@@ -2,7 +2,7 @@ type
   LoggingError* = object of CatchableError
 
 
-when defined(normdebug):
+when defined(normDebug):
   import std/[logging, strutils]
 
   proc log*(msg: string) {.raises: LoggingError.} =

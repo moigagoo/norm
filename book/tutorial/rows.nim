@@ -62,7 +62,9 @@ nbCode:
 
 nbText: &"""
 ## Select Row
+
 ### Select in general
+
 To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call `select`.
 
 One curious thing about `select` is that its result depends not only on the condition you pass but also on the container. If the container has `Model` fields that are not `None`, Norm will select the related rows in a single `JOIN` query giving you a fully populated model object. However, if the container has a `none Model` field, it is just ignored.
@@ -137,6 +139,7 @@ nbCode:
 nbText: """
 
 ### Selecting Many-To-One/One-To-Many relationships
+
 Imagine you had a Many-To-One relationship between two models, like we have with `Customer` being the many-model and `User` being the one-model, where one user can have many customers. 
 
 If you have a user and wanted to query all of their customers, you couldn't do so by just making a query for the user, as that model doesn't have a "seq[Customer]" field that norm could resolve.
@@ -173,7 +176,9 @@ In the first approach, if Customer doesn't have a field called "user" or if that
 
 In the second approach, if Customer doesn't have any field of type "User" or any other model-type that points to the same table as "User", it will also not compile while throwing a helpful error message.
 
+
 ### Selecting Many-To-Many relationships
+
 Imagine if you had a Many-To-Many relationship between two models (e.g. Users and Groups) that is recorded on an "join-model" (e.g. UserGroup), where one user can be in many groups and a group can have many users.
 
 If you have a user and want to query all of its groups, you can do so via the general select statement mechanism.

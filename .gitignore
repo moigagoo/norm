@@ -30,8 +30,10 @@ tests/sqlite/tfkpragma_selfref
 tests/sqlite/tfkpragmanotint
 tests/sqlite/tfkpragmanotmodel
 tests/sqlite/tnull
+tests/sqlite/tpool
 tests/sqlite/trelated
 tests/sqlite/trepeatfks
+tests/sqlite/trawselect
 tests/sqlite/tro
 tests/sqlite/tronocomp
 tests/sqlite/tronocomp2
@@ -55,8 +57,10 @@ tests/postgres/tfkpragma_selfref
 tests/postgres/tfkpragmanotint
 tests/postgres/tfkpragmanotmodel
 tests/postgres/tnull
+tests/postgres/tpool
 tests/postgres/trelated
 tests/postgres/trepeatfks
+tests/postgres/trawselect
 tests/postgres/tro
 tests/postgres/tronocomp
 tests/postgres/tronocomp2

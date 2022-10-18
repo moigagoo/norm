@@ -21,9 +21,9 @@ func isEmptyColumn*(row: Row, index: int): bool =
 
 ## This does the actual heavy lifting for parsing
 proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: static bool = false) =
-  ##[ Convert ``ndb.sqlite.Row`` instance into `ref object`_ instance, from a given position.
+  ##[ Convert ``ndb.sqlite.Row`` instance into ``ref object`` instance, from a given position.
 
-  This is a helper proc to convert to `ref object`_ instances that have fields of the same type.
+  This is a helper proc to convert to ``ref object`` instances that have fields of the same type.
   ]##
 
   for fld, dummyVal in T()[].fieldPairs:
@@ -31,7 +31,7 @@ proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: sta
       if dot(obj, fld).toOptional().isSome:             ## and it's either a ``some ref object`` or ``ref object``
         var subMod = dot(obj, fld).toOptional().get()   ## then we try to populate it with the next ``row`` values.
 
-        if row.isEmptyColumn(pos):                      ## If we have a ``NULL`` at this point, we return an empty ``ref object``:
+        if row.isEmptyColumn(pos):                      ## If we have a ``NULL`` at this point, we return an empty instance:
           when typeof(dummyVal) is Option:              ## ``val`` is guaranteed to be either ``ref object`` or an ``Option[ref object]`` at this point,
             when isRefObject(dummyVal):
               dot(obj, fld) = none typeof(subMod)       ## and the fact that we got a ``NULL`` tells us it's an ``Option[ref object]``,
@@ -56,9 +56,9 @@ proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: sta
   
 
 proc fromRow*[T: ref object](obj: var T, row: Row) =
-  ##[ Populate `ref object`_ instance from ``ndb.postgres.Row`` instance.
+  ##[ Populate ``ref object`` instance from ``ndb.postgres.Row`` instance.
 
-  Nested `ref object`_ fields are populated from the same ``ndb.postgres.Row`` instance.
+  Nested ``ref object`` fields are populated from the same ``ndb.postgres.Row`` instance.
   ]##
 
   var pos: Natural = 0

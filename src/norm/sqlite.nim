@@ -27,12 +27,13 @@ type
     ]##
   NotFoundError* = object of KeyError
 
+
 const dbHostEnv* = "DB_HOST"
 
 
 # Sugar to get DB config from environment variables
 
-proc getDb*(): DbConn =
+proc getDb*: DbConn =
   ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
 
   open(getEnv(dbHostEnv), "", "", "")
