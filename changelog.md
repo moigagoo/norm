@@ -8,7 +8,7 @@
 -   [d]—docs improvement
 
 
-## 2.6.0 (WIP)
+## 2.6.0 (October 18, 2022)
 
 - [+] App connection pool (see [#50](https://github.com/moigagoo/norm/issues/50)).
 
