@@ -82,6 +82,11 @@ type
   Account* = ref object of Model
     status* {.uniqueGroup.}: int 
     email* {.uniqueGroup.}: string
+ 
+  Student* = ref object of Model 
+    firstName* {.index: "idx_student_names".}: string
+    lastName* {.index: "idx_student_names".}: string
+    email* {.index: "idx_student_emails".}: string
 
 
 func newToy*(price: float): Toy =
@@ -232,4 +237,7 @@ func newSelfRef*(parentid: int64): SelfRef =
 
 func newAccount*(status = 0, email = ""): Account =
   Account(status: status, email: email)
+
+func newStudent*(firstName = "", lastName = "", email = ""): Student =
+  Student(firstName: firstName, lastName: lastName, email: email)
 

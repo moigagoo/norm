@@ -75,7 +75,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
     if val.model.isSome:
       dbConn.createTables(get val.model)
 
-  var colGroups, fkGroups, uniqueGroupCols: seq[string]
+  var
+    colGroups, fkGroups, uniqueGroupCols: seq[string]
+    indexes: Table[string, seq[string]]
 
   for fld, val in obj[].fieldPairs:
     var colShmParts: seq[string]
@@ -95,6 +97,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     when obj.dot(fld).hasCustomPragma(uniqueGroup):
       uniqueGroupCols.add obj.col(fld)
+
+    when obj.dot(fld).hasCustomPragma(index):
+      indexes.mgetOrPut(obj.dot(fld).getCustomPragmaVal(index), @[]).add(obj.col(fld))
 
     if val.isModel:
       var fkGroup = "FOREIGN KEY($#) REFERENCES $#($#)" %
@@ -130,6 +135,13 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   dbConn.exec(sql qry)
 
+  for index, cols in indexes.pairs:
+    let qry = "CREATE INDEX $# ON $#($#);" % [index, T.table, cols.join(", ")]
+
+    log(qry)
+
+    dbConn.exec(sql qry)
+  
 # Row manipulation
 proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.

@@ -37,3 +37,9 @@ template onDelete*(val: string) {.pragma.}
 template tableName*(val: string) {.pragma.}
   ## Custom table name for a model.
 
+template index*(val: string) {.pragma.}
+  ## Create index for the given field.
+
+template uniqueIndex*(val: string) {.pragma.}
+  ## Create unique index for the given field.
+

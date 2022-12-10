@@ -29,6 +29,7 @@ tests/sqlite/tfkpragma
 tests/sqlite/tfkpragma_selfref
 tests/sqlite/tfkpragmanotint
 tests/sqlite/tfkpragmanotmodel
+tests/sqlite/tindexes
 tests/sqlite/tnull
 tests/sqlite/tpool
 tests/sqlite/trelated
