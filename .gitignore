@@ -57,6 +57,7 @@ tests/postgres/tfkpragma
 tests/postgres/tfkpragma_selfref
 tests/postgres/tfkpragmanotint
 tests/postgres/tfkpragmanotmodel
+tests/postgres/tindexes
 tests/postgres/tnull
 tests/postgres/tpool
 tests/postgres/trelated
