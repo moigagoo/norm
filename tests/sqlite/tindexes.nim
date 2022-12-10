@@ -24,7 +24,7 @@ suite "Indexes":
     let qry = "PRAGMA index_list($#);"
 
     check dbConn.getAllRows(sql qry % "Student") == @[
-      @[?0, ?"idx_student_emails", ?0, ?"c", ?0],
+      @[?0, ?"idx_student_emails", ?1, ?"c", ?0],
       @[?1, ?"idx_student_names", ?0, ?"c", ?0]
     ]
  

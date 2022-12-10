@@ -78,6 +78,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
   var
     colGroups, fkGroups, uniqueGroupCols: seq[string]
     indexes: Table[string, seq[string]]
+    uniqueIndexes: Table[string, seq[string]]
 
   for fld, val in obj[].fieldPairs:
     var colShmParts: seq[string]
@@ -100,6 +101,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     when obj.dot(fld).hasCustomPragma(index):
       indexes.mgetOrPut(obj.dot(fld).getCustomPragmaVal(index), @[]).add(obj.col(fld))
+
+    when obj.dot(fld).hasCustomPragma(uniqueIndex):
+      uniqueIndexes.mgetOrPut(obj.dot(fld).getCustomPragmaVal(uniqueIndex), @[]).add(obj.col(fld))
 
     if val.isModel:
       var fkGroup = "FOREIGN KEY($#) REFERENCES $#($#)" %
@@ -137,6 +141,13 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
   for index, cols in indexes.pairs:
     let qry = "CREATE INDEX $# ON $#($#);" % [index, T.table, cols.join(", ")]
+
+    log(qry)
+
+    dbConn.exec(sql qry)
+
+  for index, cols in uniqueIndexes.pairs:
+    let qry = "CREATE UNIQUE INDEX $# ON $#($#);" % [index, T.table, cols.join(", ")]
 
     log(qry)
 

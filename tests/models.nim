@@ -86,7 +86,7 @@ type
   Student* = ref object of Model 
     firstName* {.index: "idx_student_names".}: string
     lastName* {.index: "idx_student_names".}: string
-    email* {.index: "idx_student_emails".}: string
+    email* {.uniqueIndex: "idx_student_emails".}: string
 
 
 func newToy*(price: float): Toy =
