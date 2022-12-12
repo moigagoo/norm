@@ -106,6 +106,11 @@ window.addEventListener('DOMContentLoaded', main);
     title="fk(val: typed)">fk(val: typed)</a></li>
 
   </ul>
+  <ul class="simple nested-toc-section">index
+      <li><a class="reference" href="#index.t%2Cstring"
+    title="index(val: string)">index(val: string)</a></li>
+
+  </ul>
   <ul class="simple nested-toc-section">onDelete
       <li><a class="reference" href="#onDelete.t%2Cstring"
     title="onDelete(val: string)">onDelete(val: string)</a></li>
@@ -141,6 +146,11 @@ window.addEventListener('DOMContentLoaded', main);
     title="uniqueGroup()">uniqueGroup()</a></li>
 
   </ul>
+  <ul class="simple nested-toc-section">uniqueIndex
+      <li><a class="reference" href="#uniqueIndex.t%2Cstring"
+    title="uniqueIndex(val: string)">uniqueIndex(val: string)</a></li>
+
+  </ul>
 
   </ul>
 </li>
@@ -161,6 +171,14 @@ window.addEventListener('DOMContentLoaded', main);
 <dd>
 
 Mark <tt class="docutils literal"><span class="pre">int</span></tt> field as foreign key. Foreign keys always references the field <tt class="docutils literal"><span class="pre">id</span></tt> of <tt class="docutils literal"><span class="pre">val</span></tt>. <tt class="docutils literal"><span class="pre">val</span></tt> should be a Model.
+
+</dd>
+</div>
+<div id="index.t,string">
+<dt><pre><span class="Keyword">template</span> <a href="#index.t%2Cstring"><span class="Identifier">index</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span class="Identifier">pragma</span>.}</pre></dt>
+<dd>
+
+Create index for the given field.
 
 </dd>
 </div>
@@ -227,6 +245,14 @@ Mark fields as a unique group. Add pragma to every field.
 
 </dd>
 </div>
+<div id="uniqueIndex.t,string">
+<dt><pre><span class="Keyword">template</span> <a href="#uniqueIndex.t%2Cstring"><span class="Identifier">uniqueIndex</span></a><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span> {.<span class="Identifier">pragma</span>.}</pre></dt>
+<dd>
+
+Create unique index for the given field.
+
+</dd>
+</div>
 
 </dl></div>
 
@@ -237,7 +263,7 @@ Mark fields as a unique group. Add pragma to every field.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-10-18 09:07:04 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-12-12 16:26:33 UTC</small>
       </div>
     </div>
   </div>

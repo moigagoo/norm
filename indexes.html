@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using nimibook -->
         <meta charset="UTF-8">
-        <title>Models 101 - Norm</title>
+        <title>Indexes - Norm</title>
 
         <!-- Custom HTML head -->
 
@@ -87,7 +87,7 @@
                     <strong aria-hidden="true">1.</strong> Welcome to Norm!
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./models.html" class="active" tabindex="0">
+                  <a href="./models.html" tabindex="0">
                     <strong aria-hidden="true">2.</strong> Models 101
                   </a></li>
                 <li class="chapter-item expanded ">
@@ -119,7 +119,7 @@
                     <strong aria-hidden="true">4.</strong> Transactions
                   </a></li>
                 <li class="chapter-item expanded ">
-                  <a href="./indexes.html" tabindex="0">
+                  <a href="./indexes.html" class="active" tabindex="0">
                     <strong aria-hidden="true">5.</strong> Indexes
                   </a></li>
                 <li class="chapter-item expanded ">
@@ -199,61 +199,26 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1>Models 101</h1>
-<p>A model is an abstraction for a unit of your app's business logic. For example, in an online shop, the models might be Product, Customer, and Discount. Sometimes, models are created for entities that are not visible for the end user, but that are necessary from the architecture point of view: User, CartItem, or Permission.</p>
-<p>Models can relate to each each with one-to-one, one-to-many, many-to-many relations. For example, a CartItem can have many Discounts, whereas as a single Discount can be applied to many Products.</p>
-<p>Models can also inherit from each other. For example, Customer may inherit from User.</p>
-<p>In Norm, Models are ref objects inherited from <code>Model</code> root object:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/model
+                        <h1>Indexes</h1>
+<p>Index is a special table that makes use of data sortability to allow faster data access.</p>
+<p>Indexes can be unique and not unique. The difference is the in a unique index, rows are guaranteed to be unique.</p>
+<p>To create an index for you model, use <code>index</code> or <code>uniqueIndex</code> pragma passing the name of the index as its value:</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/[model, pragmas]
 
 <span class="hljs-keyword">type</span>
-  <span class="hljs-type">BaseUser</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    email: <span class="hljs-built_in">string</span></code></pre>
-                        <p>From a model definition, Norm deduces SQL queries to create tables and insert, select, update, and delete rows. Norm converts Nim objects to rows, their fields to columns, and their types to SQL types and vice versa.</p>
-<p>For example, for a model definition like the one above, Norm generates the following table schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-</code></pre>
-<p>Inherited models are just inherited objects:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">NamedUser</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">BaseUser</span>
-    name: <span class="hljs-built_in">string</span></code></pre>
-                        <p>To create relations between models, define fields subtyped from <code>Model</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">User</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    email: <span class="hljs-built_in">string</span>
+  <span class="hljs-type">Person</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    email* {.uniqueIndex: <span class="hljs-string">&quot;Person_emails&quot;</span>}: <span class="hljs-built_in">string</span>
+    firstName* {.index: <span class="hljs-string">&quot;Person_names&quot;</span>.}: <span class="hljs-built_in">string</span>
+    lastName* {.index: <span class="hljs-string">&quot;Person_names&quot;</span>.}: <span class="hljs-built_in">string</span></code></pre>
+                        <p>With this type definition, we'll have two indexes, one unique, one non-unique.</p>
+<p>The indexes are created together with the tables:</p>
+                        <pre><code class="nim hljs"><span class="hljs-keyword">let</span> dbConn* = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
 
-  <span class="hljs-type">Customer</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    name: <span class="hljs-built_in">string</span>
-    user: <span class="hljs-type">User</span></code></pre>
-                        <p>To add a <code>UNIQUE</code> constraint to a field, use <code>{.unique.}</code> pragma.</p>
-<p><code>UNIQUE</code> constraint ensures all values in a column or a group of columns are distinct from one another.</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/pragmas
+dbConn.createTables(<span class="hljs-type">Person</span>())
 
-<span class="hljs-keyword">type</span>
-  <span class="hljs-type">Client</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    email: <span class="hljs-built_in">string</span>
-    name {.unique.}: <span class="hljs-built_in">string</span></code></pre>
-                        <p>Norm will generate the following table schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
-</code></pre>
-<p>To define unique combination or columns, add <code>{.uniqueGroup.}</code> pragma to each field in the group.</p>
-<h2>Custom Table Name</h2>
-<p>By default, a table is named after the model type, enclosed in double quotes, e.g. <code>User</code> model's table is called <code>&quot;User&quot;</code>.</p>
-<p>To override this behavior and set a custom name for the generated table, use <code>tableName</code> pragma:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">Thing</span>* {.tableName: <span class="hljs-string">&quot;ThingTable&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    attr: <span class="hljs-built_in">string</span></code></pre>
-                        <p>This will result in this schema:</p>
-<pre><code>CREATE TABLE IF NOT EXISTS &quot;ThingTable&quot;(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-</code></pre>
-<h2>Read-only Models</h2>
-<p>To slim down DB queries when you don't need to fetch the full model, use read-only models.</p>
-<p>A read-only model is a model that defines a subset of fields of another model. Another important property of read-only model is that you can't use it to insert, update, or delete data; just select.</p>
-<p>To define a read-only model, annotate your <code>Model</code> subtype with <code>readOnly</code> or <code>ro</code> pragma and point it to an existing table with <code>tableName</code>:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">type</span>
-  <span class="hljs-type">ClientName</span>* {.readOnly, tableName: <span class="hljs-string">&quot;Client&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
-    name: <span class="hljs-built_in">string</span></code></pre>
-                        <p>Now you can query data from the DB into <code>ClientName</code> instances just like you do with any other model.</p>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Person&quot;(email TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+CREATE INDEX Person_names ON &quot;Person&quot;(firstName, lastName);
+CREATE UNIQUE INDEX Person_emails ON &quot;Person&quot;(email);</samp></pre>
                         <script defer>/* Generated by the Nim Compiler v1.6.6 */
 var framePtr = null;
 var excHandler = 0;
@@ -272,11 +237,11 @@ var objectID_637534370 = [0];
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="./index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="./transactions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="./tutorial.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="./config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -286,11 +251,11 @@ var objectID_637534370 = [0];
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="./index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="./transactions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="./tutorial.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="./config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
