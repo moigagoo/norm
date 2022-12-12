@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.6.0"
+version       = "2.6.1"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -17,7 +17,7 @@ task test, "Run tests":
 
 task book, "Generate book":
   rmDir "docs"
-  exec "nimble install -y nimib@#head nimibook@#head"
+  exec "nimble install -y nimib nimibook@#280a626a902745b378cc2186374f14c904c9a606"
   exec "nim r -d:release nbook.nim update"
   exec "nim r -d:release nbook.nim build"
   cpFile("CNAME", "docs/CNAME")

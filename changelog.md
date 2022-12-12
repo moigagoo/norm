@@ -7,6 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.6.1 (December 12, 2022)
+
+- [+] Add the ability to create indexes for tables (see [#180](https://github.com/moigagoo/norm/issues/180)).
+
 
 ## 2.6.0 (October 18, 2022)
 
