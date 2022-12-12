@@ -1,7 +1,7 @@
 import nimibook
 
 
-var book = newBookFromToc("Norm", "book"):
+var book = initBookWithToc:
   entry("Welcome to Norm!", "index.nim")
   entry("Models 101", "models.nim")
   section("Tutorial", "tutorial.nim"):
