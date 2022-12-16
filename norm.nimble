@@ -10,15 +10,15 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "ndb >= 0.19.9", "nimble >= 0.14.1"
+requires "nim >= 1.4.0", "ndb >= 0.19.9"
 
-taskRequires "book", "nimib >= 0.3.4", "nimibook#280a626a902745b378cc2186374f14c904c9a606"
 
 task test, "Run tests":
   exec "testament all"
 
 task book, "Generate book":
   rmDir "docs"
+  exec "nimble install -y nimib nimibook@#280a626a902745b378cc2186374f14c904c9a606"
   exec "nim r -d:release nbook.nim update"
   exec "nim r -d:release nbook.nim build"
   cpFile("CNAME", "docs/CNAME")
