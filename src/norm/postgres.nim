@@ -160,6 +160,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
 
     dbConn.exec(sql qry)
  
+
 # Row manupulation
 
 proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
@@ -231,7 +232,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
     joinStmts = collect(newSeq):
       for grp in obj.joinGroups:
         "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
-    qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
+    qry = "SELECT $# FROM $# $# WHERE $# LIMIT 1" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
   log(qry, $params)
 
