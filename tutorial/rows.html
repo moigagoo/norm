@@ -246,7 +246,7 @@ userBaz.id == 156 ?true</samp></pre>
                         <pre><code class="nim hljs"><span class="hljs-keyword">var</span> customerBar = newCustomer()
 dbConn.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['bar@bar.bar']</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? LIMIT 1 &lt;- ['bar@bar.bar']</samp></pre>
                         <p>Let's examine how Norm populated <code>customerBar</code>:</p>
                         <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>(name: some(&quot;Sam&quot;), user: ..., id: 3)</samp></pre>
                         <pre><code class="nim hljs"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre><pre class="nb-output"><samp>(email: &quot;bar@bar.bar&quot;, id: 2)</samp></pre>
