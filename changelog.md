@@ -7,9 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+
 ## 2.6.2 (WIP)
 
-- [+] Add LIMIT 1 to the single object variant of select proc.
+- [+] Add `LIMIT 1` to the single object variant of `select` proc to make selection faster.
 
 
 ## 2.6.1 (December 12, 2022)
