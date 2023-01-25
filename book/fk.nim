@@ -84,4 +84,13 @@ nbCode:
 
   echo()
 
+nbText: """
+  Please note that Sqlite enforces foreign key constraints only when you use `getDb()` 
+  or a norm connection pool. Sqlite does not enable checking for foreign key constraints
+  by default (See chapter 2 [here](https://www.sqlite.org/foreignkeys.html)), 
+  but norm does so automatically for every connection that norm creates.
+  
+  To enable foreign key constraints on a connection you created yourself with `open`, 
+  execute the SQL command [`PRAGMA foreign_keys=on;`](https://www.sqlite.org/pragma.html#pragma_foreign_keys) with it.
+"""
 nbSave
