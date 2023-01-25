@@ -36,7 +36,8 @@ const dbHostEnv* = "DB_HOST"
 proc getDb*: DbConn =
   ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
 
-  open(getEnv(dbHostEnv), "", "", "")
+  result = open(getEnv(dbHostEnv), "", "", "")
+  result.exec(sql"PRAGMA foreign_keys=on;")
 
 template withDb*(body: untyped): untyped =
   ##[ Wrapper for DB operations.

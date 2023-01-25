@@ -11,7 +11,7 @@
 ## 2.6.2 (WIP)
 
 - [+] Add `LIMIT 1` to the single object variant of `select` proc to make selection faster.
-
+- [f] Add `PRAGMA foreign_keys=on` to sqlite connections upon creation, for both the pool and when using `getDb`.
 
 ## 2.6.1 (December 12, 2022)
 

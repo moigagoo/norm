@@ -37,8 +37,6 @@ When using `fk` pragma, foreign key must be handled manually, so `createTables` 
 nbCode:
   let db = open(":memory:", "", "", "")
 
-  db.exec sql"PRAGMA foreign_keys = ON"
-
   db.createTables(newProduct())
   db.createTables(newConsumer())
 

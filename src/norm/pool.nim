@@ -26,7 +26,15 @@ proc newPool*[T: DbConn](defaultSize: Positive, getDbProc: proc: T = getDb, pool
     - ``pepExtend`` means throw “add another connection to the pool.”
   ]##
 
-  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), getDbProc: getDbProc, poolExhaustedPolicy: poolExhaustedPolicy)
+  when T is sqlite.DbConn:
+    let dbProc = proc(): sqlite.DbConn =
+      result = getDbProc()
+      result.exec(sql"PRAGMA foreign_keys=on;")
+  else:
+    let dbProc = getDbProc
+
+  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), getDbProc: dbProc, poolExhaustedPolicy: poolExhaustedPolicy)
+
 
   initLock(result.lock)
 
