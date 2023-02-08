@@ -6,10 +6,10 @@ nbInit(theme = useNimibook)
 nbText: """
 # Raw SQL SELECT interactions
 
-Sometimes SQL abilities are needed that norm can not represent well.
+Sometimes SQL abilities are needed that Norm can not represent well.
 
-For such cases, norm provides a way to execute raw SQL SELECT queries and parse the received data into a user provided ``ref object`` type.
-This bypassses norm's ability to generate the SQL for you, but still allows you to use norm's ability parse ``Row`` instances.
+For such cases, Norm provides a way to execute raw SQL SELECT queries and parse the received data into a user provided ``ref object`` type.
+This bypassses Norm's ability to generate the SQL for you, but still allows you to use Norm's ability parse ``Row`` instances.
 """
 
 nbCode:

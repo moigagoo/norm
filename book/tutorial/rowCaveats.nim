@@ -5,7 +5,7 @@ nbInit(theme = useNimibook)
 
 nbText: """
 # Caveats
-There are some caveats when working with norm that you need to consider and strategies to work around them.
+There are some caveats when working with Norm that you need to consider and strategies to work around them.
 
 ## Managing Data for Many-to-Many Relationships
 Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary "glue"-models yourself as if they were regular models.
@@ -79,7 +79,7 @@ nbText: """
 ## Complex SELECT queries
 Norm handles simple database manipulations and queries well.
 However, it does not cover the entire feature-spectrum of SQL and thus does not support some more complex queries or other database features (e.g. views).
-For these scenarios you can write raw SQL, have norm execute it and parse the response in a custom ``ref object`` type you provide.
+For these scenarios you can write raw SQL, have Norm execute it and parse the response in a custom ``ref object`` type you provide.
 
 See the ``Raw SQL interactions`` section for more information.
 """

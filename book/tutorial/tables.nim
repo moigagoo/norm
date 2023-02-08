@@ -67,7 +67,7 @@ Note that a single `createTables` call generated two table schemas. That's becau
 
 ### Caveats
 
-Make sure to instantiate models with `Model` fields so that these fields are not `nil`. Otherwise, norm won't be able to create a table schema for them.
+Make sure to instantiate models with `Model` fields so that these fields are not `nil`. Otherwise, Norm won't be able to create a table schema for them.
 
 Note that `id` column is created despite not being present in `User` definition. That's because it's a special read-only field maintained automatically by norm. It represents row id in the database. **Do not define id field or manually update its value.**
 """

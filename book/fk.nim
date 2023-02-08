@@ -6,7 +6,7 @@ nbInit(theme = useNimibook)
 nbText: """
 # Manual Foreign Key Handling
 
-norm handles foreign keys automatically if you have a field of type `Model`. However, it has a downside: to fill up an object from the DB, norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
+Norm handles foreign keys automatically if you have a field of type `Model`. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
 
 To work around that limitation, you can declare and handle foreign keys manually, with `fk` pragma:
 """
@@ -56,7 +56,7 @@ nbCode:
   echo()
 
 nbText: """
-If an invalid ID is passed, norm will raise a `DbError` exception:
+If an invalid ID is passed, Norm will raise a `DbError` exception:
 """
 
 nbCode:
@@ -86,9 +86,9 @@ nbCode:
 
 nbText: """
   Please note that Sqlite enforces foreign key constraints only when you use `getDb()` 
-  or a norm connection pool. Sqlite does not enable checking for foreign key constraints
+  or a Norm connection pool. Sqlite does not enable checking for foreign key constraints
   by default (See chapter 2 [here](https://www.sqlite.org/foreignkeys.html)), 
-  but norm does so automatically for every connection that norm creates.
+  but Norm does so automatically for every connection that Norm creates.
   
   To enable foreign key constraints on a connection you created yourself with `open`, 
   execute the SQL command [`PRAGMA foreign_keys=on;`](https://www.sqlite.org/pragma.html#pragma_foreign_keys) with it.
