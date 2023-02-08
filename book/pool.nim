@@ -36,7 +36,6 @@ nbCode:
   var connPool = newPool[DbConn](10)
 
   withDb(connPool):
-    db.exec sql"PRAGMA foreign_keys = ON"
     db.createTables(newProduct())
   
 nbText: """

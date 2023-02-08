@@ -48,7 +48,7 @@ When Norm attempts to insert `alice`, it detects that `userFoo` that it referenc
 
 With `bob`, there's no need to do that since `userFoo` is already in the database.
 
-When inserting norm Model, it is possible to force the id to a given value by setting the id attribute of the Model. In order for the insertion to proceed, it is necessary to specify ``force=true`` when inserting:
+When inserting Norm Model, it is possible to force the id to a given value by setting the id attribute of the Model. In order for the insertion to proceed, it is necessary to specify ``force=true`` when inserting:
 """
 
 nbCode:
@@ -65,7 +65,7 @@ nbText: &"""
 
 ### Select in general
 
-To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call `select`.
+To select a rows with norm, you instantiate a model that serves as a container for the selected data and call `select`.
 
 One curious thing about `select` is that its result depends not only on the condition you pass but also on the container. If the container has `Model` fields that are not `None`, Norm will select the related rows in a single `JOIN` query giving you a fully populated model object. However, if the container has a `none Model` field, it is just ignored.
 
@@ -142,7 +142,7 @@ nbText: """
 
 Imagine you had a Many-To-One relationship between two models, like we have with `Customer` being the many-model and `User` being the one-model, where one user can have many customers. 
 
-If you have a user and wanted to query all of their customers, you couldn't do so by just making a query for the user, as that model doesn't have a "seq[Customer]" field that norm could resolve.
+If you have a user and wanted to query all of their customers, you couldn't do so by just making a query for the user, as that model doesn't have a "seq[Customer]" field that Norm could resolve.
 
 You could query the users for a given customer separately using the mechanisms of a general select statement.
 
@@ -150,7 +150,7 @@ However, you can also query them separately using a convenience proc `selectOneT
 
 Just provide the "one"-side of the relationship (user), a seq of the "many-model" (seq[Customer]) to populate as before and the name of the field on the "many-model" ("user" as that's the name of field on Customer pointing to User) that points to the "one-model" (User).
 
-If your "many-model" (Customer) only has a single field pointing to the one model (User) you can even forego providing the field-name, norm will infer it for you!
+If your "many-model" (Customer) only has a single field pointing to the one model (User) you can even forego providing the field-name, Norm will infer it for you!
 """
 
 nbCode:
@@ -170,7 +170,7 @@ nbCode:
 
 nbText: """
 
-An additional benefit of using this `selectOneToMany` is that with it, norm will validate whether this query is correct at compile time! 
+An additional benefit of using this `selectOneToMany` is that with it, Norm will validate whether this query is correct at compile time! 
 
 In the first approach, if Customer doesn't have a field called "user" or if that field does not have any model-type that points to the "User"-table, nor an fk-pragma to any such type, then the code will throw an error with a helpful message at compile-time.
 
@@ -187,7 +187,7 @@ Similarly to `selectOneToMany` there is a helper proc `selectManyToMany` here fo
 
 Just provide the side whose model entry you have (e.g. User or Group), a seq of the join-model (e.g. UserGroup), a seq of the entries your trying to query (e.g. seq[Group] or seq[User]), the field name on the join-model pointing to the model entry you have (e.g. "user" or "group") and the field name on the join-model pointing to the model of the entries you're trying to query (e.g. "group" or "user").
 
-As before, if your join-model (e.g. UserGroup) only has a single field pointing to each of the two many models (e.g. User and Group), you can forego the field names and let norm infer them for you.
+As before, if your join-model (e.g. UserGroup) only has a single field pointing to each of the two many models (e.g. User and Group), you can forego the field names and let Norm infer them for you.
 """
 
 nbCode:
