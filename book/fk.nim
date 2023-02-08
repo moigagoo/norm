@@ -6,7 +6,7 @@ nbInit(theme = useNimibook)
 nbText: """
 # Manual Foreign Key Handling
 
-Norm handles foreign keys automatically if you have a field of type `Model`. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
+norm handles foreign keys automatically if you have a field of type `Model`. However, it has a downside: to fill up an object from the DB, norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.
 
 To work around that limitation, you can declare and handle foreign keys manually, with `fk` pragma:
 """
@@ -56,7 +56,7 @@ nbCode:
   echo()
 
 nbText: """
-If an invalid ID is passed, Norm will raise a `DbError` exception:
+If an invalid ID is passed, norm will raise a `DbError` exception:
 """
 
 nbCode:

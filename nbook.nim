@@ -2,7 +2,7 @@ import nimibook
 
 
 var book = initBookWithToc:
-  entry("Welcome to Norm!", "index.nim")
+  entry("Welcome to norm!", "index.nim")
   entry("Models 101", "models.nim")
   section("Tutorial", "tutorial.nim"):
     entry("Tables", "tutorial/tables.nim")

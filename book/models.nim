@@ -12,7 +12,7 @@ Models can relate to each each with one-to-one, one-to-many, many-to-many relati
 
 Models can also inherit from each other. For example, Customer may inherit from User.
 
-In Norm, Models are ref objects inherited from `Model` root object:
+In norm, Models are ref objects inherited from `Model` root object:
 """
 
 nbCode:
@@ -23,9 +23,9 @@ nbCode:
       email: string
 
 nbText: """
-From a model definition, Norm deduces SQL queries to create tables and insert, select, update, and delete rows. Norm converts Nim objects to rows, their fields to columns, and their types to SQL types and vice versa.
+From a model definition, norm deduces SQL queries to create tables and insert, select, update, and delete rows. Norm converts Nim objects to rows, their fields to columns, and their types to SQL types and vice versa.
 
-For example, for a model definition like the one above, Norm generates the following table schema:
+For example, for a model definition like the one above, norm generates the following table schema:
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 

@@ -5,7 +5,7 @@ nbInit(theme = useNimibook)
 
 nbText: """
 # Caveats
-There are some caveats when working with Norm that you need to consider and strategies to work around them.
+There are some caveats when working with norm that you need to consider and strategies to work around them.
 
 ## Managing Data for Many-to-Many Relationships
 Support for Many-To-Many relationships has not yet been fully reached. You will have to set-up and manage the necessary "glue"-models yourself as if they were regular models.

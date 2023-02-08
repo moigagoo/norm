@@ -10,7 +10,7 @@ nbInit(theme = useNimibook)
 nbText: """
 # Custom Datatypes
 
-By default, Norm can deal with the following Nim types:
+By default, norm can deal with the following Nim types:
   - ``bool``
   - ``int/int8/16/32/64``
   - ``uint/uint8/16/32/64``
@@ -19,11 +19,11 @@ By default, Norm can deal with the following Nim types:
   - ``DateTime``
   - ``Model``
 
-It does so by interacting with the database through a package called ``ndb``. With ``ndb``, Norm converts these Nim types into the ``DbValue`` type which it then can convert to and from the various database-types.
+It does so by interacting with the database through a package called ``ndb``. With ``ndb``, norm converts these Nim types into the ``DbValue`` type which it then can convert to and from the various database-types.
 
-More specifically, Norm does this by specifying 3 procs. These procs specify which database-type to convert ``DbValue`` to, how to convert the Nim type to ``DbValue`` and how to convert ``DbValue`` to the Nim type.
+More specifically, norm does this by specifying 3 procs. These procs specify which database-type to convert ``DbValue`` to, how to convert the Nim type to ``DbValue`` and how to convert ``DbValue`` to the Nim type.
 
-If you want to have Norm ``Models`` that contain your own custom types, you need to define these 3 procs for your Nim type:
+If you want to have norm ``Models`` that contain your own custom types, you need to define these 3 procs for your Nim type:
   - ``dbType(T: typedesc[YourType]) -> string`` maps your Nim type to a database type (e.g. ``func dbType*(T: typedesc[string]): string = "TEXT"`` for SQLite)
   - ``dbValue(YourType) -> DbValue`` converts an instance of ``YourType`` to a ``DbValue`` instance.
   - ``to(DbValue, T: typedesc[YourType]) -> T`` converts a ``DbValue`` instance to an instance of ``YourType``.

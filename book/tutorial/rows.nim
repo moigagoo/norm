@@ -15,7 +15,7 @@ nbText: """
 
 To insert rows, use `insert` procs. There is a variant that takes a single model instance or a sequence of them.
 
-Instances passed to `insert` must be mutable for Norm to be able to update their `id` fields.
+Instances passed to `insert` must be mutable for norm to be able to update their `id` fields.
 
 In your inim session, run:
 """
@@ -44,7 +44,7 @@ nbCode:
   echo()
 
 nbText: &"""
-When Norm attempts to insert `alice`, it detects that `userFoo` that it referenced in it has not been inserted yet, so there's no `id` to store as foreign key. So, Norm inserts `userFoo` automatically and then uses its new `id` (in this case, {userFoo.id}) as the foreign key value.
+When norm attempts to insert `alice`, it detects that `userFoo` that it referenced in it has not been inserted yet, so there's no `id` to store as foreign key. So, norm inserts `userFoo` automatically and then uses its new `id` (in this case, {userFoo.id}) as the foreign key value.
 
 With `bob`, there's no need to do that since `userFoo` is already in the database.
 
@@ -65,11 +65,11 @@ nbText: &"""
 
 ### Select in general
 
-To select a rows with Norm, you instantiate a model that serves as a container for the selected data and call `select`.
+To select a rows with norm, you instantiate a model that serves as a container for the selected data and call `select`.
 
-One curious thing about `select` is that its result depends not only on the condition you pass but also on the container. If the container has `Model` fields that are not `None`, Norm will select the related rows in a single `JOIN` query giving you a fully populated model object. However, if the container has a `none Model` field, it is just ignored.
+One curious thing about `select` is that its result depends not only on the condition you pass but also on the container. If the container has `Model` fields that are not `None`, norm will select the related rows in a single `JOIN` query giving you a fully populated model object. However, if the container has a `none Model` field, it is just ignored.
 
-In other words, Norm will automatically handle the "n+1" problem.
+In other words, norm will automatically handle the "n+1" problem.
 
 Let's see how that works:
 """
@@ -81,7 +81,7 @@ nbCode:
   echo()
 
 nbText: """
-Let's examine how Norm populated `customerBar`:
+Let's examine how norm populated `customerBar`:
 """
 
 nbCode:
