@@ -1,5 +1,9 @@
+import std/logging
+
 import nimib, nimibook
 
+
+addHandler newConsoleLogger(fmtStr = "")
 
 nbInit(theme = useNimibook)
 

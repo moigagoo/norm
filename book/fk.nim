@@ -1,5 +1,9 @@
+import std/logging
+
 import nimib, nimibook
 
+
+addHandler newConsoleLogger(fmtStr = "")
 
 nbInit(theme = useNimibook)
 
@@ -93,4 +97,6 @@ nbText: """
   To enable foreign key constraints on a connection you created yourself with `open`, 
   execute the SQL command [`PRAGMA foreign_keys=on;`](https://www.sqlite.org/pragma.html#pragma_foreign_keys) with it.
 """
+
 nbSave
+
