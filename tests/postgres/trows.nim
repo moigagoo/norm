@@ -271,3 +271,17 @@ suite "Row CRUD":
     dbConn.delete(cat)
 
     check dbConn.getRow(sql"""SELECT * FROM "Person" WHERE name = 'Alice'""").isNone
+
+  test """
+    Given 2 models with one entry depending on another, 
+    When the other entry gets deleted 
+    Then a DBError should occur due to FK checks
+  """:
+    var toy = newToy(123.45)
+    var cat = newPet("cat", toy)
+
+    dbConn.insert(toy)
+    dbConn.insert(cat)
+
+    expect DBError:
+      dbConn.delete(toy)

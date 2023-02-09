@@ -36,7 +36,8 @@ const dbHostEnv* = "DB_HOST"
 proc getDb*: DbConn =
   ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
 
-  open(getEnv(dbHostEnv), "", "", "")
+  result = open(getEnv(dbHostEnv), "", "", "")
+  result.exec(sql"PRAGMA foreign_keys=on;")
 
 template withDb*(body: untyped): untyped =
   ##[ Wrapper for DB operations.
@@ -152,8 +153,10 @@ proc createTables*[T: Model](dbConn; obj: T) =
     log(qry)
 
     dbConn.exec(sql qry)
-  
+
+
 # Row manipulation
+
 proc insert*[T: Model](dbConn; obj: var T, force = false, conflictPolicy = cpRaise) =
   ##[ Insert rows for `Model`_ instance and its `Model`_ fields, updating their ``id`` fields.
 
@@ -213,7 +216,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
     joinStmts = collect(newSeq):
       for grp in obj.joinGroups:
         "LEFT JOIN $# AS $# ON $# = $#" % [grp.tbl, grp.tAls, grp.lFld, grp.rFld]
-    qry = "SELECT $# FROM $# $# WHERE $#" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
+    qry = "SELECT $# FROM $# $# WHERE $# LIMIT 1" % [obj.rfCols.join(", "), T.table, joinStmts.join(" "), cond]
 
   log(qry, $params)
 

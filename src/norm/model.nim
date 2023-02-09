@@ -119,7 +119,7 @@ proc checkRo*(T: typedesc[Model]) =
   ## Stop compilation if an object has `ro`_ pragma.
 
   when T.hasCustomPragma(ro) or T.hasCustomPragma(readOnly):
-    {.error: "can't use mutating procs with read-only models".}
+    {.error: "Can't use mutating procs with read-only models".}
 
 proc getRelatedFieldNameTo*[S: Model, T: Model](source: typedesc[S], target: typedesc[T]): string {.compileTime.} =
   ## A compile time proc that searches the given `source` Model type for any
@@ -210,3 +210,4 @@ proc validateJoinModelFkField*[S, T: Model](fkFieldName: static string, joinMode
       return true
 
   return false
+

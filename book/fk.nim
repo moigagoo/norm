@@ -1,5 +1,9 @@
+import std/logging
+
 import nimib, nimibook
 
+
+addHandler newConsoleLogger(fmtStr = "")
 
 nbInit(theme = useNimibook)
 
@@ -36,8 +40,6 @@ When using `fk` pragma, foreign key must be handled manually, so `createTables` 
 
 nbCode:
   let db = open(":memory:", "", "", "")
-
-  db.exec sql"PRAGMA foreign_keys = ON"
 
   db.createTables(newProduct())
   db.createTables(newConsumer())
@@ -86,4 +88,15 @@ nbCode:
 
   echo()
 
+nbText: """
+  Please note that Sqlite enforces foreign key constraints only when you use `getDb()` 
+  or a Norm connection pool. Sqlite does not enable checking for foreign key constraints
+  by default (See chapter 2 [here](https://www.sqlite.org/foreignkeys.html)), 
+  but Norm does so automatically for every connection that Norm creates.
+  
+  To enable foreign key constraints on a connection you created yourself with `open`, 
+  execute the SQL command [`PRAGMA foreign_keys=on;`](https://www.sqlite.org/pragma.html#pragma_foreign_keys) with it.
+"""
+
 nbSave
+

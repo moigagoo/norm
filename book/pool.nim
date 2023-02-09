@@ -1,5 +1,9 @@
+import std/logging
+
 import nimib, nimibook
 
+
+addHandler newConsoleLogger(fmtStr = "")
 
 nbInit(theme = useNimibook)
 
@@ -36,7 +40,6 @@ nbCode:
   var connPool = newPool[DbConn](10)
 
   withDb(connPool):
-    db.exec sql"PRAGMA foreign_keys = ON"
     db.createTables(newProduct())
   
 nbText: """

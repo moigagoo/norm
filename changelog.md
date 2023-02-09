@@ -7,6 +7,13 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+
+## 2.6.2 (February 9, 2023)
+
+- [+] Add `LIMIT 1` to the single object variant of `select` proc to make selection faster.
+- [f] Add `PRAGMA foreign_keys=on` to sqlite connections upon creation, for both the pool and when using `getDb`.
+
+
 ## 2.6.1 (December 12, 2022)
 
 - [+] Add the ability to create indexes for tables (see [#180](https://github.com/moigagoo/norm/issues/180)).

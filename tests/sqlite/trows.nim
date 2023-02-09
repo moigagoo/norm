@@ -10,7 +10,8 @@ suite "Row CRUD":
   setup:
     removeFile dbFile
 
-    let dbConn = open(dbFile, "", "", "")
+    putEnv("DB_HOST", dbFile)
+    let dbConn = getDb()
 
     dbConn.createTables(newPerson())
 
@@ -253,8 +254,6 @@ suite "Row CRUD":
     check dbConn.getRow(sql"SELECT * FROM Person WHERE name = 'Alice'").isNone
 
   test "Delete rows cascade":
-    dbConn.exec sql"PRAGMA foreign_keys = ON"
-
     var
       cat = newPet("cat", newToy(123.45))
       person = newPerson("Alice", some cat)
@@ -263,3 +262,17 @@ suite "Row CRUD":
     dbConn.delete(cat)
 
     check dbConn.getRow(sql"SELECT * FROM Person WHERE name = 'Alice'").isNone
+
+  test """
+    Given 2 models with one entry depending on another, 
+    When the other entry gets deleted 
+    Then a DBError should occur due to FK checks
+  """:
+    var toy = newToy(123.45)
+    var cat = newPet("cat", toy)
+
+    dbConn.insert(toy)
+    dbConn.insert(cat)
+
+    expect DBError:
+      dbConn.delete(toy)

@@ -176,3 +176,21 @@ suite "Connection pool":
 
     close pool
 
+  test """
+    Given 2 models with one entry depending on another and a pool with a custom connection-creation-proc, 
+    When the other entry gets deleted with a connection from the pool 
+    Then a DBError should occur due to FK checks
+  """:
+    var pool = newPool[DbConn](1, proc(): DbConn = open(dbFile, "", "", ""))
+    var toy = newToy(123.45)
+    var cat = newPet("cat", toy)
+
+    withDb(pool):
+      db.createTables(toy)
+      db.createTables(cat)
+
+      db.insert(toy)
+      db.insert(cat)
+
+      expect DBError:
+        db.delete(toy)

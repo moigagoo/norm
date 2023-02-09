@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.6.1"
+version       = "2.6.2"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -11,6 +11,7 @@ skipDirs      = @["tests", "htmldocs"]
 # Dependencies
 
 requires "nim >= 1.4.0", "ndb >= 0.19.9"
+
 
 task test, "Run tests":
   exec "testament all"

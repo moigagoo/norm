@@ -1,5 +1,4 @@
-import std/sugar
-import std/logging
+import std/[logging, sugar]
 
 import nimib, nimibook
 import norm/sqlite

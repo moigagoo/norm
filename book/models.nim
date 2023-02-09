@@ -12,7 +12,7 @@ Models can relate to each each with one-to-one, one-to-many, many-to-many relati
 
 Models can also inherit from each other. For example, Customer may inherit from User.
 
-In Norm, Models are ref objects inherited from `Model` root object:
+In norm, Models are ref objects inherited from `Model` root object:
 """
 
 nbCode:

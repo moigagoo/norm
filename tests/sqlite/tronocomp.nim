@@ -1,6 +1,6 @@
 discard """
   action: "reject"
-  errormsg: "can't use mutating procs with read-only models"
+  errormsg: "Can't use mutating procs with read-only models"
   file: "model.nim"
 """
 
