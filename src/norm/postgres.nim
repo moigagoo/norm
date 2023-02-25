@@ -8,7 +8,7 @@ else:
   import std/macros
   export macros
 
-import ndb/postgres
+import lowdb/postgres
 export postgres
 
 import private/postgres/[dbtypes, rowutils, llexec]
@@ -159,7 +159,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
     log(qry)
 
     dbConn.exec(sql qry)
- 
+
 
 # Row manupulation
 

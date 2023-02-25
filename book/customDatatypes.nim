@@ -19,7 +19,7 @@ By default, Norm can deal with the following Nim types:
   - ``DateTime``
   - ``Model``
 
-It does so by interacting with the database through a package called ``ndb``. With ``ndb``, Norm converts these Nim types into the ``DbValue`` type which it then can convert to and from the various database-types.
+It does so by interacting with the database through a package called ``lowdb``. With ``lowdb``, Norm converts these Nim types into the ``DbValue`` type which it then can convert to and from the various database-types.
 
 More specifically, Norm does this by specifying 3 procs. These procs specify which database-type to convert ``DbValue`` to, how to convert the Nim type to ``DbValue`` and how to convert ``DbValue`` to the Nim type.
 

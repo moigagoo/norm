@@ -1,5 +1,5 @@
-import ndb/postgres {.all.}
-import ndb/wrappers/libpq
+import lowdb/postgres {.all.}
+import lowdb/wrappers/libpq
 
 proc execExpect(db: DbConn, query: SqlQuery, args: seq[DbValue],
                  expectedStatusType: ExecStatusType) =

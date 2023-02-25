@@ -8,7 +8,7 @@ else:
   import std/macros
   export macros
 
-import ndb/sqlite
+import lowdb/sqlite
 export sqlite
 
 import private/sqlite/[dbtypes, rowutils]

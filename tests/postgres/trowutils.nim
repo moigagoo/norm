@@ -1,6 +1,6 @@
 import std/[unittest, options, times]
 
-import ndb/postgres
+import lowdb/postgres
 
 import norm/private/postgres/rowutils
 import norm/[model, pragmas]
@@ -8,7 +8,7 @@ import norm/[model, pragmas]
 import ../models
 
 
-suite "Converting between Model and ndb.postgres.Row":
+suite "Converting between Model and lowdb.postgres.Row":
   test "Built-in types":
     type
       Person = ref object of Model

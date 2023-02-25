@@ -1,8 +1,8 @@
-## Procs to convert `Model <../../model.html#Model>`_ instances or ref object instances to ``ndb.postgres.Row`` instances and back.
+## Procs to convert `Model <../../model.html#Model>`_ instances or ref object instances to ``lowdb.postgres.Row`` instances and back.
 
 import std/options
 
-import ndb/postgres
+import lowdb/postgres
 
 import dbtypes
 import ../dot
@@ -21,7 +21,7 @@ func isEmptyColumn*(row: Row, index: int): bool =
 
 ## This does the actual heavy lifting for parsing
 proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: static bool = false) =
-  ##[ Convert ``ndb.sqlite.Row`` instance into ``ref object`` instance, from a given position.
+  ##[ Convert ``lowdb.sqlite.Row`` instance into ``ref object`` instance, from a given position.
 
   This is a helper proc to convert to ``ref object`` instances that have fields of the same type.
   ]##
@@ -45,7 +45,7 @@ proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: sta
 
       else:                                             ## If the field is a ``none ref object``,
         inc pos                                         ## don't bother trying to populate it at all.
-                                          
+
     else:
       when not skip:                                    ## If we're dealing with an "ordinary" field,
         dot(obj, fld) = row[pos].to(typeof(dummyVal))   ## just convert it.
@@ -53,19 +53,19 @@ proc fromRowPos[T: ref object](obj: var T, row: Row, pos: var Natural, skip: sta
 
       else:
         inc pos
-  
+
 
 proc fromRow*[T: ref object](obj: var T, row: Row) =
-  ##[ Populate ``ref object`` instance from ``ndb.postgres.Row`` instance.
+  ##[ Populate ``ref object`` instance from ``lowdb.postgres.Row`` instance.
 
-  Nested ``ref object`` fields are populated from the same ``ndb.postgres.Row`` instance.
+  Nested ``ref object`` fields are populated from the same ``lowdb.postgres.Row`` instance.
   ]##
 
   var pos: Natural = 0
   obj.fromRowPos(row, pos)
 
 proc toRow*[T: Model](obj: T, force = false): Row =
-  ##[ Convert `Model`_ instance into ``ndb.postgres.Row`` instance.
+  ##[ Convert `Model`_ instance into ``lowdb.postgres.Row`` instance.
 
   If ``force`` is ``true``, fields with `ro <../../pragmas.html#ro.t>`_ pragma are not skipped.
   ]##
