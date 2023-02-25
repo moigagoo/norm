@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "lowdb >= 0.1.0"
+requires "nim >= 1.4.0", "lowdb >= 0.1.1"
 
 
 task test, "Run tests":
