@@ -27,3 +27,24 @@ task docs, "Generate docs":
   rmDir "docs/apidocs"
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
 
+import std/[strutils, sequtils, strformat]
+
+task dockerTests, "Run all containerized tests":
+  let wantsSudoExecution = commandLineParams.anyIt(it == "sudo")
+  var command = "docker-compose run --rm tests"
+  if wantsSudoExecution:
+    command = fmt"sudo {command}"
+
+  exec command
+
+task singleDockerTest, "Run containerized tests for a specific test file":
+  let testArguments = commandLineParams.filterIt(it.startsWith("test"))
+
+  let wantsSudoExecution = commandLineParams.anyIt(it == "sudo")
+  var command = "docker-compose run --rm tests"
+
+  for argument in testArguments:
+    var command = fmt"docker-compose run --rm test {argument}"
+    if wantsSudoExecution:
+      command = fmt"sudo {command}"
+    exec command
