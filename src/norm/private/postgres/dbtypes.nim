@@ -21,7 +21,7 @@ func dbType*(T: typedesc[int16]): string = "SMALLINT"
 
 func dbType*(T: typedesc[int32]): string = "INTEGER"
 
-func dbType*(T: typedesc[int64]): string = "BIGINT"
+func dbType*(T: typedesc[int64 | Positive]): string = "BIGINT"
 
 func dbType*(T: typedesc[float32]): string = "REAL"
 
