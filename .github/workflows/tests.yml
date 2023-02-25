@@ -42,7 +42,7 @@ jobs:
       - run: nimble install -Y
 
       - name: Run tests
-        run: testament run
+        run: testament all
         env:
           PGHOST: localhost
 
