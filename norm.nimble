@@ -16,11 +16,15 @@ requires "nim >= 1.4.0", "lowdb >= 0.1.1"
 task test, "Run tests":
   exec "testament all"
 
+task setupBook, "Compiles the nimibook CLI-binary used for generating the docs":
+  exec "nimble install -y nimib nimibook@#280a626a902745b378cc2186374f14c904c9a606"
+  exec "nim c -d:release --mm:orc --deepcopy:on nbook.nim"
+
 task book, "Generate book":
   rmDir "docs"
-  exec "nimble install -y nimib nimibook@#280a626a902745b378cc2186374f14c904c9a606"
-  exec "nim r -d:release --mm:refc nbook.nim update"
-  exec "nim r -d:release --mm:refc nbook.nim build"
+  exec "nimble setupBook"
+  exec "./nbook --mm:orc --deepcopy:on update"
+  exec "./nbook --mm:orc --deepcopy:on build"
   cpFile("CNAME", "docs/CNAME")
 
 task docs, "Generate docs":
