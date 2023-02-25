@@ -27,24 +27,39 @@ task docs, "Generate docs":
   rmDir "docs/apidocs"
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
 
+
+## For Local Development
+
 import std/[strutils, sequtils, strformat]
 
-task dockerTests, "Run all containerized tests":
-  let wantsSudoExecution = commandLineParams.anyIt(it == "sudo")
-  var command = "docker-compose run --rm tests"
-  if wantsSudoExecution:
+let postgresName = "norm-postgres-testcontainer"
+putEnv("PGHOST", "localhost") ## Mandatory for all Postgres tests
+
+proc asSudo(params: seq[string]): bool =
+  return params.anyIt(it == "sudo")
+
+task startContainers, "Starts a postgres container for running tests against":
+  var command = fmt"""docker run -d -e POSTGRES_PASSWORD="postgres" --name {postgresName} --rm -p 5432:5432 postgres"""
+
+  if commandLineParams.asSudo():
     command = fmt"sudo {command}"
 
   exec command
 
-task singleDockerTest, "Run containerized tests for a specific test file":
-  let testArguments = commandLineParams.filterIt(it.startsWith("test"))
+task stopContainers, "Stops a postgres container used for norm tests":
+  var command = fmt"""docker stop {postgresName}"""
 
-  let wantsSudoExecution = commandLineParams.anyIt(it == "sudo")
-  var command = "docker-compose run --rm tests"
+  if commandLineParams.asSudo():
+    command = fmt"sudo {command}"
 
-  for argument in testArguments:
-    var command = fmt"docker-compose run --rm test {argument}"
-    if wantsSudoExecution:
-      command = fmt"sudo {command}"
+  exec command
+
+task allTests, "Run all tests via testament":
+  exec "testament all"
+
+task singleTest, "Run containerized tests for a specific test file":
+  let testFiles = commandLineParams.filterIt(it.startsWith("test"))
+
+  for file in testFiles:
+    let command = fmt"nimble c -r {file}"
     exec command
