@@ -1,4 +1,4 @@
-import std/[unittest, options, times]
+import std/[os, unittest, options, times]
 
 import lowdb/postgres
 

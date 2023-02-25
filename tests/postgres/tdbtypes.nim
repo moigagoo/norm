@@ -1,4 +1,4 @@
-import std/[unittest, with, strutils, times, sugar]
+import std/[os, unittest, with, strutils, times, sugar]
 
 import norm/[model, postgres, types]
 
@@ -6,10 +6,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 
 suite "Import dbTypes from norm/private/postgres/dbtypes":
