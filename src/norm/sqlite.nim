@@ -409,7 +409,7 @@ template transaction*(dbConn; body: untyped): untyped =
     log(commitQry)
     dbConn.exec(sql commitQry)
 
-  except:
+  except CatchableError:
     log(rollbackQry)
     dbConn.exec(sql rollbackQry)
 
