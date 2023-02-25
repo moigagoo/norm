@@ -46,9 +46,9 @@ func dbValue*(val: DateTime): DbValue = dbValue(val.toTime().toUnixFloat())
 
 func dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
 
-func dbValue*[_](val: StringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: StringOfCap[T]): DbValue = dbValue(string(val))
 
-func dbValue*[_](val: PaddedStringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: PaddedStringOfCap[T]): DbValue = dbValue(string(val))
 
 func dbValue*(val: Option[bool]): DbValue =
   if val.isSome:
@@ -90,9 +90,9 @@ func to*(dbVal; T: typedesc[DbBlob]): T = dbVal.b
 
 proc to*(dbVal; T: typedesc[DateTime]): T = utc dbVal.f.fromUnixFloat()
 
-func to*[_](dbVal; T: typedesc[StringOfCap[_]]): T = dbVal.s.T
+func to*[U](dbVal; T: typedesc[StringOfCap[U]]): T = dbVal.s.T
 
-func to*[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T = dbVal.s.T
+func to*[U](dbVal; T: typedesc[PaddedStringOfCap[U]]): T = dbVal.s.T
 
 func to*(dbVal; T: typedesc[Model]): T =
   ## This is never called and exists only to please the compiler.

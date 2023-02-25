@@ -52,9 +52,9 @@ func dbValue*[T: Model](val: Option[T]): DbValue =
   else:
     dbValue(nil)
 
-func dbValue*[_](val: StringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: StringOfCap[T]): DbValue = dbValue(string(val))
 
-func dbValue*[_](val: PaddedStringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: PaddedStringOfCap[T]): DbValue = dbValue(string(val))
 
 
 # Converter funcs from ``DbValue`` instances to Nim types:
@@ -67,9 +67,9 @@ func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 
 func to*(dbVal; T: typedesc[string]): T = dbVal.s
 
-func to*[_](dbVal; T: typedesc[StringOfCap[_]]): T = dbVal.o.value.T
+func to*[U](dbVal; T: typedesc[StringOfCap[U]]): T = dbVal.o.value.T
 
-func to*[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T = dbVal.o.value.T
+func to*[U](dbVal; T: typedesc[PaddedStringOfCap[U]]): T = dbVal.o.value.T
 
 func to*(dbVal; T: typedesc[bool]): T = dbVal.b
 

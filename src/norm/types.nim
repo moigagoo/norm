@@ -14,15 +14,15 @@ func newStringOfCap*[C: static[int]](val = ""): StringOfCap[C] =
 func newPaddedStringOfCap*[C: static[int]](val = ""): PaddedStringOfCap[C] =
   PaddedStringOfCap[C](val.alignLeft(C))
 
-func `==`*[_](x, y: StringOfCap[_]): bool =
+func `==`*[T](x, y: StringOfCap[T]): bool =
   string(x) == string(y)
 
-func `==`*[_](x, y: PaddedStringOfCap[_]): bool =
+func `==`*[T](x, y: PaddedStringOfCap[T]): bool =
   string(x) == string(y)
 
-func `$`*[_](s: StringOfCap[_]): string =
+func `$`*[T](s: StringOfCap[T]): string =
   string(s)
 
-func `$`*[_](s: PaddedStringOfCap[_]): string =
+func `$`*[T](s: PaddedStringOfCap[T]): string =
   string(s)
 
