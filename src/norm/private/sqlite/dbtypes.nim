@@ -90,9 +90,9 @@ func to*(dbVal; T: typedesc[DbBlob]): T = dbVal.b
 
 proc to*(dbVal; T: typedesc[DateTime]): T = utc dbVal.f.fromUnixFloat()
 
-func to*[U](dbVal; T: typedesc[StringOfCap[U]]): T = dbVal.s.T
+func to*[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2 = dbVal.s.T2
 
-func to*[U](dbVal; T: typedesc[PaddedStringOfCap[U]]): T = dbVal.s.T
+func to*[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2 = dbVal.s.T2
 
 func to*(dbVal; T: typedesc[Model]): T =
   ## This is never called and exists only to please the compiler.

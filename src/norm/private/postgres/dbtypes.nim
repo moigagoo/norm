@@ -67,9 +67,9 @@ func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 
 func to*(dbVal; T: typedesc[string]): T = dbVal.s
 
-func to*[U](dbVal; T: typedesc[StringOfCap[U]]): T = dbVal.o.value.T
+func to*[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2 = dbVal.o.value.T2
 
-func to*[U](dbVal; T: typedesc[PaddedStringOfCap[U]]): T = dbVal.o.value.T
+func to*[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2 = dbVal.o.value.T2
 
 func to*(dbVal; T: typedesc[bool]): T = dbVal.b
 
