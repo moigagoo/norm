@@ -217,7 +217,7 @@ proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
   for obj in objs.mitems:
     dbConn.insert(obj, force)
 
-proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError, Exception}.} =
+proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
@@ -236,14 +236,17 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   log(qry, $params)
 
-  let row = dbConn.getRow(sql qry, params)
+  let row = try:
+      dbConn.getRow(sql qry, params)
+    except Exception as e:
+      raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
 
   obj.fromRow(get row)
 
-proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError, Exception}.} =
+proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``objs`` must have at least one item.
@@ -260,7 +263,10 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
 
   log(qry, $params)
 
-  let rows = dbConn.getAllRows(sql qry, params)
+  let rows: seq[Row] = try:
+      dbConn.getAllRows(sql qry, params)
+    except Exception as e:
+      raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if objs.len > rows.len:
     objs.setLen(rows.len)
@@ -281,7 +287,7 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
 
   dbConn.select(objs, "TRUE")
 
-proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError, Exception}.} =
+proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a ref object instance ``obj`` and its ref object fields from DB.
 
   ``qry`` is the raw sql query whose contents are to be parsed into obj.
@@ -289,14 +295,17 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
   Table names must be written surrounded by quotation marks and are case sensititve.
   Raises a `NotFoundError` if the query returns nothing.
   ]##
-  let row = dbConn.getRow(sql qry, params)
+  let row = try:
+      dbConn.getRow(sql qry, params)
+    except Exception as e:
+      raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
 
   obj.fromRow(get row)
 
-proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError, Exception}.} =
+proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a sequence of ref object instances from DB.
 
   ``qry`` is the raw sql query whose contents are to be parsed into ``objs``.
@@ -305,7 +314,10 @@ proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: va
   ``objs`` must have at least one item.
   Table names must be written surrounded by quotation marks and are case sensititve.
   ]##
-  let rows = dbConn.getAllRows(sql qry, params)
+  let rows = try:
+    dbConn.getAllRows(sql qry, params)
+  except Exception as e:
+    raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if objs.len > rows.len:
     objs.setLen(rows.len)
