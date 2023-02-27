@@ -222,10 +222,11 @@
 </li>
 <li>
 <p>Run the tests before and after you change the code.</p>
-<p>The recommended way to run the tests is via nimble commands:
-$ nimble startContainers                                # Starts docker containers needed for testing
-$ nimble startContainers sudo                           # Starts docker containers using sudo</p>
-<pre><code>$ nimble allTests                                       # run all test suites
+<p>The recommended way to run the tests is via nimble commands:</p>
+<pre><code>$ nimble startContainers                                # Starts docker containers needed for testing
+$ nimble startContainers sudo                           # Starts docker containers using sudo
+
+$ nimble allTests                                       # run all test suites
 $ nimble singleTest tests/common/tmodel.nim             # run a single/list of test suite/s
 
 $ nimble stopContainers                                 # Stops and shuts down docker-containers
