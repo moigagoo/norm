@@ -201,7 +201,7 @@ proc insert*[T: Model](dbConn; objs: var openArray[T], force = false, conflictPo
   for obj in objs.mitems:
     dbConn.insert(obj, force, conflictPolicy)
 
-proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError, Exception}.} =
+proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
@@ -227,7 +227,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   obj.fromRow(get row)
 
-proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError, Exception}.} =
+proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``objs`` must have at least one item.
@@ -265,7 +265,7 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
 
   dbConn.select(objs, "1")
 
-proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError, Exception}.} =
+proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a ref object instance ``obj`` and its ref object fields from DB.
 
   ``qry`` is the raw sql query whose contents are to be parsed into obj.
@@ -279,7 +279,7 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
 
   obj.fromRow(get row)
 
-proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError, Exception}.} =
+proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a sequence of ref object instances from DB.
 
   ``qry`` is the raw sql query whose contents are to be parsed into ``objs``.
