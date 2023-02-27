@@ -4,7 +4,7 @@ discard """
   file: "model.nim"
 """
 
-import std/[unittest, strutils, sugar]
+import std/[os, unittest, strutils, sugar]
 
 import norm/[model, postgres]
 
@@ -12,10 +12,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 
 suite "Read-only models, mutating procs":

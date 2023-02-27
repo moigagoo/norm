@@ -1,15 +1,15 @@
-##[ Funcs to convert between Nim types and SQLite types and between Nim values and ``ndb.postgres.DbValue``.
+##[ Funcs to convert between Nim types and SQLite types and between Nim values and ``lowdb.postgres.DbValue``.
 
 To add support for ``YourType``, define three funcs:
 - ``dbType(T: typedesc[YourType]) -> string`` that returns SQL type for given ``YourType``
-- ``dbValue(YourType) -> DbValue`` that converts instances of ``YourType`` to ``ndb.sqlite.DbValue``
-- ``to(DbValue, T: typedesc[YourType]) -> T`` that converts ``ndb.sqlite.DbValue`` instances to ``YourType``.
+- ``dbValue(YourType) -> DbValue`` that converts instances of ``YourType`` to ``lowdb.sqlite.DbValue``
+- ``to(DbValue, T: typedesc[YourType]) -> T`` that converts ``lowdb.sqlite.DbValue`` instances to ``YourType``.
 ]##
 
 
 import std/[options, times, strutils]
 
-import ndb/postgres
+import lowdb/postgres
 
 import ../../model
 import ../../types
@@ -21,7 +21,7 @@ func dbType*(T: typedesc[int16]): string = "SMALLINT"
 
 func dbType*(T: typedesc[int32]): string = "INTEGER"
 
-func dbType*(T: typedesc[int64]): string = "BIGINT"
+func dbType*(T: typedesc[int64 | Positive | int | Natural]): string = "BIGINT"
 
 func dbType*(T: typedesc[float32]): string = "REAL"
 
@@ -52,9 +52,9 @@ func dbValue*[T: Model](val: Option[T]): DbValue =
   else:
     dbValue(nil)
 
-func dbValue*[_](val: StringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: StringOfCap[T]): DbValue = dbValue(string(val))
 
-func dbValue*[_](val: PaddedStringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: PaddedStringOfCap[T]): DbValue = dbValue(string(val))
 
 
 # Converter funcs from ``DbValue`` instances to Nim types:
@@ -67,9 +67,9 @@ func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 
 func to*(dbVal; T: typedesc[string]): T = dbVal.s
 
-func to*[_](dbVal; T: typedesc[StringOfCap[_]]): T = dbVal.o.value.T
+func to*[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2 = dbVal.o.value.T2
 
-func to*[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T = dbVal.o.value.T
+func to*[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2 = dbVal.o.value.T2
 
 func to*(dbVal; T: typedesc[bool]): T = dbVal.b
 

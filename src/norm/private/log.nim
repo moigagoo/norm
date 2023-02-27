@@ -5,12 +5,12 @@ type
 when defined(normDebug):
   import std/[logging, strutils]
 
-  proc log*(msg: string) {.raises: LoggingError.} =
+  proc log*(msg: string) {.raises: {LoggingError}.} =
     ## Log arbitrary message with debug level if the app is compiled with ``-d:normDebug``.
 
     try:
       debug msg
-    except:
+    except Exception:
       raise newException(LoggingError, getCurrentExceptionMsg())
 
   proc log*(qry, paramstr: string) {.raises: {ValueError, LoggingError}.} =

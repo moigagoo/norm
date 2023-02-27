@@ -7,6 +7,14 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.7.0 (February 27, 2023)
+
+- [+] Norm is not Nim 2.0 compatible (see [#182](https://github.com/moigagoo/norm/issues/182)).
+- [f] DB interactions are now GC-safe (see [#167](https://github.com/moigagoo/norm/issues/167)).
+- [r] ndb dependency has been replaced with lowdb.
+- [r] Improve exception tracking accuracy.
+- [t] Tons of improvements with regard to GitHub Actions and nimble tasks to run the test suite.
+
 
 ## 2.6.2 (February 9, 2023)
 

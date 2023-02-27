@@ -6,10 +6,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 proc resetDb =
   let dbConn = open(dbHost, dbUser, dbPassword, "template1")
