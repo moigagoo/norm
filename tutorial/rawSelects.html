@@ -203,7 +203,7 @@
 <p>Sometimes SQL abilities are needed that Norm can not represent well.</p>
 <p>For such cases, Norm provides a way to execute raw SQL SELECT queries and parse the received data into a user provided <code>ref object</code> type.
 This bypassses Norm's ability to generate the SQL for you, but still allows you to use Norm's ability parse <code>Row</code> instances.</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> std/json
 <span class="hljs-keyword">import</span> norm/[model, sqlite, pragmas]
 
 <span class="hljs-keyword">type</span> <span class="hljs-type">Campaign</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>

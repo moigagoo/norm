@@ -133,7 +133,7 @@ window.addEventListener('DOMContentLoaded', main);
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc">Procs to convert <a class="reference external" href="../../model.html#Model">Model</a> instances or ref object instances to <tt class="docutils literal"><span class="pre">ndb.postgres.Row</span></tt> instances and back.This does the actual heavy lifting for parsing</p>
+  <p class="module-desc">Procs to convert <a class="reference external" href="../../model.html#Model">Model</a> instances or ref object instances to <tt class="docutils literal"><span class="pre">lowdb.postgres.Row</span></tt> instances and back.This does the actual heavy lifting for parsing</p>
   <div class="section" id="6">
 <h1><a class="toc-backref" href="#6">Imports</a></h1>
 <dl class="item">
@@ -146,8 +146,8 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><pre><span class="Keyword">proc</span> <a href="#fromRow%2CT%2CRow"><span class="Identifier">fromRow</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Keyword">ref</span> <span class="Keyword">object</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Keyword">var</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">row</span><span class="Other">:</span> <span class="Identifier">Row</span><span class="Other">)</span></pre></dt>
 <dd>
 
-<p>Populate <tt class="docutils literal"><span class="pre">ref object</span></tt> instance from <tt class="docutils literal"><span class="pre">ndb.postgres.Row</span></tt> instance.</p>
-<p>Nested <tt class="docutils literal"><span class="pre">ref object</span></tt> fields are populated from the same <tt class="docutils literal"><span class="pre">ndb.postgres.Row</span></tt> instance. </p>
+<p>Populate <tt class="docutils literal"><span class="pre">ref object</span></tt> instance from <tt class="docutils literal"><span class="pre">lowdb.postgres.Row</span></tt> instance.</p>
+<p>Nested <tt class="docutils literal"><span class="pre">ref object</span></tt> fields are populated from the same <tt class="docutils literal"><span class="pre">lowdb.postgres.Row</span></tt> instance. </p>
 
 
 </dd>
@@ -164,7 +164,7 @@ Checks whether the column at a given index is empty
 <dt><pre><span class="Keyword">proc</span> <a href="#toRow%2CT"><span class="Identifier">toRow</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="../../model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Row</span></pre></dt>
 <dd>
 
-<p>Convert <a class="reference external" href="../../model.html#Model">Model</a> instance into <tt class="docutils literal"><span class="pre">ndb.postgres.Row</span></tt> instance.</p>
+<p>Convert <a class="reference external" href="../../model.html#Model">Model</a> instance into <tt class="docutils literal"><span class="pre">lowdb.postgres.Row</span></tt> instance.</p>
 <p>If <tt class="docutils literal"><span class="pre">force</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>, fields with <a class="reference external" href="../../pragmas.html#ro.t">ro</a> pragma are not skipped. </p>
 
 
@@ -180,7 +180,7 @@ Checks whether the column at a given index is empty
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-09 14:36:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-27 17:53:02 UTC</small>
       </div>
     </div>
   </div>

@@ -222,9 +222,14 @@
 </li>
 <li>
 <p>Run the tests before and after you change the code.</p>
-<p>The recommended way to run the tests is with Docker Compose:</p>
-<pre><code>$ docker-compose run --rm tests                         # run all test suites
-$ docker-compose run --rm test tests/common/tmodel.nim  # run a single test suite
+<p>The recommended way to run the tests is via nimble commands:
+$ nimble startContainers                                # Starts docker containers needed for testing
+$ nimble startContainers sudo                           # Starts docker containers using sudo</p>
+<pre><code>$ nimble allTests                                       # run all test suites
+$ nimble singleTest tests/common/tmodel.nim             # run a single/list of test suite/s
+
+$ nimble stopContainers                                 # Stops and shuts down docker-containers
+$ nimble startContainers sudo                           # Stops docker container using sudo
 </code></pre>
 </li>
 <li>

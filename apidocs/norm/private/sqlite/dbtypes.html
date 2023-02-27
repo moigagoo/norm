@@ -139,14 +139,14 @@ window.addEventListener('DOMContentLoaded', main);
     title="dbValue(val: Option[bool]): DbValue">dbValue(val: Option[bool]): DbValue</a></li>
   <li><a class="reference" href="#dbValue%2COption%5BDateTime%5D"
     title="dbValue(val: Option[DateTime]): DbValue">dbValue(val: Option[DateTime]): DbValue</a></li>
-  <li><a class="reference" href="#dbValue%2CPaddedStringOfCap%5B_%5D"
-    title="dbValue[_](val: PaddedStringOfCap[_]): DbValue">dbValue[_](val: PaddedStringOfCap[_]): DbValue</a></li>
-  <li><a class="reference" href="#dbValue%2CStringOfCap%5B_%5D"
-    title="dbValue[_](val: StringOfCap[_]): DbValue">dbValue[_](val: StringOfCap[_]): DbValue</a></li>
   <li><a class="reference" href="#dbValue%2COption%5BT%3A%20Model%5D"
     title="dbValue[T: Model](val: Option[T]): DbValue">dbValue[T: Model](val: Option[T]): DbValue</a></li>
   <li><a class="reference" href="#dbValue%2CT"
     title="dbValue[T: Model](val: T): DbValue">dbValue[T: Model](val: T): DbValue</a></li>
+  <li><a class="reference" href="#dbValue%2CPaddedStringOfCap%5BT%5D"
+    title="dbValue[T](val: PaddedStringOfCap[T]): DbValue">dbValue[T](val: PaddedStringOfCap[T]): DbValue</a></li>
+  <li><a class="reference" href="#dbValue%2CStringOfCap%5BT%5D"
+    title="dbValue[T](val: StringOfCap[T]): DbValue">dbValue[T](val: StringOfCap[T]): DbValue</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">to
@@ -164,10 +164,10 @@ window.addEventListener('DOMContentLoaded', main);
     title="to(dbVal; T: typedesc[SomeInteger]): T:type">to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5Bstring%5D"
     title="to(dbVal; T: typedesc[string]): T:type">to(dbVal; T: typedesc[string]): T:type</a></li>
-  <li><a class="reference" href="#to%2C%2Ctypedesc%5BPaddedStringOfCap%5B_%5D%5D"
-    title="to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type">to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type</a></li>
-  <li><a class="reference" href="#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D"
-    title="to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type">to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type</a></li>
+  <li><a class="reference" href="#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D"
+    title="to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type">to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type</a></li>
+  <li><a class="reference" href="#to%2C%2Ctypedesc%5BStringOfCap%5BT1%5D%5D"
+    title="to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type">to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BOption%5BT%5D%5D"
     title="to[T](dbVal; O: typedesc[Option[T]]): O:type">to[T](dbVal; O: typedesc[Option[T]]): O:type</a></li>
 
@@ -183,11 +183,11 @@ window.addEventListener('DOMContentLoaded', main);
   <div class="nine columns" id="content">
   <div id="tocRoot"></div>
   
-  <p class="module-desc"><p>Funcs to convert between Nim types and SQLite types and between Nim values and <tt class="docutils literal"><span class="pre">ndb.sqlite.DbValue</span></tt>.</p>
+  <p class="module-desc"><p>Funcs to convert between Nim types and SQLite types and between Nim values and <tt class="docutils literal"><span class="pre">lowdb.sqlite.DbValue</span></tt>.</p>
 <p>To add support for <tt class="docutils literal"><span class="pre">YourType</span></tt>, define three funcs:</p>
 <ul class="simple"><li><tt class="docutils literal"><span class="pre">dbType(T: typedesc[YourType]) -&gt; string</span></tt> that returns SQL type for given <tt class="docutils literal"><span class="pre">YourType</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">dbValue(YourType) -&gt; DbValue</span></tt> that converts instances of <tt class="docutils literal"><span class="pre">YourType</span></tt> to <tt class="docutils literal"><span class="pre">ndb.sqlite.DbValue</span></tt></li>
-<li><tt class="docutils literal"><span class="pre">to(DbValue, T: typedesc[YourType]) -&gt; T</span></tt> that converts <tt class="docutils literal"><span class="pre">ndb.sqlite.DbValue</span></tt> instances to <tt class="docutils literal"><span class="pre">YourType</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">dbValue(YourType) -&gt; DbValue</span></tt> that converts instances of <tt class="docutils literal"><span class="pre">YourType</span></tt> to <tt class="docutils literal"><span class="pre">lowdb.sqlite.DbValue</span></tt></li>
+<li><tt class="docutils literal"><span class="pre">to(DbValue, T: typedesc[YourType]) -&gt; T</span></tt> that converts <tt class="docutils literal"><span class="pre">lowdb.sqlite.DbValue</span></tt> instances to <tt class="docutils literal"><span class="pre">YourType</span></tt>.</li>
 </ul>
 </p>
   <div class="section" id="6">
@@ -310,22 +310,6 @@ window.addEventListener('DOMContentLoaded', main);
 
 </dd>
 </div>
-<div id="dbValue,PaddedStringOfCap[_]">
-<dt><pre><span class="Keyword">func</span> <a href="#dbValue%2CPaddedStringOfCap%5B_%5D"><span class="Identifier">dbValue</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <a href="../../types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbValue</span></pre></dt>
-<dd>
-
-
-
-</dd>
-</div>
-<div id="dbValue,StringOfCap[_]">
-<dt><pre><span class="Keyword">func</span> <a href="#dbValue%2CStringOfCap%5B_%5D"><span class="Identifier">dbValue</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <a href="../../types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbValue</span></pre></dt>
-<dd>
-
-
-
-</dd>
-</div>
 <div id="dbValue,Option[T: Model]">
 <dt><pre><span class="Keyword">func</span> <a href="#dbValue%2COption%5BT%3A%20Model%5D"><span class="Identifier">dbValue</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="../../model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbValue</span></pre></dt>
 <dd>
@@ -336,6 +320,22 @@ window.addEventListener('DOMContentLoaded', main);
 </div>
 <div id="dbValue,T">
 <dt><pre><span class="Keyword">func</span> <a href="#dbValue%2CT"><span class="Identifier">dbValue</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="../../model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbValue</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="dbValue,PaddedStringOfCap[T]">
+<dt><pre><span class="Keyword">func</span> <a href="#dbValue%2CPaddedStringOfCap%5BT%5D"><span class="Identifier">dbValue</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <a href="../../types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbValue</span></pre></dt>
+<dd>
+
+
+
+</dd>
+</div>
+<div id="dbValue,StringOfCap[T]">
+<dt><pre><span class="Keyword">func</span> <a href="#dbValue%2CStringOfCap%5BT%5D"><span class="Identifier">dbValue</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <a href="../../types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbValue</span></pre></dt>
 <dd>
 
 
@@ -398,16 +398,16 @@ This is never called and exists only to please the compiler.
 
 </dd>
 </div>
-<div id="to,,typedesc[PaddedStringOfCap[_]]">
-<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BPaddedStringOfCap%5B_%5D%5D"><span class="Identifier">to</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="../../types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T:type</span></pre></dt>
+<div id="to,,typedesc[PaddedStringOfCap[T1]]">
+<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D"><span class="Identifier">to</span></a><span class="Other">[</span><span class="Identifier">T1</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T2</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="../../types.html#PaddedStringOfCap"><span class="Identifier">PaddedStringOfCap</span></a><span class="Other">[</span><span class="Identifier">T1</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T2:type</span></pre></dt>
 <dd>
 
 
 
 </dd>
 </div>
-<div id="to,,typedesc[StringOfCap[_]]">
-<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D"><span class="Identifier">to</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="../../types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Operator">_</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T:type</span></pre></dt>
+<div id="to,,typedesc[StringOfCap[T1]]">
+<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BStringOfCap%5BT1%5D%5D"><span class="Identifier">to</span></a><span class="Other">[</span><span class="Identifier">T1</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T2</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="../../types.html#StringOfCap"><span class="Identifier">StringOfCap</span></a><span class="Other">[</span><span class="Identifier">T1</span><span class="Other">]</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T2:type</span></pre></dt>
 <dd>
 
 
@@ -432,7 +432,7 @@ This is never called and exists only to please the compiler.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-09 14:36:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-27 17:53:02 UTC</small>
       </div>
     </div>
   </div>

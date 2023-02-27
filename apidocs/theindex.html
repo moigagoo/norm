@@ -73,15 +73,15 @@ window.addEventListener('DOMContentLoaded', main);
     Modules: <a href="norm/model.html">norm/model</a>, <a href="norm/pool.html">norm/pool</a>, <a href="norm/postgres.html">norm/postgres</a>, <a href="norm/pragmas.html">norm/pragmas</a>, <a href="norm/pragmasutils.html">norm/pragmasutils</a>, <a href="norm/private/dot.html">norm/private/dot</a>, <a href="norm/private/log.html">norm/private/log</a>, <a href="norm/private/postgres/dbtypes.html">norm/private/postgres/dbtypes</a>, <a href="norm/private/postgres/llexec.html">norm/private/postgres/llexec</a>, <a href="norm/private/postgres/rowutils.html">norm/private/postgres/rowutils</a>, <a href="norm/private/sqlite/dbtypes.html">norm/private/sqlite/dbtypes</a>, <a href="norm/private/sqlite/rowutils.html">norm/private/sqlite/rowutils</a>, <a href="norm/private/utils.html">norm/private/utils</a>, <a href="norm/sqlite.html">norm/sqlite</a>, <a href="norm/types.html">norm/types</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="types: `$`[_](s: PaddedStringOfCap[_]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5B_%5D">types: `$`[_](s: PaddedStringOfCap[_]): string</a></li>
+          data-doc-search-tag="types: `$`[T](s: PaddedStringOfCap[T]): string" href="norm/types.html#%24%2CPaddedStringOfCap%5BT%5D">types: `$`[T](s: PaddedStringOfCap[T]): string</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="types: `$`[_](s: StringOfCap[_]): string" href="norm/types.html#%24%2CStringOfCap%5B_%5D">types: `$`[_](s: StringOfCap[_]): string</a></li>
+          data-doc-search-tag="types: `$`[T](s: StringOfCap[T]): string" href="norm/types.html#%24%2CStringOfCap%5BT%5D">types: `$`[T](s: StringOfCap[T]): string</a></li>
           </ul></dd>
 <dt><a name="%60%3D%3D%60" href="#%60%3D%3D%60"><span>`==`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="types: `==`[_](x, y: PaddedStringOfCap[_]): bool" href="norm/types.html#%3D%3D%2CPaddedStringOfCap%5B_%5D%2CPaddedStringOfCap%5B_%5D">types: `==`[_](x, y: PaddedStringOfCap[_]): bool</a></li>
+          data-doc-search-tag="types: `==`[T](x, y: PaddedStringOfCap[T]): bool" href="norm/types.html#%3D%3D%2CPaddedStringOfCap%5BT%5D%2CPaddedStringOfCap%5BT%5D">types: `==`[T](x, y: PaddedStringOfCap[T]): bool</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="types: `==`[_](x, y: StringOfCap[_]): bool" href="norm/types.html#%3D%3D%2CStringOfCap%5B_%5D%2CStringOfCap%5B_%5D">types: `==`[_](x, y: StringOfCap[_]): bool</a></li>
+          data-doc-search-tag="types: `==`[T](x, y: StringOfCap[T]): bool" href="norm/types.html#%3D%3D%2CStringOfCap%5BT%5D%2CStringOfCap%5BT%5D">types: `==`[T](x, y: StringOfCap[T]): bool</a></li>
           </ul></dd>
 <dt><a name="add" href="#add"><span>add:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -153,6 +153,8 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="dbType" href="#dbType"><span>dbType:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5B%5D">dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[bool]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bbool%5D">dbtypes: dbType(T: typedesc[bool]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[DateTime]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BDateTime%5D">dbtypes: dbType(T: typedesc[DateTime]): string</a></li>
@@ -164,8 +166,6 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="dbtypes: dbType(T: typedesc[int16]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint16%5D">dbtypes: dbType(T: typedesc[int16]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[int32]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint32%5D">dbtypes: dbType(T: typedesc[int32]): string</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbType(T: typedesc[int64]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint64%5D">dbtypes: dbType(T: typedesc[int64]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[Model]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BModel%5D">dbtypes: dbType(T: typedesc[Model]): string</a></li>
           <li><a class="reference external"
@@ -205,9 +205,9 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: Option[T]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2COption%5BT%3A%20Model%5D">dbtypes: dbValue[T: Model](val: Option[T]): DbValue</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CPaddedStringOfCap%5B_%5D">dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue</a></li>
+          data-doc-search-tag="dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CPaddedStringOfCap%5BT%5D">dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbValue[_](val: StringOfCap[_]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CStringOfCap%5B_%5D">dbtypes: dbValue[_](val: StringOfCap[_]): DbValue</a></li>
+          data-doc-search-tag="dbtypes: dbValue[T](val: StringOfCap[T]): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CStringOfCap%5BT%5D">dbtypes: dbValue[T](val: StringOfCap[T]): DbValue</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: T): DbValue" href="norm/private/postgres/dbtypes.html#dbValue%2CT">dbtypes: dbValue[T: Model](val: T): DbValue</a></li>
           <li><a class="reference external"
@@ -221,9 +221,9 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: Option[T]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2COption%5BT%3A%20Model%5D">dbtypes: dbValue[T: Model](val: Option[T]): DbValue</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CPaddedStringOfCap%5B_%5D">dbtypes: dbValue[_](val: PaddedStringOfCap[_]): DbValue</a></li>
+          data-doc-search-tag="dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CPaddedStringOfCap%5BT%5D">dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbValue[_](val: StringOfCap[_]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CStringOfCap%5B_%5D">dbtypes: dbValue[_](val: StringOfCap[_]): DbValue</a></li>
+          data-doc-search-tag="dbtypes: dbValue[T](val: StringOfCap[T]): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CStringOfCap%5BT%5D">dbtypes: dbValue[T](val: StringOfCap[T]): DbValue</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbValue[T: Model](val: T): DbValue" href="norm/private/sqlite/dbtypes.html#dbValue%2CT">dbtypes: dbValue[T: Model](val: T): DbValue</a></li>
           </ul></dd>
@@ -637,7 +637,7 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type</a></li>
+          data-doc-search-tag="dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D">dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BSomeFloat%5D">dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
           <li><a class="reference external"
@@ -645,7 +645,7 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[string]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5Bstring%5D">dbtypes: to(dbVal; T: typedesc[string]): T:type</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type</a></li>
+          data-doc-search-tag="dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5BT1%5D%5D">dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[bool]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5Bbool%5D">dbtypes: to(dbVal; T: typedesc[bool]): T:type</a></li>
           <li><a class="reference external"
@@ -657,7 +657,7 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T:type</a></li>
+          data-doc-search-tag="dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D">dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BSomeFloat%5D">dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
           <li><a class="reference external"
@@ -665,7 +665,7 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[string]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5Bstring%5D">dbtypes: to(dbVal; T: typedesc[string]): T:type</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5B_%5D%5D">dbtypes: to[_](dbVal; T: typedesc[StringOfCap[_]]): T:type</a></li>
+          data-doc-search-tag="dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5BT1%5D%5D">dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type</a></li>
           </ul></dd>
 <dt><a name="toOptional" href="#toOptional"><span>toOptional:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -734,7 +734,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-09 14:36:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-02-27 17:53:02 UTC</small>
       </div>
     </div>
   </div>

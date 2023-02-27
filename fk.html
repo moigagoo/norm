@@ -202,7 +202,7 @@
                         <h1>Manual Foreign Key Handling</h1>
 <p>Norm handles foreign keys automatically if you have a field of type <code>Model</code>. However, it has a downside: to fill up an object from the DB, Norm always fetches all related objects along with the original one, potentially generating a heavy JOIN query.</p>
 <p>To work around that limitation, you can declare and handle foreign keys manually, with <code>fk</code> pragma:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/[model, sqlite, pragmas]
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> norm/[model, sqlite, pragmas]
 
 
 <span class="hljs-keyword">type</span>
@@ -220,7 +220,7 @@
 <span class="hljs-keyword">proc</span> newConsumer(email = <span class="hljs-string">&quot;&quot;</span>, productId = <span class="hljs-number">0'i64</span>): <span class="hljs-type">Consumer</span> =
   <span class="hljs-type">Consumer</span>(email: email, productId: productId)</code></pre>
                         <p>When using <code>fk</code> pragma, foreign key must be handled manually, so <code>createTables</code> needs to be called for both <code>Model</code>s:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">let</span> db = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">let</span> db = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
 
 db.createTables(newProduct())
 db.createTables(newConsumer())
@@ -228,7 +228,7 @@ db.createTables(newConsumer())
 <span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Product&quot;(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Consumer&quot;(email TEXT NOT NULL, productId INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY (productId) REFERENCES &quot;Product&quot;(id))</samp></pre>
                         <p><code>INSERT</code> statements can now be done using only <code>id</code>. This allows for more flexibility at the cost of more manual queries:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">var</span> cheese = <span class="hljs-type">Product</span>(name: <span class="hljs-string">&quot;Cheese&quot;</span>, price: <span class="hljs-number">13.30</span>)
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span> cheese = <span class="hljs-type">Product</span>(name: <span class="hljs-string">&quot;Cheese&quot;</span>, price: <span class="hljs-number">13.30</span>)
 db.insert(cheese)
 
 <span class="hljs-keyword">var</span> bob = newConsumer(<span class="hljs-string">&quot;bob@mail.org&quot;</span>, cheese.id)
@@ -237,7 +237,7 @@ db.insert(bob)
 <span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;Product&quot; (name, price) VALUES(?, ?) &lt;- @['Cheese', 13.3]
 INSERT INTO &quot;Consumer&quot; (email, productId) VALUES(?, ?) &lt;- @['bob@mail.org', 1]</samp></pre>
                         <p>If an invalid ID is passed, Norm will raise a <code>DbError</code> exception:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">try</span>:
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">try</span>:
   <span class="hljs-keyword">let</span> badProductId = <span class="hljs-number">133</span>
   <span class="hljs-keyword">var</span> paul = newConsumer(<span class="hljs-string">&quot;paul@mail.org&quot;</span>, badProductId)
   db.insert(paul)
@@ -245,7 +245,7 @@ INSERT INTO &quot;Consumer&quot; (email, productId) VALUES(?, ?) &lt;- @['bob@ma
 <span class="hljs-keyword">except</span> <span class="hljs-type">DbError</span>:
   <span class="hljs-keyword">echo</span> getCurrentExceptionMsg()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;Consumer&quot; (email, productId) VALUES(?, ?) &lt;- @['paul@mail.org', 133]</samp></pre>
                         <p><code>select</code> queries will only return the <code>id</code> referenced and not the associated fields:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">var</span> consumer = newConsumer()
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span> consumer = newConsumer()
 db.select(consumer, <span class="hljs-string">&quot;email = $1&quot;</span>, <span class="hljs-string">&quot;bob@mail.org&quot;</span>)
 doAssert(consumer.email == <span class="hljs-string">&quot;bob@mail.org&quot;</span>)
 

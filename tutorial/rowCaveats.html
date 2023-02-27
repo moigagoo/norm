@@ -208,7 +208,7 @@
 To keep the data together, you can make a new object-type that acts as a container for all the various queries.
 In this case, we add a <code>Employee</code> to the mix. We still want the data of the Producer, but now on top of the data of all their <code>Product</code>s we also want all of their <code>Employee</code>s.
 You can do this in a total of 3 queries (2 if you combine this with the previous approach, though this might be harder to maintain):</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/json
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> std/json
 <span class="hljs-keyword">import</span> norm/[model, sqlite]
 
 <span class="hljs-keyword">type</span> <span class="hljs-type">Producer</span> = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>

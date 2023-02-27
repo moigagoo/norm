@@ -202,7 +202,7 @@
                         <h1>Configuration from Environment</h1>
 <p>In a real-life project, you want to keep your DB configuration separate from the code. Common pattern is to put it in environment variables, probably in a <code>.env</code> file that's processed during the app startup.</p>
 <p>Norm's <code>getDb</code> proc lets you create a DB connection using <code>DB_HOST</code>, <code>DB_USER</code>, <code>DB_PASS</code>, and <code>DB_NAME</code> environment variables:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> std/[os, options]
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> std/[os, options]
 
 <span class="hljs-keyword">import</span> norm/sqlite
 
@@ -226,7 +226,7 @@ INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
 SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? LIMIT 1 &lt;- ['foo@foo.foo']
 (name: some(&quot;Alice&quot;), user: ..., id: 1)</samp></pre>
                         <p><code>withDb</code> template is even handier as it lets you run code without explicitly creating or closing a DB connection:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">var</span>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span>
   customerSpam = newCustomer(some <span class="hljs-string">&quot;Bob&quot;</span>, newUser(<span class="hljs-string">&quot;bar@bar.bar&quot;</span>))
   customerEggs = newCustomer()
 

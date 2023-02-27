@@ -203,7 +203,7 @@
 <p>Index is a special table that makes use of data sortability to allow faster data access.</p>
 <p>Indexes can be unique and not unique. The difference is the in a unique index, rows are guaranteed to be unique.</p>
 <p>To create an index for you model, use <code>index</code> or <code>uniqueIndex</code> pragma passing the name of the index as its value:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">import</span> norm/[model, pragmas]
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> norm/[model, pragmas]
 
 <span class="hljs-keyword">type</span>
   <span class="hljs-type">Person</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
@@ -212,7 +212,7 @@
     lastName* {.index: <span class="hljs-string">&quot;Person_names&quot;</span>.}: <span class="hljs-built_in">string</span></code></pre>
                         <p>With this type definition, we'll have two indexes, one unique, one non-unique.</p>
 <p>The indexes are created together with the tables:</p>
-                        <pre><code class="nim hljs"><span class="hljs-keyword">let</span> dbConn* = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">let</span> dbConn* = open(<span class="hljs-string">&quot;:memory:&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;&quot;</span>)
 
 dbConn.createTables(<span class="hljs-type">Person</span>())
 
