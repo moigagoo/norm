@@ -27,6 +27,7 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 -   Run the tests before and after you change the code.
 
     The recommended way to run the tests is via nimble commands:
+    
         $ nimble startContainers                                # Starts docker containers needed for testing
         $ nimble startContainers sudo                           # Starts docker containers using sudo
 
