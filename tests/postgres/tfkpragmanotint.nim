@@ -2,16 +2,16 @@ discard """
   action: "reject"
 """
 
-import std/[unittest, os, times, strutils]
+import std/[os, unittest, os, times, strutils]
 
 import norm/[model, pragmas, sqlite]
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 
 type

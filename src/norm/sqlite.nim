@@ -8,7 +8,7 @@ else:
   import std/macros
   export macros
 
-import ndb/sqlite
+import lowdb/sqlite
 export sqlite
 
 import private/sqlite/[dbtypes, rowutils]
@@ -409,7 +409,7 @@ template transaction*(dbConn; body: untyped): untyped =
     log(commitQry)
     dbConn.exec(sql commitQry)
 
-  except:
+  except CatchableError:
     log(rollbackQry)
     dbConn.exec(sql rollbackQry)
 

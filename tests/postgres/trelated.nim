@@ -1,4 +1,4 @@
-import std/[unittest, os, sugar, options, with, strutils, tables]
+import std/[os, unittest, os, sugar, options, with, strutils, tables]
 
 import norm/postgres
 
@@ -6,10 +6,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 proc resetDb =
   let dbConn = open(dbHost, dbUser, dbPassword, "template1")
@@ -44,19 +44,19 @@ suite "Testing selectOneToMany":
     dbConn.createTables(newPlayfulPet())
     discard @[alice, bob, jeff].dup:
       dbConn.insert
-    
+
     discard @[someDoctor].dup:
       dbConn.insert
-    
+
     discard @[visit1, visit2].dup:
       dbConn.insert
-      
+
     discard @[boneToy, ballToy].dup:
       dbConn.insert
-      
+
     discard @[spot].dup:
       dbConn.insert
-  
+
   teardown:
     close dbConn
     resetDb()
@@ -77,7 +77,7 @@ suite "Testing selectOneToMany":
     check doctorVisits.len() == 1
     check doctorVisits[0].doctor === someDoctor
 
-  
+
   test "When there is a many-to-one relationship between two models and the entry has no related entries, fetch an empty seq[]":
     var doctorVisits: seq[DoctorVisit] = @[newDoctorVisit()]
 
@@ -131,7 +131,7 @@ suite "Testing selectOneToMany":
     check doctorVisits.len() == 1
     check doctorVisits[alice.id].len() == 1
     check doctorVisits[alice.id][0].doctor === someDoctor
-  
+
 
 suite "Testing selectManyToMany":
   setup:
@@ -174,7 +174,7 @@ suite "Testing selectManyToMany":
   test "Given a many-to-many relationship, When the members linked to a specific entry are queried, Then return these members":
     var aculaSpecialties: seq[Specialty] = @[newSpecialty()]
     var doctorSpecialties: seq[DoctorSpecialties] = @[aculaBloodletting]
-    
+
     dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "doctor", "specialty")
 
     check doctorSpecialties.len() == 3
@@ -186,13 +186,13 @@ suite "Testing selectManyToMany":
   test "Given a many-to-many relationship, When the members linked to a specific entry are queried with the fields that don't exist on the joinModel, then don't compile":
     var aculaSpecialties: seq[Specialty] = @[newSpecialty()]
     var doctorSpecialties: seq[DoctorSpecialties] = @[aculaBloodletting]
-    
+
     check not compiles(dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "aNonexistantField", "specialty"))
 
   test "Given a many-to-many relationship, When the members linked to a specific entry are queried by passing fields that point to the wrong tables, then don't compile":
     var aculaSpecialties: seq[Specialty] = @[newSpecialty()]
     var doctorSpecialties: seq[DoctorSpecialties] = @[aculaBloodletting]
-    
+
     check not compiles(dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "doctor", "doctor"))
     check not compiles(dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "specialty", "specialty"))
     check not compiles(dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "specialty", "doctor"))
@@ -200,7 +200,7 @@ suite "Testing selectManyToMany":
   test "Given a many-to-many relationship, When the members linked to a specific entry are queried with a field that does not point to a model, Then don't compile":
     var aculaSpecialties: seq[Specialty] = @[newSpecialty()]
     var doctorSpecialties: seq[DoctorSpecialties] = @[aculaBloodletting]
-    
+
     check not compiles(dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "specialtyAcquiredDate", "doctor"))
     check not compiles(dbConn.selectManyToMany(acula, doctorSpecialties, aculaSpecialties, "specialty", "specialtyAcquiredDate"))
 
@@ -217,15 +217,15 @@ suite "Testing selectManyToMany":
     check aculaSpecialties[2] === hypnosisSpecialty
 
 
- 
+
   test "When there is a many-to-many relationship without any attached entries, fetch an empty seq[]":
     var specialtiesOfDoctor: seq[Specialty] = @[newSpecialty()]
     var specialtyRelationship: seq[DoctorSpecialties] = @[newDoctorSpecialties()]
-    
+
     dbConn.selectManyToMany(unspecialDoctor, specialtyRelationship, specialtiesOfDoctor)
 
     check specialtiesOfDoctor.len() == 0
-  
+
 
   test "When the join table has no field pointing to the starter model, the code does not compile":
     var specialtiesOfDoctor: seq[Specialty] = @[newSpecialty()]
@@ -237,4 +237,3 @@ suite "Testing selectManyToMany":
     var petSeq: seq[Pet] = @[newPet()]
     var specialtyRelationship: seq[DoctorSpecialties] = @[newDoctorSpecialties()]
     check compiles(dbConn.selectManyToMany(acula, specialtyRelationship, petSeq)) == false
-     

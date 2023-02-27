@@ -1,4 +1,4 @@
-import std/[unittest, with, strutils, sugar, sequtils]
+import std/[os, unittest, with, strutils, sugar, sequtils]
 
 import norm/[model, postgres]
 
@@ -6,10 +6,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 
 suite "Fancy syntax":

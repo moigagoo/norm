@@ -1,4 +1,4 @@
-import std/[unittest, with, strutils, sugar, options]
+import std/[os, unittest, with, strutils, sugar, options]
 
 import norm/[model, postgres]
 
@@ -6,10 +6,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 suite "Row CRUD":
   proc resetDb =
@@ -273,8 +273,8 @@ suite "Row CRUD":
     check dbConn.getRow(sql"""SELECT * FROM "Person" WHERE name = 'Alice'""").isNone
 
   test """
-    Given 2 models with one entry depending on another, 
-    When the other entry gets deleted 
+    Given 2 models with one entry depending on another,
+    When the other entry gets deleted
     Then a DBError should occur due to FK checks
   """:
     var toy = newToy(123.45)

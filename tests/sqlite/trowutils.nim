@@ -1,6 +1,6 @@
 import std/[unittest, options, times]
 
-import ndb/sqlite
+import lowdb/sqlite
 
 import norm/private/sqlite/rowutils
 import norm/[model, pragmas]
@@ -11,7 +11,7 @@ import ../models
 const dtCmpThsld = initDuration(nanoseconds = 1000)
 
 
-suite "Converting between Model and ndb.sqlite.Row":
+suite "Converting between Model and lowdb.sqlite.Row":
   test "Built-in types":
     type
       Person = ref object of Model

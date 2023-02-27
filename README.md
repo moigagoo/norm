@@ -5,7 +5,7 @@
 - [Documentation](https://norm.nim.town/) (built with [nimibook](https://github.com/pietroppeter/nimibook))
 - [API index](https://norm.nim.town/apidocs/theindex.html)
 - [norman](https://github.com/moigagoo/norman): scaffolder and migration manager for Norm
-- [shopapp](https://github.com/moigagoo/shopapp): a proof-of-concept for a webapp created with Karax for frontend, Jester for API server, Norm for ORM, and Norman for migration management 
+- [shopapp](https://github.com/moigagoo/shopapp): a proof-of-concept for a webapp created with Karax for frontend, Jester for API server, Norm for ORM, and Norman for migration management
 
 ## Installation
 
@@ -26,10 +26,15 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
 -   Run the tests before and after you change the code.
 
-    The recommended way to run the tests is with Docker Compose:
+    The recommended way to run the tests is via nimble commands:
+        $ nimble startContainers                                # Starts docker containers needed for testing
+        $ nimble startContainers sudo                           # Starts docker containers using sudo
 
-        $ docker-compose run --rm tests                         # run all test suites
-        $ docker-compose run --rm test tests/common/tmodel.nim  # run a single test suite
+        $ nimble allTests                                       # run all test suites
+        $ nimble singleTest tests/common/tmodel.nim             # run a single/list of test suite/s
+
+        $ nimble stopContainers                                 # Stops and shuts down docker-containers
+        $ nimble startContainers sudo                           # Stops docker container using sudo
 
 -   Use camelCase instead of snake_case.
 

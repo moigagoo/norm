@@ -1,15 +1,15 @@
-##[ Funcs to convert between Nim types and SQLite types and between Nim values and ``ndb.sqlite.DbValue``.
+##[ Funcs to convert between Nim types and SQLite types and between Nim values and ``lowdb.sqlite.DbValue``.
 
 To add support for ``YourType``, define three funcs:
 - ``dbType(T: typedesc[YourType]) -> string`` that returns SQL type for given ``YourType``
-- ``dbValue(YourType) -> DbValue`` that converts instances of ``YourType`` to ``ndb.sqlite.DbValue``
-- ``to(DbValue, T: typedesc[YourType]) -> T`` that converts ``ndb.sqlite.DbValue`` instances to ``YourType``.
+- ``dbValue(YourType) -> DbValue`` that converts instances of ``YourType`` to ``lowdb.sqlite.DbValue``
+- ``to(DbValue, T: typedesc[YourType]) -> T`` that converts ``lowdb.sqlite.DbValue`` instances to ``YourType``.
 ]##
 
 
 import std/[options, times]
 
-import ndb/sqlite
+import lowdb/sqlite
 
 import ../../model
 import ../../types
@@ -46,9 +46,9 @@ func dbValue*(val: DateTime): DbValue = dbValue(val.toTime().toUnixFloat())
 
 func dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
 
-func dbValue*[_](val: StringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: StringOfCap[T]): DbValue = dbValue(string(val))
 
-func dbValue*[_](val: PaddedStringOfCap[_]): DbValue = dbValue(string(val))
+func dbValue*[T](val: PaddedStringOfCap[T]): DbValue = dbValue(string(val))
 
 func dbValue*(val: Option[bool]): DbValue =
   if val.isSome:
@@ -90,9 +90,9 @@ func to*(dbVal; T: typedesc[DbBlob]): T = dbVal.b
 
 proc to*(dbVal; T: typedesc[DateTime]): T = utc dbVal.f.fromUnixFloat()
 
-func to*[_](dbVal; T: typedesc[StringOfCap[_]]): T = dbVal.s.T
+func to*[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2 = dbVal.s.T2
 
-func to*[_](dbVal; T: typedesc[PaddedStringOfCap[_]]): T = dbVal.s.T
+func to*[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2 = dbVal.s.T2
 
 func to*(dbVal; T: typedesc[Model]): T =
   ## This is never called and exists only to please the compiler.

@@ -8,7 +8,7 @@ else:
   import std/macros
   export macros
 
-import ndb/postgres
+import lowdb/postgres
 export postgres
 
 import private/postgres/[dbtypes, rowutils, llexec]
@@ -159,7 +159,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
     log(qry)
 
     dbConn.exec(sql qry)
- 
+
 
 # Row manupulation
 
@@ -236,7 +236,10 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   log(qry, $params)
 
-  let row = dbConn.getRow(sql qry, params)
+  let row = try:
+      dbConn.getRow(sql qry, params)
+    except Exception as e:
+      raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
@@ -260,7 +263,10 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
 
   log(qry, $params)
 
-  let rows = dbConn.getAllRows(sql qry, params)
+  let rows: seq[Row] = try:
+      dbConn.getAllRows(sql qry, params)
+    except Exception as e:
+      raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if objs.len > rows.len:
     objs.setLen(rows.len)
@@ -289,7 +295,10 @@ proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[
   Table names must be written surrounded by quotation marks and are case sensititve.
   Raises a `NotFoundError` if the query returns nothing.
   ]##
-  let row = dbConn.getRow(sql qry, params)
+  let row = try:
+      dbConn.getRow(sql qry, params)
+    except Exception as e:
+      raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if row.isNone:
     raise newException(NotFoundError, "Record not found")
@@ -305,7 +314,10 @@ proc rawSelect*[T: ref object](dbConn; qry: string, objs: var seq[T], params: va
   ``objs`` must have at least one item.
   Table names must be written surrounded by quotation marks and are case sensititve.
   ]##
-  let rows = dbConn.getAllRows(sql qry, params)
+  let rows = try:
+    dbConn.getAllRows(sql qry, params)
+  except Exception as e:
+    raise newException(DbError, fmt"Database select query '{qry}' failed!")
 
   if objs.len > rows.len:
     objs.setLen(rows.len)
@@ -433,7 +445,7 @@ template transaction*(dbConn; body: untyped): untyped =
     log(commitQry)
     dbConn.exec(sql commitQry)
 
-  except:
+  except CatchableError:
     log(rollbackQry)
     dbConn.exec(sql rollbackQry)
 

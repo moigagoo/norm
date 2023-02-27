@@ -1,4 +1,4 @@
-import std/[unittest, os, strutils]
+import std/[os, unittest, os, strutils]
 
 import norm/[postgres, pool]
 
@@ -6,10 +6,10 @@ import ../models
 
 
 const
-  dbHost = "postgres"
-  dbUser = "postgres"
-  dbPassword = "postgres"
-  dbDatabase = "postgres"
+  dbHost = getEnv("PGHOST", "postgres")
+  dbUser = getEnv("PGUSER", "postgres")
+  dbPassword = getEnv("PGPASSWORD", "postgres")
+  dbDatabase = getEnv("PGDATABASE", "postgres")
 
 
 suite "Connection pool":
@@ -157,7 +157,7 @@ suite "Connection pool":
             while not exceptionRaised:
               sleep 100
         except PoolExhaustedError:
-          exceptionRaised = true 
+          exceptionRaised = true
 
     createThread(threads[0], getToy, 123.45)
     createThread(threads[1], getToy, 456.78)
@@ -208,8 +208,8 @@ suite "Connection pool":
 
 
   test """
-    Given 2 models with one entry depending on another and a pool with a custom connection-creation-proc, 
-    When the other entry gets deleted with a connection from the pool 
+    Given 2 models with one entry depending on another and a pool with a custom connection-creation-proc,
+    When the other entry gets deleted with a connection from the pool
     Then a DBError should occur due to FK checks
   """:
     var pool = newPool[DbConn](1, proc(): DbConn = open(dbHost, dbuser, dbPassword, dbDatabase))
@@ -225,5 +225,5 @@ suite "Connection pool":
 
       expect DBError:
         db.delete(toy)
-    
+
     close pool
