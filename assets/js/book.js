@@ -137,7 +137,7 @@ function playground_text(playground) {
         .catch(error => result_block.innerText = "Playground Communication: " + error.message);
     }
 
-    // Syntax highlighting Configuration
+    /* // Syntax highlighting Configuration
     hljs.configure({
         tabReplace: '    ', // 4 spaces
         languages: [],      // Languages used for auto-detection
@@ -164,7 +164,7 @@ function playground_text(playground) {
 
     // Adding the hljs class gives code blocks the color css
     // even if highlighting doesn't apply
-    code_nodes.forEach(function (block) { block.classList.add('hljs'); });
+    code_nodes.forEach(function (block) { block.classList.add('hljs'); }); */
 
     Array.from(document.querySelectorAll("code.language-rust")).forEach(function (block) {
 
