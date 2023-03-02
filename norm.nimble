@@ -17,8 +17,8 @@ task test, "Run tests":
   exec "testament all"
 
 task setupBook, "Compiles the nimibook CLI-binary used for generating the docs":
-  exec "nimble install -y nimib nimibook@#280a626a902745b378cc2186374f14c904c9a606"
-  exec "nim c -d:release --mm:refc nbook.nim"
+  exec "nimble install -y nimib nimibook"
+  exec "nim c -d:release nbook.nim"
 
 task book, "Generate book":
   rmDir "docs"
