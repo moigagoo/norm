@@ -12,27 +12,36 @@ skipDirs      = @["tests", "htmldocs"]
 
 requires "nim >= 1.4.0", "lowdb >= 0.1.1"
 
+taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
+
+
+# Tasks
 
 task test, "Run tests":
   exec "testament all"
 
 task setupBook, "Compiles the nimibook CLI-binary used for generating the docs":
-  exec "nimble install -y nimib nimibook"
   exec "nim c -d:release nbook.nim"
 
-task book, "Generate book":
+before book:
   rmDir "docs"
   exec "nimble setupBook"
+
+task book, "Generate book":
   exec "./nbook --mm:orc --deepcopy:on update"
   exec "./nbook --mm:orc --deepcopy:on build"
+
+after book:
   cpFile("CNAME", "docs/CNAME")
 
-task docs, "Generate docs":
+before docs:
   rmDir "docs/apidocs"
+
+task docs, "Generate docs":
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
 
 
-## For Local Development
+# For local development
 
 import std/[strutils, sequtils, strformat]
 
@@ -67,3 +76,4 @@ task singleTest, "Run containerized tests for a specific test file":
   for file in testFiles:
     let command = fmt"nimble c -r {file}"
     exec command
+
