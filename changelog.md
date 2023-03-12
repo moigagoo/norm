@@ -7,6 +7,9 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+## 2.7.1 (March XX, 2023)
+- [+] Enum Support
+
 ## 2.7.0 (February 27, 2023)
 
 - [+] Norm is not Nim 2.0 compatible (see [#182](https://github.com/moigagoo/norm/issues/182)).

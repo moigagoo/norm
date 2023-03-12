@@ -21,7 +21,7 @@ func dbType*(T: typedesc[int16]): string = "SMALLINT"
 
 func dbType*(T: typedesc[int32]): string = "INTEGER"
 
-func dbType*(T: typedesc[int64 | Positive | int | Natural]): string = "BIGINT"
+func dbType*(T: typedesc[int64 | Positive | int | Natural | enum]): string = "BIGINT"
 
 func dbType*(T: typedesc[float32]): string = "REAL"
 
@@ -61,7 +61,7 @@ func dbValue*[T](val: PaddedStringOfCap[T]): DbValue = dbValue(string(val))
 
 using dbVal: DbValue
 
-func to*(dbVal; T: typedesc[SomeInteger]): T = dbVal.i.T
+func to*(dbVal; T: typedesc[SomeInteger | enum]): T = dbVal.i.T
 
 func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 

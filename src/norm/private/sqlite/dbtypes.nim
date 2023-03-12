@@ -17,7 +17,7 @@ import ../../types
 
 # Funcs that return an SQLite type for a given Nim type:
 
-func dbType*(T: typedesc[SomeInteger]): string = "INTEGER"
+func dbType*(T: typedesc[SomeInteger | enum]): string = "INTEGER"
 
 func dbType*(T: typedesc[SomeFloat]): string = "FLOAT"
 
@@ -73,7 +73,7 @@ func dbValue*[T: Model](val: Option[T]): DbValue =
 
 using dbVal: DbValue
 
-func to*(dbVal; T: typedesc[SomeInteger]): T = dbVal.i.T
+func to*(dbVal; T: typedesc[SomeInteger | enum]): T = dbVal.i.T
 
 func to*(dbVal; T: typedesc[SomeFloat]): T = dbVal.f.T
 
