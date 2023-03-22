@@ -89,7 +89,7 @@ type
     email* {.uniqueIndex: "idx_student_emails".}: string
 
   CoinKind* = enum
-    ck1Cent, ck2Cents, ck5Cents, ck10Cents, ck20Cents, ck50Cents ck1Euro, ck2Euro
+    ck1Cent, ck2Cents, ck5Cents, ck10Cents, ck20Cents, ck50Cents, ck1Euro, ck2Euro
 
   Coin* = ref object of Model
     kind*: CoinKind
