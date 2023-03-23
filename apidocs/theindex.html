@@ -153,7 +153,9 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="dbType" href="#dbType"><span>dbType:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5B%5D">dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string</a></li>
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[int32 | enum]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5B%5D">dbtypes: dbType(T: typedesc[int32 | enum]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5B%5D_2">dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[bool]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bbool%5D">dbtypes: dbType(T: typedesc[bool]): string</a></li>
           <li><a class="reference external"
@@ -165,8 +167,6 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[int16]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint16%5D">dbtypes: dbType(T: typedesc[int16]): string</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbType(T: typedesc[int32]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bint32%5D">dbtypes: dbType(T: typedesc[int32]): string</a></li>
-          <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[Model]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BModel%5D">dbtypes: dbType(T: typedesc[Model]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType[T](_: typedesc[Option[T]]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BOption%5BT%5D%5D">dbtypes: dbType[T](_: typedesc[Option[T]]): string</a></li>
@@ -176,6 +176,8 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="dbtypes: dbType(T: typedesc[string]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5Bstring%5D">dbtypes: dbType(T: typedesc[string]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string" href="norm/private/postgres/dbtypes.html#dbType%2Ctypedesc%5BStringOfCap%5BC%5D%5D">dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeInteger | enum]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5B%5D">dbtypes: dbType(T: typedesc[SomeInteger | enum]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[bool]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5Bbool%5D">dbtypes: dbType(T: typedesc[bool]): string</a></li>
           <li><a class="reference external"
@@ -190,8 +192,6 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BPaddedStringOfCap%5BC%5D%5D">dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeFloat]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BSomeFloat%5D">dbtypes: dbType(T: typedesc[SomeFloat]): string</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="dbtypes: dbType(T: typedesc[SomeInteger]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5BSomeInteger%5D">dbtypes: dbType(T: typedesc[SomeInteger]): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: dbType(T: typedesc[string]): string" href="norm/private/sqlite/dbtypes.html#dbType%2Ctypedesc%5Bstring%5D">dbtypes: dbType(T: typedesc[string]): string</a></li>
           <li><a class="reference external"
@@ -629,6 +629,8 @@ window.addEventListener('DOMContentLoaded', main);
           </ul></dd>
 <dt><a name="to" href="#to"><span>to:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
+          data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5B%5D">dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[bool]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5Bbool%5D">dbtypes: to(dbVal; T: typedesc[bool]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[DateTime]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BDateTime%5D">dbtypes: to(dbVal; T: typedesc[DateTime]): T:type</a></li>
@@ -641,11 +643,11 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BSomeFloat%5D">dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BSomeInteger%5D">dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
-          <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[string]): T:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5Bstring%5D">dbtypes: to(dbVal; T: typedesc[string]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type" href="norm/private/postgres/dbtypes.html#to%2C%2Ctypedesc%5BStringOfCap%5BT1%5D%5D">dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5B%5D">dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[bool]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5Bbool%5D">dbtypes: to(dbVal; T: typedesc[bool]): T:type</a></li>
           <li><a class="reference external"
@@ -660,8 +662,6 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D">dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BSomeFloat%5D">dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
-          <li><a class="reference external"
-          data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5BSomeInteger%5D">dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
           <li><a class="reference external"
           data-doc-search-tag="dbtypes: to(dbVal; T: typedesc[string]): T:type" href="norm/private/sqlite/dbtypes.html#to%2C%2Ctypedesc%5Bstring%5D">dbtypes: to(dbVal; T: typedesc[string]): T:type</a></li>
           <li><a class="reference external"
@@ -734,7 +734,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-02 13:05:25 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-23 06:42:52 UTC</small>
       </div>
     </div>
   </div>

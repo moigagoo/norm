@@ -118,9 +118,9 @@ window.addEventListener('DOMContentLoaded', main);
     title="dbType(T: typedesc[float64]): string">dbType(T: typedesc[float64]): string</a></li>
   <li><a class="reference" href="#dbType%2Ctypedesc%5Bint16%5D"
     title="dbType(T: typedesc[int16]): string">dbType(T: typedesc[int16]): string</a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5Bint32%5D"
-    title="dbType(T: typedesc[int32]): string">dbType(T: typedesc[int32]): string</a></li>
   <li><a class="reference" href="#dbType%2Ctypedesc%5B%5D"
+    title="dbType(T: typedesc[int32 | enum]): string">dbType(T: typedesc[int32 | enum]): string</a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5B%5D_2"
     title="dbType(T: typedesc[int64 | Positive | int | Natural]): string">dbType(T: typedesc[int64 | Positive | int | Natural]): string</a></li>
   <li><a class="reference" href="#dbType%2Ctypedesc%5BModel%5D"
     title="dbType(T: typedesc[Model]): string">dbType(T: typedesc[Model]): string</a></li>
@@ -154,8 +154,8 @@ window.addEventListener('DOMContentLoaded', main);
     title="to(dbVal; T: typedesc[Model]): T:type">to(dbVal; T: typedesc[Model]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeFloat%5D"
     title="to(dbVal; T: typedesc[SomeFloat]): T:type">to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
-  <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeInteger%5D"
-    title="to(dbVal; T: typedesc[SomeInteger]): T:type">to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
+  <li><a class="reference" href="#to%2C%2Ctypedesc%5B%5D"
+    title="to(dbVal; T: typedesc[SomeInteger | enum]): T:type">to(dbVal; T: typedesc[SomeInteger | enum]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5Bstring%5D"
     title="to(dbVal; T: typedesc[string]): T:type">to(dbVal; T: typedesc[string]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D"
@@ -232,16 +232,16 @@ window.addEventListener('DOMContentLoaded', main);
 
 </dd>
 </div>
-<div id="dbType,typedesc[int32]">
-<dt><pre><span class="Keyword">func</span> <a href="#dbType%2Ctypedesc%5Bint32%5D"><span class="Identifier">dbType</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">int32</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<div id="dbType,typedesc[]">
+<dt><pre><span class="Keyword">func</span> <a href="#dbType%2Ctypedesc%5B%5D"><span class="Identifier">dbType</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">int32</span> <span class="Operator">|</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
 
 </dd>
 </div>
-<div id="dbType,typedesc[]">
-<dt><pre><span class="Keyword">func</span> <a href="#dbType%2Ctypedesc%5B%5D"><span class="Identifier">dbType</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">int64</span> <span class="Operator">|</span> <span class="Identifier">Positive</span> <span class="Operator">|</span> <span class="Identifier">int</span> <span class="Operator">|</span> <span class="Identifier">Natural</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<div id="dbType,typedesc[]_2">
+<dt><pre><span class="Keyword">func</span> <a href="#dbType%2Ctypedesc%5B%5D_2"><span class="Identifier">dbType</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">int64</span> <span class="Operator">|</span> <span class="Identifier">Positive</span> <span class="Operator">|</span> <span class="Identifier">int</span> <span class="Operator">|</span> <span class="Identifier">Natural</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
@@ -352,8 +352,8 @@ This is never called and exists only to please the compiler.
 
 </dd>
 </div>
-<div id="to,,typedesc[SomeInteger]">
-<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BSomeInteger%5D"><span class="Identifier">to</span></a><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">SomeInteger</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T:type</span></pre></dt>
+<div id="to,,typedesc[]">
+<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5B%5D"><span class="Identifier">to</span></a><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">SomeInteger</span> <span class="Operator">|</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T:type</span></pre></dt>
 <dd>
 
 
@@ -402,7 +402,7 @@ This is never called and exists only to please the compiler.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-02 13:05:25 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-23 06:42:52 UTC</small>
       </div>
     </div>
   </div>

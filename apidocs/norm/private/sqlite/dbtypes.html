@@ -118,8 +118,8 @@ window.addEventListener('DOMContentLoaded', main);
     title="dbType(T: typedesc[Model]): string">dbType(T: typedesc[Model]): string</a></li>
   <li><a class="reference" href="#dbType%2Ctypedesc%5BSomeFloat%5D"
     title="dbType(T: typedesc[SomeFloat]): string">dbType(T: typedesc[SomeFloat]): string</a></li>
-  <li><a class="reference" href="#dbType%2Ctypedesc%5BSomeInteger%5D"
-    title="dbType(T: typedesc[SomeInteger]): string">dbType(T: typedesc[SomeInteger]): string</a></li>
+  <li><a class="reference" href="#dbType%2Ctypedesc%5B%5D"
+    title="dbType(T: typedesc[SomeInteger | enum]): string">dbType(T: typedesc[SomeInteger | enum]): string</a></li>
   <li><a class="reference" href="#dbType%2Ctypedesc%5Bstring%5D"
     title="dbType(T: typedesc[string]): string">dbType(T: typedesc[string]): string</a></li>
   <li><a class="reference" href="#dbType%2Ctypedesc%5BPaddedStringOfCap%5BC%5D%5D"
@@ -160,8 +160,8 @@ window.addEventListener('DOMContentLoaded', main);
     title="to(dbVal; T: typedesc[Model]): T:type">to(dbVal; T: typedesc[Model]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeFloat%5D"
     title="to(dbVal; T: typedesc[SomeFloat]): T:type">to(dbVal; T: typedesc[SomeFloat]): T:type</a></li>
-  <li><a class="reference" href="#to%2C%2Ctypedesc%5BSomeInteger%5D"
-    title="to(dbVal; T: typedesc[SomeInteger]): T:type">to(dbVal; T: typedesc[SomeInteger]): T:type</a></li>
+  <li><a class="reference" href="#to%2C%2Ctypedesc%5B%5D"
+    title="to(dbVal; T: typedesc[SomeInteger | enum]): T:type">to(dbVal; T: typedesc[SomeInteger | enum]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5Bstring%5D"
     title="to(dbVal; T: typedesc[string]): T:type">to(dbVal; T: typedesc[string]): T:type</a></li>
   <li><a class="reference" href="#to%2C%2Ctypedesc%5BPaddedStringOfCap%5BT1%5D%5D"
@@ -238,8 +238,8 @@ window.addEventListener('DOMContentLoaded', main);
 
 </dd>
 </div>
-<div id="dbType,typedesc[SomeInteger]">
-<dt><pre><span class="Keyword">func</span> <a href="#dbType%2Ctypedesc%5BSomeInteger%5D"><span class="Identifier">dbType</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">SomeInteger</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+<div id="dbType,typedesc[]">
+<dt><pre><span class="Keyword">func</span> <a href="#dbType%2Ctypedesc%5B%5D"><span class="Identifier">dbType</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">SomeInteger</span> <span class="Operator">|</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
 
@@ -382,8 +382,8 @@ This is never called and exists only to please the compiler.
 
 </dd>
 </div>
-<div id="to,,typedesc[SomeInteger]">
-<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5BSomeInteger%5D"><span class="Identifier">to</span></a><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">SomeInteger</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T:type</span></pre></dt>
+<div id="to,,typedesc[]">
+<dt><pre><span class="Keyword">func</span> <a href="#to%2C%2Ctypedesc%5B%5D"><span class="Identifier">to</span></a><span class="Other">(</span><span class="Identifier">dbVal</span><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">SomeInteger</span> <span class="Operator">|</span> <span class="Keyword">enum</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">T:type</span></pre></dt>
 <dd>
 
 
@@ -432,7 +432,7 @@ This is never called and exists only to please the compiler.
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-02 13:05:25 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2023-03-23 06:42:52 UTC</small>
       </div>
     </div>
   </div>

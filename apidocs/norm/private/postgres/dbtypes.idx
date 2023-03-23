@@ -1,6 +1,6 @@
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[int16]	dbtypes: dbType(T: typedesc[int16]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[int32]	dbtypes: dbType(T: typedesc[int32]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]	dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string	
+dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]	dbtypes: dbType(T: typedesc[int32 | enum]): string	
+dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]_2	dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string	
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[float32]	dbtypes: dbType(T: typedesc[float32]): string	
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[float64]	dbtypes: dbType(T: typedesc[float64]): string	
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[string]	dbtypes: dbType(T: typedesc[string]): string	
@@ -14,7 +14,7 @@ dbValue	norm/private/postgres/dbtypes.html#dbValue,T	dbtypes: dbValue[T: Model](
 dbValue	norm/private/postgres/dbtypes.html#dbValue,Option[T: Model]	dbtypes: dbValue[T: Model](val: Option[T]): DbValue	
 dbValue	norm/private/postgres/dbtypes.html#dbValue,StringOfCap[T]	dbtypes: dbValue[T](val: StringOfCap[T]): DbValue	
 dbValue	norm/private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[T]	dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[SomeInteger]	dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type	
+to	norm/private/postgres/dbtypes.html#to,,typedesc[]	dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type	
 to	norm/private/postgres/dbtypes.html#to,,typedesc[SomeFloat]	dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type	
 to	norm/private/postgres/dbtypes.html#to,,typedesc[string]	dbtypes: to(dbVal; T: typedesc[string]): T:type	
 to	norm/private/postgres/dbtypes.html#to,,typedesc[StringOfCap[T1]]	dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type	

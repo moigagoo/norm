@@ -1,4 +1,4 @@
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeInteger]	dbtypes: dbType(T: typedesc[SomeInteger]): string	
+dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[]	dbtypes: dbType(T: typedesc[SomeInteger | enum]): string	
 dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeFloat]	dbtypes: dbType(T: typedesc[SomeFloat]): string	
 dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[string]	dbtypes: dbType(T: typedesc[string]): string	
 dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[bool]	dbtypes: dbType(T: typedesc[bool]): string	
@@ -16,7 +16,7 @@ dbValue	norm/private/sqlite/dbtypes.html#dbValue,PaddedStringOfCap[T]	dbtypes: d
 dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[bool]	dbtypes: dbValue(val: Option[bool]): DbValue	
 dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[DateTime]	dbtypes: dbValue(val: Option[DateTime]): DbValue	
 dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[T: Model]	dbtypes: dbValue[T: Model](val: Option[T]): DbValue	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[SomeInteger]	dbtypes: to(dbVal; T: typedesc[SomeInteger]): T:type	
+to	norm/private/sqlite/dbtypes.html#to,,typedesc[]	dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type	
 to	norm/private/sqlite/dbtypes.html#to,,typedesc[SomeFloat]	dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type	
 to	norm/private/sqlite/dbtypes.html#to,,typedesc[string]	dbtypes: to(dbVal; T: typedesc[string]): T:type	
 to	norm/private/sqlite/dbtypes.html#to,,typedesc[bool]	dbtypes: to(dbVal; T: typedesc[bool]): T:type	
