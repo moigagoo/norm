@@ -88,6 +88,18 @@ type
     lastName* {.index: "idx_student_names".}: string
     email* {.uniqueIndex: "idx_student_emails".}: string
 
+  CoinKind* = enum
+    ck1Cent, ck2Cents, ck5Cents, ck10Cents, ck20Cents, ck50Cents, ck1Euro, ck2Euro
+
+  Coin* = ref object of Model
+    kind*: CoinKind
+
+  CoinKind2* = enum
+    ckCent, ckPound
+
+  Coin2* = ref object of Model
+    kind*: CoinKind2
+
 
 func newToy*(price: float): Toy =
   Toy(price: price)
@@ -241,3 +253,14 @@ func newAccount*(status = 0, email = ""): Account =
 func newStudent*(firstName = "", lastName = "", email = ""): Student =
   Student(firstName: firstName, lastName: lastName, email: email)
 
+func newCoin*(coinKind: CoinKind = ck1Euro): Coin =
+  Coin(kind: coinKind)
+
+func `===`*(a, b: Coin): bool =
+  a.kind == b.kind
+
+func newCoin2*(coinKind: CoinKind2 = ckCent): Coin2 =
+  Coin2(kind: coinKind)
+
+func `===`*(a, b: Coin2): bool =
+  a.kind == b.kind

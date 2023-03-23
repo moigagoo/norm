@@ -10,7 +10,7 @@ skipDirs      = @["tests", "htmldocs"]
 
 # Dependencies
 
-requires "nim >= 1.4.0", "lowdb >= 0.1.1"
+requires "nim >= 1.4.0", "lowdb >= 0.2.0"
 
 taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
 
