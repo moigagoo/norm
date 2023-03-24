@@ -360,7 +360,7 @@ proc update*[T: Model](dbConn; objs: var openArray[T]) =
   type BulkUpdateValues = Table[string, seq[tuple[id: int64; val: DbValue]]]
 
   func genBulkUpdateQuery(tableName: string; values: BulkUpdateValues): tuple[qry: string; values: seq[DbValue]] =
-    result.qry = ("""UPDATE $# SET""" % tableName) & "\l"
+    result.qry = fmt"UPDATE {tableName} SET{'\l'}"
     var ids: seq[int64]
     let limit = values.len - 1
     var i = -1

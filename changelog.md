@@ -8,7 +8,7 @@
 -   [d]—docs improvement
 
 ## 2.7.2 (March 24, 2023)
-- [+] Bulk SQLite update with single query
+- [+] Bulk SQLite and PostgreSQL update with single query!y
 
 ## 2.7.1 (March XX, 2023)
 - [+] Enum Support
