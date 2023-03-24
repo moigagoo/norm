@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.7.0"
+version       = "2.7.2"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -76,4 +76,3 @@ task singleTest, "Run containerized tests for a specific test file":
   for file in testFiles:
     let command = fmt"nimble c -r {file}"
     exec command
-

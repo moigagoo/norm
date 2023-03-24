@@ -354,11 +354,50 @@ proc update*[T: Model](dbConn; obj: var T) =
 
   dbConn.exec(sql qry, row)
 
+
 proc update*[T: Model](dbConn; objs: var openArray[T]) =
   ## Update rows for each `Model`_ instance in open array.
+  type BulkUpdateValues = Table[string, seq[tuple[id: int64; val: DbValue]]]
 
-  for obj in objs.mitems:
-    dbConn.update(obj)
+  func genBulkUpdateQuery(tableName: string; values: BulkUpdateValues): tuple[qry: string; values: seq[DbValue]] =
+    result.qry = ("""UPDATE $# SET""" % tableName) & "\l"
+    var ids: seq[int64]
+    let limit = values.len - 1
+    var i = -1
+    for field, conds in values.pairs:
+      inc i
+      result.qry.add fmt"  {field} = CASE id{'\l'}"
+      for (id, val) in conds:
+        result.qry.add fmt"    WHEN {id} THEN ?{'\l'}"
+        if id notin ids:
+          ids.add id
+        result.values.add val
+      result.qry.add "  END"
+      if i < limit:
+        result.qry.add ","
+      result.qry.add "\l"
+    let idsStr = ids.join ", "
+    result.qry.add fmt"WHERE id IN ({idsStr})"
+  proc add(t: var BulkUpdateValues; field: string; id: int64, value: DbValue) =
+    if not t.hasKey field:
+      t[field] = @[]
+    t[field].add (id, value)
+
+  checkRo(T)
+  
+  var data: BulkUpdateValues
+
+  for obj in objs:
+    for fld, val in obj[].fieldPairs:
+      if fld != "id":
+        data.add(fld, obj.id, dbValue val)
+      if val.model.isSome:
+        var subMod = get val.model
+        dbConn.update(subMod)
+
+  let q = genBulkUpdateQuery(T.table, data)
+  log(q.qry, $q.values)
+  dbConn.exec(sql q.qry, q.values)
 
 proc delete*[T: Model](dbConn; obj: var T) =
   ## Delete rows for `Model`_ instance and its `Model`_ fields.
