@@ -7,10 +7,8 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.7.2 (March 24, 2023)
-- [+] Bulk SQLite and PostgreSQL update with single query!y
-
 ## 2.7.1 (March XX, 2023)
+- [+] Bulk SQLite and PostgreSQL update with single query!y
 - [+] Enum Support
 
 ## 2.7.0 (February 27, 2023)
