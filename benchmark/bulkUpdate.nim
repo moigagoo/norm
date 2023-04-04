@@ -1,40 +1,58 @@
-from std/os import removeFile
+from std/os import removeFile, copyFile
+from std/strformat import fmt
 
 import pkg/benchy
-# from pkg/lowdb/sqlite as lowdb import DbConn
 
 import norm/[model, sqlite]
 
 import ../tests/models
 
-const dbFile = "test.db"
+const
+  baseDbFile = "cleanBulkUpdate.db"
+  dbFile = "bulkUpdate.db"
 
-proc updateEach*[T: Model](dbConn: DbConn; objs: var openArray[T]) =
-  # https://github.com/moigagoo/norm/blob/9fe0105ccb47e4fd72f2e5b546dbea72b58cedeb/src/norm/sqlite.nim#L357
+proc setupDb(dbFile: string; rows: int) =
+  stderr.write fmt"Generating '{dbFile}' with {rows} rows"
 
-  for obj in objs.mitems:
-    dbConn.update(obj)
+  let dbConn = open(dbFile, "", "", "")
+
+  dbConn.createTables newToy()
+
+  var toys: seq[Toy]
+  for i in 1..rows:
+    stderr.write "."
+    var toy = newToy(float i)
+    dbConn.insert toy
+    toys.add toy
+  echo " done!\l"
 
 template updateTime(name, body: untyped): untyped =
   block:
+    stderr.write name & "\r"
+
+    baseDbFile.copyFile dbFile
+
     let dbConn {.inject.} = open(dbFile, "", "", "")
 
-    dbConn.createTables(newToy())
+    var toys {.inject.} = @[newToy()]
+    dbConn.selectAll toys
 
-    var toys {.inject.}: seq[Toy]
-    for i in 1..1000:
-      var toy = newToy(float i)
-      dbConn.insert toy
+    for toy in toys.mitems:
       toy.price *= 2
-      toys.add toy
-      
+
     timeIt name, 1:
       body
 
     removeFile dbFile
 
+baseDbFile.setupDb 1000
+
 updateTime "Bulk update":
   dbConn.update toys
 
 updateTime "Update each row":
-  dbConn.updateEach toys
+  # https://github.com/moigagoo/norm/blob/9fe0105ccb47e4fd72f2e5b546dbea72b58cedeb/src/norm/sqlite.nim#L357
+  for toy in toys.mitems:
+    dbConn.update toy
+
+removeFile baseDbFile

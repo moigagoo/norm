@@ -41,7 +41,7 @@ task docs, "Generate docs":
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
 
 task benchmark, "Run benchmark":
-  exec "nim r -d:danger ./benchmark/bulkUpdate.nim"
+  exec "nim r -d:danger --deepcopy:on ./benchmark/bulkUpdate.nim"
 
 
 # For local development
