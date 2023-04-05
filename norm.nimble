@@ -12,7 +12,8 @@ skipDirs      = @["tests", "htmldocs"]
 
 requires "nim >= 1.4.0", "lowdb >= 0.2.0"
 
-taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1", "benchy >= 0.0.1"
+taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
+taskRequires "benchmark", "benchy >= 0.0.1"
 
 
 # Tasks
@@ -41,7 +42,7 @@ task docs, "Generate docs":
   exec "nimble doc --outdir:docs/apidocs --project --index:on src/norm"
 
 task benchmark, "Run benchmark":
-  exec "nim r -d:danger --deepcopy:on ./benchmark/bulkUpdate.nim"
+  exec "nim r benchmark/bulkUpdate.nim"
 
 
 # For local development
@@ -79,3 +80,4 @@ task singleTest, "Run containerized tests for a specific test file":
   for file in testFiles:
     let command = fmt"nimble c -r {file}"
     exec command
+

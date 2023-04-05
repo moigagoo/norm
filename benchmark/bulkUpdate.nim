@@ -1,15 +1,17 @@
 from std/os import removeFile, copyFile
 from std/strformat import fmt
 
-import pkg/benchy
+import benchy
 
 import norm/[model, sqlite]
 
 import ../tests/models
 
+
 const
   baseDbFile = "cleanBulkUpdate.db"
   dbFile = "bulkUpdate.db"
+
 
 proc setupDb(dbFile: string; rows: int) =
   stderr.write fmt"Generating '{dbFile}' with {rows} rows"
@@ -56,3 +58,4 @@ updateTime "Update each row":
     dbConn.update toy
 
 removeFile baseDbFile
+

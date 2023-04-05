@@ -156,3 +156,4 @@ macro getCustomPragmaVal*(n: typed, cp: typed{nkSym}): untyped =
       break
   if result.kind == nnkEmpty:
     error(n.repr & " doesn't have a pragma named " & cp.repr()) # returning an empty node results in most cases in a cryptic error,
+

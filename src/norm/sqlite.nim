@@ -625,3 +625,4 @@ proc selectManyToMany*[M1: Model, J: Model, M2: Model](
   const fkColumnFromJoinToManyStart: string = J.getRelatedFieldNameTo(M1)
   const fkColumnFromJoinToManyEnd: string = J.getRelatedFieldNameTo(M2)
   selectManyToMany(dbConn, queryStartEntries, joinModelEntries, queryEndEntries, fkColumnFromJoinToManyStart, fkColumnFromJoinToManyEnd)
+
