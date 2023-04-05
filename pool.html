@@ -229,7 +229,7 @@ putEnv(<span class="hljs-string">&quot;DB_HOST&quot;</span>, <span class="hljs-s
 <span class="hljs-keyword">var</span> connPool = newPool[<span class="hljs-type">DbConn</span>](<span class="hljs-number">10</span>)
 
 withDb(connPool):
-  db.createTables(newProduct())</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Product&quot;(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)</samp></pre>
+  db.createTables(newProduct())</code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;Product&quot;(name TEXT NOT NULL, price FLOAT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)</pre>
                         <h2>Pool Exhausted Policy</h2>
 <p>If the app requests more connections from the pool than it can give, we say the pool is exhausted.</p>
 <p>There are two ways a pool can react to that:</p>
@@ -251,7 +251,7 @@ product.price = <span class="hljs-number">123.45</span>
 
 dbConn.insert(product)
 
-connPool.add(dbConn)</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;Product&quot; (name, price) VALUES(?, ?) &lt;- @['Table', 123.45]</samp></pre>
+connPool.add(dbConn)</code></pre><pre class="nb-output">INSERT INTO &quot;Product&quot; (name, price) VALUES(?, ?) &lt;- @['Table', 123.45]</pre>
                         <h2>Closing the Pool</h2>
 <p>When you no longer need the pool, for example, when your app exits or crashes, to avoid leaving hanging connections, close the pool by calling <a href="/apidocs/norm/pool.html#close,Pool"><code>close</code></a>. This proc closes all connections in the pool and sets its size to 0.</p>
                         <pre><code class="nohighlight hljs nim">close connPool</code></pre>

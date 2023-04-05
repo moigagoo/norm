@@ -250,10 +250,10 @@ db.insert(human)
 <span class="hljs-keyword">var</span> human2 = <span class="hljs-type">Creature</span>()
 db.select(human2, <span class="hljs-string">&quot;id = ?&quot;</span>, human.id)
 
-<span class="hljs-keyword">assert</span> human2.family == <span class="hljs-type">CreatureFamily</span>.<span class="hljs-type">HUMANOID</span></code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Creature&quot;(name TEXT NOT NULL, family TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+<span class="hljs-keyword">assert</span> human2.family == <span class="hljs-type">CreatureFamily</span>.<span class="hljs-type">HUMANOID</span></code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;Creature&quot;(name TEXT NOT NULL, family TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 INSERT INTO &quot;Creature&quot; (name, family) VALUES(?, ?) &lt;- @['Karl', 'HUMANOID']
 @[@['Karl', 'HUMANOID', 1]]
-SELECT &quot;Creature&quot;.name, &quot;Creature&quot;.family, &quot;Creature&quot;.id FROM &quot;Creature&quot;  WHERE id = ? LIMIT 1 &lt;- [1]</samp></pre>
+SELECT &quot;Creature&quot;.name, &quot;Creature&quot;.family, &quot;Creature&quot;.id FROM &quot;Creature&quot;  WHERE id = ? LIMIT 1 &lt;- [1]</pre>
                         <p>Changing the above to store the enums as integers in your database is similarly easy. All you'd need to do is change the 3 procs so that they store the enum in a different way.</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">type</span> <span class="hljs-type">CreatureFamily2</span> = <span class="hljs-keyword">distinct</span> <span class="hljs-type">CreatureFamily</span>
 

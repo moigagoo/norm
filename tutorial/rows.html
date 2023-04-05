@@ -223,13 +223,13 @@ with dbConn:
   insert userBar
   insert sam
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['foo@foo.foo']
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
 Object ID is not 0, skipping insertion. Type: User, ID: 1
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]
 INSERT INTO &quot;User&quot; (email) VALUES(?) &lt;- @['bar@bar.bar']
 Object ID is not 0, skipping insertion. Type: User, ID: 2
-INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Sam', 2]</samp></pre>
+INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Sam', 2]</pre>
                         <p>When Norm attempts to insert <code>alice</code>, it detects that <code>userFoo</code> that it referenced in it has not been inserted yet, so there's no <code>id</code> to store as foreign key. So, Norm inserts <code>userFoo</code> automatically and then uses its new <code>id</code> (in this case, 1) as the foreign key value.</p>
 <p>With <code>bob</code>, there's no need to do that since <code>userFoo</code> is already in the database.</p>
 <p>When inserting Norm Model, it is possible to force the id to a given value by setting the id attribute of the Model. In order for the insertion to proceed, it is necessary to specify <code>force=true</code> when inserting:</p>
@@ -239,8 +239,8 @@ with dbConn:
   insert(userBaz, force = <span class="hljs-literal">true</span>)
 <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;userBaz.id == 156 ?&quot;</span>, (userBaz.id == <span class="hljs-number">156</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>INSERT INTO &quot;User&quot; (email, id) VALUES(?, ?) &lt;- @['baz@baz.baz', 156]
-userBaz.id == 156 ?true</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">INSERT INTO &quot;User&quot; (email, id) VALUES(?, ?) &lt;- @['baz@baz.baz', 156]
+userBaz.id == 156 ?true</pre>
                         <h2>Select Row</h2>
 <h3>Select in general</h3>
 <p>To select a rows with norm, you instantiate a model that serves as a container for the selected data and call <code>select</code>.</p>
@@ -250,22 +250,22 @@ userBaz.id == 156 ?true</samp></pre>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span> customerBar = newCustomer()
 dbConn.select(customerBar, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;bar@bar.bar&quot;</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? LIMIT 1 &lt;- ['bar@bar.bar']</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? LIMIT 1 &lt;- ['bar@bar.bar']</pre>
                         <p>Let's examine how Norm populated <code>customerBar</code>:</p>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output"><samp>(name: some(&quot;Sam&quot;), user: ..., id: 3)</samp></pre>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre><pre class="nb-output"><samp>(email: &quot;bar@bar.bar&quot;, id: 2)</samp></pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> customerBar[]</code></pre><pre class="nb-output">(name: some(&quot;Sam&quot;), user: ..., id: 3)</pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> customerBar.user[]</code></pre><pre class="nb-output">(email: &quot;bar@bar.bar&quot;, id: 2)</pre>
                         <p>If you pass a sequence to <code>select</code>, you'll get many rows:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span> customersFoo = @[newCustomer()]
 dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['foo@foo.foo']</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? &lt;- ['foo@foo.foo']</pre>
                         <p>The generated query is similar to the previous one, but the result is populated objects, not one:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo:
   <span class="hljs-keyword">echo</span> customer[]
-  <span class="hljs-keyword">echo</span> customer.user[]</code></pre><pre class="nb-output"><samp>(name: some(&quot;Alice&quot;), user: ..., id: 1)
+  <span class="hljs-keyword">echo</span> customer.user[]</code></pre><pre class="nb-output">(name: some(&quot;Alice&quot;), user: ..., id: 1)
 (email: &quot;foo@foo.foo&quot;, id: 1)
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
-(email: &quot;foo@foo.foo&quot;, id: 1)</samp></pre>
+(email: &quot;foo@foo.foo&quot;, id: 1)</pre>
                         <p>If you query relationships that are nested, such as when customers can have pets and you want to query all pets of all customers of users with a specific email address, you will need  to concatenate the foreign-key fields, separeted by a <code>_</code> in your query.</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> norm/model
 
@@ -286,13 +286,13 @@ dbConn.insert(fluffi)
 dbConn.select(petsFoo, <span class="hljs-string">&quot;owner_user.email LIKE ?&quot;</span>, <span class="hljs-string">&quot;foo%&quot;</span>)
 
 <span class="hljs-keyword">for</span> pet <span class="hljs-keyword">in</span> petsFoo:
-  <span class="hljs-keyword">echo</span> pet[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+  <span class="hljs-keyword">echo</span> pet[]</code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Customer&quot;(name TEXT, user INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(user) REFERENCES &quot;User&quot;(id))
 CREATE TABLE IF NOT EXISTS &quot;Pet&quot;(name TEXT NOT NULL, owner INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY, FOREIGN KEY(owner) REFERENCES &quot;Customer&quot;(id))
 Object ID is not 0, skipping insertion. Type: Customer, ID: 2
 INSERT INTO &quot;Pet&quot; (name, owner) VALUES(?, ?) &lt;- @['Fluffi', 2]
 SELECT &quot;Pet&quot;.name, &quot;Pet&quot;.owner, &quot;owner&quot;.name, &quot;owner&quot;.user, &quot;owner_user&quot;.email, &quot;owner_user&quot;.id, &quot;owner&quot;.id, &quot;Pet&quot;.id FROM &quot;Pet&quot; LEFT JOIN &quot;Customer&quot; AS &quot;owner&quot; ON &quot;Pet&quot;.owner = &quot;owner&quot;.id LEFT JOIN &quot;User&quot; AS &quot;owner_user&quot; ON &quot;owner&quot;.user = &quot;owner_user&quot;.id WHERE owner_user.email LIKE ? &lt;- ['foo%']
-(name: &quot;Fluffi&quot;, owner: ..., id: 1)</samp></pre>
+(name: &quot;Fluffi&quot;, owner: ..., id: 1)</pre>
                         <h3>Selecting Many-To-One/One-To-Many relationships</h3>
 <p>Imagine you had a Many-To-One relationship between two models, like we have with <code>Customer</code> being the many-model and <code>User</code> being the one-model, where one user can have many customers.</p>
 <p>If you have a user and wanted to query all of their customers, you couldn't do so by just making a query for the user, as that model doesn't have a &quot;seq[Customer]&quot; field that Norm could resolve.</p>
@@ -312,12 +312,12 @@ dbConn.selectOneToMany(userFoo, customersFoo2, <span class="hljs-string">&quot;u
 dbConn.selectOneToMany(userFoo, customersFoo3)
   
 <span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo3:
-  <span class="hljs-keyword">echo</span> customer[]</code></pre><pre class="nb-output"><samp>SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
+  <span class="hljs-keyword">echo</span> customer[]</code></pre><pre class="nb-output">SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
 (name: some(&quot;Alice&quot;), user: ..., id: 1)
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
 SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE &quot;Customer&quot;.user = ? &lt;- [1]
 (name: some(&quot;Alice&quot;), user: ..., id: 1)
-(name: some(&quot;Bob&quot;), user: ..., id: 2)</samp></pre>
+(name: some(&quot;Bob&quot;), user: ..., id: 2)</pre>
                         <p>An additional benefit of using this <code>selectOneToMany</code> is that with it, Norm will validate whether this query is correct at compile time!</p>
 <p>In the first approach, if Customer doesn't have a field called &quot;user&quot; or if that field does not have any model-type that points to the &quot;User&quot;-table, nor an fk-pragma to any such type, then the code will throw an error with a helpful message at compile-time.</p>
 <p>In the second approach, if Customer doesn't have any field of type &quot;User&quot; or any other model-type that points to the same table as &quot;User&quot;, it will also not compile while throwing a helpful error message.</p>
@@ -372,7 +372,7 @@ dbConn.selectManyToMany(userFoo, userFooGroupMemberships, userFooGroups, <span c
 dbConn.selectManyToMany(userFoo, userFooGroupMemberships2, userFooGroups2)
 
 <span class="hljs-keyword">for</span> group <span class="hljs-keyword">in</span> userFooGroups2:
-  <span class="hljs-keyword">echo</span> group[]</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+  <span class="hljs-keyword">echo</span> group[]</code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE TABLE IF NOT EXISTS &quot;Group&quot;(name TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
@@ -393,18 +393,18 @@ SELECT &quot;UserGroup&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, 
 (name: &quot;groupBar&quot;, id: 2)
 SELECT &quot;UserGroup&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;UserGroup&quot;.membershipGroup, &quot;membershipGroup&quot;.name, &quot;membershipGroup&quot;.id, &quot;UserGroup&quot;.id FROM &quot;UserGroup&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;UserGroup&quot;.user = &quot;user&quot;.id LEFT JOIN &quot;Group&quot; AS &quot;membershipGroup&quot; ON &quot;UserGroup&quot;.membershipGroup = &quot;membershipGroup&quot;.id WHERE &quot;UserGroup&quot;.user = ? &lt;- [1]
 (name: &quot;groupFoo&quot;, id: 1)
-(name: &quot;groupBar&quot;, id: 2)</samp></pre>
+(name: &quot;groupBar&quot;, id: 2)</pre>
                         <h2>Count Rows</h2>
 <p>Selecting rows is expensive if many rows are fetched. Knowing the number of rows you have before doing the actual select is useful.</p>
 <p>To count the rows without fetching them, use <code>count</code>:</p>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>)</code></pre><pre class="nb-output"><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE 1 &lt;- []
-3</samp></pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>)</code></pre><pre class="nb-output">SELECT COUNT( *) FROM &quot;Customer&quot; WHERE 1 &lt;- []
+3</pre>
                         <p>To count only unique records, use <code>dist = true</code> in conjunction with the column name you want to check for uniqueness:</p>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;user&quot;</span>, dist = <span class="hljs-literal">true</span>)</code></pre><pre class="nb-output"><samp>SELECT COUNT(DISTINCT user) FROM &quot;Customer&quot; WHERE 1 &lt;- []
-2</samp></pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;user&quot;</span>, dist = <span class="hljs-literal">true</span>)</code></pre><pre class="nb-output">SELECT COUNT(DISTINCT user) FROM &quot;Customer&quot; WHERE 1 &lt;- []
+2</pre>
                         <p>You can also count rows matching condition:</p>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;*&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;name LIKE ?&quot;</span>, <span class="hljs-string">&quot;alice&quot;</span>)</code></pre><pre class="nb-output"><samp>SELECT COUNT( *) FROM &quot;Customer&quot; WHERE name LIKE ? &lt;- ['alice']
-1</samp></pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.count(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;*&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;name LIKE ?&quot;</span>, <span class="hljs-string">&quot;alice&quot;</span>)</code></pre><pre class="nb-output">SELECT COUNT( *) FROM &quot;Customer&quot; WHERE name LIKE ? &lt;- ['alice']
+1</pre>
                         <h2>Sum Column Values</h2>
 <p>To get a sum of column values, use <code>sum</code> proc:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> norm/model
@@ -427,7 +427,7 @@ dbConn.insert(anotherFourLeggedChair)
 
 <span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>)
 <span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">true</span>)
-<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;legCount &gt; ?&quot;</span>, <span class="hljs-number">3</span>)</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Chair&quot;(legCount INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+<span class="hljs-keyword">echo</span> dbConn.sum(<span class="hljs-type">Chair</span>, <span class="hljs-string">&quot;legCount&quot;</span>, dist = <span class="hljs-literal">false</span>, <span class="hljs-string">&quot;legCount &gt; ?&quot;</span>, <span class="hljs-number">3</span>)</code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;Chair&quot;(legCount INTEGER NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[3]
 INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[4]
 INSERT INTO &quot;Chair&quot; (legCount) VALUES(?) &lt;- @[4]
@@ -436,18 +436,18 @@ SELECT SUM( legCount) FROM &quot;Chair&quot; WHERE 1 &lt;- []
 SELECT SUM(DISTINCT legCount) FROM &quot;Chair&quot; WHERE 1 &lt;- []
 7.0
 SELECT SUM( legCount) FROM &quot;Chair&quot; WHERE legCount &gt; ? &lt;- [3]
-8.0</samp></pre>
+8.0</pre>
                         <h2>Check If Row Exists</h2>
 <p>If you need to check if a row selected by a given condition exists, use <code>exists</code> proc:</p>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.exists(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;Alice&quot;</span>)</code></pre><pre class="nb-output"><samp>SELECT EXISTS(SELECT NULL FROM &quot;Customer&quot; WHERE name = ?) &lt;- ['Alice']
-true</samp></pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> dbConn.exists(<span class="hljs-type">Customer</span>, <span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;Alice&quot;</span>)</code></pre><pre class="nb-output">SELECT EXISTS(SELECT NULL FROM &quot;Customer&quot; WHERE name = ?) &lt;- ['Alice']
+true</pre>
                         <h2>Update Rows</h2>
 <p>To update a row, you just update the object and call <code>update</code> on it:</p>
                         <pre><code class="nohighlight hljs nim">customerBar.name = some <span class="hljs-string">&quot;Saaam&quot;</span>
 dbConn.update(customerBar)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>UPDATE &quot;User&quot; SET email = ? WHERE id = 2 &lt;- @['bar@bar.bar']
-UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 3 &lt;- @['Saaam', 2]</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">UPDATE &quot;User&quot; SET email = ? WHERE id = 2 &lt;- @['bar@bar.bar']
+UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 3 &lt;- @['Saaam', 2]</pre>
                         <p>Since customer references a user, to update a customer, we also need to update its user. Norm handles that automatically by generating two queries.</p>
 <p>Updating rows in bulk is also possible:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">for</span> customer <span class="hljs-keyword">in</span> customersFoo:
@@ -455,18 +455,26 @@ UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 3 &lt;- @['Saaam',
 
 dbConn.update(customersFoo)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
-UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 1 &lt;- @['MegaAlice', 1]
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
 UPDATE &quot;User&quot; SET email = ? WHERE id = 1 &lt;- @['foo@foo.foo']
-UPDATE &quot;Customer&quot; SET name = ?, user = ? WHERE id = 2 &lt;- @['MegaBob', 1]</samp></pre>
+UPDATE &quot;Customer&quot; SET
+user = CASE id
+WHEN 1 THEN ?
+WHEN 2 THEN ?
+END,
+name = CASE id
+WHEN 1 THEN ?
+WHEN 2 THEN ?
+END
+WHERE id IN (1, 2) &lt;- @[1, 1, 'MegaAlice', 'MegaBob']</pre>
                         <p>For each object in <code>customersFoo</code>, a pair of queries are generated.</p>
 <h2>Delete Rows</h2>
 <p>To delete a row, call <code>delete</code> on an object:</p>
                         <pre><code class="nohighlight hljs nim">dbConn.delete(sam)
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>DELETE FROM &quot;Customer&quot; WHERE id = 3</samp></pre>
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">DELETE FROM &quot;Customer&quot; WHERE id = 3</pre>
                         <p>After deletion, the object becomes <code>nil</code>:</p>
-                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> sam.isNil</code></pre><pre class="nb-output"><samp>true</samp></pre>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">echo</span> sam.isNil</code></pre><pre class="nb-output">true</pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

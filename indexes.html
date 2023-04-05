@@ -220,9 +220,9 @@
 
 dbConn.createTables(<span class="hljs-type">Person</span>())
 
-<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output"><samp>CREATE TABLE IF NOT EXISTS &quot;Person&quot;(email TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;Person&quot;(email TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 CREATE INDEX Person_names ON &quot;Person&quot;(firstName, lastName);
-CREATE UNIQUE INDEX Person_emails ON &quot;Person&quot;(email);</samp></pre>
+CREATE UNIQUE INDEX Person_emails ON &quot;Person&quot;(email);</pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">

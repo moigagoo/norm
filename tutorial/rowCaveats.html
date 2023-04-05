@@ -267,7 +267,7 @@ dbConn.select(employees, <span class="hljs-string">&quot;employer = ?&quot;</spa
   employees: employees
 )
 
-<span class="hljs-keyword">echo</span> %*producerContainer</code></pre><pre class="nb-output"><samp>{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}</samp></pre>
+<span class="hljs-keyword">echo</span> %*producerContainer</code></pre><pre class="nb-output">{&quot;producer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;products&quot;:[{&quot;name&quot;:&quot;The best spaghetti&quot;,&quot;producedBy&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}],&quot;employees&quot;:[{&quot;name&quot;:&quot;Steff&quot;,&quot;employer&quot;:{&quot;name&quot;:&quot;Alex&quot;,&quot;id&quot;:1},&quot;id&quot;:1}]}</pre>
                         <h2>Complex SELECT queries</h2>
 <p>Norm handles simple database manipulations and queries well.
 However, it does not cover the entire feature-spectrum of SQL and thus does not support some more complex queries or other database features (e.g. views).
