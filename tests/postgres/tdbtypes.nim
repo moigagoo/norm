@@ -11,6 +11,9 @@ const
   dbPassword = getEnv("PGPASSWORD", "postgres")
   dbDatabase = getEnv("PGDATABASE", "postgres")
 
+func to(dbVal: DbValue, T: typedesc[CoinKind2]): T = parseEnum[CoinKind2](dbVal.s)
+func dbValue(val: CoinKind2): DbValue = dbValue($val)
+func dbType(_: typedesc[CoinKind2]): string = "TEXT"
 
 suite "Import dbTypes from norm/private/postgres/dbtypes":
   proc resetDb =
@@ -26,7 +29,8 @@ suite "Import dbTypes from norm/private/postgres/dbtypes":
     dbConn.createTables(newUser())
     dbConn.createTables(newNumber())
     dbConn.createTables(newString())
-
+    dbConn.createTables(newCoin())
+    dbConn.createTables(newCoin2())
   teardown:
     close dbConn
     resetDb()
@@ -115,3 +119,25 @@ suite "Import dbTypes from norm/private/postgres/dbtypes":
       select(outString, "s = $1", "foo")
 
     check inpString === outString
+
+  test "Enum get row":
+    var
+      inpCoin = newCoin(CoinKind.ck5Cents)
+      outCoin = newCoin()
+
+    with dbConn:
+      insert(inpCoin)
+      select(outCoin, "kind = $1", 2)
+
+    check inpCoin === outCoin
+
+  test "Enum get row with custom procs":
+    var
+      inpCoin = newCoin2(CoinKind2.ckCent)
+      outCoin = newCoin2()
+
+    with dbConn:
+      insert(inpCoin)
+      select(outCoin, "kind = $1", "ckCent")
+
+    check inpCoin === outCoin

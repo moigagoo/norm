@@ -7,6 +7,9 @@ import ../models
 
 const dbFile = "test.db"
 
+func to(dbVal: DbValue, T: typedesc[CoinKind2]): T = parseEnum[CoinKind2](dbVal.s)
+func dbValue(val: CoinKind2): DbValue = dbValue($val)
+func dbType(_: typedesc[CoinKind2]): string = "TEXT"
 
 suite "Import dbTypes from norm/private/sqlite/dbtypes":
   setup:
@@ -17,6 +20,8 @@ suite "Import dbTypes from norm/private/sqlite/dbtypes":
     dbConn.createTables(newUser())
     dbConn.createTables(newNumber())
     dbConn.createTables(newString())
+    dbConn.createTables(newCoin())
+    dbConn.createTables(newCoin2())
 
   teardown:
     close dbConn
@@ -46,7 +51,7 @@ suite "Import dbTypes from norm/private/sqlite/dbtypes":
 
     check number.id > 0
 
-    let rows = dbConn.getAllRows(sql"""SELECT n, n16, n32, n64, id FROM "Number"""")
+    let rows = dbConn.getAllRows(sql"""SELECT n, n16, n32, n64, id FROM "Number" """)
 
     check rows.len == 1
     check rows[0] == @[?1, ?2'i16, ?3'i32, ?4'i64, ?number.id]
@@ -79,7 +84,7 @@ suite "Import dbTypes from norm/private/sqlite/dbtypes":
 
     check str.id > 0
 
-    let rows = dbConn.getAllRows(sql"""SELECT s, sc10, psc5, id FROM "String"""")
+    let rows = dbConn.getAllRows(sql"""SELECT s, sc10, psc5, id FROM "String" """)
 
     check rows.len == 1
 
@@ -98,3 +103,25 @@ suite "Import dbTypes from norm/private/sqlite/dbtypes":
       select(outString, "s = $1", "foo")
 
     check inpString === outString
+
+  test "Enum get row":
+    var
+      inpCoin = newCoin(CoinKind.ck5Cents)
+      outCoin = newCoin()
+
+    with dbConn:
+      insert(inpCoin)
+      select(outCoin, "kind = $1", 2)
+
+    check inpCoin === outCoin
+
+  test "Enum get row with custom procs":
+    var
+      inpCoin = newCoin2(CoinKind2.ckCent)
+      outCoin = newCoin2()
+
+    with dbConn:
+      insert(inpCoin)
+      select(outCoin, "kind = $1", "ckCent")
+
+    check inpCoin === outCoin

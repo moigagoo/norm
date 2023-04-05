@@ -24,4 +24,3 @@ func toOptional*[T: ref object](val: T): Option[T] =
 func toOptional*[T: ref object](val: Option[T]): Option[T] =
   ## Convert optional type to optional type, doing effectively nothing
   val
-

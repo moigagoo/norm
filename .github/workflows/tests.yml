@@ -39,7 +39,7 @@ jobs:
         with:
           nim-version: ${{ matrix.nim-version }}
 
-      - run: nimble install -Y
+      - run: nimble install -y nimble && nimble install -y
 
       - name: Run tests
         run: testament all
