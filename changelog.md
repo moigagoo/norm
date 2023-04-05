@@ -7,9 +7,11 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.7.1 (March XX, 2023)
-- [+] Bulk SQLite and PostgreSQL update with single query!y
-- [+] Enum Support
+
+## 2.8.0 (WIP)
+- [+] Bulk update is now performed in a single query which speeds up execution 1000 times (see [#188](https://github.com/moigagoo/norm/issues/188)).
+- [+] Enum Support (see [#166](https://github.com/moigagoo/norm/issues/166)).
+
 
 ## 2.7.0 (February 27, 2023)
 
