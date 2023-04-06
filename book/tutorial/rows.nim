@@ -330,7 +330,6 @@ nbCode:
   echo()
 
 nbText: """
-For each object in `customersFoo`, a pair of queries are generated.
 
 ## Delete Rows
 
