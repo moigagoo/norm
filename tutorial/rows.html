@@ -467,8 +467,7 @@ WHEN 1 THEN ?
 WHEN 2 THEN ?
 END
 WHERE id IN (1, 2) &lt;- @[1, 1, 'MegaAlice', 'MegaBob']</pre>
-                        <p>For each object in <code>customersFoo</code>, a pair of queries are generated.</p>
-<h2>Delete Rows</h2>
+                        <h2>Delete Rows</h2>
 <p>To delete a row, call <code>delete</code> on an object:</p>
                         <pre><code class="nohighlight hljs nim">dbConn.delete(sam)
 
