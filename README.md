@@ -17,6 +17,10 @@ Add Norm to your .nimble file:
 
     requires "norm"
 
+Norm requires Nimble 0.14.0 sonmake sure you have the latest Nimble installed by running:
+
+    $ nimble install -y nimble
+
 
 ## Contributing
 
