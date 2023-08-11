@@ -7,8 +7,10 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.8.1 (XX, XX, 2023)
+## 2.8.1 (August 11, 2023)
+
 - [f] version bump lowdb to fix failed import of db_connector on nim 2.0.0
+
 
 ## 2.8.0 (April 5, 2023)
 
