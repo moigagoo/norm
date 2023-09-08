@@ -7,7 +7,7 @@ var book = initBookWithToc:
   section("Tutorial", "tutorial.nim"):
     entry("Tables", "tutorial/tables.nim")
     entry("Simple Queries", "tutorial/rows.nim")
-    entry("Complex Select Queries", "tutorial/rowsComplex.nim")
+    entry("Advanced Queries", "tutorial/rowsAdvanced.nim")
     entry("Many-To-One/Many Queries", "tutorial/rowsManyToX.nim")
     entry("Raw SQL interactions", "tutorial/rawSelects.nim")
     entry("Row Caveats", "tutorial/rowCaveats.nim")

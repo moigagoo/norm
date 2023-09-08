@@ -8,8 +8,8 @@ nbInit(theme = useNimibook)
 nbText: """
 # More complex queries
 Norm allows you to sort, limit use subqueries for complex where clauses and more.
-To understand how, it helps to keep in mind that norm essentially generates SQL queries after the following pattern:
-  `SELECT <fields of model> FROM <table-name specified by model> WHERE <condition>`.
+To understand how, it helps to keep in mind that norm essentially generates SQL SELECT queries after the following pattern:
+`SELECT <fields of model> FROM <table-name specified by model> WHERE <condition>`
 
 This means that whatever pieces of SQL come after the WHERE keyword are thing you can freely specify if need be.
 
@@ -55,7 +55,8 @@ nbCode:
 
 nbText: """
 ## Using Subqueries
-Similarly as to ORDER BY, you can also use subqueries withint he WHERE block:
+Similarly as to ORDER BY, you can also use subqueries within the WHERE block:
+  
 """
 nbCode:
   var subqueryCustomersFoo = @[newCustomer()]
