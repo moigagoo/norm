@@ -12,8 +12,9 @@ skipDirs      = @["tests", "htmldocs"]
 
 requires "nim >= 1.4.0", "lowdb >= 0.2.1"
 
-taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
-taskRequires "benchmark", "benchy >= 0.0.1"
+when NimMajor >= 2:
+  taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
+  taskRequires "benchmark", "benchy >= 0.0.1"
 
 
 # Tasks
