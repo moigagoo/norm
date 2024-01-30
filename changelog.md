@@ -7,6 +7,12 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+
+## 2.8.2 (WIP)
+
+- [+] PostgreSQL: Add the ability to set custom schema name for models (see [#202](https://github.com/moigagoo/norm/pull/202)).
+
+
 ## 2.8.1 (August 11, 2023)
 
 - [f] version bump lowdb to fix failed import of db_connector on nim 2.0.0
