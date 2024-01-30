@@ -8,7 +8,7 @@
 -   [d]—docs improvement
 
 
-## 2.8.2 (WIP)
+## 2.8.2 (January 30, 2024)
 
 - [+] PostgreSQL: Add the ability to set custom schema name for models (see [#202](https://github.com/moigagoo/norm/pull/202)).
 
