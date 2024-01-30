@@ -69,7 +69,7 @@ Norm will generate the following table schema:
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
 
-To define unique combination or columns, add `{.uniqueGroup.}` pragma to each field in the group.
+To define unique combination or columns, add `uniqueGroup` pragma to each field in the group.
 
 
 ## Custom Table Name
