@@ -59,6 +59,23 @@ suite "Table creation":
       @[?"legcount", ?dftDbInt]
     ]
 
+  test "Create table with custom schema":
+    let furnitureTable = newFurnitureTable()
+
+    dbConn.createTables(furnitureTable)
+
+    let
+      qry = sql """SELECT column_name::text, data_type::text
+        FROM information_schema.columns
+        WHERE table_schema = $1 AND table_name = $2
+        ORDER BY column_name"""
+      dftDbInt = if high(int) == high(int64): "bigint" else: "integer"
+
+    check dbConn.getAllRows(qry, "Furniture", "FurnitureTable") == @[
+      @[?"id", ?"bigint"],
+      @[?"legcount", ?dftDbInt]
+    ]
+
   test "Create tables":
     let
       toy = newToy(123.45)

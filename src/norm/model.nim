@@ -36,13 +36,33 @@ func model*[T](val: T): Option[Model] =
 
   none Model
 
+func schema*(T: typedesc[Model]): Option[string] =
+  ##[ Get schema name for `Model <#Model>`_, which is the value of `schemaName <pragmas.html#schemaName.t,string>`_ pragma.
+
+  `none(string)` means default schema.
+
+  Ignored in SQLite.
+  ]##
+
+  when T.hasCustomPragma(schemaName):
+    some '"' & T.getCustomPragmaVal(schemaName) & '"'
+  else:
+    none(string)
+
 func table*(T: typedesc[Model]): string =
-  ## Get table name for `Model <#Model>`_, which is the type name in single quotes.
+  ##[ Get table name for `Model <#Model>`_,
+  which is the value of `tableName <pragmas.html#tableName.t,string>`_ pragma or the type name in double quotes.
+
+  If `schemaName`_ is set, it's prepended to the table name.
+  ]##
+
+  if T.schema.isSome:
+    result &= get(T.schema) & '.'
 
   when T.hasCustomPragma(tableName):
-    '"' & T.getCustomPragmaVal(tableName) & '"'
+    result &= '"' & T.getCustomPragmaVal(tableName) & '"'
   else:
-    '"' & $T & '"'
+    result &= '"' & $T & '"'
 
 func col*(T: typedesc[Model], fld: string): string =
   ## Get column name for a `Model`_ field, which is just the field name.

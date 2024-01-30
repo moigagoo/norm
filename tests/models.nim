@@ -76,6 +76,9 @@ type
   Table* {.tableName: "FurnitureTable".} = ref object of Model
     legCount*: Positive
 
+  FurnitureTable* {.schemaName: "Furniture", tableName: "FurnitureTable".} = ref object of Model
+    legCount*: Positive
+
   SelfRef* = ref object of Model
     parent* {.fk: SelfRef.}: Option[int64]
 
@@ -236,6 +239,9 @@ func `===`*(a, b: String): bool =
 
 func newTable*(legCount: Positive = 4): Table =
   Table(legCount: legCount)
+
+func newFurnitureTable*(legCount: Positive = 4): FurnitureTable =
+  FurnitureTable(legCount: legCount)
 
 func newPetSpecies*: PetSpecies = PetSpecies(species: "")
 

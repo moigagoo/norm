@@ -69,6 +69,11 @@ proc dropDb* =
 
 # Table manipulation
 
+proc createSchema*[T: Model](dbConn; obj: T) =
+  ## Dummy proc for API consistency.
+
+  discard
+
 proc createTables*[T: Model](dbConn; obj: T) =
   ## Create tables for `Model <model.html#Model>`_ and its `Model`_ fields.
 
