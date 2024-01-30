@@ -90,7 +90,7 @@ This will result in this schema:
     CREATE TABLE IF NOT EXISTS "ThingTable"(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 
 
-## Custom Table Name (PostgreSQL only)
+## Custom Schema Name (PostgreSQL only)
 
 PostgreSQL schemas are named collections of tables (`read more in the docs <https://www.postgresql.org/docs/current/ddl-schemas.html>`__).
 
