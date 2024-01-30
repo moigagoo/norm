@@ -9,6 +9,7 @@ suite "Getting table and columns from Model":
   test "Table":
     check Person.table == """"Person""""
     check Table.table == """"FurnitureTable""""
+    check FurnitureTable.table == """"Furniture"."FurnitureTable""""
 
   test "Columns":
     let

@@ -74,8 +74,18 @@ proc dropDb* =
 
 # Table manipulation
 
+proc createSchema*[T: Model](dbConn; obj: T) =
+  ## Create schema for `Model <model.html#Model>`_.
+
+  if T.schema.isSome:
+    let qry = "CREATE SCHEMA IF NOT EXISTS $#" % get(T.schema)
+
+    log(qry)
+
+    dbConn.exec(sql qry)
+
 proc createTables*[T: Model](dbConn; obj: T) =
-  ## Create tables for `Model <model.html#Model>`_ and its `Model`_ fields.
+  ## Create tables for `Model`_ and its `Model`_ fields.
 
   for fld, val in obj[].fieldPairs:
     if val.model.isSome:
@@ -137,6 +147,8 @@ proc createTables*[T: Model](dbConn; obj: T) =
         fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
     colGroups.add colShmParts.join(" ")
+
+  dbConn.createSchema(obj)
 
   let
     uniqueGroups = if len(uniqueGroupCols) > 0: @["UNIQUE($#)" % uniqueGroupCols.join(", ")] else: @[]

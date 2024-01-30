@@ -40,6 +40,8 @@ func dbType*[T](_: typedesc[Option[T]]): string = dbType T
 
 # Converter funcs from Nim values to ``DbValue``:
 
+func dbValue*(val: typeof(nil)): DbValue = DbValue(kind: dvkNull)
+
 func dbValue*(val: bool): DbValue = dbValue(if val: 1 else: 0)
 
 func dbValue*(val: DateTime): DbValue = dbValue(val.toTime().toUnixFloat())
