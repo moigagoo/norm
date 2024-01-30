@@ -90,6 +90,26 @@ This will result in this schema:
     CREATE TABLE IF NOT EXISTS "ThingTable"(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 
 
+## Custom Table Name (PostgreSQL only)
+
+PostgreSQL schemas are named collections of tables (`read more in the docs <https://www.postgresql.org/docs/current/ddl-schemas.html>`__).
+
+To set a schema name for your model, use `schemaName` pragma:
+"""
+
+nbCode:
+  type
+    Dog* {.schemaName: "Animals", tableName: "Canine".} = ref object of Model
+      name: string
+
+nbText """
+This will result in this query being executed before creating the tables for the model:
+
+    CREATE SCHEMA IF NOT EXISTS "Animals"
+
+If the schema name is set, it's used in the model table name references, e.g. `"Animals"."Canine"`.
+
+
 ## Read-only Models
 
 To slim down DB queries when you don't need to fetch the full model, use read-only models.
