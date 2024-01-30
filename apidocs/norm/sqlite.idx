@@ -4,6 +4,7 @@ dbHostEnv	norm/sqlite.html#dbHostEnv	sqlite: dbHostEnv
 getDb	norm/sqlite.html#getDb	sqlite: getDb(): DbConn	
 withDb	norm/sqlite.html#withDb.t,untyped	sqlite: withDb(body: untyped): untyped	
 dropDb	norm/sqlite.html#dropDb	sqlite: dropDb()	
+createSchema	norm/sqlite.html#createSchema,,T	sqlite: createSchema[T: Model](dbConn; obj: T)	
 createTables	norm/sqlite.html#createTables,,T	sqlite: createTables[T: Model](dbConn; obj: T)	
 insert	norm/sqlite.html#insert,,T	sqlite: insert[T: Model](dbConn; obj: var T; force = false; conflictPolicy = cpRaise)	
 insert	norm/sqlite.html#insert,,openArray[T]	sqlite: insert[T: Model](dbConn; objs: var openArray[T]; force = false;\n                 conflictPolicy = cpRaise)	

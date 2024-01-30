@@ -248,7 +248,7 @@
                         <p>Norm will generate the following table schema:</p>
 <pre><code>CREATE TABLE IF NOT EXISTS &quot;User&quot;(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
 </code></pre>
-<p>To define unique combination or columns, add <code>{.uniqueGroup.}</code> pragma to each field in the group.</p>
+<p>To define unique combination or columns, add <code>uniqueGroup</code> pragma to each field in the group.</p>
 <h2>Custom Table Name</h2>
 <p>By default, a table is named after the model type, enclosed in double quotes, e.g. <code>User</code> model's table is called <code>&quot;User&quot;</code>.</p>
 <p>To override this behavior and set a custom name for the generated table, use <code>tableName</code> pragma:</p>
@@ -258,6 +258,16 @@
                         <p>This will result in this schema:</p>
 <pre><code>CREATE TABLE IF NOT EXISTS &quot;ThingTable&quot;(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 </code></pre>
+<h2>Custom Table Name (PostgreSQL only)</h2>
+<p>PostgreSQL schemas are named collections of tables (<code>read more in the docs &lt;https://www.postgresql.org/docs/current/ddl-schemas.html&gt;</code>__).</p>
+<p>To set a schema name for your model, use <code>schemaName</code> pragma:</p>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">type</span>
+  <span class="hljs-type">Dog</span>* {.schemaName: <span class="hljs-string">&quot;Animals&quot;</span>, tableName: <span class="hljs-string">&quot;Canine&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
+    name: <span class="hljs-built_in">string</span></code></pre>
+                        <p>This will result in this query being executed before creating the tables for the model:</p>
+<pre><code>CREATE SCHEMA IF NOT EXISTS &quot;Animals&quot;
+</code></pre>
+<p>If the schema name is set, it's used in the model table name references, e.g. <code>&quot;Animals&quot;.&quot;Canine&quot;</code>.</p>
 <h2>Read-only Models</h2>
 <p>To slim down DB queries when you don't need to fetch the full model, use read-only models.</p>
 <p>A read-only model is a model that defines a subset of fields of another model. Another important property of read-only model is that you can't use it to insert, update, or delete data; just select.</p>

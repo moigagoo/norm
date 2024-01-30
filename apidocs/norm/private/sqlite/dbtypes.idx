@@ -8,6 +8,7 @@ dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Model]	dbtypes: dbType(T
 dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[StringOfCap[C]]	dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string	
 dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]	dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string	
 dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Option[T]]	dbtypes: dbType[T](_: typedesc[Option[T]]): string	
+dbValue	norm/private/sqlite/dbtypes.html#dbValue	dbtypes: dbValue(val: typeof(nil)): DbValue	
 dbValue	norm/private/sqlite/dbtypes.html#dbValue,bool	dbtypes: dbValue(val: bool): DbValue	
 dbValue	norm/private/sqlite/dbtypes.html#dbValue,DateTime	dbtypes: dbValue(val: DateTime): DbValue	
 dbValue	norm/private/sqlite/dbtypes.html#dbValue,T	dbtypes: dbValue[T: Model](val: T): DbValue	

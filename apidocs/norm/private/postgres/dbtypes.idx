@@ -10,6 +10,7 @@ dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[bool]	dbtypes: dbType(
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[DateTime]	dbtypes: dbType(T: typedesc[DateTime]): string	
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[Model]	dbtypes: dbType(T: typedesc[Model]): string	
 dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[Option[T]]	dbtypes: dbType[T](_: typedesc[Option[T]]): string	
+dbValue	norm/private/postgres/dbtypes.html#dbValue	dbtypes: dbValue(val: typeof(nil)): DbValue	
 dbValue	norm/private/postgres/dbtypes.html#dbValue,T	dbtypes: dbValue[T: Model](val: T): DbValue	
 dbValue	norm/private/postgres/dbtypes.html#dbValue,Option[T: Model]	dbtypes: dbValue[T: Model](val: Option[T]): DbValue	
 dbValue	norm/private/postgres/dbtypes.html#dbValue,StringOfCap[T]	dbtypes: dbValue[T](val: StringOfCap[T]): DbValue	

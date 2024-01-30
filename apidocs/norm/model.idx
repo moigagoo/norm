@@ -9,6 +9,7 @@ isModel	norm/model.html#isModel,T_2	model: isModel[T](val: T): bool
 model	norm/model.html#model,T	model: model[T: Model](val: T): Option[T]	
 model	norm/model.html#model,Option[T: Model]	model: model[T: Model](val: Option[T]): Option[T]	
 model	norm/model.html#model,T_2	model: model[T](val: T): Option[Model]	
+schema	norm/model.html#schema,typedesc[Model]	model: schema(T: typedesc[Model]): Option[string]	
 table	norm/model.html#table,typedesc[Model]	model: table(T: typedesc[Model]): string	
 col	norm/model.html#col,typedesc[Model],string	model: col(T: typedesc[Model]; fld: string): string	
 col	norm/model.html#col,T,string	model: col[T: Model](obj: T; fld: string): string	

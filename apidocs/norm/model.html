@@ -184,6 +184,11 @@ window.addEventListener('DOMContentLoaded', main);
     title="rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]">rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]</a></li>
 
   </ul>
+  <ul class="simple nested-toc-section">schema
+      <li><a class="reference" href="#schema%2Ctypedesc%5BModel%5D"
+    title="schema(T: typedesc[Model]): Option[string]">schema(T: typedesc[Model]): Option[string]</a></li>
+
+  </ul>
   <ul class="simple nested-toc-section">table
       <li><a class="reference" href="#table%2Ctypedesc%5BModel%5D"
     title="table(T: typedesc[Model]): string">table(T: typedesc[Model]): string</a></li>
@@ -396,11 +401,24 @@ Recursively get fully qualified column names for <a class="reference external" h
 
 </dd>
 </div>
+<div id="schema,typedesc[Model]">
+<dt><pre><span class="Keyword">func</span> <a href="#schema%2Ctypedesc%5BModel%5D"><span class="Identifier">schema</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+<dd>
+
+<p>Get schema name for <a class="reference external" href="#Model">Model</a>, which is the value of <a class="reference external" href="pragmas.html#schemaName.t,string">schemaName</a> pragma.</p>
+<p><tt class="docutils literal"><span class="pre"><span class="Identifier">none</span><span class="Punctuation">(</span><span class="Identifier">string</span><span class="Punctuation">)</span></span></tt> means default schema.</p>
+<p>Ignored in SQLite. </p>
+
+
+</dd>
+</div>
 <div id="table,typedesc[Model]">
 <dt><pre><span class="Keyword">func</span> <a href="#table%2Ctypedesc%5BModel%5D"><span class="Identifier">table</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
 <dd>
 
-Get table name for <a class="reference external" href="#Model">Model</a>, which is the type name in single quotes.
+<p>Get table name for <a class="reference external" href="#Model">Model</a>, which is the value of <a class="reference external" href="pragmas.html#tableName.t,string">tableName</a> pragma or the type name in double quotes.</p>
+<p>If <a class="reference external" href="pragmas.html#schemaName.t,string">schemaName</a> is set, it's prepended to the table name. </p>
+
 
 </dd>
 </div>
@@ -433,7 +451,7 @@ Checks at compile time whether the field with the name <tt class="docutils liter
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2023-10-30 19:39:39 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-01-30 19:31:22 UTC</small>
       </div>
     </div>
   </div>
