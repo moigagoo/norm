@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.8.1"
+version       = "2.8.2"
 author        = "Constantine Molchanov"
 description   = "Nim ORM for SQLite and PostgreSQL."
 license       = "MIT"
@@ -12,9 +12,14 @@ skipDirs      = @["tests", "htmldocs"]
 
 requires "nim >= 1.4.0", "lowdb >= 0.2.1"
 
-taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
-taskRequires "benchmark", "benchy >= 0.0.1"
-
+when NimMajor >= 2:
+  taskRequires "setupBook", "nimib >= 0.3.8", "nimibook >= 0.3.1"
+  taskRequires "benchmark", "benchy >= 0.0.1"
+else:
+  # Task Dependencies
+  requires "nimib >= 0.3.8"
+  requires "nimibook >= 0.3.1"
+  requires "benchy >= 0.0.1"
 
 # Tasks
 

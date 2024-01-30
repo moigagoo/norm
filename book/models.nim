@@ -69,7 +69,7 @@ Norm will generate the following table schema:
 
     CREATE TABLE IF NOT EXISTS "User"(email TEXT NOT NULL, name TEXT NOT NULL UNIQUE, id INTEGER NOT NULL PRIMARY KEY)
 
-To define unique combination or columns, add `{.uniqueGroup.}` pragma to each field in the group.
+To define unique combination or columns, add `uniqueGroup` pragma to each field in the group.
 
 
 ## Custom Table Name
@@ -88,6 +88,26 @@ nbText """
 This will result in this schema:
 
     CREATE TABLE IF NOT EXISTS "ThingTable"(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
+
+
+## Custom Schema Name (PostgreSQL only)
+
+PostgreSQL schemas are named collections of tables (`read more in the docs <https://www.postgresql.org/docs/current/ddl-schemas.html>`__).
+
+To set a schema name for your model, use `schemaName` pragma:
+"""
+
+nbCode:
+  type
+    Dog* {.schemaName: "Animals", tableName: "Canine".} = ref object of Model
+      name: string
+
+nbText """
+This will result in this query being executed before creating the tables for the model:
+
+    CREATE SCHEMA IF NOT EXISTS "Animals"
+
+If the schema name is set, it's used in the model table name references, e.g. `"Animals"."Canine"`.
 
 
 ## Read-only Models

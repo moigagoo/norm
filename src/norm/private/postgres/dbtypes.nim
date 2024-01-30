@@ -44,6 +44,8 @@ func dbType*[T](_: typedesc[Option[T]]): string = dbType T
 
 # Converter funcs from Nim values to ``DbValue``:
 
+func dbValue*(val: typeof(nil)): DbValue = DbValue(kind: dvkNull)
+
 func dbValue*[T: Model](val: T): DbValue = dbValue(val.id)
 
 func dbValue*[T: Model](val: Option[T]): DbValue =
