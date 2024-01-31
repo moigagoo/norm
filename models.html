@@ -259,7 +259,7 @@
 <pre><code>CREATE TABLE IF NOT EXISTS &quot;ThingTable&quot;(attr TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
 </code></pre>
 <h2>Custom Schema Name (PostgreSQL only)</h2>
-<p>PostgreSQL schemas are named collections of tables (<code>read more in the docs &lt;https://www.postgresql.org/docs/current/ddl-schemas.html&gt;</code>_).</p>
+<p>PostgreSQL schemas are named collections of tables (<a href="https://www.postgresql.org/docs/current/ddl-schemas.html">read more in the docs</a>).</p>
 <p>To set a schema name for your model, use <code>schemaName</code> pragma:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">type</span>
   <span class="hljs-type">Dog</span>* {.schemaName: <span class="hljs-string">&quot;Animals&quot;</span>, tableName: <span class="hljs-string">&quot;Canine&quot;</span>.} = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>
