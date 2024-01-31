@@ -92,7 +92,7 @@ This will result in this schema:
 
 ## Custom Schema Name (PostgreSQL only)
 
-PostgreSQL schemas are named collections of tables (`read more in the docs <https://www.postgresql.org/docs/current/ddl-schemas.html>`__).
+PostgreSQL schemas are named collections of tables (`read more in the docs <https://www.postgresql.org/docs/current/ddl-schemas.html>`_).
 
 To set a schema name for your model, use `schemaName` pragma:
 """
