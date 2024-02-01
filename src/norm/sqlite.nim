@@ -146,14 +146,14 @@ proc createTables*[T: Model](dbConn; obj: T) =
   dbConn.exec(sql qry)
 
   for index, cols in indexes.pairs:
-    let qry = "CREATE INDEX $# ON $#($#);" % [index, T.table, cols.join(", ")]
+    let qry = "CREATE INDEX IF NOT EXISTS $# ON $#($#);" % [index, T.table, cols.join(", ")]
 
     log(qry)
 
     dbConn.exec(sql qry)
 
   for index, cols in uniqueIndexes.pairs:
-    let qry = "CREATE UNIQUE INDEX $# ON $#($#);" % [index, T.table, cols.join(", ")]
+    let qry = "CREATE UNIQUE INDEX IF NOT EXISTS $# ON $#($#);" % [index, T.table, cols.join(", ")]
 
     log(qry)
 
