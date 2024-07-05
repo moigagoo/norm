@@ -229,8 +229,8 @@
 dbConn.createTables(<span class="hljs-type">Person</span>())
 
 <span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">CREATE TABLE IF NOT EXISTS &quot;Person&quot;(email TEXT NOT NULL, firstName TEXT NOT NULL, lastName TEXT NOT NULL, id INTEGER NOT NULL PRIMARY KEY)
-CREATE INDEX Person_names ON &quot;Person&quot;(firstName, lastName);
-CREATE UNIQUE INDEX Person_emails ON &quot;Person&quot;(email);</pre>
+CREATE INDEX IF NOT EXISTS Person_names ON &quot;Person&quot;(firstName, lastName);
+CREATE UNIQUE INDEX IF NOT EXISTS Person_emails ON &quot;Person&quot;(email);</pre>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
