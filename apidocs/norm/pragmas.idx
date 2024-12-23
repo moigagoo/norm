@@ -1,11 +1,12 @@
-pk	norm/pragmas.html#pk.t	pragmas: pk()	
-ro	norm/pragmas.html#ro.t	pragmas: ro()	
-readOnly	norm/pragmas.html#readOnly.t	pragmas: readOnly()	
-unique	norm/pragmas.html#unique.t	pragmas: unique()	
-uniqueGroup	norm/pragmas.html#uniqueGroup.t	pragmas: uniqueGroup()	
-fk	norm/pragmas.html#fk.t,typed	pragmas: fk(val: typed)	
-onDelete	norm/pragmas.html#onDelete.t,string	pragmas: onDelete(val: string)	
-schemaName	norm/pragmas.html#schemaName.t,string	pragmas: schemaName(val: string)	
-tableName	norm/pragmas.html#tableName.t,string	pragmas: tableName(val: string)	
-index	norm/pragmas.html#index.t,string	pragmas: index(val: string)	
-uniqueIndex	norm/pragmas.html#uniqueIndex.t,string	pragmas: uniqueIndex(val: string)	
+nimTitle	pragmas	norm/pragmas.html	module src/norm/pragmas		0
+nim	pk	norm/pragmas.html#pk.t	template pk()		4
+nim	ro	norm/pragmas.html#ro.t	template ro()		10
+nim	readOnly	norm/pragmas.html#readOnly.t	template readOnly()		22
+nim	unique	norm/pragmas.html#unique.t	template unique()		25
+nim	uniqueGroup	norm/pragmas.html#uniqueGroup.t	template uniqueGroup()		28
+nim	fk	norm/pragmas.html#fk.t,typed	template fk(val: typed)		31
+nim	onDelete	norm/pragmas.html#onDelete.t,string	template onDelete(val: string)		34
+nim	schemaName	norm/pragmas.html#schemaName.t,string	template schemaName(val: string)		37
+nim	tableName	norm/pragmas.html#tableName.t,string	template tableName(val: string)		40
+nim	index	norm/pragmas.html#index.t,string	template index(val: string)		43
+nim	uniqueIndex	norm/pragmas.html#uniqueIndex.t,string	template uniqueIndex(val: string)		46

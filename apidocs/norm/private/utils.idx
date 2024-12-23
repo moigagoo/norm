@@ -1,6 +1,9 @@
-isRefObject	norm/private/utils.html#isRefObject,typedesc[T]	utils: isRefObject[T](val: typedesc[T]): bool	
-isRefObject	norm/private/utils.html#isRefObject,T	utils: isRefObject[T](val: T): bool	
-isRefObject	norm/private/utils.html#isRefObject,typedesc[Option[T]]	utils: isRefObject[T](val: typedesc[Option[T]]): bool	
-isRefObject	norm/private/utils.html#isRefObject,Option[T]	utils: isRefObject[T](val: Option[T]): bool	
-toOptional	norm/private/utils.html#toOptional,T	utils: toOptional[T: ref object](val: T): Option[T]	
-toOptional	norm/private/utils.html#toOptional,Option[T: ref object]	utils: toOptional[T: ref object](val: Option[T]): Option[T]	
+nimTitle	utils	norm/private/utils.html	module src/norm/private/utils		0
+nim	isRefObject	norm/private/utils.html#isRefObject,typedesc[T]	proc isRefObject[T](val: typedesc[T]): bool		4
+nim	isRefObject	norm/private/utils.html#isRefObject,T	proc isRefObject[T](val: T): bool		8
+nim	isRefObject	norm/private/utils.html#isRefObject,typedesc[Option[T]]	proc isRefObject[T](val: typedesc[Option[T]]): bool		12
+nim	isRefObject	norm/private/utils.html#isRefObject,Option[T]	proc isRefObject[T](val: Option[T]): bool		16
+nim	toOptional	norm/private/utils.html#toOptional,T	proc toOptional[T: ref object](val: T): Option[T]		20
+nim	toOptional	norm/private/utils.html#toOptional,Option[T: ref object]	proc toOptional[T: ref object](val: Option[T]): Option[T]		24
+nimgrp	isrefobject	norm/private/utils.html#isRefObject-procs-all	proc		4
+nimgrp	tooptional	norm/private/utils.html#toOptional-procs-all	proc		20

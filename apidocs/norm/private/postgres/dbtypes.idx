@@ -1,26 +1,30 @@
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[int16]	dbtypes: dbType(T: typedesc[int16]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]	dbtypes: dbType(T: typedesc[int32 | enum]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]_2	dbtypes: dbType(T: typedesc[int64 | Positive | int | Natural]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[float32]	dbtypes: dbType(T: typedesc[float32]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[float64]	dbtypes: dbType(T: typedesc[float64]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[string]	dbtypes: dbType(T: typedesc[string]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[StringOfCap[C]]	dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]	dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[bool]	dbtypes: dbType(T: typedesc[bool]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[DateTime]	dbtypes: dbType(T: typedesc[DateTime]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[Model]	dbtypes: dbType(T: typedesc[Model]): string	
-dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[Option[T]]	dbtypes: dbType[T](_: typedesc[Option[T]]): string	
-dbValue	norm/private/postgres/dbtypes.html#dbValue	dbtypes: dbValue(val: typeof(nil)): DbValue	
-dbValue	norm/private/postgres/dbtypes.html#dbValue,T	dbtypes: dbValue[T: Model](val: T): DbValue	
-dbValue	norm/private/postgres/dbtypes.html#dbValue,Option[T: Model]	dbtypes: dbValue[T: Model](val: Option[T]): DbValue	
-dbValue	norm/private/postgres/dbtypes.html#dbValue,StringOfCap[T]	dbtypes: dbValue[T](val: StringOfCap[T]): DbValue	
-dbValue	norm/private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[T]	dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[]	dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[SomeFloat]	dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[string]	dbtypes: to(dbVal; T: typedesc[string]): T:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[StringOfCap[T1]]	dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[PaddedStringOfCap[T1]]	dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[bool]	dbtypes: to(dbVal; T: typedesc[bool]): T:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[DateTime]	dbtypes: to(dbVal; T: typedesc[DateTime]): T:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[Model]	dbtypes: to(dbVal; T: typedesc[Model]): T:type	
-to	norm/private/postgres/dbtypes.html#to,,typedesc[Option[T]]	dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type	
+nimTitle	dbtypes	norm/private/postgres/dbtypes.html	module src/norm/private/postgres/dbtypes		0
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[int16]	proc dbType(T: typedesc[int16]): string		20
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]	proc dbType(T: typedesc[int32 | enum]): string		22
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]_2	proc dbType(T: typedesc[int64 | Positive | int | Natural]): string		24
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[float32]	proc dbType(T: typedesc[float32]): string		26
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[float64]	proc dbType(T: typedesc[float64]): string		28
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[string]	proc dbType(T: typedesc[string]): string		30
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[StringOfCap[C]]	proc dbType[C](_: typedesc[StringOfCap[C]]): string		32
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]	proc dbType[C](_: typedesc[PaddedStringOfCap[C]]): string		34
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[bool]	proc dbType(T: typedesc[bool]): string		36
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[DateTime]	proc dbType(T: typedesc[DateTime]): string		38
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[Model]	proc dbType(T: typedesc[Model]): string		40
+nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[Option[T]]	proc dbType[T](_: typedesc[Option[T]]): string		42
+nim	dbValue	norm/private/postgres/dbtypes.html#dbValue	proc dbValue(val: typeof(nil)): DbValue		47
+nim	dbValue	norm/private/postgres/dbtypes.html#dbValue,T	proc dbValue[T: Model](val: T): DbValue		49
+nim	dbValue	norm/private/postgres/dbtypes.html#dbValue,Option[T: Model]	proc dbValue[T: Model](val: Option[T]): DbValue		51
+nim	dbValue	norm/private/postgres/dbtypes.html#dbValue,StringOfCap[T]	proc dbValue[T](val: StringOfCap[T]): DbValue		57
+nim	dbValue	norm/private/postgres/dbtypes.html#dbValue,PaddedStringOfCap[T]	proc dbValue[T](val: PaddedStringOfCap[T]): DbValue		59
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[]	proc to(dbVal: DbValue; T: typedesc[SomeInteger | enum]): T:type		66
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[SomeFloat]	proc to(dbVal: DbValue; T: typedesc[SomeFloat]): T:type		68
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[string]	proc to(dbVal: DbValue; T: typedesc[string]): T:type		70
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[StringOfCap[T1]]	proc to[T1](dbVal: DbValue; T2: typedesc[StringOfCap[T1]]): T2:type		72
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[PaddedStringOfCap[T1]]	proc to[T1](dbVal: DbValue; T2: typedesc[PaddedStringOfCap[T1]]): T2:type		74
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[bool]	proc to(dbVal: DbValue; T: typedesc[bool]): T:type		76
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[DateTime]	proc to(dbVal: DbValue; T: typedesc[DateTime]): T:type		78
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[Model]	proc to(dbVal: DbValue; T: typedesc[Model]): T:type		80
+nim	to	norm/private/postgres/dbtypes.html#to,,typedesc[Option[T]]	proc to[T](dbVal: DbValue; O: typedesc[Option[T]]): O:type		85
+nimgrp	dbtype	norm/private/postgres/dbtypes.html#dbType-procs-all	proc		20
+nimgrp	to	norm/private/postgres/dbtypes.html#to-procs-all	proc		66
+nimgrp	dbvalue	norm/private/postgres/dbtypes.html#dbValue-procs-all	proc		47

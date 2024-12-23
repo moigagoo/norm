@@ -1,8 +1,11 @@
-StringOfCap	norm/types.html#StringOfCap	types: StringOfCap	
-PaddedStringOfCap	norm/types.html#PaddedStringOfCap	types: PaddedStringOfCap	
-newStringOfCap	norm/types.html#newStringOfCap,string	types: newStringOfCap[C: static[int]](val = &quot;&quot;): StringOfCap[C]	
-newPaddedStringOfCap	norm/types.html#newPaddedStringOfCap,string	types: newPaddedStringOfCap[C: static[int]](val = &quot;&quot;): PaddedStringOfCap[C]	
-`==`	norm/types.html#==,StringOfCap[T],StringOfCap[T]	types: `==`[T](x, y: StringOfCap[T]): bool	
-`==`	norm/types.html#==,PaddedStringOfCap[T],PaddedStringOfCap[T]	types: `==`[T](x, y: PaddedStringOfCap[T]): bool	
-`$`	norm/types.html#$,StringOfCap[T]	types: `$`[T](s: StringOfCap[T]): string	
-`$`	norm/types.html#$,PaddedStringOfCap[T]	types: `$`[T](s: PaddedStringOfCap[T]): string	
+nimTitle	types	norm/types.html	module src/norm/types		0
+nim	StringOfCap	norm/types.html#StringOfCap	type StringOfCap		7
+nim	PaddedStringOfCap	norm/types.html#PaddedStringOfCap	type PaddedStringOfCap		8
+nim	newStringOfCap	norm/types.html#newStringOfCap,string	proc newStringOfCap[C: static[int]](val = ""): StringOfCap[C]		11
+nim	newPaddedStringOfCap	norm/types.html#newPaddedStringOfCap,string	proc newPaddedStringOfCap[C: static[int]](val = ""): PaddedStringOfCap[C]		14
+nim	`==`	norm/types.html#==,StringOfCap[T],StringOfCap[T]	proc `==`[T](x, y: StringOfCap[T]): bool		17
+nim	`==`	norm/types.html#==,PaddedStringOfCap[T],PaddedStringOfCap[T]	proc `==`[T](x, y: PaddedStringOfCap[T]): bool		20
+nim	`$`	norm/types.html#$,StringOfCap[T]	proc `$`[T](s: StringOfCap[T]): string		23
+nim	`$`	norm/types.html#$,PaddedStringOfCap[T]	proc `$`[T](s: PaddedStringOfCap[T]): string		26
+nimgrp	==	norm/types.html#==-procs-all	proc		17
+nimgrp	$	norm/types.html#$-procs-all	proc		23

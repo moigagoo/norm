@@ -1,26 +1,31 @@
-Model	norm/model.html#Model	model: Model	
-cpRaise	norm/model.html#cpRaise	ConflictPolicy.cpRaise	
-cpIgnore	norm/model.html#cpIgnore	ConflictPolicy.cpIgnore	
-cpReplace	norm/model.html#cpReplace	ConflictPolicy.cpReplace	
-ConflictPolicy	norm/model.html#ConflictPolicy	model: ConflictPolicy	
-isModel	norm/model.html#isModel,T	model: isModel[T: Model](val: T): bool	
-isModel	norm/model.html#isModel,Option[T: Model]	model: isModel[T: Model](val: Option[T]): bool	
-isModel	norm/model.html#isModel,T_2	model: isModel[T](val: T): bool	
-model	norm/model.html#model,T	model: model[T: Model](val: T): Option[T]	
-model	norm/model.html#model,Option[T: Model]	model: model[T: Model](val: Option[T]): Option[T]	
-model	norm/model.html#model,T_2	model: model[T](val: T): Option[Model]	
-schema	norm/model.html#schema,typedesc[Model]	model: schema(T: typedesc[Model]): Option[string]	
-table	norm/model.html#table,typedesc[Model]	model: table(T: typedesc[Model]): string	
-col	norm/model.html#col,typedesc[Model],string	model: col(T: typedesc[Model]; fld: string): string	
-col	norm/model.html#col,T,string	model: col[T: Model](obj: T; fld: string): string	
-fCol	norm/model.html#fCol,typedesc[Model],string	model: fCol(T: typedesc[Model]; fld: string): string	
-fCol	norm/model.html#fCol,T,string	model: fCol[T: Model](obj: T; fld: string): string	
-fCol	norm/model.html#fCol,typedesc[Model],string,string	model: fCol(T: typedesc[Model]; fld, tAls: string): string	
-fCol	norm/model.html#fCol,T,string,string	model: fCol[T: Model](obj: T; fld, tAls: string): string	
-cols	norm/model.html#cols,T	model: cols[T: Model](obj: T; force = false): seq[string]	
-rfCols	norm/model.html#rfCols,T,seq[string]	model: rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]	
-joinGroups	norm/model.html#joinGroups,T,seq[string]	model: joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[\n    tuple[tbl, tAls, lFld, rFld: string]]	
-checkRo	norm/model.html#checkRo,typedesc[Model]	model: checkRo(T: typedesc[Model])	
-getRelatedFieldNameTo	norm/model.html#getRelatedFieldNameTo,typedesc[S],typedesc[T]	model: getRelatedFieldNameTo[S: Model; T: Model](source: typedesc[S];\n    target: typedesc[T]): string	
-validateFkField	norm/model.html#validateFkField,staticstring,typedesc[S],typedesc[T]	model: validateFkField[S, T: Model](fkFieldName: static string; source: typedesc[S];\n                             target: typedesc[T]): bool	
-validateJoinModelFkField	norm/model.html#validateJoinModelFkField,staticstring,typedesc[S],typedesc[T]	model: validateJoinModelFkField[S, T: Model](fkFieldName: static string;\n                                      joinModel: typedesc[S];\n                                      target: typedesc[T]): bool	
+nimTitle	model	norm/model.html	module src/norm/model		0
+nim	Model	norm/model.html#Model	type Model		11
+nim	cpRaise	norm/model.html#cpRaise	ConflictPolicy.cpRaise		19
+nim	cpIgnore	norm/model.html#cpIgnore	ConflictPolicy.cpIgnore		19
+nim	cpReplace	norm/model.html#cpReplace	ConflictPolicy.cpReplace		19
+nim	ConflictPolicy	norm/model.html#ConflictPolicy	enum ConflictPolicy		19
+nim	isModel	norm/model.html#isModel,T	proc isModel[T: Model](val: T): bool		24
+nim	isModel	norm/model.html#isModel,Option[T: Model]	proc isModel[T: Model](val: Option[T]): bool		26
+nim	isModel	norm/model.html#isModel,T_2	proc isModel[T](val: T): bool		28
+nim	model	norm/model.html#model,T	proc model[T: Model](val: T): Option[T]		30
+nim	model	norm/model.html#model,Option[T: Model]	proc model[T: Model](val: Option[T]): Option[T]		32
+nim	model	norm/model.html#model,T_2	proc model[T](val: T): Option[Model]		34
+nim	schema	norm/model.html#schema,typedesc[Model]	proc schema(T: typedesc[Model]): Option[string]		39
+nim	table	norm/model.html#table,typedesc[Model]	proc table(T: typedesc[Model]): string		52
+nim	col	norm/model.html#col,typedesc[Model],string	proc col(T: typedesc[Model]; fld: string): string		67
+nim	col	norm/model.html#col,T,string	proc col[T: Model](obj: T; fld: string): string		72
+nim	fCol	norm/model.html#fCol,typedesc[Model],string	proc fCol(T: typedesc[Model]; fld: string): string		77
+nim	fCol	norm/model.html#fCol,T,string	proc fCol[T: Model](obj: T; fld: string): string		82
+nim	fCol	norm/model.html#fCol,typedesc[Model],string,string	proc fCol(T: typedesc[Model]; fld, tAls: string): string		87
+nim	fCol	norm/model.html#fCol,T,string,string	proc fCol[T: Model](obj: T; fld, tAls: string): string		92
+nim	cols	norm/model.html#cols,T	proc cols[T: Model](obj: T; force = false): seq[string]		97
+nim	rfCols	norm/model.html#rfCols,T,seq[string]	proc rfCols[T: Model](obj: T; flds: seq[string] = @[]): seq[string]		107
+nim	joinGroups	norm/model.html#joinGroups,T,seq[string]	proc joinGroups[T: Model](obj: T; flds: seq[string] = @[]): seq[\n    tuple[tbl, tAls, lFld, rFld: string]]		116
+nim	checkRo	norm/model.html#checkRo,typedesc[Model]	proc checkRo(T: typedesc[Model])		138
+nim	getRelatedFieldNameTo	norm/model.html#getRelatedFieldNameTo,typedesc[S],typedesc[T]	proc getRelatedFieldNameTo[S: Model; T: Model](source: typedesc[S];\n    target: typedesc[T]): string		144
+nim	validateFkField	norm/model.html#validateFkField,staticstring,typedesc[S],typedesc[T]	proc validateFkField[S, T: Model](fkFieldName: static string; source: typedesc[S];\n                             target: typedesc[T]): bool		176
+nim	validateJoinModelFkField	norm/model.html#validateJoinModelFkField,staticstring,typedesc[S],typedesc[T]	proc validateJoinModelFkField[S, T: Model](fkFieldName: static string;\n                                      joinModel: typedesc[S];\n                                      target: typedesc[T]): bool		214
+nimgrp	ismodel	norm/model.html#isModel-procs-all	proc		24
+nimgrp	fcol	norm/model.html#fCol-procs-all	proc		77
+nimgrp	model	norm/model.html#model-procs-all	proc		30
+nimgrp	col	norm/model.html#col-procs-all	proc		67

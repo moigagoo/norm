@@ -1,29 +1,33 @@
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[]	dbtypes: dbType(T: typedesc[SomeInteger | enum]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeFloat]	dbtypes: dbType(T: typedesc[SomeFloat]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[string]	dbtypes: dbType(T: typedesc[string]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[bool]	dbtypes: dbType(T: typedesc[bool]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[DbBlob]	dbtypes: dbType(T: typedesc[DbBlob]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[DateTime]	dbtypes: dbType(T: typedesc[DateTime]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Model]	dbtypes: dbType(T: typedesc[Model]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[StringOfCap[C]]	dbtypes: dbType[C](_: typedesc[StringOfCap[C]]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]	dbtypes: dbType[C](_: typedesc[PaddedStringOfCap[C]]): string	
-dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Option[T]]	dbtypes: dbType[T](_: typedesc[Option[T]]): string	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue	dbtypes: dbValue(val: typeof(nil)): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,bool	dbtypes: dbValue(val: bool): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,DateTime	dbtypes: dbValue(val: DateTime): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,T	dbtypes: dbValue[T: Model](val: T): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,StringOfCap[T]	dbtypes: dbValue[T](val: StringOfCap[T]): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,PaddedStringOfCap[T]	dbtypes: dbValue[T](val: PaddedStringOfCap[T]): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[bool]	dbtypes: dbValue(val: Option[bool]): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[DateTime]	dbtypes: dbValue(val: Option[DateTime]): DbValue	
-dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[T: Model]	dbtypes: dbValue[T: Model](val: Option[T]): DbValue	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[]	dbtypes: to(dbVal; T: typedesc[SomeInteger | enum]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[SomeFloat]	dbtypes: to(dbVal; T: typedesc[SomeFloat]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[string]	dbtypes: to(dbVal; T: typedesc[string]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[bool]	dbtypes: to(dbVal; T: typedesc[bool]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[DbBlob]	dbtypes: to(dbVal; T: typedesc[DbBlob]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[DateTime]	dbtypes: to(dbVal; T: typedesc[DateTime]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[StringOfCap[T1]]	dbtypes: to[T1](dbVal; T2: typedesc[StringOfCap[T1]]): T2:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[PaddedStringOfCap[T1]]	dbtypes: to[T1](dbVal; T2: typedesc[PaddedStringOfCap[T1]]): T2:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[Model]	dbtypes: to(dbVal; T: typedesc[Model]): T:type	
-to	norm/private/sqlite/dbtypes.html#to,,typedesc[Option[T]]	dbtypes: to[T](dbVal; O: typedesc[Option[T]]): O:type	
+nimTitle	dbtypes	norm/private/sqlite/dbtypes.html	module src/norm/private/sqlite/dbtypes		0
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[]	proc dbType(T: typedesc[SomeInteger | enum]): string		20
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeFloat]	proc dbType(T: typedesc[SomeFloat]): string		22
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[string]	proc dbType(T: typedesc[string]): string		24
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[bool]	proc dbType(T: typedesc[bool]): string		26
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[DbBlob]	proc dbType(T: typedesc[DbBlob]): string		28
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[DateTime]	proc dbType(T: typedesc[DateTime]): string		30
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Model]	proc dbType(T: typedesc[Model]): string		32
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[StringOfCap[C]]	proc dbType[C](_: typedesc[StringOfCap[C]]): string		34
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[PaddedStringOfCap[C]]	proc dbType[C](_: typedesc[PaddedStringOfCap[C]]): string		36
+nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[Option[T]]	proc dbType[T](_: typedesc[Option[T]]): string		38
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue	proc dbValue(val: typeof(nil)): DbValue		43
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,bool	proc dbValue(val: bool): DbValue		45
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,DateTime	proc dbValue(val: DateTime): DbValue		47
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,T	proc dbValue[T: Model](val: T): DbValue		49
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,StringOfCap[T]	proc dbValue[T](val: StringOfCap[T]): DbValue		51
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,PaddedStringOfCap[T]	proc dbValue[T](val: PaddedStringOfCap[T]): DbValue		53
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[bool]	proc dbValue(val: Option[bool]): DbValue		55
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[DateTime]	proc dbValue(val: Option[DateTime]): DbValue		61
+nim	dbValue	norm/private/sqlite/dbtypes.html#dbValue,Option[T: Model]	proc dbValue[T: Model](val: Option[T]): DbValue		67
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[]	proc to(dbVal: DbValue; T: typedesc[SomeInteger | enum]): T:type		78
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[SomeFloat]	proc to(dbVal: DbValue; T: typedesc[SomeFloat]): T:type		80
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[string]	proc to(dbVal: DbValue; T: typedesc[string]): T:type		82
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[bool]	proc to(dbVal: DbValue; T: typedesc[bool]): T:type		84
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[DbBlob]	proc to(dbVal: DbValue; T: typedesc[DbBlob]): T:type		91
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[DateTime]	proc to(dbVal: DbValue; T: typedesc[DateTime]): T:type		93
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[StringOfCap[T1]]	proc to[T1](dbVal: DbValue; T2: typedesc[StringOfCap[T1]]): T2:type		95
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[PaddedStringOfCap[T1]]	proc to[T1](dbVal: DbValue; T2: typedesc[PaddedStringOfCap[T1]]): T2:type		97
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[Model]	proc to(dbVal: DbValue; T: typedesc[Model]): T:type		99
+nim	to	norm/private/sqlite/dbtypes.html#to,,typedesc[Option[T]]	proc to[T](dbVal: DbValue; O: typedesc[Option[T]]): O:type		104
+nimgrp	dbtype	norm/private/sqlite/dbtypes.html#dbType-procs-all	proc		20
+nimgrp	to	norm/private/sqlite/dbtypes.html#to-procs-all	proc		78
+nimgrp	dbvalue	norm/private/sqlite/dbtypes.html#dbValue-procs-all	proc		43

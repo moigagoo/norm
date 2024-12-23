@@ -1,2 +1,3 @@
-dot	norm/private/dot.html#dot.m,typed,string	dot: dot(obj: typed; fld: string): untyped	
-hasField	norm/private/dot.html#hasField.t,typed,staticstring	dot: hasField(t: typed; fieldName: static string): bool	
+nimTitle	dot	norm/private/dot.html	module src/norm/private/dot		0
+nim	dot	norm/private/dot.html#dot.m,typed,string	macro dot(obj: typed; fld: string): untyped		4
+nim	hasField	norm/private/dot.html#hasField.t,typed,staticstring	template hasField(t: typed; fieldName: static string): bool		10

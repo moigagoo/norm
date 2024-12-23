@@ -1,13 +1,16 @@
-Pool	norm/pool.html#Pool	pool: Pool	
-PoolExhaustedError	norm/pool.html#PoolExhaustedError	pool: PoolExhaustedError	
-pepRaise	norm/pool.html#pepRaise	PoolExhaustedPolicy.pepRaise	
-pepExtend	norm/pool.html#pepExtend	PoolExhaustedPolicy.pepExtend	
-PoolExhaustedPolicy	norm/pool.html#PoolExhaustedPolicy	pool: PoolExhaustedPolicy	
-newPool	norm/pool.html#newPool,Positive,proc)	pool: newPool[T: DbConn](defaultSize: Positive; getDbProc: proc (): T = getDb;\n                   poolExhaustedPolicy = pepRaise): Pool[T]	
-defaultSize	norm/pool.html#defaultSize,Pool	pool: defaultSize(pool: Pool): Natural	
-size	norm/pool.html#size,Pool	pool: size(pool: Pool): Natural	
-pop	norm/pool.html#pop,Pool[T: DbConn]	pool: pop[T: DbConn](pool: var Pool[T]): T	
-add	norm/pool.html#add,Pool,T	pool: add[T: DbConn](pool: var Pool; dbConn: T)	
-reset	norm/pool.html#reset,Pool	pool: reset(pool: var Pool)	
-close	norm/pool.html#close,Pool	pool: close(pool: var Pool)	
-withDb	norm/pool.html#withDb.t,Pool,untyped	pool: withDb(pool: var Pool; body: untyped): untyped	
+nimTitle	pool	norm/pool.html	module src/norm/pool		0
+nim	Pool	norm/pool.html#Pool	type Pool		7
+nim	PoolExhaustedError	norm/pool.html#PoolExhaustedError	object PoolExhaustedError		13
+nim	pepRaise	norm/pool.html#pepRaise	PoolExhaustedPolicy.pepRaise		14
+nim	pepExtend	norm/pool.html#pepExtend	PoolExhaustedPolicy.pepExtend		14
+nim	PoolExhaustedPolicy	norm/pool.html#PoolExhaustedPolicy	enum PoolExhaustedPolicy		14
+nim	newPool	norm/pool.html#newPool,Positive	proc newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc = sqlite.getDb;\n                          poolExhaustedPolicy = pepRaise): Pool[T]		19
+nim	newPool	norm/pool.html#newPool,Positive_2	proc newPool[T: postgres.DbConn](defaultSize: Positive; getDbProc = postgres.getDb;\n                            poolExhaustedPolicy = pepRaise): Pool[T]		39
+nim	defaultSize	norm/pool.html#defaultSize,Pool	proc defaultSize(pool: Pool): Natural		57
+nim	size	norm/pool.html#size,Pool	proc size(pool: Pool): Natural		60
+nim	pop	norm/pool.html#pop,Pool[T: DbConn or DbConn]	proc pop[T: sqlite.DbConn | postgres.DbConn](pool: var Pool[T]): T		63
+nim	add	norm/pool.html#add,Pool,T	proc add[T: sqlite.DbConn | postgres.DbConn](pool: var Pool; dbConn: T)		79
+nim	reset	norm/pool.html#reset,Pool	proc reset(pool: var Pool)		88
+nim	close	norm/pool.html#close,Pool	proc close(pool: var Pool)		96
+nim	withDb	norm/pool.html#withDb.t,Pool,untyped	template withDb(pool: var Pool; body: untyped): untyped		105
+nimgrp	newpool	norm/pool.html#newPool-procs-all	proc		19

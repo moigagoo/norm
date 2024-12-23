@@ -1,3 +1,5 @@
-LoggingError	norm/private/log.html#LoggingError	log: LoggingError	
-log	norm/private/log.html#log,string	log: log(msg: string)	
-log	norm/private/log.html#log,string,string	log: log(qry, paramstr: string)	
+nimTitle	log	norm/private/log.html	module src/norm/private/log		0
+nim	LoggingError	norm/private/log.html#LoggingError	object LoggingError		2
+nim	log	norm/private/log.html#log,string	proc log(msg: string)		22
+nim	log	norm/private/log.html#log,string,string	proc log(qry, paramstr: string)		24
+nimgrp	log	norm/private/log.html#log-procs-all	proc		22

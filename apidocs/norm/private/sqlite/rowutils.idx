@@ -1,3 +1,4 @@
-isEmptyColumn	norm/private/sqlite/rowutils.html#isEmptyColumn,Row,int	rowutils: isEmptyColumn(row: Row; index: int): bool	
-fromRow	norm/private/sqlite/rowutils.html#fromRow,T,Row	rowutils: fromRow[T: ref object](obj: var T; row: Row)	
-toRow	norm/private/sqlite/rowutils.html#toRow,T	rowutils: toRow[T: Model](obj: T; force = false): Row	
+nimTitle	rowutils	norm/private/sqlite/rowutils.html	module src/norm/private/sqlite/rowutils		0
+nim	isEmptyColumn	norm/private/sqlite/rowutils.html#isEmptyColumn,Row,int	proc isEmptyColumn(row: Row; index: int): bool		18
+nim	fromRow	norm/private/sqlite/rowutils.html#fromRow,T,Row	proc fromRow[T: ref object](obj: var T; row: Row)		57
+nim	toRow	norm/private/sqlite/rowutils.html#toRow,T	proc toRow[T: Model](obj: T; force = false): Row		66
