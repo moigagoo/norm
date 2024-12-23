@@ -86,12 +86,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Book
-        run: docker-compose run book
-
+        run: docker compose run book
+ 
   Docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Docs
-        run: docker-compose run docs
+        run: docker compose run docs
 
