@@ -37,7 +37,7 @@ func model*[T](val: T): Option[Model] =
   none Model
 
 func schema*(T: typedesc[Model]): Option[string] =
-  ##[ Get schema name for `Model <#Model>`_, which is the value of `schemaName <pragmas.html#schemaName.t,string>`_ pragma.
+  ##[ Get schema name for `Model`_, which is the value of `schemaName <pragmas.html#schemaName.t,string>`_ pragma.
 
   `none(string)` means default schema.
 
@@ -50,7 +50,7 @@ func schema*(T: typedesc[Model]): Option[string] =
     none(string)
 
 func table*(T: typedesc[Model]): string =
-  ##[ Get table name for `Model <#Model>`_,
+  ##[ Get table name for `Model`_,
   which is the value of `tableName <pragmas.html#tableName.t,string>`_ pragma or the type name in double quotes.
 
   If `schemaName`_ is set, it's prepended to the table name.

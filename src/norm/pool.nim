@@ -3,9 +3,8 @@ import std/locks
 import sqlite, postgres
 
 
-type 
-  DbConn = sqlite.DbConn | postgres.DbConn
-  Pool*[T: DbConn] = ref object 
+type
+  Pool*[T: sqlite.DbConn | postgres.DbConn] = ref object
     defaultSize: Natural
     conns: seq[T]
     getDbProc: proc: T
@@ -17,24 +16,38 @@ type
     pepExtend
 
 
-proc newPool*[T: DbConn](defaultSize: Positive, getDbProc: proc: T = getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
-  ##[ Create a connection pool of the given size.
+proc newPool*[T: sqlite.DbConn](defaultSize: Positive, getDbProc = sqlite.getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
+  ##[ Create an SQLite connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
 
     - ``pepRaise`` (default) means throw ``PoolExhaustedError``
-    - ``pepExtend`` means throw “add another connection to the pool.”
+    - ``pepExtend`` means “add another connection to the pool.”
   ]##
 
-  when T is sqlite.DbConn:
-    let dbProc = proc(): sqlite.DbConn =
-      result = getDbProc()
-      result.exec(sql"PRAGMA foreign_keys=on;")
-  else:
-    let dbProc = getDbProc
+  let dbProc = proc(): sqlite.DbConn =
+    result = getDbProc()
+    result.exec(sql"PRAGMA foreign_keys=on;")
 
   result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), getDbProc: dbProc, poolExhaustedPolicy: poolExhaustedPolicy)
 
+  initLock(result.lock)
+
+  for conn in result.conns.mitems:
+    conn = result.getDbProc()
+
+proc newPool*[T: postgres.DbConn](defaultSize: Positive, getDbProc = postgres.getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
+  ##[ Create a Postgres connection pool of the given size.
+
+  ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
+
+    - ``pepRaise`` (default) means throw ``PoolExhaustedError``
+    - ``pepExtend`` means “add another connection to the pool.”
+  ]##
+
+  let dbProc = getDbProc
+
+  result = Pool[T](defaultSize: defaultSize, conns: newSeq[T](defaultSize), getDbProc: dbProc, poolExhaustedPolicy: poolExhaustedPolicy)
 
   initLock(result.lock)
 
@@ -47,7 +60,7 @@ func defaultSize*(pool: Pool): Natural =
 func size*(pool: Pool): Natural =
   len(pool.conns)
 
-proc pop*[T: DbConn](pool: var Pool[T]): T =
+proc pop*[T: sqlite.DbConn | postgres.DbConn](pool: var Pool[T]): T =
   ##[ Take a connection from the pool.
 
   If you're calling this manually, don't forget to `add <#add,Pool,DbConn>`_ it back!
@@ -63,7 +76,7 @@ proc pop*[T: DbConn](pool: var Pool[T]): T =
       of pepExtend:
         result = pool.getDbProc()
 
-func add*[T: DbConn](pool: var Pool, dbConn: T) =
+func add*[T: sqlite.DbConn | postgres.DbConn](pool: var Pool, dbConn: T) =
   ##[ Add a connection to the pool.
 
   Use to return a borrowed connection to the pool.

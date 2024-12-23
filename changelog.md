@@ -8,6 +8,12 @@
 -   [d]—docs improvement
 
 
+## 2.8.4 (December 24, 2024)
+
+- [f] Fix connection pool creation for Nim 2.2.0 (see [#206](https://github.com/moigagoo/norm/pull/206)).
+- [d] Update the docs in the code for the improved docgen in Nim 2.2.0.
+
+
 ## 2.8.3 (July 5, 2024)
 
 - [f] Make creating indices idempotent (see [#203](https://github.com/moigagoo/norm/pull/203)).
