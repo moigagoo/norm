@@ -3,7 +3,7 @@ import std/locks
 import sqlite, postgres
 
 
-type 
+type
   DbConn = sqlite.DbConn | postgres.DbConn
   Pool*[T: DbConn] = ref object 
     defaultSize: Natural
@@ -23,7 +23,7 @@ proc newPool*[T: DbConn](defaultSize: Positive, getDbProc: proc: T = getDb, pool
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
 
     - ``pepRaise`` (default) means throw ``PoolExhaustedError``
-    - ``pepExtend`` means throw “add another connection to the pool.”
+    - ``pepExtend`` means “add another connection to the pool.”
   ]##
 
   when T is sqlite.DbConn:
