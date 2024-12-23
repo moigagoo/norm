@@ -12,10 +12,10 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Book
-        run: docker-compose run book
+        run: docker compose run book
 
       - name: Docs
-        run: docker-compose run docs
+        run: docker compose run docs
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

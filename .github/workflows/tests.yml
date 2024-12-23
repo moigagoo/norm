@@ -17,7 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        nim-version: ['1.6.18', 'devel']
+        nim-version: ['1.6.20', '2.0.12', '2.2.0', 'devel']
 
     services:
       postgres:
@@ -53,7 +53,7 @@ jobs:
 
     strategy:
       matrix:
-        nim-version: ['1.6.18', 'devel']
+        nim-version: ['1.6.20', '2.0.12', '2.2.0', 'devel']
 
     services:
       postgres:
@@ -86,12 +86,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Book
-        run: docker-compose run book
-
+        run: docker compose run book
+ 
   Docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Docs
-        run: docker-compose run docs
+        run: docker compose run docs
 
