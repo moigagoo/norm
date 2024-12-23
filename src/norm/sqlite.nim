@@ -23,7 +23,7 @@ type
   RollbackError* = object of CatchableError
     ##[ Raised when transaction is manually rollbacked.
 
-    Do not raise manually, use `rollback <#rollback>`_ proc.
+    Do not raise manually, use `rollback`_ proc.
     ]##
   NotFoundError* = object of KeyError
 
@@ -42,7 +42,7 @@ proc getDb*: DbConn =
 template withDb*(body: untyped): untyped =
   ##[ Wrapper for DB operations.
 
-  Creates a ``DbConn`` with `getDb <#getDb>`_ as ``db`` variable,
+  Creates a ``DbConn`` with `getDb`_ as ``db`` variable,
   runs your code in a ``try`` block, and closes ``db`` afterward.
   ]##
 
@@ -435,7 +435,7 @@ proc delete*[T: Model](dbConn; objs: var openArray[T]) =
 # Transactions
 
 proc rollback* {.raises: RollbackError.} =
-  ## Rollback transaction by raising `RollbackError <#RollbackError>`_.
+  ## Rollback transaction by raising `RollbackError`_.
 
   raise newException(RollbackError, "Rollback transaction.")
 
