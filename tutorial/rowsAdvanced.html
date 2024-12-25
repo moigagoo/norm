@@ -212,23 +212,23 @@
                 <div id="content" class="content">
                     <main>
                         <h1>More complex queries</h1>
-<p>Norm allows you to sort, limit use subqueries for complex where clauses and more.
-To understand how, it helps to keep in mind that norm essentially generates SQL SELECT queries after the following pattern:
-<code>SELECT &lt;fields of model&gt; FROM &lt;table-name specified by model&gt; WHERE &lt;condition&gt;</code></p>
-<p>This means that whatever pieces of SQL come after the WHERE keyword are thing you can freely specify if need be.</p>
+<p>Norm allows you to sort and limit rows and use subqueries for complex <code>WHERE</code> clauses. To understand how, it helps to keep in mind that Norm essentially generates SQL <code>SELECT</code> queries after the following pattern: <code>SELECT &lt;fields of model&gt; FROM &lt;table-name specified by model&gt; WHERE &lt;condition&gt;</code></p>
+<p>This means that whatever pieces of SQL come after the <code>WHERE</code> keyword are thing you can freely specify if need be.</p>
 <h2>Limiting the number of queried models</h2>
-<p>To limit the number of queried models, simply use SQL's Limit keyword.</p>
-<p>Lets query our <code>Customer</code> table from earlier and query multiple entries, but only take the first entry.</p>
+<p>To limit the number of queried models, simply use SQL's <code>LIMIT</code> keyword.</p>
+<p>Let's query our <code>Customer</code> table from earlier and query multiple entries, but only take the first entry:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span>
   userFoo = newUser(<span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
   alice = newCustomer(some <span class="hljs-string">&quot;Alice&quot;</span>, userFoo)
   bob = newCustomer(some <span class="hljs-string">&quot;Bob&quot;</span>, userFoo)
+
 with dbConn:
   insert userFoo
   insert alice
   insert bob
 
 <span class="hljs-keyword">var</span> customersFoo = @[newCustomer()]
+
 dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ? LIMIT 1&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
 
 <span class="hljs-keyword">assert</span> customersFoo.len() == <span class="hljs-number">1</span>
@@ -239,10 +239,11 @@ INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Alice', 1]
 Object ID is not 0, skipping insertion. Type: User, ID: 1
 INSERT INTO &quot;Customer&quot; (name, user) VALUES(?, ?) &lt;- @['Bob', 1]
 SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? LIMIT 1 &lt;- ['foo@foo.foo']</pre>
-                        <p><code>customersFoo</code> has only 1 entry, despite <code>alice</code> and <code>bob</code> both having the email address <code>&quot;foo@foo.foo&quot;</code>, thanks to the LIMIT SQL keyword.</p>
+                        <p><code>customersFoo</code> has only 1 entry, despite <code>alice</code> and <code>bob</code> both having the email address <code>&quot;foo@foo.foo&quot;</code>, thanks to the <code>LIMIT</code> SQL keyword.</p>
 <h2>Sorting model output</h2>
-<p>We can of course use ORDER BY just as we did LIMIT before:</p>
+<p>We can of course use <code>ORDER BY</code> just as we did <code>LIMIT</code> before:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span> sortedCustomersFoo = @[newCustomer()]
+
 dbConn.select(sortedCustomersFoo, <span class="hljs-string">&quot;User.email = ? ORDER BY name DESC&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
 
 <span class="hljs-keyword">assert</span> sortedCustomersFoo[<span class="hljs-number">0</span>].name.get() == <span class="hljs-string">&quot;Bob&quot;</span>
@@ -250,12 +251,15 @@ dbConn.select(sortedCustomersFoo, <span class="hljs-string">&quot;User.email = ?
 
 <span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">SELECT &quot;Customer&quot;.name, &quot;Customer&quot;.user, &quot;user&quot;.email, &quot;user&quot;.id, &quot;Customer&quot;.id FROM &quot;Customer&quot; LEFT JOIN &quot;User&quot; AS &quot;user&quot; ON &quot;Customer&quot;.user = &quot;user&quot;.id WHERE User.email = ? ORDER BY name DESC &lt;- ['foo@foo.foo']</pre>
                         <h2>Using Subqueries</h2>
-<p>Similarly as to ORDER BY, you can also use subqueries within the WHERE block:</p>
+<p>Similarly as to <code>ORDER BY</code>, you can also use subqueries within the <code>WHERE</code> block:</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">var</span> subqueryCustomersFoo = @[newCustomer()]
+
 <span class="hljs-keyword">const</span> condition = <span class="hljs-string">&quot;&quot;&quot;
     Customer.id IN (SELECT Cust.id FROM Customer AS Cust WHERE Cust.id % 2 == 0)
   &quot;&quot;&quot;</span>
+
 dbConn.select(subqueryCustomersFoo, condition)
+
 <span class="hljs-keyword">assert</span> subqueryCustomersFoo.len() == <span class="hljs-number">1</span>
 <span class="hljs-keyword">assert</span> subqueryCustomersFoo[<span class="hljs-number">0</span>].id == <span class="hljs-number">2</span>
 
