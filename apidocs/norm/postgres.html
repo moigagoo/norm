@@ -140,10 +140,14 @@
 <li><a class="reference" href="#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D" title="select[T: Model](dbConn: DbConn; objs: var seq[T]; cond: string;
                  params: varargs[DbValue, dbValue])">select[T: Model](dbConn: DbConn; objs: var seq[T]; cond: string;
                  params: varargs[DbValue, dbValue])</a></li>
+<li><a class="reference" href="#select%2C%2Ctypedesc%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D" title="select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;
+                 params: varargs[DbValue, dbValue]): seq[T]">select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;
+                 params: varargs[DbValue, dbValue]): seq[T]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">selectAll
   <li><a class="reference" href="#selectAll%2C%2Cseq%5BT%5D" title="selectAll[T: Model](dbConn: DbConn; objs: var seq[T])">selectAll[T: Model](dbConn: DbConn; objs: var seq[T])</a></li>
+<li><a class="reference" href="#selectAll%2C%2Ctypedesc%5BT%5D" title="selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]">selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">selectManyToMany
@@ -490,6 +494,18 @@ instead of hardcoded table and column names</li>
     
   </dd>
 </div>
+<div id="select,,typedesc[T],string,varargs[DbValue,dbValue]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#select%2C%2Ctypedesc%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D"><span class="Identifier">select</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">:</span> <span class="Identifier">DbConn</span><span class="Other">;</span> <span class="Identifier">typ</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">cond</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">;</span>
+                      <span class="Identifier">params</span><span class="Other">:</span> <span class="Identifier">varargs</span><span class="Other">[</span><span class="Identifier">DbValue</span><span class="Other">,</span> <span class="Identifier">dbValue</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">{</span><span class="Identifier">ValueError</span><span class="Other">,</span> <span class="Identifier">DbError</span><span class="Other">,</span> <a href="private/log.html#LoggingError"><span class="Identifier">LoggingError</span></a><span class="Other">}</span></span>.}</pre></dt>
+  <dd>
+    
+    <p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB.</p>
+<p><tt class="docutils literal"><span class="pre">typ</span></tt> is a <a class="reference external" href="model.html#Model">Model</a> subtype to contain the values. </p>
+
+    
+  </dd>
+</div>
 
 </div>
 <div id="selectAll-procs-all">
@@ -499,6 +515,17 @@ instead of hardcoded table and column names</li>
     
     <p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB, fetching all rows in the matching table.</p>
 <p><tt class="docutils literal"><span class="pre">objs</span></tt> must have at least one item.</p>
+<p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
+
+    
+  </dd>
+</div>
+<div id="selectAll,,typedesc[T]">
+  <dt><pre><span class="Keyword">proc</span> <a href="#selectAll%2C%2Ctypedesc%5BT%5D"><span class="Identifier">selectAll</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">dbConn</span><span class="Other">:</span> <span class="Identifier">DbConn</span><span class="Other">;</span> <span class="Identifier">typ</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dd>
+    
+    <p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB, fetching all rows in the matching table.</p>
+<p><tt class="docutils literal"><span class="pre">typ</span></tt> is a <a class="reference external" href="model.html#Model">Model</a> subtype to contain the values.</p>
 <p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
 
     
@@ -667,7 +694,7 @@ instead of hardcoded table and column names</li>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 13:58:55 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 18:46:58 UTC</small>
       </div>
     </div>
   </div>

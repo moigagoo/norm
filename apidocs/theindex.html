@@ -462,6 +462,10 @@
                  params: varargs[DbValue, dbValue])" href="norm/postgres.html#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: proc select[T: Model](dbConn: DbConn; obj: var T; cond: string;
                  params: varargs[DbValue, dbValue])</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="postgres: proc select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;
+                 params: varargs[DbValue, dbValue]): seq[T]" href="norm/postgres.html#select%2C%2Ctypedesc%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">postgres: proc select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;
+                 params: varargs[DbValue, dbValue]): seq[T]</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="sqlite: proc select[T: Model](dbConn: DbConn; objs: var seq[T]; cond: string;
                  params: varargs[DbValue, dbValue])" href="norm/sqlite.html#select%2C%2Cseq%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: proc select[T: Model](dbConn: DbConn; objs: var seq[T]; cond: string;
                  params: varargs[DbValue, dbValue])</a></li>
@@ -469,12 +473,20 @@
           data-doc-search-tag="sqlite: proc select[T: Model](dbConn: DbConn; obj: var T; cond: string;
                  params: varargs[DbValue, dbValue])" href="norm/sqlite.html#select%2C%2CT%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: proc select[T: Model](dbConn: DbConn; obj: var T; cond: string;
                  params: varargs[DbValue, dbValue])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: proc select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;
+                 params: varargs[DbValue, dbValue]): seq[T]" href="norm/sqlite.html#select%2C%2Ctypedesc%5BT%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D">sqlite: proc select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;
+                 params: varargs[DbValue, dbValue]): seq[T]</a></li>
           </ul></dd>
 <dt><a name="selectAll" href="#selectAll"><span>selectAll:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="postgres: proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])" href="norm/postgres.html#selectAll%2C%2Cseq%5BT%5D">postgres: proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])</a></li>
           <li><a class="reference external"
+          data-doc-search-tag="postgres: proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]" href="norm/postgres.html#selectAll%2C%2Ctypedesc%5BT%5D">postgres: proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]</a></li>
+          <li><a class="reference external"
           data-doc-search-tag="sqlite: proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])" href="norm/sqlite.html#selectAll%2C%2Cseq%5BT%5D">sqlite: proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sqlite: proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]" href="norm/sqlite.html#selectAll%2C%2Ctypedesc%5BT%5D">sqlite: proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]</a></li>
           </ul></dd>
 <dt><a name="selectManyToMany" href="#selectManyToMany"><span>selectManyToMany:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -712,7 +724,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 13:58:55 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 18:46:58 UTC</small>
       </div>
     </div>
   </div>
