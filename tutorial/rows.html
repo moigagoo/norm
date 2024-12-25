@@ -274,7 +274,11 @@ dbConn.select(customersFoo, <span class="hljs-string">&quot;User.email = ?&quot;
 (email: &quot;foo@foo.foo&quot;, id: 1)
 (name: some(&quot;Bob&quot;), user: ..., id: 2)
 (email: &quot;foo@foo.foo&quot;, id: 1)</pre>
-                        <p>If you query relationships that are nested, such as when customers can have pets and you want to query all pets of all customers of users with a specific email address, you will need  to concatenate the foreign-key fields, separeted by a <code>_</code> in your query.</p>
+                        <p>You can pass a <code>Model</code> subtype to <code>select</code> proc instead of the object instance. Norm will instantiate the container object implicitly:</p>
+                        <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">let</span> userFoo2 = dbConn.select(<span class="hljs-type">User</span>, <span class="hljs-string">&quot;email = ?&quot;</span>, <span class="hljs-string">&quot;foo@foo.foo&quot;</span>)
+<span class="hljs-keyword">echo</span>()</code></pre><pre class="nb-output">SELECT &quot;User&quot;.email, &quot;User&quot;.id FROM &quot;User&quot;  WHERE email = ? &lt;- ['foo@foo.foo']</pre>
+                        <p>Note that this will only work with types that can be instantiated by calling <code>new &lt;Type&gt;</code>, i.e. types that don't require explicit instantiation.</p>
+<p>If you query relationships that are nested, such as when customers can have pets and you want to query all pets of all customers of users with a specific email address, you will need  to concatenate the foreign-key fields, separeted by a <code>_</code> in your query.</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> norm/model
 
 <span class="hljs-keyword">type</span> <span class="hljs-type">Pet</span>* = <span class="hljs-keyword">ref</span> <span class="hljs-keyword">object</span> <span class="hljs-keyword">of</span> <span class="hljs-type">Model</span>

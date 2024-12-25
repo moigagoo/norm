@@ -12,32 +12,32 @@ nim	insert	norm/sqlite.html#insert,,openArray[T]	proc insert[T: Model](dbConn: D
 nim	select	norm/sqlite.html#select,,T,string,varargs[DbValue,dbValue]	proc select[T: Model](dbConn: DbConn; obj: var T; cond: string;\n                 params: varargs[DbValue, dbValue])		209
 nim	select	norm/sqlite.html#select,,seq[T],string,varargs[DbValue,dbValue]	proc select[T: Model](dbConn: DbConn; objs: var seq[T]; cond: string;\n                 params: varargs[DbValue, dbValue])		235
 nim	select	norm/sqlite.html#select,,typedesc[T],string,varargs[DbValue,dbValue]	proc select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;\n                 params: varargs[DbValue, dbValue]): seq[T]		263
-nim	selectAll	norm/sqlite.html#selectAll,,seq[T]	proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])		272
-nim	selectAll	norm/sqlite.html#selectAll,,typedesc[T]	proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]		282
-nim	rawSelect	norm/sqlite.html#rawSelect,,string,T,varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; obj: var T;\n                         params: varargs[DbValue, dbValue])		293
-nim	rawSelect	norm/sqlite.html#rawSelect,,string,seq[T],varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; objs: var seq[T];\n                         params: varargs[DbValue, dbValue])		307
-nim	count	norm/sqlite.html#count,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc count(dbConn: DbConn; T: typedesc[Model]; col = "*"; dist = false; cond = "1";\n      params: varargs[DbValue, dbValue]): int64		326
-nim	sum	norm/sqlite.html#sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc sum(dbConn: DbConn; T: typedesc[Model]; col: string; dist = false; cond = "1";\n    params: varargs[DbValue, dbValue]): float		340
-nim	exists	norm/sqlite.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	proc exists(dbConn: DbConn; T: typedesc[Model]; cond = "1";\n       params: varargs[DbValue, dbValue]): bool		352
-nim	update	norm/sqlite.html#update,,T	proc update[T: Model](dbConn: DbConn; obj: var T)		361
-nim	update	norm/sqlite.html#update,,openArray[T]	proc update[T: Model](dbConn: DbConn; objs: var openArray[T])		416
-nim	delete	norm/sqlite.html#delete,,T	proc delete[T: Model](dbConn: DbConn; obj: var T)		435
-nim	delete	norm/sqlite.html#delete,,openArray[T]	proc delete[T: Model](dbConn: DbConn; objs: var openArray[T])		448
-nim	rollback	norm/sqlite.html#rollback	proc rollback()		457
-nim	transaction	norm/sqlite.html#transaction.t,,untyped	template transaction(dbConn; body: untyped): untyped		462
-nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,O,seq[M],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M];\n                                    foreignKeyFieldName: static string)		490
-nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,O,seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M])		503
-nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,seq[O],Table[int64,seq[M]],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var Table[int64, seq[M]];\n                                    foreignKeyFieldName: static string)		515
-nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,seq[O],seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var seq[M])		548
-nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2]; fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		565
-nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,M1,seq[J],seq[M2]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2])		587
-nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]];\n    fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		601
-nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]])		633
-nimgrp	selectonetomany	norm/sqlite.html#selectOneToMany-procs-all	proc		490
-nimgrp	rawselect	norm/sqlite.html#rawSelect-procs-all	proc		293
-nimgrp	delete	norm/sqlite.html#delete-procs-all	proc		435
+nim	selectAll	norm/sqlite.html#selectAll,,seq[T]	proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])		274
+nim	selectAll	norm/sqlite.html#selectAll,,typedesc[T]	proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]		284
+nim	rawSelect	norm/sqlite.html#rawSelect,,string,T,varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; obj: var T;\n                         params: varargs[DbValue, dbValue])		297
+nim	rawSelect	norm/sqlite.html#rawSelect,,string,seq[T],varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; objs: var seq[T];\n                         params: varargs[DbValue, dbValue])		311
+nim	count	norm/sqlite.html#count,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc count(dbConn: DbConn; T: typedesc[Model]; col = "*"; dist = false; cond = "1";\n      params: varargs[DbValue, dbValue]): int64		330
+nim	sum	norm/sqlite.html#sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc sum(dbConn: DbConn; T: typedesc[Model]; col: string; dist = false; cond = "1";\n    params: varargs[DbValue, dbValue]): float		344
+nim	exists	norm/sqlite.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	proc exists(dbConn: DbConn; T: typedesc[Model]; cond = "1";\n       params: varargs[DbValue, dbValue]): bool		356
+nim	update	norm/sqlite.html#update,,T	proc update[T: Model](dbConn: DbConn; obj: var T)		365
+nim	update	norm/sqlite.html#update,,openArray[T]	proc update[T: Model](dbConn: DbConn; objs: var openArray[T])		420
+nim	delete	norm/sqlite.html#delete,,T	proc delete[T: Model](dbConn: DbConn; obj: var T)		439
+nim	delete	norm/sqlite.html#delete,,openArray[T]	proc delete[T: Model](dbConn: DbConn; objs: var openArray[T])		452
+nim	rollback	norm/sqlite.html#rollback	proc rollback()		461
+nim	transaction	norm/sqlite.html#transaction.t,,untyped	template transaction(dbConn; body: untyped): untyped		466
+nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,O,seq[M],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M];\n                                    foreignKeyFieldName: static string)		494
+nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,O,seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M])		507
+nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,seq[O],Table[int64,seq[M]],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var Table[int64, seq[M]];\n                                    foreignKeyFieldName: static string)		519
+nim	selectOneToMany	norm/sqlite.html#selectOneToMany,,seq[O],seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var seq[M])		552
+nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2]; fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		569
+nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,M1,seq[J],seq[M2]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2])		591
+nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]];\n    fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		605
+nim	selectManyToMany	norm/sqlite.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]])		637
+nimgrp	selectonetomany	norm/sqlite.html#selectOneToMany-procs-all	proc		494
+nimgrp	rawselect	norm/sqlite.html#rawSelect-procs-all	proc		297
+nimgrp	delete	norm/sqlite.html#delete-procs-all	proc		439
 nimgrp	select	norm/sqlite.html#select-procs-all	proc		209
-nimgrp	selectmanytomany	norm/sqlite.html#selectManyToMany-procs-all	proc		565
-nimgrp	selectall	norm/sqlite.html#selectAll-procs-all	proc		272
-nimgrp	update	norm/sqlite.html#update-procs-all	proc		361
+nimgrp	selectmanytomany	norm/sqlite.html#selectManyToMany-procs-all	proc		569
+nimgrp	selectall	norm/sqlite.html#selectAll-procs-all	proc		274
+nimgrp	update	norm/sqlite.html#update-procs-all	proc		365
 nimgrp	insert	norm/sqlite.html#insert-procs-all	proc		165

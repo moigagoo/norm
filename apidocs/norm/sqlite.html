@@ -476,7 +476,8 @@ instead of hardcoded table and column names</li>
   <dd>
     
     <p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB.</p>
-<p><tt class="docutils literal"><span class="pre">typ</span></tt> is a <a class="reference external" href="model.html#Model">Model</a> subtype to contain the values. </p>
+<p><tt class="docutils literal"><span class="pre">typ</span></tt> is a <a class="reference external" href="model.html#Model">Model</a> subtype to contain the values.</p>
+<p><strong>Note:</strong> This works only with types that can be instantiated by calling <tt class="docutils literal"><span class="pre">new &lt;Type&gt;</span></tt>, i.e. types that don't require explicit instantiation. </p>
 
     
   </dd>
@@ -501,6 +502,7 @@ instead of hardcoded table and column names</li>
     
     <p>Populate a sequence of <a class="reference external" href="model.html#Model">Model</a> instances from DB, fetching all rows in the matching table.</p>
 <p><tt class="docutils literal"><span class="pre">typ</span></tt> is a <a class="reference external" href="model.html#Model">Model</a> subtype to contain the values.</p>
+<p><strong>Note:</strong> This works only with types that can be instantiated by calling <tt class="docutils literal"><span class="pre">new &lt;Type&gt;</span></tt>, i.e. types that don't require explicit instantiation.</p>
 <p><strong>Warning:</strong> this is a dangerous operation because you don't control how many rows will be fetched. </p>
 
     
@@ -669,7 +671,7 @@ instead of hardcoded table and column names</li>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 18:46:58 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 19:13:09 UTC</small>
       </div>
     </div>
   </div>

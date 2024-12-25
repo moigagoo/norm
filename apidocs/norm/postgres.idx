@@ -15,32 +15,32 @@ nim	insert	norm/postgres.html#insert,,openArray[T]	proc insert[T: Model](dbConn:
 nim	select	norm/postgres.html#select,,T,string,varargs[DbValue,dbValue]	proc select[T: Model](dbConn: DbConn; obj: var T; cond: string;\n                 params: varargs[DbValue, dbValue])		232
 nim	select	norm/postgres.html#select,,seq[T],string,varargs[DbValue,dbValue]	proc select[T: Model](dbConn: DbConn; objs: var seq[T]; cond: string;\n                 params: varargs[DbValue, dbValue])		261
 nim	select	norm/postgres.html#select,,typedesc[T],string,varargs[DbValue,dbValue]	proc select[T: Model](dbConn: DbConn; typ: typedesc[T]; cond: string;\n                 params: varargs[DbValue, dbValue]): seq[T]		292
-nim	selectAll	norm/postgres.html#selectAll,,seq[T]	proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])		301
-nim	selectAll	norm/postgres.html#selectAll,,typedesc[T]	proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]		311
-nim	rawSelect	norm/postgres.html#rawSelect,,string,T,varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; obj: var T;\n                         params: varargs[DbValue, dbValue])		322
-nim	rawSelect	norm/postgres.html#rawSelect,,string,seq[T],varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; objs: var seq[T];\n                         params: varargs[DbValue, dbValue])		340
-nim	count	norm/postgres.html#count,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc count(dbConn: DbConn; T: typedesc[Model]; col = "*"; dist = false;\n      cond = "TRUE"; params: varargs[DbValue, dbValue]): int64		363
-nim	sum	norm/postgres.html#sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc sum(dbConn: DbConn; T: typedesc[Model]; col: string; dist = false;\n    cond = "TRUE"; params: varargs[DbValue, dbValue]): float		379
-nim	exists	norm/postgres.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	proc exists(dbConn: DbConn; T: typedesc[Model]; cond = "TRUE";\n       params: varargs[DbValue, dbValue]): bool		393
-nim	update	norm/postgres.html#update,,T	proc update[T: Model](dbConn: DbConn; obj: var T)		404
-nim	update	norm/postgres.html#update,,openArray[T]	proc update[T: Model](dbConn: DbConn; objs: var openArray[T])		462
-nim	delete	norm/postgres.html#delete,,T	proc delete[T: Model](dbConn: DbConn; obj: var T)		481
-nim	delete	norm/postgres.html#delete,,openArray[T]	proc delete[T: Model](dbConn: DbConn; objs: var openArray[T])		494
-nim	rollback	norm/postgres.html#rollback	proc rollback()		503
-nim	transaction	norm/postgres.html#transaction.t,,untyped	template transaction(dbConn; body: untyped): untyped		508
-nim	selectOneToMany	norm/postgres.html#selectOneToMany,,O,seq[M],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M];\n                                    foreignKeyFieldName: static string)		537
-nim	selectOneToMany	norm/postgres.html#selectOneToMany,,O,seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M])		549
-nim	selectOneToMany	norm/postgres.html#selectOneToMany,,seq[O],Table[int64,seq[M]],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var Table[int64, seq[M]];\n                                    foreignKeyFieldName: static string)		560
-nim	selectOneToMany	norm/postgres.html#selectOneToMany,,seq[O],seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var seq[M])		593
-nim	selectManyToMany	norm/postgres.html#selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2]; fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		610
-nim	selectManyToMany	norm/postgres.html#selectManyToMany,,M1,seq[J],seq[M2]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2])		632
-nim	selectManyToMany	norm/postgres.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]];\n    fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		646
-nim	selectManyToMany	norm/postgres.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]])		678
-nimgrp	selectonetomany	norm/postgres.html#selectOneToMany-procs-all	proc		537
-nimgrp	rawselect	norm/postgres.html#rawSelect-procs-all	proc		322
-nimgrp	delete	norm/postgres.html#delete-procs-all	proc		481
+nim	selectAll	norm/postgres.html#selectAll,,seq[T]	proc selectAll[T: Model](dbConn: DbConn; objs: var seq[T])		303
+nim	selectAll	norm/postgres.html#selectAll,,typedesc[T]	proc selectAll[T: Model](dbConn: DbConn; typ: typedesc[T]): seq[T]		313
+nim	rawSelect	norm/postgres.html#rawSelect,,string,T,varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; obj: var T;\n                         params: varargs[DbValue, dbValue])		326
+nim	rawSelect	norm/postgres.html#rawSelect,,string,seq[T],varargs[DbValue,dbValue]	proc rawSelect[T: ref object](dbConn: DbConn; qry: string; objs: var seq[T];\n                         params: varargs[DbValue, dbValue])		344
+nim	count	norm/postgres.html#count,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc count(dbConn: DbConn; T: typedesc[Model]; col = "*"; dist = false;\n      cond = "TRUE"; params: varargs[DbValue, dbValue]): int64		367
+nim	sum	norm/postgres.html#sum,,typedesc[Model],string,string,varargs[DbValue,dbValue]	proc sum(dbConn: DbConn; T: typedesc[Model]; col: string; dist = false;\n    cond = "TRUE"; params: varargs[DbValue, dbValue]): float		383
+nim	exists	norm/postgres.html#exists,,typedesc[Model],string,varargs[DbValue,dbValue]	proc exists(dbConn: DbConn; T: typedesc[Model]; cond = "TRUE";\n       params: varargs[DbValue, dbValue]): bool		397
+nim	update	norm/postgres.html#update,,T	proc update[T: Model](dbConn: DbConn; obj: var T)		408
+nim	update	norm/postgres.html#update,,openArray[T]	proc update[T: Model](dbConn: DbConn; objs: var openArray[T])		466
+nim	delete	norm/postgres.html#delete,,T	proc delete[T: Model](dbConn: DbConn; obj: var T)		485
+nim	delete	norm/postgres.html#delete,,openArray[T]	proc delete[T: Model](dbConn: DbConn; objs: var openArray[T])		498
+nim	rollback	norm/postgres.html#rollback	proc rollback()		507
+nim	transaction	norm/postgres.html#transaction.t,,untyped	template transaction(dbConn; body: untyped): untyped		512
+nim	selectOneToMany	norm/postgres.html#selectOneToMany,,O,seq[M],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M];\n                                    foreignKeyFieldName: static string)		541
+nim	selectOneToMany	norm/postgres.html#selectOneToMany,,O,seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntry: O;\n                                    relatedEntries: var seq[M])		553
+nim	selectOneToMany	norm/postgres.html#selectOneToMany,,seq[O],Table[int64,seq[M]],staticstring	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var Table[int64, seq[M]];\n                                    foreignKeyFieldName: static string)		564
+nim	selectOneToMany	norm/postgres.html#selectOneToMany,,seq[O],seq[M]	proc selectOneToMany[O: Model; M: Model](dbConn: DbConn; oneEntries: seq[O];\n                                    relatedEntries: var seq[M])		597
+nim	selectManyToMany	norm/postgres.html#selectManyToMany,,M1,seq[J],seq[M2],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2]; fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		614
+nim	selectManyToMany	norm/postgres.html#selectManyToMany,,M1,seq[J],seq[M2]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntry: M1; joinModelEntries: var seq[J];\n    queryEndEntries: var seq[M2])		636
+nim	selectManyToMany	norm/postgres.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]],staticstring,staticstring	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]];\n    fkColumnFromJoinToManyStart: static string;\n    fkColumnFromJoinToManyEnd: static string)		650
+nim	selectManyToMany	norm/postgres.html#selectManyToMany,,seq[M1],seq[J],Table[int64,seq[M2]]	proc selectManyToMany[M1: Model; J: Model; M2: Model](dbConn: DbConn;\n    queryStartEntries: seq[M1]; joinModelEntries: var seq[J];\n    queryEndEntries: var Table[int64, seq[M2]])		682
+nimgrp	selectonetomany	norm/postgres.html#selectOneToMany-procs-all	proc		541
+nimgrp	rawselect	norm/postgres.html#rawSelect-procs-all	proc		326
+nimgrp	delete	norm/postgres.html#delete-procs-all	proc		485
 nimgrp	select	norm/postgres.html#select-procs-all	proc		232
-nimgrp	selectmanytomany	norm/postgres.html#selectManyToMany-procs-all	proc		610
-nimgrp	selectall	norm/postgres.html#selectAll-procs-all	proc		301
-nimgrp	update	norm/postgres.html#update-procs-all	proc		404
+nimgrp	selectmanytomany	norm/postgres.html#selectManyToMany-procs-all	proc		614
+nimgrp	selectall	norm/postgres.html#selectAll-procs-all	proc		303
+nimgrp	update	norm/postgres.html#update-procs-all	proc		408
 nimgrp	insert	norm/postgres.html#insert-procs-all	proc		178
