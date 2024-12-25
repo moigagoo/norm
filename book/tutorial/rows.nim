@@ -110,6 +110,15 @@ nbCode:
     echo customer.user[]
 
 nbText: """
+You can pass a `Model` subtype to `select` proc instead of the object instance. Norm will instantiate the container object implicitly:
+"""
+
+nbCode:
+  let userFoo2 = dbConn.select(User, "email = ?", "foo@foo.foo")
+  echo()
+
+nbText: """
+Note that this will only work with types that can be instantiated by calling `new <Type>`, i.e. types that don't require explicit instantiation.
 
 If you query relationships that are nested, such as when customers can have pets and you want to query all pets of all customers of users with a specific email address, you will need  to concatenate the foreign-key fields, separeted by a `_` in your query.
 """

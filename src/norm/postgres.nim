@@ -293,6 +293,8 @@ proc select*[T: Model](dbConn; typ: typedesc[T], cond: string, params: varargs[D
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``typ`` is a `Model`_ subtype to contain the values.
+
+  **Note:** This works only with types that can be instantiated by calling ``new <Type>``, i.e. types that don't require explicit instantiation.
   ]##
 
   result.add(new T)
@@ -312,6 +314,8 @@ proc selectAll*[T: Model](dbConn; typ: typedesc[T]): seq[T] =
   ##[ Populate a sequence of `Model`_ instances from DB, fetching all rows in the matching table.
 
   ``typ`` is a `Model`_ subtype to contain the values.
+
+  **Note:** This works only with types that can be instantiated by calling ``new <Type>``, i.e. types that don't require explicit instantiation.
 
   **Warning:** this is a dangerous operation because you don't control how many rows will be fetched.
   ]##
