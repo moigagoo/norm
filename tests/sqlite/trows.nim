@@ -193,7 +193,7 @@ suite "Row CRUD":
   test "Get rows, implicit object instantiation":
     var
       inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
-  
+
     dbConn.insert(inpToys)
 
     let outToys = dbConn.select(Toy, "price > ?", 100.00)
