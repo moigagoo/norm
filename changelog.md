@@ -8,6 +8,11 @@
 -   [d]—docs improvement
 
 
+## 2.8.5 (December 25, 2024)
+
+- [+] Add `select` and `selectAll` procs that don't require object instances and accept types instead (see [#176](https://github.com/moigagoo/norm/pull/176)).
+
+
 ## 2.8.4 (December 24, 2024)
 
 - [f] Fix connection pool creation for Nim 2.2.0 (see [#206](https://github.com/moigagoo/norm/pull/206)).
