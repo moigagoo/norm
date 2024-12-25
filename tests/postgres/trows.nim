@@ -172,10 +172,18 @@ suite "Row CRUD":
       inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
       outToys = @[newToy()]
 
-    for inpToy in inpToys.mitems:
-      dbConn.insert(inpToy)
+    dbConn.insert(inpToys)
 
     dbConn.selectAll(outToys)
+
+    check outToys === inpToys
+
+  test "Get all rows, implicit object instantiation":
+    var inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
+
+    dbConn.insert(inpToys)
+
+    let outToys = dbConn.selectAll(Toy)
 
     check outToys === inpToys
 
@@ -190,6 +198,16 @@ suite "Row CRUD":
         dbConn.select("price > $1", 100.00)
 
     check outToys === inpToys[..1]
+
+  test "Get rows, implicit object instantiation":
+    var
+      inpToys = @[newToy(123.45), newToy(456.78), newToy(99.99)]
+
+    dbConn.insert(inpToys)
+
+    let outToys = dbConn.select(Toy, "price > $1", 100.00)
+
+    check outToys === inpToys[0..1]
 
   test "Get rows, nested models":
     var
