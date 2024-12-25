@@ -289,6 +289,10 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
   for i, row in rows:
     objs[i].fromRow(row)
 
+proc select*[T: Model](dbConn; typ: typedesc[T], cond: string, params: varargs[DbValue, dbValue]): seq[T] {.raises: {ValueError, DbError, LoggingError}.} =
+  result.add(new T)
+  select(dbConn, result, cond, params)
+
 proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
   ##[ Populate a sequence of `Model`_ instances from DB, fetching all rows in the matching table.
 
@@ -298,6 +302,10 @@ proc selectAll*[T: Model](dbConn; objs: var seq[T]) =
   ]##
 
   dbConn.select(objs, "TRUE")
+
+proc selectAll*[T: Model](dbConn; typ: typedesc[T]): seq[T] =
+  result.add(new T)
+  selectAll(dbConn, result)
 
 proc rawSelect*[T: ref object](dbConn; qry: string, obj: var T, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
   ##[ Populate a ref object instance ``obj`` and its ref object fields from DB.
