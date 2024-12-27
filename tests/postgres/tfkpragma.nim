@@ -4,7 +4,6 @@ import norm/[model, postgres]
 
 import ../models
 
-
 const
   dbHost = getEnv("PGHOST", "postgres")
   dbUser = getEnv("PGUSER", "postgres")
@@ -41,8 +40,8 @@ suite "``fk`` pragma":
     check customer.id > 0
 
     let
-      userRows = dbConn.getAllRows(sql"""SELECT lastLogin, id FROM "User"""")
-      customerRows = dbConn.getAllRows(sql"""SELECT userId, email, id FROM "Customer"""")
+      userRows = dbConn.getAllRows(sql"""SELECT "lastLogin", "id" FROM "User" """)
+      customerRows = dbConn.getAllRows(sql"""SELECT "userId", "email", "id" FROM "Customer" """)
 
     check userRows.len == 1
     check userRows[0][1] == ?user.id
@@ -70,6 +69,6 @@ suite "``fk`` pragma":
     for inpCustomer in inpCustomers.mitems:
       dbConn.insert inpCustomer
 
-    dbConn.select(outCustomers, """"userid" = $1""", userA.id)
+    dbConn.select(outCustomers, """"userId" = $1""", userA.id)
 
     check outCustomers === inpCustomers[0..^2]
