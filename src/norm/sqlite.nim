@@ -33,7 +33,7 @@ const dbHostEnv* = "DB_HOST"
 
 # Sugar to get DB config from environment variables
 
-proc getDb*: DbConn =
+let getDb* = proc(): DbConn {.closure.} =
   ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
 
   result = open(getEnv(dbHostEnv), "", "", "")
