@@ -1,4 +1,4 @@
-import std/[os, unittest, os, strutils]
+import std/[os, unittest, strutils]
 
 import norm/[postgres, pool]
 
