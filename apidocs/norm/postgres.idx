@@ -5,7 +5,7 @@ nim	dbHostEnv	norm/postgres.html#dbHostEnv	const dbHostEnv		32
 nim	dbUserEnv	norm/postgres.html#dbUserEnv	const dbUserEnv		33
 nim	dbPassEnv	norm/postgres.html#dbPassEnv	const dbPassEnv		34
 nim	dbNameEnv	norm/postgres.html#dbNameEnv	const dbNameEnv		35
-nim	getDb	norm/postgres.html#getDb	proc getDb(): DbConn		40
+nim	getDb	norm/postgres.html#getDb	let getDb		40
 nim	withDb	norm/postgres.html#withDb.t,untyped	template withDb(body: untyped): untyped		45
 nim	dropDb	norm/postgres.html#dropDb	proc dropDb()		67
 nim	createSchema	norm/postgres.html#createSchema,,T	proc createSchema[T: Model](dbConn: DbConn; obj: T)		77

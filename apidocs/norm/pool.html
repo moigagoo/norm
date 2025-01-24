@@ -83,12 +83,12 @@
 
 </ul>
 <ul class="simple nested-toc-section">newPool
-  <li><a class="reference" href="#newPool%2CPositive_2" title="newPool[T: postgres.DbConn](defaultSize: Positive; getDbProc = postgres.getDb;
+  <li><a class="reference" href="#newPool%2CPositive" title="newPool[T: postgres.DbConn](defaultSize: Positive; getDbProc = postgres.getDb;
                             poolExhaustedPolicy = pepRaise): Pool[T]">newPool[T: postgres.DbConn](defaultSize: Positive; getDbProc = postgres.getDb;
                             poolExhaustedPolicy = pepRaise): Pool[T]</a></li>
-<li><a class="reference" href="#newPool%2CPositive" title="newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc = sqlite.getDb;
-                          poolExhaustedPolicy = pepRaise): Pool[T]">newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc = sqlite.getDb;
-                          poolExhaustedPolicy = pepRaise): Pool[T]</a></li>
+<li><a class="reference" href="#newPool%2CPositive%2Cproc%29" title="newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc: proc (): sqlite.DbConn {.
+    closure.} = sqlite.getDb; poolExhaustedPolicy = pepRaise): Pool[T]">newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc: proc (): sqlite.DbConn {.
+    closure.} = sqlite.getDb; poolExhaustedPolicy = pepRaise): Pool[T]</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">pop
@@ -204,8 +204,8 @@
 
 </div>
 <div id="newPool-procs-all">
-  <div id="newPool,Positive_2">
-  <dt><pre><span class="Keyword">proc</span> <a href="#newPool%2CPositive_2"><span class="Identifier">newPool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">postgres</span><span class="Other">.</span><span class="Identifier">DbConn</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">defaultSize</span><span class="Other">:</span> <span class="Identifier">Positive</span><span class="Other">;</span>
+  <div id="newPool,Positive">
+  <dt><pre><span class="Keyword">proc</span> <a href="#newPool%2CPositive"><span class="Identifier">newPool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">postgres</span><span class="Other">.</span><span class="Identifier">DbConn</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">defaultSize</span><span class="Other">:</span> <span class="Identifier">Positive</span><span class="Other">;</span>
                                  <span class="Identifier">getDbProc</span> <span class="Other">=</span> <span class="Identifier">postgres</span><span class="Other">.</span><span class="Identifier">getDb</span><span class="Other">;</span>
                                  <span class="Identifier">poolExhaustedPolicy</span> <span class="Other">=</span> <span class="Identifier">pepRaise</span><span class="Other">)</span><span class="Other">:</span> <a href="pool.html#Pool"><span class="Identifier">Pool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
@@ -219,9 +219,9 @@
     
   </dd>
 </div>
-<div id="newPool,Positive">
-  <dt><pre><span class="Keyword">proc</span> <a href="#newPool%2CPositive"><span class="Identifier">newPool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">sqlite</span><span class="Other">.</span><span class="Identifier">DbConn</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">defaultSize</span><span class="Other">:</span> <span class="Identifier">Positive</span><span class="Other">;</span> <span class="Identifier">getDbProc</span> <span class="Other">=</span> <span class="Identifier">sqlite</span><span class="Other">.</span><span class="Identifier">getDb</span><span class="Other">;</span>
-                               <span class="Identifier">poolExhaustedPolicy</span> <span class="Other">=</span> <span class="Identifier">pepRaise</span><span class="Other">)</span><span class="Other">:</span> <a href="pool.html#Pool"><span class="Identifier">Pool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+<div id="newPool,Positive,proc)">
+  <dt><pre><span class="Keyword">proc</span> <a href="#newPool%2CPositive%2Cproc%29"><span class="Identifier">newPool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">sqlite</span><span class="Other">.</span><span class="Identifier">DbConn</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">defaultSize</span><span class="Other">:</span> <span class="Identifier">Positive</span><span class="Other">;</span> <span class="Identifier">getDbProc</span><span class="Other">:</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">sqlite</span><span class="Other">.</span><span class="Identifier">DbConn</span> {.
+    <span class="Identifier">closure</span>.} <span class="Other">=</span> <span class="Identifier">sqlite</span><span class="Other">.</span><span class="Identifier">getDb</span><span class="Other">;</span> <span class="Identifier">poolExhaustedPolicy</span> <span class="Other">=</span> <span class="Identifier">pepRaise</span><span class="Other">)</span><span class="Other">:</span> <a href="pool.html#Pool"><span class="Identifier">Pool</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     <p>Create an SQLite connection pool of the given size.</p>
@@ -299,7 +299,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2024-12-25 19:14:33 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-01-24 20:20:54 UTC</small>
       </div>
     </div>
   </div>
