@@ -7,7 +7,7 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
-## 2.8.6 (?? ??, 2025)
+## 2.8.6 (January 25, 2025)
 
 -   [f] Fix closure support for `getDb` proc parameter of `newPool`
 
