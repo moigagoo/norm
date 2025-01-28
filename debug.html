@@ -212,7 +212,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1>Debugging SQL</h1>
-<p>To enable the logging of SQL queries, define <code>NormDebug</code> either by compiling with <code>-d:normDebug</code>, or by adding <code>switch(&quot;define&quot;, &quot;normDebug&quot;)</code> to config.nims.</p>
+<p>To enable the logging of SQL queries, define <code>normDebug</code> either by compiling with <code>-d:normDebug</code>, or by adding <code>switch(&quot;define&quot;, &quot;normDebug&quot;)</code> to config.nims.</p>
 <p>Once <code>normDebug</code> is defined, add a logger on debug level (see https://nim-lang.org/docs/logging.html for more info):</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> logging
 <span class="hljs-keyword">var</span> consoleLog = newConsoleLogger()
