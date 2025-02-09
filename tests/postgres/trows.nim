@@ -1,5 +1,6 @@
 import std/[os, unittest, with, strutils, sugar, options]
 
+
 import norm/[model, postgres]
 
 import ../models
@@ -95,7 +96,7 @@ suite "Row CRUD":
 
     let
       personRows = dbConn.getAllRows(sql"""SELECT name, pet, id FROM "Person"""")
-      petRows = dbConn.getAllRows(sql"""SELECT species, favToy, id FROM "Pet"""")
+      petRows = dbConn.getAllRows(sql"""SELECT species, "favToy", id FROM "Pet"""")
       toyRows = dbConn.getAllRows(sql"""SELECT price, id FROM "Toy"""")
 
     check personRows.len == 1
@@ -265,7 +266,7 @@ suite "Row CRUD":
 
     let
       personRow = get dbConn.getRow(sql"""SELECT name, pet, id FROM "Person" WHERE id = $1""", person.id)
-      petRow = get dbConn.getRow(sql"""SELECT species, favToy, id FROM "Pet" WHERE id = $1""", pet.id)
+      petRow = get dbConn.getRow(sql"""SELECT species, "favToy", id FROM "Pet" WHERE id = $1""", pet.id)
       toyRow = get dbConn.getRow(sql"""SELECT price, id FROM "Toy" WHERE id = $1""", pet.favToy.id)
 
     check personRow == @[?"Bob", ?pet.id, ?person.id]

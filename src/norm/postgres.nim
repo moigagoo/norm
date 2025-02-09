@@ -123,7 +123,7 @@ proc createTables*[T: Model](dbConn; obj: T) =
       uniqueIndexes.mgetOrPut(obj.dot(fld).getCustomPragmaVal(uniqueIndex), @[]).add(obj.col(fld))
 
     if val.isModel:
-      var fkGroup = "FOREIGN KEY($#) REFERENCES $#($#)" %
+      var fkGroup = """FOREIGN KEY($#) REFERENCES $#($#)""" %
         [obj.col(fld), typeof(get val.model).table, typeof(get val.model).col("id")]
 
       when obj.dot(fld).hasCustomPragma(onDelete):
@@ -142,9 +142,9 @@ proc createTables*[T: Model](dbConn; obj: T) =
           const selfTableName = '"' & T.getCustomPragmaVal(tableName) & '"'
         else:
           const selfTableName = '"' & $T & '"'
-        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, selfTableName]
+        fkGroups.add """FOREIGN KEY ($#) REFERENCES $#(id)""" % [obj.col(fld), selfTableName]
       else:
-        fkGroups.add "FOREIGN KEY ($#) REFERENCES $#(id)" % [fld, (obj.dot(fld).getCustomPragmaVal(fk)).table]
+        fkGroups.add """FOREIGN KEY ($#) REFERENCES $#(id)""" % [obj.col(fld), (obj.dot(fld).getCustomPragmaVal(fk)).table]
 
     colGroups.add colShmParts.join(" ")
 
