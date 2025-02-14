@@ -9,7 +9,7 @@ on:
       - develop
 
 jobs:
-  Tests Common:
+  tests_common:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -30,7 +30,7 @@ jobs:
       - name: Run common tests
         run: testament category common
 
-  Tests SQLite:
+  tests_sqlite:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -51,7 +51,7 @@ jobs:
       - name: Run SQLite tests
         run: testament category sqlite
 
-  Tests Postgres:
+  tests_postgres:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -87,7 +87,7 @@ jobs:
         env:
           PGHOST: localhost
 
-  Benchmark:
+  benchmark:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -123,14 +123,14 @@ jobs:
         env:
           PGHOST: localhost
 
-  Book:
+  book:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Book
         run: docker compose run book
- 
-  Docs:
+
+  docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
