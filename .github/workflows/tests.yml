@@ -9,7 +9,49 @@ on:
       - develop
 
 jobs:
-  Tests:
+  Tests Common:
+    timeout-minutes: 30
+
+    name: Nim ${{ matrix.nim-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        nim-version: ['1.6.20', '2.0.12', '2.2.0', 'devel']
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: ${{ matrix.nim-version }}
+
+      - run: nimble install -y nimble && nimble install -y
+
+      - name: Run common tests
+        run: testament category common
+
+  Tests SQLite:
+    timeout-minutes: 30
+
+    name: Nim ${{ matrix.nim-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        nim-version: ['1.6.20', '2.0.12', '2.2.0', 'devel']
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: ${{ matrix.nim-version }}
+
+      - run: nimble install -y nimble && nimble install -y
+
+      - name: Run SQLite tests
+        run: testament category sqlite
+
+  Tests Postgres:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -40,8 +82,8 @@ jobs:
 
       - run: nimble install -y nimble && nimble install -y
 
-      - name: Run tests
-        run: testament all
+      - name: Run Postgres tests
+        run: testament category postgres
         env:
           PGHOST: localhost
 
@@ -77,7 +119,7 @@ jobs:
       - run: nimble install -y nimble && nimble install -y
 
       - name: Run benchmark
-        run: nimble benchmark 
+        run: nimble benchmark
         env:
           PGHOST: localhost
 
