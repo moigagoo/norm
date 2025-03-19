@@ -212,9 +212,12 @@ suite "Connection pool":
     When the other entry gets deleted with a connection from the pool
     Then a DBError should occur due to FK checks
   """:
-    var pool = newPool[DbConn](1, proc(): DbConn = open(dbHost, dbuser, dbPassword, dbDatabase))
-    var toy = newToy(123.45)
-    var cat = newPet("cat", toy)
+    var
+      pool = newPool[DbConn](1, proc(): DbConn = open(dbHost, dbuser, dbPassword, dbDatabase))
+      toy = newToy(123.45)
+      cat = newPet("cat", toy)
+
+    defer close pool
 
     withDb(pool):
       db.createTables(toy)
@@ -226,4 +229,3 @@ suite "Connection pool":
       expect DBError:
         db.delete(toy)
 
-    close pool

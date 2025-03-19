@@ -15,7 +15,7 @@ type
     pepRaise
     pepExtend
 
-proc newPool*[T: sqlite.DbConn](defaultSize: Positive, getDbProc: proc(): sqlite.DbConn {.closure.} = sqlite.getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
+proc newPool*[T: sqlite.DbConn](defaultSize: Natural, getDbProc: proc(): sqlite.DbConn {.closure.} = sqlite.getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
   ##[ Create an SQLite connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
@@ -35,7 +35,7 @@ proc newPool*[T: sqlite.DbConn](defaultSize: Positive, getDbProc: proc(): sqlite
   for conn in result.conns.mitems:
     conn = result.getDbProc()
 
-proc newPool*[T: postgres.DbConn](defaultSize: Positive, getDbProc = postgres.getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
+proc newPool*[T: postgres.DbConn](defaultSize: Natural, getDbProc = postgres.getDb, poolExhaustedPolicy = pepRaise): Pool[T] =
   ##[ Create a Postgres connection pool of the given size.
 
   ``poolExhaustedPolicy`` defines how the pool reacts when a connection is requested but the pool has no connection available:
