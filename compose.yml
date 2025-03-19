@@ -4,34 +4,44 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
 
-  tests:
-    build: .
-    image: norm
-    depends_on:
-      - postgres
+  tests_common:
+    build:
+      context: ./
+      target: norm_base
     volumes:
       - .:/usr/src/app
-    command: nimble test
+    command: testament category common
 
-  test:
-    build: .
-    image: norm
+  tests_sqlite:
+    build:
+      context: ./
+      target: norm_sqlite
+    volumes:
+      - .:/usr/src/app
+    command: testament category sqlite
+
+  tests_postgres:
+    build:
+      context: ./
+      target: norm_postgres
     depends_on:
       - postgres
     volumes:
       - .:/usr/src/app
-    entrypoint: testament run
+    command: testament category postgres
 
   docs:
-    build: .
-    image: norm
+    build:
+      context: ./
+      target: norm_base
     volumes:
       - .:/usr/src/app
     command: nimble docs
 
   book:
-    build: .
-    image: norm
+    build:
+      context: ./
+      target: norm_base
     volumes:
       - .:/usr/src/app
     command: nimble book
