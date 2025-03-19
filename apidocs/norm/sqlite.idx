@@ -2,7 +2,7 @@ nimTitle	sqlite	norm/sqlite.html	module src/norm/sqlite		0
 nim	RollbackError	norm/sqlite.html#RollbackError	object RollbackError		23
 nim	NotFoundError	norm/sqlite.html#NotFoundError	object NotFoundError		28
 nim	dbHostEnv	norm/sqlite.html#dbHostEnv	const dbHostEnv		31
-nim	getDb	norm/sqlite.html#getDb	let getDb		36
+nim	getDb	norm/sqlite.html#getDb	proc getDb(): DbConn		36
 nim	withDb	norm/sqlite.html#withDb.t,untyped	template withDb(body: untyped): untyped		42
 nim	dropDb	norm/sqlite.html#dropDb	proc dropDb()		64
 nim	createSchema	norm/sqlite.html#createSchema,,T	proc createSchema[T: Model](dbConn: DbConn; obj: T)		72

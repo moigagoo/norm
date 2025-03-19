@@ -66,19 +66,6 @@
 </li>
 <li>
   <details open>
-    <summary><a class="reference reference-toplevel" href="#9" id="59">Lets</a></summary>
-    <ul class="simple simple-toc-section">
-      <li><a class="reference" href="#getDb" title="getDb = proc (): DbConn {.closure.} =
-  ## Create a ``DbConn`` from ``DB_HOST`` environment variable.
-  result = open(getEnv(dbHostEnv, &quot;&quot;), &quot;&quot;, &quot;&quot;, &quot;&quot;)
-  exec(result,
-    SqlQuery(r&quot;PRAGMA foreign_keys=on;&quot;), [])">getDb</a></li>
-
-    </ul>
-  </details>
-</li>
-<li>
-  <details open>
     <summary><a class="reference reference-toplevel" href="#10" id="60">Consts</a></summary>
     <ul class="simple simple-toc-section">
       <li><a class="reference" href="#dbHostEnv" title="dbHostEnv = &quot;DB_HOST&quot;">dbHostEnv</a></li>
@@ -117,6 +104,10 @@
   <li><a class="reference" href="#exists%2C%2Ctypedesc%5BModel%5D%2Cstring%2Cvarargs%5BDbValue%2CdbValue%5D" title="exists(dbConn: DbConn; T: typedesc[Model]; cond = &quot;1&quot;;
        params: varargs[DbValue, dbValue]): bool">exists(dbConn: DbConn; T: typedesc[Model]; cond = &quot;1&quot;;
        params: varargs[DbValue, dbValue]): bool</a></li>
+
+</ul>
+<ul class="simple nested-toc-section">getDb
+  <li><a class="reference" href="#getDb" title="getDb(): DbConn">getDb(): DbConn</a></li>
 
 </ul>
 <ul class="simple nested-toc-section">insert
@@ -276,24 +267,6 @@
 
   </dl>
 </div>
-<div class="section" id="9">
-  <h1><a class="toc-backref" href="#9">Lets</a></h1>
-  <dl class="item">
-    <div id="getDb">
-  <dt><pre><a href="sqlite.html#getDb"><span class="Identifier">getDb</span></a> <span class="Other">=</span> <span class="Keyword">proc</span> <span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbConn</span> {.<span class="Identifier">closure</span>.} <span class="Other">=</span>
-  <span class="Comment">## Create a ``DbConn`` from ``DB_HOST`` environment variable.</span>
-  <span class="Identifier">result</span> <span class="Other">=</span> <span class="Identifier">open</span><span class="Other">(</span><span class="Identifier">getEnv</span><span class="Other">(</span><a href="sqlite.html#dbHostEnv"><span class="Identifier">dbHostEnv</span></a><span class="Other">,</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span><span class="Other">,</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;&quot;</span><span class="Other">,</span> <span class="StringLit">&quot;&quot;</span><span class="Other">)</span>
-  <span class="Identifier">exec</span><span class="Other">(</span><span class="Identifier">result</span><span class="Other">,</span>
-    <span class="Identifier">SqlQuery</span><span class="Other">(</span><span class="StringLit">r&quot;PRAGMA foreign_keys=on;&quot;</span><span class="Other">)</span><span class="Other">,</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">)</span></pre></dt>
-  <dd>
-    
-    
-    
-  </dd>
-</div>
-
-  </dl>
-</div>
 <div class="section" id="10">
   <h1><a class="toc-backref" href="#10">Consts</a></h1>
   <dl class="item">
@@ -386,6 +359,18 @@
   <dd>
     
     Check if a row exists in the table.
+    
+  </dd>
+</div>
+
+</div>
+<div id="getDb-procs-all">
+  <div id="getDb">
+  <dt><pre><span class="Keyword">proc</span> <a href="#getDb"><span class="Identifier">getDb</span></a><span class="Other">(</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">DbConn</span> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbError</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">DbEffect</span><span class="Other">,</span> <span class="Identifier">ReadEnvEffect</span><span class="Other">,</span>
+    <span class="Identifier">ReadDbEffect</span><span class="Other">,</span> <span class="Identifier">WriteDbEffect</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">forbids</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
+  <dd>
+    
+    Create a <tt class="docutils literal"><span class="pre">DbConn</span></tt> from <tt class="docutils literal"><span class="pre">DB_HOST</span></tt> environment variable.
     
   </dd>
 </div>
@@ -669,7 +654,7 @@ instead of hardcoded table and column names</li>
   <dd>
     
     <p>Wrapper for DB operations.</p>
-<p>Creates a <tt class="docutils literal"><span class="pre">DbConn</span></tt> with <a class="reference internal nimdoc" title="let getDb" href="#getDb">getDb</a> as <tt class="docutils literal"><span class="pre">db</span></tt> variable, runs your code in a <tt class="docutils literal"><span class="pre">try</span></tt> block, and closes <tt class="docutils literal"><span class="pre">db</span></tt> afterward. </p>
+<p>Creates a <tt class="docutils literal"><span class="pre">DbConn</span></tt> with <a class="reference internal nimdoc" title="proc getDb(): DbConn" href="#getDb">getDb</a> as <tt class="docutils literal"><span class="pre">db</span></tt> variable, runs your code in a <tt class="docutils literal"><span class="pre">try</span></tt> block, and closes <tt class="docutils literal"><span class="pre">db</span></tt> afterward. </p>
 
     
   </dd>
@@ -686,7 +671,7 @@ instead of hardcoded table and column names</li>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-01-28 07:57:13 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-03-19 11:55:09 UTC</small>
       </div>
     </div>
   </div>

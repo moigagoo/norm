@@ -252,9 +252,9 @@
           </ul></dd>
 <dt><a name="getDb" href="#getDb"><span>getDb:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="postgres: let getDb" href="norm/postgres.html#getDb">postgres: let getDb</a></li>
+          data-doc-search-tag="postgres: proc getDb(): DbConn" href="norm/postgres.html#getDb">postgres: proc getDb(): DbConn</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="sqlite: let getDb" href="norm/sqlite.html#getDb">sqlite: let getDb</a></li>
+          data-doc-search-tag="sqlite: proc getDb(): DbConn" href="norm/sqlite.html#getDb">sqlite: proc getDb(): DbConn</a></li>
           </ul></dd>
 <dt><a name="getRelatedFieldNameTo" href="#getRelatedFieldNameTo"><span>getRelatedFieldNameTo:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -344,12 +344,12 @@
           </ul></dd>
 <dt><a name="newPool" href="#newPool"><span>newPool:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
-          data-doc-search-tag="pool: proc newPool[T: postgres.DbConn](defaultSize: Positive; getDbProc = postgres.getDb;
-                            poolExhaustedPolicy = pepRaise): Pool[T]" href="norm/pool.html#newPool%2CPositive">pool: proc newPool[T: postgres.DbConn](defaultSize: Positive; getDbProc = postgres.getDb;
+          data-doc-search-tag="pool: proc newPool[T: postgres.DbConn](defaultSize: Natural; getDbProc = postgres.getDb;
+                            poolExhaustedPolicy = pepRaise): Pool[T]" href="norm/pool.html#newPool%2CNatural">pool: proc newPool[T: postgres.DbConn](defaultSize: Natural; getDbProc = postgres.getDb;
                             poolExhaustedPolicy = pepRaise): Pool[T]</a></li>
           <li><a class="reference external"
-          data-doc-search-tag="pool: proc newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc: proc (): sqlite.DbConn {.
-    closure.} = sqlite.getDb; poolExhaustedPolicy = pepRaise): Pool[T]" href="norm/pool.html#newPool%2CPositive%2Cproc%29">pool: proc newPool[T: sqlite.DbConn](defaultSize: Positive; getDbProc: proc (): sqlite.DbConn {.
+          data-doc-search-tag="pool: proc newPool[T: sqlite.DbConn](defaultSize: Natural; getDbProc: proc (): sqlite.DbConn {.
+    closure.} = sqlite.getDb; poolExhaustedPolicy = pepRaise): Pool[T]" href="norm/pool.html#newPool%2CNatural%2Cproc%29">pool: proc newPool[T: sqlite.DbConn](defaultSize: Natural; getDbProc: proc (): sqlite.DbConn {.
     closure.} = sqlite.getDb; poolExhaustedPolicy = pepRaise): Pool[T]</a></li>
           </ul></dd>
 <dt><a name="newStringOfCap" href="#newStringOfCap"><span>newStringOfCap:</span></a></dt><dd><ul class="simple">
@@ -724,7 +724,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-01-28 07:57:13 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2025-03-19 11:55:09 UTC</small>
       </div>
     </div>
   </div>
