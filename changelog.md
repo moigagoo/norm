@@ -7,6 +7,13 @@
 -   [t]—test suite improvement
 -   [d]—docs improvement
 
+
+## 2.8.7 (March 19, 2025)
+
+-   [f] SQLite backend doesn't require PostgreSQL driver any more (see [#210](https://github.com/moigagoo/norm/issues/210#issuecomment-2736342304)).
+-   [t] Split images for SQLite and PostreSQL tests.
+
+
 ## 2.8.6 (January 25, 2025)
 
 -   [f] Fix closure support for `getDb` proc parameter of `newPool`

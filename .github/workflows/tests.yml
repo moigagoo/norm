@@ -9,7 +9,49 @@ on:
       - develop
 
 jobs:
-  Tests:
+  tests_common:
+    timeout-minutes: 30
+
+    name: Nim ${{ matrix.nim-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        nim-version: ['1.6.20', '2.0.12', '2.2.0', 'devel']
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: ${{ matrix.nim-version }}
+
+      - run: nimble install -y nimble && nimble install -y
+
+      - name: Run common tests
+        run: testament category common
+
+  tests_sqlite:
+    timeout-minutes: 30
+
+    name: Nim ${{ matrix.nim-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        nim-version: ['1.6.20', '2.0.12', '2.2.0', 'devel']
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: ${{ matrix.nim-version }}
+
+      - run: nimble install -y nimble && nimble install -y
+
+      - name: Run SQLite tests
+        run: testament category sqlite
+
+  tests_postgres:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -40,12 +82,12 @@ jobs:
 
       - run: nimble install -y nimble && nimble install -y
 
-      - name: Run tests
-        run: testament all
+      - name: Run Postgres tests
+        run: testament category postgres
         env:
           PGHOST: localhost
 
-  Benchmark:
+  benchmark:
     timeout-minutes: 30
 
     name: Nim ${{ matrix.nim-version }}
@@ -77,18 +119,18 @@ jobs:
       - run: nimble install -y nimble && nimble install -y
 
       - name: Run benchmark
-        run: nimble benchmark 
+        run: nimble benchmark
         env:
           PGHOST: localhost
 
-  Book:
+  book:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Book
         run: docker compose run book
- 
-  Docs:
+
+  docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
