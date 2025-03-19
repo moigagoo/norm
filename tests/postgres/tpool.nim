@@ -217,8 +217,6 @@ suite "Connection pool":
       toy = newToy(123.45)
       cat = newPet("cat", toy)
 
-    defer close pool
-
     withDb(pool):
       db.createTables(toy)
       db.createTables(cat)
@@ -228,4 +226,6 @@ suite "Connection pool":
 
       expect DBError:
         db.delete(toy)
+
+    close pool
 
