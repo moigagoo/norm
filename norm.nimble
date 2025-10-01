@@ -37,9 +37,6 @@ task book, "Generate book":
   exec "./nbook --mm:orc --deepcopy:on update"
   exec "./nbook --mm:orc --deepcopy:on build"
 
-after book:
-  cpFile("CNAME", "docs/CNAME")
-
 before docs:
   rmDir "docs/apidocs"
 
