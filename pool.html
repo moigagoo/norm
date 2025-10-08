@@ -217,10 +217,10 @@
 <p><strong>Important</strong> Connection pooling requires <code>--mm:orc</code>.</p>
 <p>To use connection pool:</p>
 <ol>
-<li>create a <a href="/apidocs/norm/pool.html#Pool"><code>Pool</code></a> instance by calling <a href="/apidocs/norm/pool.html#newPool,Positive"><code>newPool</code></a></li>
-<li>wrap your DB calls in a <a href="/apidocs/norm/pool.html#withDb.t,Pool,untyped"><code>withDb</code></a></li>
+<li>create a <a href="/norm/apidocs/norm/pool.html#Pool"><code>Pool</code></a> instance by calling <a href="/norm/apidocs/norm/pool.html#newPool,Positive"><code>newPool</code></a></li>
+<li>wrap your DB calls in a <a href="/norm/apidocs/norm/pool.html#withDb.t,Pool,untyped"><code>withDb</code></a></li>
 </ol>
-<p><code>newPool</code> creates a pool of a given size with connections of type <code>DbConn</code> (either from <a href="/apidocs/norm/sqlite.html"><code>sqlite</code></a> or <a href="/apidocs/norm/postgres.html"><code>postgres</code></a>). The params for the connections are taken from the environment, similar to how <code>withDb</code> works (see <a href="/config.html">Configuration from Environment</a>).</p>
+<p><code>newPool</code> creates a pool of a given size with connections of type <code>DbConn</code> (either from <a href="/norm/apidocs/norm/sqlite.html"><code>sqlite</code></a> or <a href="/norm/apidocs/norm/postgres.html"><code>postgres</code></a>). The params for the connections are taken from the environment, similar to how <code>withDb</code> works (see <a href="/config.html">Configuration from Environment</a>).</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">import</span> norm/[model, sqlite, pool]
 
 
@@ -242,14 +242,14 @@ withDb(connPool):
 <p>If the app requests more connections from the pool than it can give, we say the pool is exhausted.</p>
 <p>There are two ways a pool can react to that:</p>
 <ol>
-<li>raise a <a href="/apidocs/norm/pool.html#PoolExhaustedError"><code>PoolExhaustedError</code></a>; this is the default policy</li>
+<li>raise a <a href="/norm/apidocs/norm/pool.html#PoolExhaustedError"><code>PoolExhaustedError</code></a>; this is the default policy</li>
 <li>open an additional connection and extend the pool size</li>
 </ol>
 <p>The policy is set during the pool creation by setting <code>poolExhaustedPolicy</code> param to either <code>pepRaise</code> or <code>pepExtend</code>.</p>
-<p>To reset the pool back to its default size after it has been extended, call <a href="/apidocs/norm/pool.html#reset,Pool"><code>reset</code></a> proc on it.</p>
+<p>To reset the pool back to its default size after it has been extended, call <a href="/norm/apidocs/norm/pool.html#reset,Pool"><code>reset</code></a> proc on it.</p>
 <h2>Manual Pool Manipulation</h2>
-<p>You can borrow connections from the pool manually by calling <a href="/apidocs/norm/pool.html#add%2CPool%2CT"><code>pop</code></a> proc.</p>
-<p><strong>Important</strong> If you choose to get connections from the pool manually, you must care about putting the borrowed connections back byb calling <a href="/apidocs/norm/pool.html#add,Pool,T"><code>add</code></a>.</p>
+<p>You can borrow connections from the pool manually by calling <a href="/norm/apidocs/norm/pool.html#add%2CPool%2CT"><code>pop</code></a> proc.</p>
+<p><strong>Important</strong> If you choose to get connections from the pool manually, you must care about putting the borrowed connections back byb calling <a href="/norm/apidocs/norm/pool.html#add,Pool,T"><code>add</code></a>.</p>
                         <pre><code class="nohighlight hljs nim"><span class="hljs-keyword">let</span> dbConn = connPool.pop()
 
 <span class="hljs-keyword">var</span> product = newProduct()
@@ -261,7 +261,7 @@ dbConn.insert(product)
 
 connPool.add(dbConn)</code></pre><pre class="nb-output">INSERT INTO &quot;Product&quot; (name, price) VALUES(?, ?) &lt;- @['Table', 123.45]</pre>
                         <h2>Closing the Pool</h2>
-<p>When you no longer need the pool, for example, when your app exits or crashes, to avoid leaving hanging connections, close the pool by calling <a href="/apidocs/norm/pool.html#close,Pool"><code>close</code></a>. This proc closes all connections in the pool and sets its size to 0.</p>
+<p>When you no longer need the pool, for example, when your app exits or crashes, to avoid leaving hanging connections, close the pool by calling <a href="/norm/apidocs/norm/pool.html#close,Pool"><code>close</code></a>. This proc closes all connections in the pool and sets its size to 0.</p>
                         <pre><code class="nohighlight hljs nim">close connPool</code></pre>
                         <h2>Custom Connection Provider</h2>
 <p>By default, new connections are added to the pool by calling <code>getDB</code>, which takes the DB params from the environment.</p>
