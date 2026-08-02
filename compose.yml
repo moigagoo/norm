@@ -45,7 +45,7 @@ services:
   book:
     build:
       context: ./
-      target: norm_base
+      target: norm_book
     volumes:
       - ./book:/usr/src/app/book
       - ./docs:/usr/src/app/docs
