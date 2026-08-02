@@ -77,3 +77,6 @@ tests/postgres/ttriangle
 tests/postgres/tunique
 tests/postgres/tuniquegroup
 
+nimble.develop
+nimble.paths
+nimbledeps
