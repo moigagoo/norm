@@ -11,42 +11,48 @@
 
 Install Norm with [Nimble](https://github.com/nim-lang/nimble):
 
-    $ nimble install -y norm
+```shell
+$ nimble install -y norm
+```
 
 Add Norm to your .nimble file:
 
-    requires "norm"
+```shell
+requires "norm"
+```
 
 Norm requires Nimble 0.14.0 sonmake sure you have the latest Nimble installed by running:
 
-    $ nimble install -y nimble
-
+```shell
+$ nimble install -y nimble
+```
 
 ## Contributing
 
 Any contributions are welcome: pull requests, code reviews, documentation improvements, bug reports, and feature requests.
 
--   See the [issues on GitHub](http://github.com/moigagoo/norm/issues).
+- See the [issues on GitHub](http://github.com/moigagoo/norm/issues).
 
--   Run the tests before and after you change the code.
+- Run the tests before and after you change the code.
 
-    The recommended way to run the tests is via nimble commands:
-    
-        $ nimble startContainers                                # Starts docker containers needed for testing
-        $ nimble startContainers sudo                           # Starts docker containers using sudo
+  The recommended way to run the tests is via nimble commands:
 
-        $ nimble allTests                                       # run all test suites
-        $ nimble singleTest tests/common/tmodel.nim             # run a single/list of test suite/s
+```shell
+$ nimble startContainers # Starts docker containers needed for testing
+$ nimble startContainers sudo # Starts docker containers using sudo
 
-        $ nimble stopContainers                                 # Stops and shuts down docker-containers
-        $ nimble startContainers sudo                           # Stops docker container using sudo
+$ nimble allTests # run all test suites
+$ nimble singleTest tests/common/tmodel.nim # run a single/list of test suite/s
 
--   Use camelCase instead of snake_case.
+$ nimble stopContainers # Stops and shuts down docker-containers
+$ nimble stopContainers sudo # Stops docker container using sudo
+```
 
--   New procs must have a documentation comment. If you modify an existing proc, update the comment.
+- Use camelCase instead of snake_case.
 
--   Apart from the code that implements a feature or fixes a bug, PRs are required to ship necessary tests and a changelog updates.
+- New procs must have a documentation comment. If you modify an existing proc, update the comment.
 
+- Apart from the code that implements a feature or fixes a bug, PRs are required to ship necessary tests and a changelog updates.
 
 ## ❤ Contributors ❤
 
