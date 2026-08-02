@@ -1,12 +1,11 @@
 # Package
 
-version       = "2.8.7"
-author        = "Constantine Molchanov"
-description   = "Nim ORM for SQLite and PostgreSQL."
-license       = "MIT"
-srcDir        = "src"
-skipDirs      = @["tests", "htmldocs"]
-
+version = "2.8.7"
+author = "Constantine Molchanov"
+description = "Nim ORM for SQLite and PostgreSQL."
+license = "MIT"
+srcDir = "src"
+skipDirs = @["tests", "htmldocs"]
 
 # Dependencies
 
@@ -46,7 +45,6 @@ task docs, "Generate docs":
 task benchmark, "Run benchmark":
   exec "nim r benchmark/bulkUpdate.nim"
 
-
 # For local development
 
 import std/[strutils, sequtils, strformat]
@@ -58,7 +56,8 @@ proc asSudo(params: seq[string]): bool =
   return params.anyIt(it == "sudo")
 
 task startContainers, "Starts a postgres container for running tests against":
-  var command = fmt"""docker run -d -e POSTGRES_PASSWORD="postgres" --name {postgresName} --rm -p 5432:5432 postgres"""
+  var command =
+    fmt"""docker run -d -e POSTGRES_PASSWORD="postgres" --name {postgresName} --rm -p 5432:5432 postgres"""
 
   if commandLineParams.asSudo():
     command = fmt"sudo {command}"
@@ -80,6 +79,5 @@ task singleTest, "Run containerized tests for a specific test file":
   let testFiles = commandLineParams.filterIt(it.startsWith("test"))
 
   for file in testFiles:
-    let command = fmt"nimble c -r {file}"
+    let command = fmt"nimble r {file}"
     exec command
-
