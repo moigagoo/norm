@@ -35,7 +35,15 @@ Any contributions are welcome: pull requests, code reviews, documentation improv
 
 - Run the tests before and after you change the code.
 
-  The recommended way to run the tests is via nimble commands:
+The recommended way to run the tests is via Docker Compose:
+
+```shell
+$ docker compose run tests_common
+$ docker compose run tests_sqlite
+$ docker compose run tests_postgres
+```
+
+Alternatively, run the tests natively via nimble commands:
 
 ```shell
 $ nimble startContainers # Starts docker containers needed for testing
@@ -46,6 +54,12 @@ $ nimble singleTest tests/common/tmodel.nim # run a single/list of test suite/s
 
 $ nimble stopContainers # Stops and shuts down docker-containers
 $ nimble stopContainers sudo # Stops docker container using sudo
+```
+
+To build the docs locally, run:
+```shell
+$ docker compose run docs
+$ docker compose run book
 ```
 
 - Use camelCase instead of snake_case.
