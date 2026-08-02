@@ -39,6 +39,7 @@ services:
       target: norm_base
     volumes:
       - ./src:/usr/src/app/src
+      - ./docs:/usr/src/app/docs
     command: nimble docs
 
   book:
@@ -47,4 +48,5 @@ services:
       target: norm_base
     volumes:
       - ./book:/usr/src/app/book
+      - ./docs:/usr/src/app/docs
     command: nimble book
