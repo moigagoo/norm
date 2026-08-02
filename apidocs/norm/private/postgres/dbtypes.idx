@@ -1,4 +1,4 @@
-nimTitle	dbtypes	norm/private/postgres/dbtypes.html	module src/norm/private/postgres/dbtypes		0
+nimTitle	dbtypes	norm/private/postgres/dbtypes.html	module norm/private/postgres/dbtypes		0
 nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[int16]	proc dbType(T: typedesc[int16]): string		20
 nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]	proc dbType(T: typedesc[int32 | enum]): string		22
 nim	dbType	norm/private/postgres/dbtypes.html#dbType,typedesc[]_2	proc dbType(T: typedesc[int64 | Positive | int | Natural]): string		24

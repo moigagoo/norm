@@ -1,4 +1,4 @@
-nimTitle	postgres	norm/postgres.html	module src/norm/postgres		0
+nimTitle	postgres	norm/postgres.html	module norm/postgres		0
 nim	RollbackError	norm/postgres.html#RollbackError	object RollbackError		23
 nim	NotFoundError	norm/postgres.html#NotFoundError	object NotFoundError		28
 nim	dbHostEnv	norm/postgres.html#dbHostEnv	const dbHostEnv		32

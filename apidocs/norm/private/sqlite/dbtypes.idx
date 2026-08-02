@@ -1,4 +1,4 @@
-nimTitle	dbtypes	norm/private/sqlite/dbtypes.html	module src/norm/private/sqlite/dbtypes		0
+nimTitle	dbtypes	norm/private/sqlite/dbtypes.html	module norm/private/sqlite/dbtypes		0
 nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[]	proc dbType(T: typedesc[SomeInteger | enum]): string		20
 nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[SomeFloat]	proc dbType(T: typedesc[SomeFloat]): string		22
 nim	dbType	norm/private/sqlite/dbtypes.html#dbType,typedesc[string]	proc dbType(T: typedesc[string]): string		24

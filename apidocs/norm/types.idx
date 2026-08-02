@@ -1,4 +1,4 @@
-nimTitle	types	norm/types.html	module src/norm/types		0
+nimTitle	types	norm/types.html	module norm/types		0
 nim	StringOfCap	norm/types.html#StringOfCap	type StringOfCap		7
 nim	PaddedStringOfCap	norm/types.html#PaddedStringOfCap	type PaddedStringOfCap		8
 nim	newStringOfCap	norm/types.html#newStringOfCap,string	proc newStringOfCap[C: static[int]](val = ""): StringOfCap[C]		11

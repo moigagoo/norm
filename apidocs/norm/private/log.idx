@@ -1,4 +1,4 @@
-nimTitle	log	norm/private/log.html	module src/norm/private/log		0
+nimTitle	log	norm/private/log.html	module norm/private/log		0
 nim	LoggingError	norm/private/log.html#LoggingError	object LoggingError		2
 nim	log	norm/private/log.html#log,string	proc log(msg: string)		22
 nim	log	norm/private/log.html#log,string,string	proc log(qry, paramstr: string)		24

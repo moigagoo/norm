@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>src/norm/model</title>
+<title>norm/model</title>
 
 <!-- Google fonts -->
 <link href='https://fonts.googleapis.com/css?family=Lato:400,600,900' rel='stylesheet' type='text/css'/>
@@ -16,15 +16,18 @@
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4QQQEwksSS9ZWwAAAk1JREFUWMPtll2ITVEUx39nn/O7Y5qR8f05wtCUUr6ZIS++8pEnkZInPImneaCQ5METNdOkeFBKUhMPRIkHKfEuUZSUlGlKPN2TrgfncpvmnntnmlEyq1Z7t89/rf9a6+y99oZxGZf/XeIq61EdtgKXgdXA0xrYAvBjOIF1AI9zvjcC74BSpndrJPkBWDScTF8Aa4E3wDlgHbASaANmVqlcCnwHvgDvgVfAJ+AikAAvgfVZwLnSVZHZaOuKoQi3ZOMi4NkYkpe1p4J7A8BpYAD49hfIy/oqG0+hLomiKP2L5L+1ubn5115S+3OAn4EnwBlgMzCjyt6ZAnQCJ4A7wOs88iRJHvw50HoujuPBoCKwHWiosy8MdfZnAdcHk8dxXFJ3VQbQlCTJvRBCGdRbD4M6uc5glpY3eAihpN5S5w12diSEcCCEcKUO4ljdr15T76ur1FDDLIQQ3qv71EdDOe3Kxj3leRXyk+pxdWnFWod6Wt2bY3de3aSuUHcPBVimHs7mK9WrmeOF6lR1o9qnzskh2ar2qm1qizpfXaPeVGdlmGN5pb09qMxz1Xb1kLqgzn1RyH7JUXW52lr5e/Kqi9qpto7V1atuUzfnARrV7jEib1T76gG2qxdGmXyiekkt1GswPTtek0aBfJp6YySGBfWg2tPQ0FAYgf1stUfdmdcjarbYJEniKIq6gY/Aw+zWHAC+p2labGpqiorFYgGYCEzN7oQdQClN07O1/EfDyGgC0ALMBdYAi4FyK+4H3gLPsxfR1zRNi+NP7nH5J+QntnXe5B5mpfQAAAAASUVORK5CYII=">
 
 <!-- CSS -->
-<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.0">
+<link rel="stylesheet" type="text/css" href="../nimdoc.out.css?v=2.2.10">
 
 <!-- JS -->
-<script type="text/javascript" src="../dochack.js?v=2.2.0"></script>
+<script type="text/javascript" src="../dochack.js?v=2.2.10"></script>
 </head>
 <body>
   <div class="document" id="documentId">
+    <input type="checkbox" id="nav-toggle" hidden>
+    <label for="nav-toggle" id="nav-burger">&#9776;</label>
+    <label for="nav-toggle" id="nav-overlay"></label>
     <div class="container">
-      <h1 class="title">src/norm/model</h1>
+      <h1 class="title">norm/model</h1>
       <div class="row">
   <div class="three columns">
     <div class="theme-select-wrapper">
@@ -163,7 +166,7 @@
   <h1><a class="toc-backref" href="#7">Types</a></h1>
   <dl class="item">
     <div id="ConflictPolicy">
-  <dt><pre><a href="model.html#ConflictPolicy"><span class="Identifier">ConflictPolicy</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
+  <dt><pre><a href="#ConflictPolicy"><span class="Identifier">ConflictPolicy</span></a> <span class="Other">=</span> <span class="Keyword">enum</span>
   <span class="Identifier">cpRaise</span><span class="Other">,</span> <span class="Identifier">cpIgnore</span><span class="Other">,</span> <span class="Identifier">cpReplace</span></pre></dt>
   <dd>
     
@@ -172,7 +175,7 @@
   </dd>
 </div>
 <div id="Model">
-  <dt><pre><a href="model.html#Model"><span class="Identifier">Model</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
+  <dt><pre><a href="#Model"><span class="Identifier">Model</span></a> <span class="Other">=</span> <span class="Keyword">ref</span> <span class="Keyword">object</span> <span class="Keyword">of</span> <span class="Identifier">RootObj</span>
   <span class="Identifier">id</span><span class="Operator">*</span> {.<span class="Identifier">pk</span><span class="Other">,</span> <span class="Identifier">ro</span>.}<span class="Other">:</span> <span class="Identifier">int64</span></pre></dt>
   <dd>
     
@@ -190,7 +193,7 @@
   <dl class="item">
     <div id="checkRo-procs-all">
   <div id="checkRo,typedesc[Model]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#checkRo%2Ctypedesc%5BModel%5D"><span class="Identifier">checkRo</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span></pre></dt>
+  <dt><pre><span class="Keyword">proc</span> <a href="#checkRo%2Ctypedesc%5BModel%5D"><span class="Identifier">checkRo</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span></pre></dt>
   <dd>
     
     Stop compilation if an object has <a class="reference external" href="pragmas.html#ro.t">ro</a> pragma.
@@ -201,7 +204,7 @@
 </div>
 <div id="col-procs-all">
   <div id="col,typedesc[Model],string">
-  <dt><pre><span class="Keyword">func</span> <a href="#col%2Ctypedesc%5BModel%5D%2Cstring"><span class="Identifier">col</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#col%2Ctypedesc%5BModel%5D%2Cstring"><span class="Identifier">col</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Get column name for a <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> field, which is just the field name.
@@ -209,7 +212,7 @@
   </dd>
 </div>
 <div id="col,T,string">
-  <dt><pre><span class="Keyword">func</span> <a href="#col%2CT%2Cstring"><span class="Identifier">col</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#col%2CT%2Cstring"><span class="Identifier">col</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Get column name for a <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> instance field.
@@ -220,7 +223,7 @@
 </div>
 <div id="cols-procs-all">
   <div id="cols,T">
-  <dt><pre><span class="Keyword">func</span> <a href="#cols%2CT"><span class="Identifier">cols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#cols%2CT"><span class="Identifier">cols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">force</span> <span class="Other">=</span> <span class="Identifier">false</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     <p>Get columns for <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> instance.</p>
@@ -233,7 +236,7 @@
 </div>
 <div id="fCol-procs-all">
   <div id="fCol,typedesc[Model],string,string">
-  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2Ctypedesc%5BModel%5D%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2Ctypedesc%5BModel%5D%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Get fully qualified column name with an alias instead of the actual table name: <tt class="docutils literal"><span class="pre">alias.col</span></tt>.
@@ -241,7 +244,7 @@
   </dd>
 </div>
 <div id="fCol,typedesc[Model],string">
-  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2Ctypedesc%5BModel%5D%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2Ctypedesc%5BModel%5D%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Get fully qualified column name for a <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> field: <tt class="docutils literal"><span class="pre">table.col</span></tt>.
@@ -249,7 +252,7 @@
   </dd>
 </div>
 <div id="fCol,T,string,string">
-  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Get fully qualified column name with an alias instead of the actual table name for a <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> instance field.
@@ -257,7 +260,7 @@
   </dd>
 </div>
 <div id="fCol,T,string">
-  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#fCol%2CT%2Cstring"><span class="Identifier">fCol</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">fld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     Get fully qualified column name for a <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> instance field.
@@ -268,7 +271,7 @@
 </div>
 <div id="getRelatedFieldNameTo-procs-all">
   <div id="getRelatedFieldNameTo,typedesc[S],typedesc[T]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#getRelatedFieldNameTo%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">getRelatedFieldNameTo</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">S</span><span class="Other">]</span><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#getRelatedFieldNameTo%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">getRelatedFieldNameTo</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">;</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">S</span><span class="Other">]</span><span class="Other">;</span>
     <span class="Identifier">target</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span> {.<span class="Identifier">compileTime</span>.}</pre></dt>
   <dd>
     
@@ -280,7 +283,7 @@
 </div>
 <div id="isModel-procs-all">
   <div id="isModel,Option[T: Model]">
-  <dt><pre><span class="Keyword">func</span> <a href="#isModel%2COption%5BT%3A%20Model%5D"><span class="Identifier">isModel</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#isModel%2COption%5BT%3A%20Model%5D"><span class="Identifier">isModel</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -288,7 +291,7 @@
   </dd>
 </div>
 <div id="isModel,T">
-  <dt><pre><span class="Keyword">func</span> <a href="#isModel%2CT"><span class="Identifier">isModel</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#isModel%2CT"><span class="Identifier">isModel</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span></pre></dt>
   <dd>
     
     
@@ -307,7 +310,7 @@
 </div>
 <div id="joinGroups-procs-all">
   <div id="joinGroups,T,seq[string]">
-  <dt><pre><span class="Keyword">func</span> <a href="#joinGroups%2CT%2Cseq%5Bstring%5D"><span class="Identifier">joinGroups</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">flds</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
+  <dt><pre><span class="Keyword">func</span> <a href="#joinGroups%2CT%2Cseq%5Bstring%5D"><span class="Identifier">joinGroups</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">flds</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span>
     <span class="Keyword">tuple</span><span class="Other">[</span><span class="Identifier">tbl</span><span class="Other">,</span> <span class="Identifier">tAls</span><span class="Other">,</span> <span class="Identifier">lFld</span><span class="Other">,</span> <span class="Identifier">rFld</span><span class="Other">:</span> <span class="Identifier">string</span><span class="Other">]</span><span class="Other">]</span></pre></dt>
   <dd>
     
@@ -324,7 +327,7 @@
 </div>
 <div id="model-procs-all">
   <div id="model,Option[T: Model]">
-  <dt><pre><span class="Keyword">func</span> <a href="#model%2COption%5BT%3A%20Model%5D"><span class="Identifier">model</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#model%2COption%5BT%3A%20Model%5D"><span class="Identifier">model</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -332,7 +335,7 @@
   </dd>
 </div>
 <div id="model,T">
-  <dt><pre><span class="Keyword">func</span> <a href="#model%2CT"><span class="Identifier">model</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#model%2CT"><span class="Identifier">model</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span></pre></dt>
   <dd>
     
     
@@ -340,7 +343,7 @@
   </dd>
 </div>
 <div id="model,T_2">
-  <dt><pre><span class="Keyword">func</span> <a href="#model%2CT_2"><span class="Identifier">model</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#model%2CT_2"><span class="Identifier">model</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">(</span><span class="Identifier">val</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span></pre></dt>
   <dd>
     
     This is never called and exists only to please the compiler.
@@ -351,7 +354,7 @@
 </div>
 <div id="rfCols-procs-all">
   <div id="rfCols,T,seq[string]">
-  <dt><pre><span class="Keyword">func</span> <a href="#rfCols%2CT%2Cseq%5Bstring%5D"><span class="Identifier">rfCols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">flds</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#rfCols%2CT%2Cseq%5Bstring%5D"><span class="Identifier">rfCols</span></a><span class="Other">[</span><span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">obj</span><span class="Other">:</span> <span class="Identifier">T</span><span class="Other">;</span> <span class="Identifier">flds</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span> <span class="Other">=</span> <span class="Operator">@</span><span class="Other">[</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     Recursively get fully qualified column names for <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> instance and its <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a> fields.
@@ -362,7 +365,7 @@
 </div>
 <div id="schema-procs-all">
   <div id="schema,typedesc[Model]">
-  <dt><pre><span class="Keyword">func</span> <a href="#schema%2Ctypedesc%5BModel%5D"><span class="Identifier">schema</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#schema%2Ctypedesc%5BModel%5D"><span class="Identifier">schema</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">Option</span><span class="Other">[</span><span class="Identifier">string</span><span class="Other">]</span></pre></dt>
   <dd>
     
     <p>Get schema name for <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a>, which is the value of <a class="reference external" href="pragmas.html#schemaName.t,string">schemaName</a> pragma.</p>
@@ -376,7 +379,7 @@
 </div>
 <div id="table-procs-all">
   <div id="table,typedesc[Model]">
-  <dt><pre><span class="Keyword">func</span> <a href="#table%2Ctypedesc%5BModel%5D"><span class="Identifier">table</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
+  <dt><pre><span class="Keyword">func</span> <a href="#table%2Ctypedesc%5BModel%5D"><span class="Identifier">table</span></a><span class="Other">(</span><span class="Identifier">T</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">string</span></pre></dt>
   <dd>
     
     <p>Get table name for <a class="reference internal nimdoc" title="type Model" href="#Model">Model</a>, which is the value of <a class="reference external" href="pragmas.html#tableName.t,string">tableName</a> pragma or the type name in double quotes.</p>
@@ -389,7 +392,7 @@
 </div>
 <div id="validateFkField-procs-all">
   <div id="validateFkField,staticstring,typedesc[S],typedesc[T]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#validateFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">validateFkField</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">fkFieldName</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#validateFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">validateFkField</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">fkFieldName</span><span class="Other">:</span> <span class="Keyword">static</span> <span class="Identifier">string</span><span class="Other">;</span>
                                   <span class="Identifier">source</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">S</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">target</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.
     <span class="Identifier">compileTime</span>.}</pre></dt>
   <dd>
@@ -402,7 +405,7 @@
 </div>
 <div id="validateJoinModelFkField-procs-all">
   <div id="validateJoinModelFkField,staticstring,typedesc[S],typedesc[T]">
-  <dt><pre><span class="Keyword">proc</span> <a href="#validateJoinModelFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">validateJoinModelFkField</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="model.html#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">fkFieldName</span><span class="Other">:</span> <span class="Identifier">static</span> <span class="Identifier">string</span><span class="Other">;</span>
+  <dt><pre><span class="Keyword">proc</span> <a href="#validateJoinModelFkField%2Cstaticstring%2Ctypedesc%5BS%5D%2Ctypedesc%5BT%5D"><span class="Identifier">validateJoinModelFkField</span></a><span class="Other">[</span><span class="Identifier">S</span><span class="Other">,</span> <span class="Identifier">T</span><span class="Other">:</span> <a href="#Model"><span class="Identifier">Model</span></a><span class="Other">]</span><span class="Other">(</span><span class="Identifier">fkFieldName</span><span class="Other">:</span> <span class="Keyword">static</span> <span class="Identifier">string</span><span class="Other">;</span>
     <span class="Identifier">joinModel</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">S</span><span class="Other">]</span><span class="Other">;</span> <span class="Identifier">target</span><span class="Other">:</span> <span class="Identifier">typedesc</span><span class="Other">[</span><span class="Identifier">T</span><span class="Other">]</span><span class="Other">)</span><span class="Other">:</span> <span class="Identifier">bool</span> {.<span class="Identifier">compileTime</span>.}</pre></dt>
   <dd>
     
@@ -422,7 +425,7 @@
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2025-10-08 15:53:07 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2026-08-02 18:09:15 UTC</small>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-nimTitle	pragmas	norm/pragmas.html	module src/norm/pragmas		0
+nimTitle	pragmas	norm/pragmas.html	module norm/pragmas		0
 nim	pk	norm/pragmas.html#pk.t	template pk()		4
 nim	ro	norm/pragmas.html#ro.t	template ro()		10
 nim	readOnly	norm/pragmas.html#readOnly.t	template readOnly()		22

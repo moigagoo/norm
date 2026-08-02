@@ -1,4 +1,4 @@
-nimTitle	sqlite	norm/sqlite.html	module src/norm/sqlite		0
+nimTitle	sqlite	norm/sqlite.html	module norm/sqlite		0
 nim	RollbackError	norm/sqlite.html#RollbackError	object RollbackError		23
 nim	NotFoundError	norm/sqlite.html#NotFoundError	object NotFoundError		28
 nim	dbHostEnv	norm/sqlite.html#dbHostEnv	const dbHostEnv		31

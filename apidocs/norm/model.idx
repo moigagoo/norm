@@ -1,4 +1,4 @@
-nimTitle	model	norm/model.html	module src/norm/model		0
+nimTitle	model	norm/model.html	module norm/model		0
 nim	Model	norm/model.html#Model	type Model		11
 nim	cpRaise	norm/model.html#cpRaise	ConflictPolicy.cpRaise		19
 nim	cpIgnore	norm/model.html#cpIgnore	ConflictPolicy.cpIgnore		19

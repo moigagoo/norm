@@ -1,4 +1,4 @@
-nimTitle	pool	norm/pool.html	module src/norm/pool		0
+nimTitle	pool	norm/pool.html	module norm/pool		0
 nim	Pool	norm/pool.html#Pool	type Pool		7
 nim	PoolExhaustedError	norm/pool.html#PoolExhaustedError	object PoolExhaustedError		13
 nim	pepRaise	norm/pool.html#pepRaise	PoolExhaustedPolicy.pepRaise		14
