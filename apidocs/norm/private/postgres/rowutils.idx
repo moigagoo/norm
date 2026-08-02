@@ -1,0 +1,4 @@
+nimTitle	rowutils	norm/private/postgres/rowutils.html	module norm/private/postgres/rowutils		0
+nim	isEmptyColumn	norm/private/postgres/rowutils.html#isEmptyColumn,Row,int	proc isEmptyColumn(row: Row; index: int): bool		18
+nim	fromRow	norm/private/postgres/rowutils.html#fromRow,T,Row	proc fromRow[T: ref object](obj: var T; row: Row)		58
+nim	toRow	norm/private/postgres/rowutils.html#toRow,T	proc toRow[T: Model](obj: T; force = false): Row		67

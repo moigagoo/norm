@@ -1,0 +1,2 @@
+nimTitle	llexec	norm/private/postgres/llexec.html	module norm/private/postgres/llexec		0
+nim	execExpectTuplesOk	norm/private/postgres/llexec.html#execExpectTuplesOk,DbConn,SqlQuery,seq[DbValue]	proc execExpectTuplesOk(db: DbConn; query: SqlQuery; args: seq[DbValue])		11
