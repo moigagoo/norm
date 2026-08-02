@@ -9,7 +9,8 @@ services:
       context: ./
       target: norm_base
     volumes:
-      - .:/usr/src/app
+      - ./src:/usr/src/app/src
+      - ./tests:/usr/src/app/tests
     command: testament category common
 
   tests_sqlite:
@@ -17,7 +18,8 @@ services:
       context: ./
       target: norm_sqlite
     volumes:
-      - .:/usr/src/app
+      - ./src:/usr/src/app/src
+      - ./tests:/usr/src/app/tests
     command: testament category sqlite
 
   tests_postgres:
@@ -27,7 +29,8 @@ services:
     depends_on:
       - postgres
     volumes:
-      - .:/usr/src/app
+      - ./src:/usr/src/app/src
+      - ./tests:/usr/src/app/tests
     command: testament category postgres
 
   docs:
@@ -35,7 +38,7 @@ services:
       context: ./
       target: norm_base
     volumes:
-      - .:/usr/src/app
+      - ./src:/usr/src/app/src
     command: nimble docs
 
   book:
@@ -43,6 +46,5 @@ services:
       context: ./
       target: norm_base
     volumes:
-      - .:/usr/src/app
+      - ./book:/usr/src/app/book
     command: nimble book
-
