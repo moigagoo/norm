@@ -39,7 +39,7 @@ services:
       target: norm_base
     volumes:
       - ./src:/usr/src/app/src
-      - ./docs:/usr/src/app/docs
+      - ./docs/apidocs:/usr/src/app/docs/apidocs
     command: nimble docs
 
   book:
