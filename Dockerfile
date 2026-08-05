@@ -9,5 +9,4 @@ FROM norm_base AS norm_postgres
 RUN apt-get update && apt-get install -y postgresql-client
 
 FROM norm_base AS norm_book
-RUN apt-get update && apt-get install -y libpcre3 libpcre3-dev
 RUN nimble setupBook
