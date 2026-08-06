@@ -56,7 +56,7 @@ suite "Table creation":
 
     check dbConn.getAllRows(qry, "FurnitureTable") == @[
       @[?"id", ?"bigint"],
-      @[?"legcount", ?dftDbInt]
+      @[?"legCount", ?dftDbInt]
     ]
 
   test "Create table with custom schema":
@@ -95,7 +95,7 @@ suite "Table creation":
     ]
 
     check dbConn.getAllRows(qry, "Pet") == @[
-      @[?"favtoy", ?"bigint"],
+      @[?"favToy", ?"bigint"],
       @[?"id", ?"bigint"],
       @[?"species", ?"text"]
     ]

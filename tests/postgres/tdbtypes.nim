@@ -4,7 +4,6 @@ import norm/[model, postgres, types]
 
 import ../models
 
-
 const
   dbHost = getEnv("PGHOST", "postgres")
   dbUser = getEnv("PGUSER", "postgres")
@@ -37,7 +36,7 @@ suite "Import dbTypes from norm/private/postgres/dbtypes":
 
   test "dbValue[DateTime] is imported":
     let users = @[newUser()].dup:
-      dbConn.select("""lastLogin <= $1""", ?now())
+      dbConn.select(""""lastLogin" <= $1""", ?now())
 
     check len(users) == 0
 
