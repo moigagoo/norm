@@ -229,7 +229,7 @@ proc insert*[T: Model](dbConn; objs: var openArray[T], force = false) =
   for obj in objs.mitems:
     dbConn.insert(obj, force)
 
-proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, DbError, LoggingError}.} =
+proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue, dbValue]) {.raises: {NotFoundError, ValueError, IOError, OSError, DbError, LoggingError}.} =
   ##[ Populate a `Model`_ instance and its `Model`_ fields from DB.
 
   ``cond`` is condition for ``WHERE`` clause but with extra features:
@@ -258,7 +258,7 @@ proc select*[T: Model](dbConn; obj: var T, cond: string, params: varargs[DbValue
 
   obj.fromRow(get row)
 
-proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, DbError, LoggingError}.} =
+proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[DbValue, dbValue]) {.raises: {ValueError, IOError, OSError, DbError, LoggingError}.} =
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``objs`` must have at least one item.
