@@ -289,7 +289,7 @@ proc select*[T: Model](dbConn; objs: var seq[T], cond: string, params: varargs[D
   for i, row in rows:
     objs[i].fromRow(row)
 
-proc select*[T: Model](dbConn; typ: typedesc[T], cond: string, params: varargs[DbValue, dbValue]): seq[T] {.raises: {ValueError, DbError, LoggingError}.} =
+proc select*[T: Model](dbConn; typ: typedesc[T], cond: string, params: varargs[DbValue, dbValue]): seq[T] {.raises: {ValueError, IOError, OSError, DbError, LoggingError}.} =
   ##[ Populate a sequence of `Model`_ instances from DB.
 
   ``typ`` is a `Model`_ subtype to contain the values.
